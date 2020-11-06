@@ -1,0 +1,23 @@
+package logging
+
+import (
+	"io/ioutil"
+	"log"
+	"os"
+)
+
+var (
+	Trace   *log.Logger
+	Info    *log.Logger
+	Warning *log.Logger
+	Error   *log.Logger
+)
+
+func init() {
+	const flags = log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile | log.Lmsgprefix
+
+	Trace = log.New(ioutil.Discard, "TRACE: ", flags)
+	Info = log.New(os.Stdout, "INFO: ", flags)
+	Warning = log.New(os.Stdout, "WARNING: ", flags)
+	Error = log.New(os.Stderr, "ERROR: ", flags)
+}

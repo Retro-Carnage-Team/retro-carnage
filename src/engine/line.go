@@ -1,8 +1,8 @@
 package engine
 
 type Line struct {
-	Start Point
-	End   Point
+	Start *Point
+	End   *Point
 }
 
 func (l *Line) GetIntersection(o *Line) *Point {
@@ -13,8 +13,7 @@ func (l *Line) GetIntersection(o *Line) *Point {
 	if a >= 0 && a <= 1 && b >= 0 && b <= 1 {
 		var intersectionX = l.Start.X + a*(l.End.X-l.Start.X)
 		var intersectionY = l.Start.Y + a*(l.End.Y-l.Start.Y)
-		var result = NewPoint(intersectionX, intersectionY)
-		return &result
+		return &Point{X: intersectionX, Y: intersectionY}
 	}
 	return nil
 }
@@ -30,11 +29,4 @@ func (l *Line) Equals(o *Line) bool {
 	var otherEnd = o.End.String()
 
 	return (thisStart == otherStart && thisEnd == otherEnd) || (thisEnd == otherStart && thisStart == otherEnd)
-}
-
-func NewLine(start Point, end Point) *Line {
-	var line Line
-	line.Start = start
-	line.End = end
-	return &line
 }

@@ -3,9 +3,9 @@ package network
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/rs/zerolog/log"
 	"io/ioutil"
 	"net/http"
+	"retro-carnage.net/logging"
 	"time"
 )
 
@@ -35,26 +35,26 @@ const backendUrl = "https://backend.retro-carnage.net"
 func (hb *httpBackend) StartGameSession() {
 	response, err := http.Post(backendUrl+"/usage/start-game", "application/json", nil)
 	if nil != err {
-		log.Error().Str("class", "httpBackend").Str("method", "StartGameSession").Err(err).Send()
+		logging.Warning.Printf("Failed to start game session: %v", err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusCreated {
 		bodyBytes, err := ioutil.ReadAll(response.Body)
 		if err != nil {
-			log.Error().Str("class", "httpBackend").Str("method", "StartGameSession").Err(err).Send()
+			logging.Warning.Printf("Failed to start game session. Failed to read server response: %v", err)
+			return
 		}
 
 		var usage usageResponse
 		err = json.Unmarshal(bodyBytes, &usage)
 		if err != nil {
-			log.Error().Str("class", "httpBackend").Str("method", "StartGameSession").Err(err).Send()
+			logging.Warning.Printf("Failed to start game session. Failed to parse server response: %v", err)
+			return
 		}
 
 		hb.gameId = usage.GameId
-		log.Info().
-			Str("class", "httpBackend").Str("method", "StartGameSession").
-			Msg("Created game session with ID '" + hb.gameId + "'")
+		logging.Info.Printf("Created game session with ID '%s'", hb.gameId)
 	}
 }
 
@@ -62,18 +62,15 @@ func (hb *httpBackend) ReportGameState(screenName string) {
 	var url = backendUrl + "/usage/" + hb.gameId + "/next-screen/" + screenName
 	response, err := http.Post(url, "application/json", nil)
 	if nil != err {
-		log.Error().Str("class", "httpBackend").Str("method", "ReportGameState").Err(err).Send()
+		logging.Warning.Printf("Failed to report game state: %v", err)
+		return
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusOK {
-		log.Info().
-			Str("class", "httpBackend").Str("method", "ReportGameState").
-			Msg("Reported game progress to screen '" + screenName + "'")
+		logging.Info.Printf("Reported game progress to screen '%s'", screenName)
 	} else {
-		log.Warn().
-			Str("class", "httpBackend").Str("method", "ReportGameState").
-			Msg("Failed to report game progress to screen '" + screenName + "'")
+		logging.Warning.Printf("Failed to report game progress to screen '%s'", screenName)
 	}
 }
 
@@ -86,22 +83,19 @@ func (hb *httpBackend) ReportError(error error) {
 
 	data, err := json.Marshal(errorRequest)
 	if err != nil {
-		log.Error().Str("class", "httpBackend").Str("method", "ReportError").Err(err).Send()
+		logging.Error.Printf("Failed to report error. Unable to build request: %v", err)
+		return
 	}
 
 	response, err := http.Post(url, "application/json", bytes.NewBuffer(data))
 	if nil != err {
-		log.Error().Str("class", "httpBackend").Str("method", "ReportError").Err(err).Send()
+		logging.Warning.Printf("Failed to report error: %v", err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusCreated {
-		log.Info().
-			Str("class", "httpBackend").Str("method", "ReportError").
-			Msg("Reported error")
+		logging.Info.Printf("Reported error: '%v'", error)
 	} else {
-		log.Warn().
-			Str("class", "httpBackend").Str("method", "ReportError").
-			Msg("Failed to report error")
+		logging.Warning.Printf("Failed to report error: %v", err)
 	}
 }

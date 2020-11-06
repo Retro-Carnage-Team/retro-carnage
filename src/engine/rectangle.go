@@ -11,13 +11,13 @@ type Rectangle struct {
 	Height float32
 }
 
-func (r *Rectangle) Add(offset Point) *Rectangle {
+func (r *Rectangle) Add(offset *Point) *Rectangle {
 	r.X += offset.X
 	r.Y += offset.Y
 	return r
 }
 
-func (r *Rectangle) Subtract(offset Point) *Rectangle {
+func (r *Rectangle) Subtract(offset *Point) *Rectangle {
 	r.X -= offset.X
 	r.Y -= offset.Y
 	return r
@@ -40,30 +40,21 @@ func (r *Rectangle) GetIntersection(other *Rectangle) *Rectangle {
 }
 
 func (r *Rectangle) GetLeftBorder() *Line {
-	return NewLine(NewPoint(r.X, r.Y), NewPoint(r.X, r.Y+r.Height))
+	return &Line{Start: &Point{X: r.X, Y: r.Y}, End: &Point{X: r.X, Y: r.Y + r.Height}}
 }
 
 func (r *Rectangle) GetRightBorder() *Line {
-	return NewLine(NewPoint(r.X+r.Width, r.Y), NewPoint(r.X+r.Width, r.Y+r.Height))
+	return &Line{Start: &Point{X: r.X + r.Width, Y: r.Y}, End: &Point{X: r.X + r.Width, Y: r.Y + r.Height}}
 }
 
 func (r *Rectangle) GetTopBorder() *Line {
-	return NewLine(NewPoint(r.X, r.Y), NewPoint(r.X+r.Width, r.Y))
+	return &Line{Start: &Point{X: r.X, Y: r.Y}, End: &Point{X: r.X + r.Width, Y: r.Y}}
 }
 
 func (r *Rectangle) GetBottomBorder() *Line {
-	return NewLine(NewPoint(r.X, r.Y+r.Height), NewPoint(r.X+r.Width, r.Y+r.Height))
+	return &Line{Start: &Point{X: r.X, Y: r.Y + r.Height}, End: &Point{X: r.X + r.Width, Y: r.Y + r.Height}}
 }
 
 func (r *Rectangle) String() string {
 	return fmt.Sprintf("Rectangle[x: %.5f, y: %.5f, width: %.5f, height: %.5f]", r.X, r.Y, r.Width, r.Height)
-}
-
-func NewRectangle(x float32, y float32, width float32, height float32) *Rectangle {
-	var result Rectangle
-	result.X = x
-	result.Y = y
-	result.Width = width
-	result.Height = height
-	return &result
 }
