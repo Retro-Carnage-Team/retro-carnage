@@ -2,15 +2,15 @@ package engine
 
 import "errors"
 
-type AmmunitionCrate struct {
+type AmmunitionContainer struct {
 	ammunition []*Ammunition
 }
 
-func (ac *AmmunitionCrate) GetAll() []*Ammunition {
+func (ac *AmmunitionContainer) GetAll() []*Ammunition {
 	return ac.ammunition
 }
 
-func (ac *AmmunitionCrate) GetByName(name string) (*Ammunition, error) {
+func (ac *AmmunitionContainer) GetByName(name string) (*Ammunition, error) {
 	for _, ammo := range ac.ammunition {
 		if ammo.Name() == name {
 			return ammo, nil
@@ -20,7 +20,7 @@ func (ac *AmmunitionCrate) GetByName(name string) (*Ammunition, error) {
 }
 
 var (
-	AmmoCrate = AmmunitionCrate{ammunition: initializeAmmunition()}
+	AmmunitionCrate = AmmunitionContainer{ammunition: initializeAmmunition()}
 )
 
 func initializeAmmunition() []*Ammunition {
