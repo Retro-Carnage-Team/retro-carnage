@@ -11,9 +11,9 @@ func (*mockBackend) StartGameSession() {
 }
 
 func (*mockBackend) ReportGameState(screenName string) {
-	logging.Info.Printf("Reported game progress to %s", screenName)
+	logging.Info.Printf("Reported game progress to: %s", screenName)
 }
 
 func (*mockBackend) ReportError(error error) {
-	logging.Info.Printf("Reported error %s", error)
+	logging.Info.Printf("Reported error: %s", error)
 }
