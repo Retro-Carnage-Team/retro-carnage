@@ -1,6 +1,8 @@
-package engine
+package assets
 
-import "errors"
+import (
+	"errors"
+)
 
 type WeaponContainer struct {
 	weapons []*Weapon

@@ -1,4 +1,4 @@
-package engine
+package assets
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -10,7 +10,7 @@ func TestWeaponCrateGetAll(t *testing.T) {
 }
 
 func TestWeaponCrateGetByNameValid(t *testing.T) {
-	ammo, err := WeaponCrate.GetByName("Panzerfaust 44")
+	weapon, err := WeaponCrate.GetByName("Panzerfaust 44")
 	assert.Nil(t, err)
-	assert.Equal(t, RPG, ammo.WeaponType())
+	assert.Equal(t, RPG, weapon.WeaponType())
 }

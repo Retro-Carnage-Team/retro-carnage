@@ -1,4 +1,4 @@
-package engine
+package assets
 
 type Ammunition struct {
 	description string
@@ -29,6 +29,6 @@ func (a *Ammunition) PackageSize() int32 {
 	return a.packageSize
 }
 
-func (a *Ammunition) Prize() int32 {
+func (a *Ammunition) Price() int32 {
 	return a.price
 }

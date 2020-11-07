@@ -1,4 +1,4 @@
-package engine
+package assets
 
 type WeaponType int
 

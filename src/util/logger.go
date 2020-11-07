@@ -1,4 +1,4 @@
-package logging
+package util
 
 import (
 	"io/ioutil"
