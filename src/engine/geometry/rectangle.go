@@ -2,6 +2,7 @@ package geometry
 
 import (
 	"fmt"
+	"retro-carnage.net/util"
 )
 
 type Rectangle struct {
@@ -24,17 +25,14 @@ func (r *Rectangle) Subtract(offset *Point) *Rectangle {
 }
 
 func (r *Rectangle) GetIntersection(other *Rectangle) *Rectangle {
-	var leftX = max(r.X, other.X)
-	var rightX = min(r.X+r.Width, other.X+other.Width)
-	var topY = max(r.Y, other.Y)
-	var bottomY = min(r.Y+r.Height, other.Y+other.Height)
+	var mu = util.MathUtil{}
+
+	var leftX = mu.Max(r.X, other.X)
+	var rightX = mu.Min(r.X+r.Width, other.X+other.Width)
+	var topY = mu.Max(r.Y, other.Y)
+	var bottomY = mu.Min(r.Y+r.Height, other.Y+other.Height)
 	if leftX < rightX && topY < bottomY {
-		var result Rectangle
-		result.X = leftX
-		result.Y = topY
-		result.Width = rightX - leftX
-		result.Height = bottomY - topY
-		return &result
+		return &Rectangle{X: leftX, Y: topY, Width: rightX - leftX, Height: bottomY - topY}
 	}
 	return nil
 }
