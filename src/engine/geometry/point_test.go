@@ -7,6 +7,5 @@ import (
 
 func TestToString(t *testing.T) {
 	var p = &Point{1, 2}
-
-	assert.Equal(t, "1.00000/2.00000", p.String())
+	assert.Equal(t, "Point[X: 1.00000, Y: 2.00000]", p.String())
 }

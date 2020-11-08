@@ -8,5 +8,5 @@ type Point struct {
 }
 
 func (p *Point) String() string {
-	return fmt.Sprintf("%.5f/%.5f", p.X, p.Y)
+	return fmt.Sprintf("Point[X: %.5f, Y: %.5f]", p.X, p.Y)
 }

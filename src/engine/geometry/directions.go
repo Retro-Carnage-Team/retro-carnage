@@ -1,4 +1,4 @@
-package engine
+package geometry
 
 type Direction struct {
 	name  string

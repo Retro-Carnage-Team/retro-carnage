@@ -17,7 +17,7 @@ func run() {
 		panic(err)
 	}
 
-	win.Clear(colornames.Skyblue)
+	win.Clear(colornames.Black)
 
 	for !win.Closed() {
 		win.Update()
