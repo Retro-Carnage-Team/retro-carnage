@@ -4,6 +4,8 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
+	"retro-carnage.net/engine/input"
+	"retro-carnage.net/util"
 )
 
 func run() {
@@ -19,8 +21,15 @@ func run() {
 
 	win.Clear(colornames.Black)
 
+	inputCtrl := input.Controller{Window: win}
+	inputCtrl.HasTwoOrMoreDevices()
+	inputCtrl.AssignControllersToPlayers()
+
 	for !win.Closed() {
 		win.Update()
+		if nil != inputCtrl.ControllerPlayerOne {
+			util.Trace.Print(inputCtrl.ControllerPlayerOne.State().String())
+		}
 	}
 }
 
