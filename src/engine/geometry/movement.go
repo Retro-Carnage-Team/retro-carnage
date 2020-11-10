@@ -5,25 +5,25 @@ import (
 	"retro-carnage.net/util"
 )
 
-func calculateMovementDistance(elapsedTimeInMs int32, distancePerMs float32, maxDistance *float32) float32 {
-	var distance = float32(elapsedTimeInMs) * distancePerMs
+func calculateMovementDistance(elapsedTimeInMs int64, distancePerMs float64, maxDistance *float64) float64 {
+	var distance = float64(elapsedTimeInMs) * distancePerMs
 	if nil != maxDistance {
 		return util.MathUtil{}.Min(*maxDistance, distance)
 	}
 	return distance
 }
 
-type movementCallbackFunc func(direction Direction, distance float32, diagonalDistance float32) float32
+type movementCallbackFunc func(direction Direction, distance float64, diagonalDistance float64) float64
 
-func calculateMovement(elapsedTimeInMs int32, direction Direction, distancePerMs float32, maxDistance *float32, fn movementCallbackFunc) float32 {
+func calculateMovement(elapsedTimeInMs int64, direction Direction, distancePerMs float64, maxDistance *float64, fn movementCallbackFunc) float64 {
 	var distanceExact = calculateMovementDistance(elapsedTimeInMs, distancePerMs, maxDistance)
-	var diagonalDistance = math.Round(math.Sqrt(float64((distanceExact * distanceExact) / 2)))
-	var distance = math.Round(float64(distanceExact))
-	return fn(direction, float32(distance), float32(diagonalDistance))
+	var diagonalDistance = math.Round(math.Sqrt((distanceExact * distanceExact) / 2))
+	var distance = math.Round(distanceExact)
+	return fn(direction, distance, diagonalDistance)
 }
 
-func CalculateMovementX(elapsedTimeInMs int32, direction Direction, distancePerMs float32, maxDistance *float32) float32 {
-	var fn movementCallbackFunc = func(direction Direction, distance float32, diagonalDistance float32) float32 {
+func CalculateMovementX(elapsedTimeInMs int64, direction Direction, distancePerMs float64, maxDistance *float64) float64 {
+	var fn movementCallbackFunc = func(direction Direction, distance float64, diagonalDistance float64) float64 {
 		switch direction {
 		case Up:
 			return 0.0
@@ -48,8 +48,8 @@ func CalculateMovementX(elapsedTimeInMs int32, direction Direction, distancePerM
 	return calculateMovement(elapsedTimeInMs, direction, distancePerMs, maxDistance, fn)
 }
 
-func CalculateMovementY(elapsedTimeInMs int32, direction Direction, distancePerMs float32, maxDistance *float32) float32 {
-	var fn movementCallbackFunc = func(direction Direction, distance float32, diagonalDistance float32) float32 {
+func CalculateMovementY(elapsedTimeInMs int64, direction Direction, distancePerMs float64, maxDistance *float64) float64 {
+	var fn movementCallbackFunc = func(direction Direction, distance float64, diagonalDistance float64) float64 {
 		switch direction {
 		case Up:
 			return distance * -1

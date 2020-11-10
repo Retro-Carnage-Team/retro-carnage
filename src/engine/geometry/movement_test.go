@@ -6,14 +6,14 @@ import (
 )
 
 func TestCalculateMovementDistance(t *testing.T) {
-	var result = calculateMovementDistance(int32(10), float32(1.3), nil)
-	assert.InDelta(t, float32(13), result, 0.00001)
+	var result = calculateMovementDistance(int64(10), 1.3, nil)
+	assert.InDelta(t, 13.0, result, 0.00001)
 }
 
 func TestCalculateMovementDistanceWithMaximum(t *testing.T) {
-	var max float32 = 11.0
-	var result = calculateMovementDistance(int32(10), float32(1.3), &max)
-	assert.InDelta(t, float32(11), result, 0.00001)
+	var max = 11.0
+	var result = calculateMovementDistance(10, 1.3, &max)
+	assert.InDelta(t, 11, result, 0.00001)
 }
 
 func TestCalculateMovementXLeft(t *testing.T) {

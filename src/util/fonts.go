@@ -13,7 +13,7 @@ const defaultFontPath = "./fonts/XXII-DIRTY-ARMY.ttf"
 
 var DefaultAtlas *text.Atlas
 
-func init() {
+func InitializeFonts() {
 	defaultFont, err := loadTTF(defaultFontPath, 52)
 	if nil != err {
 		Error.Panicf("Failed to load font %s: %v", defaultFontPath, err)

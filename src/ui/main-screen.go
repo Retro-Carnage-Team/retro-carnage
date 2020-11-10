@@ -5,10 +5,12 @@ import (
 	"golang.org/x/image/colornames"
 	"retro-carnage.net/engine/input"
 	"retro-carnage.net/ui/loading"
+	"time"
 )
 
 type MainScreen struct {
 	clientScreen Screen
+	lastUpdate   time.Time
 	nextScreen   Screen
 	inputCtrl    *input.Controller
 	Monitor      *pixelgl.Monitor
@@ -22,13 +24,18 @@ func (ms *MainScreen) Initialize() {
 
 	ms.clientScreen = &loading.Screen{Window: ms.Window}
 	ms.clientScreen.SetUp()
+
+	ms.lastUpdate = time.Now()
 }
 
 func (ms *MainScreen) RunMainLoop() {
 	for !ms.Window.Closed() {
+		duration := time.Since(ms.lastUpdate).Milliseconds()
+		ms.lastUpdate = time.Now()
+
 		ms.Window.Update()
 		ms.Window.Clear(colornames.Black)
-		ms.clientScreen.Update()
+		ms.clientScreen.Update(duration)
 
 		if nil != ms.nextScreen {
 			ms.clientScreen.TearDown()

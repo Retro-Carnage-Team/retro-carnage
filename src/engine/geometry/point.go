@@ -3,8 +3,8 @@ package geometry
 import "fmt"
 
 type Point struct {
-	X float32
-	Y float32
+	X float64
+	Y float64
 }
 
 func (p *Point) String() string {

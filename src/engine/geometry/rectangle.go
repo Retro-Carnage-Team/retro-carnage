@@ -6,10 +6,10 @@ import (
 )
 
 type Rectangle struct {
-	X      float32
-	Y      float32
-	Width  float32
-	Height float32
+	X      float64
+	Y      float64
+	Width  float64
+	Height float64
 }
 
 func (r *Rectangle) Add(offset *Point) *Rectangle {

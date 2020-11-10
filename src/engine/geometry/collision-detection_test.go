@@ -13,7 +13,7 @@ func TestShouldFindCollisionForRectMovingUpAgainstCenterOfLargerRect(t *testing.
 	var collision = getCollisionForMovementUp(movingRect, stillRect, &Point{X: 0, Y: -5})
 
 	assert.NotNil(t, collision)
-	assert.Equal(t, float32(7), collision.Y)
+	assert.InDelta(t, 7.0, collision.Y, 0.00001)
 }
 
 func TestShouldFindCollisionForRectMovingUpAgainstAnotherSmallRectLeft(t *testing.T) {
@@ -22,7 +22,7 @@ func TestShouldFindCollisionForRectMovingUpAgainstAnotherSmallRectLeft(t *testin
 	var collision = getCollisionForMovementUp(movingRect, stillRect, &Point{X: 0, Y: -4})
 
 	assert.NotNil(t, collision)
-	assert.Equal(t, float32(3), collision.Y)
+	assert.InDelta(t, 3.0, collision.Y, 0.00001)
 }
 
 func TestShouldFindCollisionForRectMovingUpAgainstAnotherSmallRectRight(t *testing.T) {
@@ -31,7 +31,7 @@ func TestShouldFindCollisionForRectMovingUpAgainstAnotherSmallRectRight(t *testi
 	var collision = getCollisionForMovementUp(movingRect, stillRect, &Point{X: 0, Y: -4})
 
 	assert.NotNil(t, collision)
-	assert.Equal(t, float32(3), collision.Y)
+	assert.InDelta(t, 3.0, collision.Y, 0.00001)
 }
 
 func TestShouldStopTheUpMovementOfARectAgainstCenterOfLargerRect(t *testing.T) {
@@ -40,10 +40,10 @@ func TestShouldStopTheUpMovementOfARectAgainstCenterOfLargerRect(t *testing.T) {
 	var result = StopMovementOnCollision(movingRect, stillRect, Up, &Point{X: 0, Y: -5})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(5), result.X, 0.00001)
-	assert.InDelta(t, float32(7), result.Y, 0.00001)
-	assert.InDelta(t, float32(5), result.Width, 0.00001)
-	assert.InDelta(t, float32(2), result.Height, 0.00001)
+	assert.InDelta(t, 5.0, result.X, 0.00001)
+	assert.InDelta(t, 7.0, result.Y, 0.00001)
+	assert.InDelta(t, 5.0, result.Width, 0.00001)
+	assert.InDelta(t, 2.0, result.Height, 0.00001)
 }
 
 func TestShouldStopTheUpMovementOfARectAgainstCenterOfSmallerRect(t *testing.T) {
@@ -52,10 +52,10 @@ func TestShouldStopTheUpMovementOfARectAgainstCenterOfSmallerRect(t *testing.T) 
 	var result = StopMovementOnCollision(movingRect, stillRect, Up, &Point{X: 0, Y: -6})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(5), result.X, 0.00001)
-	assert.InDelta(t, float32(7), result.Y, 0.00001)
-	assert.InDelta(t, float32(5), result.Width, 0.00001)
-	assert.InDelta(t, float32(2), result.Height, 0.00001)
+	assert.InDelta(t, 5.0, result.X, 0.00001)
+	assert.InDelta(t, 7.0, result.Y, 0.00001)
+	assert.InDelta(t, 5.0, result.Width, 0.00001)
+	assert.InDelta(t, 2.0, result.Height, 0.00001)
 }
 
 //--- Down -----------------------------------------------------------------------------------------------------------//
@@ -66,7 +66,7 @@ func TestShouldFindCollisionForRectMovingDownAgainstCenterOfLargerRect(t *testin
 	var collision = getCollisionForMovementDown(movingRect, stillRect, &Point{X: 0, Y: 5})
 
 	assert.NotNil(t, collision)
-	assert.InDelta(t, float32(8), collision.Y, 0.00001)
+	assert.InDelta(t, 8.0, collision.Y, 0.00001)
 }
 
 func TestShouldFindCollisionForRectMovingDownAgainstAnotherRectLeft(t *testing.T) {
@@ -75,7 +75,7 @@ func TestShouldFindCollisionForRectMovingDownAgainstAnotherRectLeft(t *testing.T
 	var collision = getCollisionForMovementDown(movingRect, stillRect, &Point{X: 0, Y: 4})
 
 	assert.NotNil(t, collision)
-	assert.InDelta(t, float32(4), collision.Y, 0.00001)
+	assert.InDelta(t, 4.0, collision.Y, 0.00001)
 }
 
 func TestShouldFindCollisionForRectMovingDownAgainstAnotherRectRight(t *testing.T) {
@@ -84,7 +84,7 @@ func TestShouldFindCollisionForRectMovingDownAgainstAnotherRectRight(t *testing.
 	var collision = getCollisionForMovementDown(movingRect, stillRect, &Point{X: 0, Y: 4})
 
 	assert.NotNil(t, collision)
-	assert.InDelta(t, float32(4), collision.Y, 0.00001)
+	assert.InDelta(t, 4.0, collision.Y, 0.00001)
 }
 
 func TestShouldStopTheDownMovementOfARectAgainstCenterOfLargerRect(t *testing.T) {
@@ -93,10 +93,10 @@ func TestShouldStopTheDownMovementOfARectAgainstCenterOfLargerRect(t *testing.T)
 	var result = StopMovementOnCollision(movingRect, stillRect, Down, &Point{X: 0, Y: 4})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(1), result.X, 0.00001)
-	assert.InDelta(t, float32(2), result.Y, 0.00001)
-	assert.InDelta(t, float32(2), result.Width, 0.00001)
-	assert.InDelta(t, float32(2), result.Height, 0.00001)
+	assert.InDelta(t, 1.0, result.X, 0.00001)
+	assert.InDelta(t, 2.0, result.Y, 0.00001)
+	assert.InDelta(t, 2.0, result.Width, 0.00001)
+	assert.InDelta(t, 2.0, result.Height, 0.00001)
 }
 
 func TestShouldStopTheDownMovementOfARectAgainstCenterOfSmallerRect(t *testing.T) {
@@ -105,10 +105,10 @@ func TestShouldStopTheDownMovementOfARectAgainstCenterOfSmallerRect(t *testing.T
 	var result = StopMovementOnCollision(movingRect, stillRect, Down, &Point{X: 0, Y: 5})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(1), result.X, 0.00001)
-	assert.InDelta(t, float32(2), result.Y, 0.00001)
-	assert.InDelta(t, float32(4), result.Width, 0.00001)
-	assert.InDelta(t, float32(2), result.Height, 0.00001)
+	assert.InDelta(t, 1.0, result.X, 0.00001)
+	assert.InDelta(t, 2.0, result.Y, 0.00001)
+	assert.InDelta(t, 4.0, result.Width, 0.00001)
+	assert.InDelta(t, 2.0, result.Height, 0.00001)
 }
 
 //--- Left -----------------------------------------------------------------------------------------------------------//
@@ -119,7 +119,7 @@ func TestShouldFindCollisionForRectMovingLeftAgainstCenterOfLargerRect(t *testin
 	var collision = getCollisionForMovementLeft(movingRect, stillRect, &Point{X: -5, Y: 0})
 
 	assert.NotNil(t, collision)
-	assert.InDelta(t, float32(2), collision.X, 0.00001)
+	assert.InDelta(t, 2.0, collision.X, 0.00001)
 }
 
 func TestShouldFindCollisionForRectMovingLeftAgainstAnotherRectTop(t *testing.T) {
@@ -128,7 +128,7 @@ func TestShouldFindCollisionForRectMovingLeftAgainstAnotherRectTop(t *testing.T)
 	var collision = getCollisionForMovementLeft(movingRect, stillRect, &Point{X: -5, Y: 0})
 
 	assert.NotNil(t, collision)
-	assert.InDelta(t, float32(2), collision.X, 0.00001)
+	assert.InDelta(t, 2.0, collision.X, 0.00001)
 }
 
 func TestShouldFindCollisionForRectMovingLeftAgainstAnotherRectBottom(t *testing.T) {
@@ -137,7 +137,7 @@ func TestShouldFindCollisionForRectMovingLeftAgainstAnotherRectBottom(t *testing
 	var collision = getCollisionForMovementLeft(movingRect, stillRect, &Point{X: -5, Y: 0})
 
 	assert.NotNil(t, collision)
-	assert.InDelta(t, float32(2), collision.X, 0.00001)
+	assert.InDelta(t, 2.0, collision.X, 0.00001)
 }
 
 func TestShouldStopTheLeftMovementOfARectAgainstCenterOfLargerRect(t *testing.T) {
@@ -146,10 +146,10 @@ func TestShouldStopTheLeftMovementOfARectAgainstCenterOfLargerRect(t *testing.T)
 	var result = StopMovementOnCollision(movingRect, stillRect, Left, &Point{X: -5, Y: 0})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(2), result.X, 0.00001)
-	assert.InDelta(t, float32(3), result.Y, 0.00001)
-	assert.InDelta(t, float32(3), result.Width, 0.00001)
-	assert.InDelta(t, float32(3), result.Height, 0.00001)
+	assert.InDelta(t, 2.0, result.X, 0.00001)
+	assert.InDelta(t, 3.0, result.Y, 0.00001)
+	assert.InDelta(t, 3.0, result.Width, 0.00001)
+	assert.InDelta(t, 3.0, result.Height, 0.00001)
 }
 
 func TestShouldStopTheLeftMovementOfARectAgainstCenterOfSmallerRect(t *testing.T) {
@@ -158,10 +158,10 @@ func TestShouldStopTheLeftMovementOfARectAgainstCenterOfSmallerRect(t *testing.T
 	var result = StopMovementOnCollision(movingRect, stillRect, Left, &Point{X: -6, Y: 0})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(2), result.X, 0.00001)
-	assert.InDelta(t, float32(3), result.Y, 0.00001)
-	assert.InDelta(t, float32(3), result.Width, 0.00001)
-	assert.InDelta(t, float32(3), result.Height, 0.00001)
+	assert.InDelta(t, 2.0, result.X, 0.00001)
+	assert.InDelta(t, 3.0, result.Y, 0.00001)
+	assert.InDelta(t, 3.0, result.Width, 0.00001)
+	assert.InDelta(t, 3.0, result.Height, 0.00001)
 }
 
 //--- Right ----------------------------------------------------------------------------------------------------------//
@@ -172,7 +172,7 @@ func TestShouldFindCollisionForRectMovingRightAgainstCenterOfLargerRect(t *testi
 	var collision = getCollisionForMovementRight(movingRect, stillRect, &Point{X: 3, Y: 0})
 
 	assert.NotNil(t, collision)
-	assert.InDelta(t, float32(4), collision.X, 0.00001)
+	assert.InDelta(t, 4.0, collision.X, 0.00001)
 }
 
 func TestShouldFindCollisionForRectMovingRightAgainstAnotherRectTop(t *testing.T) {
@@ -181,7 +181,7 @@ func TestShouldFindCollisionForRectMovingRightAgainstAnotherRectTop(t *testing.T
 	var collision = getCollisionForMovementRight(movingRect, stillRect, &Point{X: 3, Y: 0})
 
 	assert.NotNil(t, collision)
-	assert.InDelta(t, float32(4), collision.X, 0.00001)
+	assert.InDelta(t, 4.0, collision.X, 0.00001)
 }
 
 func TestShouldFindCollisionForRectMovingRightAgainstAnotherRectBottom(t *testing.T) {
@@ -190,7 +190,7 @@ func TestShouldFindCollisionForRectMovingRightAgainstAnotherRectBottom(t *testin
 	var collision = getCollisionForMovementRight(movingRect, stillRect, &Point{X: 3, Y: 0})
 
 	assert.NotNil(t, collision)
-	assert.InDelta(t, float32(4), collision.X, 0.00001)
+	assert.InDelta(t, 4.0, collision.X, 0.00001)
 }
 
 func TestShouldStopTheRightMovementOfARectAgainstCenterOfLargerRect(t *testing.T) {
@@ -199,10 +199,10 @@ func TestShouldStopTheRightMovementOfARectAgainstCenterOfLargerRect(t *testing.T
 	var result = StopMovementOnCollision(movingRect, stillRect, Right, &Point{X: 3, Y: 0})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(2), result.X, 0.00001)
-	assert.InDelta(t, float32(3), result.Y, 0.00001)
-	assert.InDelta(t, float32(2), result.Width, 0.00001)
-	assert.InDelta(t, float32(2), result.Height, 0.00001)
+	assert.InDelta(t, 2.0, result.X, 0.00001)
+	assert.InDelta(t, 3.0, result.Y, 0.00001)
+	assert.InDelta(t, 2.0, result.Width, 0.00001)
+	assert.InDelta(t, 2.0, result.Height, 0.00001)
 }
 
 func TestShouldStopTheRightMovementOfARectAgainstCenterOfSmallerRect(t *testing.T) {
@@ -211,10 +211,10 @@ func TestShouldStopTheRightMovementOfARectAgainstCenterOfSmallerRect(t *testing.
 	var result = StopMovementOnCollision(movingRect, stillRect, Right, &Point{X: 6, Y: 0})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(2), result.X, 0.00001)
-	assert.InDelta(t, float32(3), result.Y, 0.00001)
-	assert.InDelta(t, float32(2), result.Width, 0.00001)
-	assert.InDelta(t, float32(9), result.Height, 0.00001)
+	assert.InDelta(t, 2.0, result.X, 0.00001)
+	assert.InDelta(t, 3.0, result.Y, 0.00001)
+	assert.InDelta(t, 2.0, result.Width, 0.00001)
+	assert.InDelta(t, 9.0, result.Height, 0.00001)
 }
 
 //--- Up Right -------------------------------------------------------------------------------------------------------//
@@ -225,10 +225,10 @@ func TestShouldStopTheUpRightMovementOfARectAgainstCenterOfLargerRect(t *testing
 	var result = stopUpRightMovement(movingRect, stillRect, &Point{X: 3, Y: -3})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(2), result.X, 0.00001)
-	assert.InDelta(t, float32(5), result.Y, 0.00001)
-	assert.InDelta(t, float32(1), result.Width, 0.00001)
-	assert.InDelta(t, float32(1), result.Height, 0.00001)
+	assert.InDelta(t, 2.0, result.X, 0.00001)
+	assert.InDelta(t, 5.0, result.Y, 0.00001)
+	assert.InDelta(t, 1.0, result.Width, 0.00001)
+	assert.InDelta(t, 1.0, result.Height, 0.00001)
 }
 
 func TestShouldStopTheUpRightMovementOfARectAgainstCenterOfSmallerRect(t *testing.T) {
@@ -237,10 +237,10 @@ func TestShouldStopTheUpRightMovementOfARectAgainstCenterOfSmallerRect(t *testin
 	var result = stopUpRightMovement(movingRect, stillRect, &Point{X: 2, Y: -3})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(1.666), result.X, 0.01)
-	assert.InDelta(t, float32(3), result.Y, 0.00001)
-	assert.InDelta(t, float32(6), result.Width, 0.00001)
-	assert.InDelta(t, float32(6), result.Height, 0.00001)
+	assert.InDelta(t, 1.666, result.X, 0.01)
+	assert.InDelta(t, 3.0, result.Y, 0.00001)
+	assert.InDelta(t, 6.0, result.Width, 0.00001)
+	assert.InDelta(t, 6.0, result.Height, 0.00001)
 }
 
 //--- Down Right -----------------------------------------------------------------------------------------------------//
@@ -251,10 +251,10 @@ func TestShouldStopTheDownRightMovementOfARectAgainstCenterOfLargerRect(t *testi
 	var result = stopDownRightMovement(movingRect, stillRect, &Point{X: 3, Y: 3})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(2), result.X, 0.01)
-	assert.InDelta(t, float32(2), result.Y, 0.00001)
-	assert.InDelta(t, float32(1), result.Width, 0.00001)
-	assert.InDelta(t, float32(1), result.Height, 0.00001)
+	assert.InDelta(t, 2.0, result.X, 0.01)
+	assert.InDelta(t, 2.0, result.Y, 0.00001)
+	assert.InDelta(t, 1.0, result.Width, 0.00001)
+	assert.InDelta(t, 1.0, result.Height, 0.00001)
 }
 
 func TestShouldStopTheDownRightMovementOfARectAgainstCenterOfSmallerRect(t *testing.T) {
@@ -263,10 +263,10 @@ func TestShouldStopTheDownRightMovementOfARectAgainstCenterOfSmallerRect(t *test
 	var result = stopDownRightMovement(movingRect, stillRect, &Point{X: 3, Y: 3})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(2), result.X, 0.01)
-	assert.InDelta(t, float32(2), result.Y, 0.00001)
-	assert.InDelta(t, float32(4), result.Width, 0.00001)
-	assert.InDelta(t, float32(4), result.Height, 0.00001)
+	assert.InDelta(t, 2.0, result.X, 0.01)
+	assert.InDelta(t, 2.0, result.Y, 0.00001)
+	assert.InDelta(t, 4.0, result.Width, 0.00001)
+	assert.InDelta(t, 4.0, result.Height, 0.00001)
 }
 
 //--- Up Left --------------------------------------------------------------------------------------------------------//
@@ -277,10 +277,10 @@ func TestShouldStopTheUpLeftMovementOfARectAgainstCenterOfLargerRect(t *testing.
 	var result = stopDownLeftMovement(movingRect, stillRect, &Point{X: -2, Y: -2})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(5), result.X, 0.01)
-	assert.InDelta(t, float32(3), result.Y, 0.00001)
-	assert.InDelta(t, float32(1), result.Width, 0.00001)
-	assert.InDelta(t, float32(1), result.Height, 0.00001)
+	assert.InDelta(t, 5.0, result.X, 0.01)
+	assert.InDelta(t, 3.0, result.Y, 0.00001)
+	assert.InDelta(t, 1.0, result.Width, 0.00001)
+	assert.InDelta(t, 1.0, result.Height, 0.00001)
 }
 
 func TestShouldStopTheUpLeftMovementOfARectAgainstCenterOfSmallerRect(t *testing.T) {
@@ -289,10 +289,10 @@ func TestShouldStopTheUpLeftMovementOfARectAgainstCenterOfSmallerRect(t *testing
 	var result = stopUpLeftMovement(movingRect, stillRect, &Point{X: -3, Y: -3})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(0), result.X, 0.01)
-	assert.InDelta(t, float32(2), result.Y, 0.00001)
-	assert.InDelta(t, float32(4), result.Width, 0.00001)
-	assert.InDelta(t, float32(4), result.Height, 0.00001)
+	assert.InDelta(t, 0.0, result.X, 0.01)
+	assert.InDelta(t, 2.0, result.Y, 0.00001)
+	assert.InDelta(t, 4.0, result.Width, 0.00001)
+	assert.InDelta(t, 4.0, result.Height, 0.00001)
 }
 
 //--- Down Left ------------------------------------------------------------------------------------------------------//
@@ -303,10 +303,10 @@ func TestShouldStopTheDownLeftMovementOfARectAgainstCenterOfLargerRect(t *testin
 	var result = stopDownLeftMovement(movingRect, stillRect, &Point{X: -3, Y: 3})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(3), result.X, 0.01)
-	assert.InDelta(t, float32(4), result.Y, 0.00001)
-	assert.InDelta(t, float32(1), result.Width, 0.00001)
-	assert.InDelta(t, float32(1), result.Height, 0.00001)
+	assert.InDelta(t, 3.0, result.X, 0.01)
+	assert.InDelta(t, 4.0, result.Y, 0.00001)
+	assert.InDelta(t, 1.0, result.Width, 0.00001)
+	assert.InDelta(t, 1.0, result.Height, 0.00001)
 }
 
 func TestShouldStopTheDownLeftMovementOfARectAgainstCenterOfSmallerRect(t *testing.T) {
@@ -315,8 +315,8 @@ func TestShouldStopTheDownLeftMovementOfARectAgainstCenterOfSmallerRect(t *testi
 	var result = stopDownLeftMovement(movingRect, stillRect, &Point{X: -2, Y: 2})
 
 	assert.NotNil(t, result)
-	assert.InDelta(t, float32(3), result.X, 0.01)
-	assert.InDelta(t, float32(2), result.Y, 0.00001)
-	assert.InDelta(t, float32(4), result.Width, 0.00001)
-	assert.InDelta(t, float32(4), result.Height, 0.00001)
+	assert.InDelta(t, 3.0, result.X, 0.01)
+	assert.InDelta(t, 2.0, result.Y, 0.00001)
+	assert.InDelta(t, 4.0, result.Width, 0.00001)
+	assert.InDelta(t, 4.0, result.Height, 0.00001)
 }

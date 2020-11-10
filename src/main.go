@@ -4,6 +4,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage.net/ui"
+	"retro-carnage.net/util"
 )
 
 func run() {
@@ -15,10 +16,15 @@ func run() {
 		Title:   "RETRO CARNAGE",
 		VSync:   true,
 	}
+
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
 		panic(err)
 	}
+
+	win.SetSmooth(true)
+
+	util.InitializeFonts()
 
 	var mainScreen = ui.MainScreen{Monitor: monitor, Window: win}
 	mainScreen.Initialize()

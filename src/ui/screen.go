@@ -2,6 +2,6 @@ package ui
 
 type Screen interface {
 	SetUp()
-	Update()
+	Update(elapsedTimeInMs int64)
 	TearDown()
 }
