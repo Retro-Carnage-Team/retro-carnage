@@ -1,6 +1,7 @@
 package assets
 
 type SoundEffect string
+type Song string
 
 const (
 	FxNone           SoundEffect = "" // this will not play any sound
@@ -36,11 +37,29 @@ const (
 	FxPistol2        SoundEffect = "pistol2.mp3"
 	FxRocketLauncher SoundEffect = "rlauncher.mp3"
 	FxUzi            SoundEffect = "UZI.mp3"
+
+	BackgroundSong1  Song = "All-We-Ever-See-of-Stars.mp3"
+	BackgroundSong2  Song = "Beatdown-City.mp3"
+	BackgroundSong3  Song = "Cracked-Streets-And-Broken-Windows.mp3"
+	BackgroundSong4  Song = "Dance-Harder.mp3"
+	BackgroundSong5  Song = "Die-Historic.mp3"
+	BackgroundSong6  Song = "Drive-Fast.mp3"
+	BackgroundSong7  Song = "Gaining-Traction.mp3"
+	BackgroundSong8  Song = "Heavy-Traffic.mp3"
+	BackgroundSong9  Song = "Hot-Nights-In-Los-Angeles.mp3"
+	BackgroundSong10 Song = "It-Cant-Be-Bargained-With.mp3"
+	BackgroundSong11 Song = "Missing-You.mp3"
+	BackgroundSong12 Song = "Raging-Streets.mp3"
+	ThemeSong        Song = "The-Only-Me-is-Me.mp3"
 )
 
 var SoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxCash, FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2,
 	FxDeathEnemy3, FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1, FxDeathPlayer2, FxError,
-	FxFnfal, FxG36, FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxHk21, FxLoading, FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo,
-	FxPistol1, FxPistol2, FxRocketLauncher, FxUzi}
+	FxFnfal, FxG36, FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxHk21, FxLoading, FxMg4, FxMg42, FxMp5, FxMp7,
+	FxOutOfAmmo, FxPistol1, FxPistol2, FxRocketLauncher, FxUzi}
 
-var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5, FxMp7, FxUzi}
+var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5,
+	FxMp7, FxUzi}
+
+var Music = []Song{BackgroundSong1, BackgroundSong2, BackgroundSong3, BackgroundSong4, BackgroundSong5, BackgroundSong6,
+	BackgroundSong7, BackgroundSong8, BackgroundSong9, BackgroundSong10, BackgroundSong11, BackgroundSong12, ThemeSong}
