@@ -6,6 +6,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"golang.org/x/image/colornames"
+	"retro-carnage.net/assets"
 	"retro-carnage.net/engine/geometry"
 	"retro-carnage.net/util"
 )
@@ -16,6 +17,7 @@ const txtSecondLine = "IS LOADING"
 type Screen struct {
 	firstLineDimensions  *geometry.Point
 	secondLineDimensions *geometry.Point
+	soundBoard           *util.SoundBoard
 	Window               *pixelgl.Window
 }
 
@@ -27,6 +29,9 @@ func (s *Screen) SetUp() {
 	txt.Clear()
 	_, _ = fmt.Fprint(txt, txtSecondLine)
 	s.secondLineDimensions = &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
+
+	s.soundBoard = util.NewSoundBoard()
+	s.soundBoard.Play(assets.FxLoading)
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {

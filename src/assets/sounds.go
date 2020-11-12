@@ -37,3 +37,10 @@ const (
 	FxRocketLauncher SoundEffect = "rlauncher.mp3"
 	FxUzi            SoundEffect = "UZI.mp3"
 )
+
+var SoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxCash, FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2,
+	FxDeathEnemy3, FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1, FxDeathPlayer2, FxError,
+	FxFnfal, FxG36, FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxHk21, FxLoading, FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo,
+	FxPistol1, FxPistol2, FxRocketLauncher, FxUzi}
+
+var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5, FxMp7, FxUzi}
