@@ -17,7 +17,7 @@ const txtSecondLine = "IS LOADING"
 type Screen struct {
 	firstLineDimensions  *geometry.Point
 	secondLineDimensions *geometry.Point
-	soundBoard           *util.SoundBoard
+	soundBoard           *util.Stereo
 	Window               *pixelgl.Window
 }
 
@@ -30,8 +30,8 @@ func (s *Screen) SetUp() {
 	_, _ = fmt.Fprint(txt, txtSecondLine)
 	s.secondLineDimensions = &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
 
-	s.soundBoard = util.NewSoundBoard()
-	s.soundBoard.Play(assets.FxLoading)
+	s.soundBoard = util.NewStereo()
+	s.soundBoard.PlayFx(assets.FxLoading)
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {

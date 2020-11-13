@@ -25,7 +25,7 @@ func run() {
 	win.SetSmooth(true)
 
 	util.InitializeFonts()
-	util.NewSoundBoard()
+	util.NewStereo()
 
 	var mainScreen = ui.MainScreen{Monitor: monitor, Window: win}
 	mainScreen.Initialize()
