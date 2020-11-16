@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"retro-carnage.net/assets"
+	"retro-carnage.net/util"
 	"time"
 )
 
@@ -41,7 +42,7 @@ func (sb *Stereo) initialize() {
 	var mp3Format = beep.Format{SampleRate: 32000, NumChannels: 2, Precision: 2}
 	err := speaker.Init(mp3Format.SampleRate, mp3Format.SampleRate.N(time.Second/10))
 	if err != nil {
-		Error.Println(err.Error())
+		util.Error.Println(err.Error())
 	}
 
 	sb.mixer = &beep.Mixer{}
@@ -51,21 +52,13 @@ func (sb *Stereo) initialize() {
 	for _, fx := range assets.SoundEffects {
 		sound, err := loadSoundEffect(fx)
 		if err != nil {
-			Error.Panicln(err.Error())
+			util.Error.Panicln(err.Error())
 		} else {
 			sb.effects[fx] = sound
 		}
 	}
 
 	sb.music = make(map[assets.Song]sound)
-	for _, song := range assets.Music {
-		sound, err := loadMusic(song)
-		if err != nil {
-			Error.Panicln(err.Error())
-		} else {
-			sb.music[song] = sound
-		}
-	}
 }
 
 // PlayFx starts the playback of a given SoundEffect
@@ -87,9 +80,15 @@ func (sb *Stereo) StopFx(effect assets.SoundEffect) {
 // PlaySong starts the playback of a given Song
 func (sb *Stereo) PlaySong(song assets.Song) {
 	var aSound = sb.music[song]
-	if nil != aSound {
-		aSound.play(sb.mixer)
+	if nil == aSound {
+		var err error = nil
+		aSound, err = loadMusic(song)
+		if err != nil {
+			util.Error.Panicln(err.Error())
+		}
+		sb.music[song] = aSound
 	}
+	aSound.play(sb.mixer)
 }
 
 // PlaySong immediately stops the playback of a given Song
@@ -101,11 +100,17 @@ func (sb *Stereo) StopSong(song assets.Song) {
 }
 
 func loadSoundEffect(fx assets.SoundEffect) (sound, error) {
+	stopWatch := util.StopWatch{Name: "Buffering sound effect " + string(fx)}
+	stopWatch.Start()
+
 	var filePath = filepath.Join(".", "sounds", "fx", string(fx))
 	buffer, err := readMp3IntoBuffer(filePath)
 	if err != nil {
 		return nil, err
 	}
+
+	_ = stopWatch.Stop()
+	util.Trace.Println(stopWatch.DebugMessage())
 
 	if isLoopingEffect(fx) {
 		return &loopingSound{buffer: buffer}, nil
@@ -114,11 +119,17 @@ func loadSoundEffect(fx assets.SoundEffect) (sound, error) {
 }
 
 func loadMusic(song assets.Song) (sound, error) {
+	stopWatch := util.StopWatch{Name: "Buffering music: " + string(song)}
+	stopWatch.Start()
+
 	var filePath = filepath.Join(".", "sounds", "music", string(song))
 	buffer, err := readMp3IntoBuffer(filePath)
 	if err != nil {
 		return nil, err
 	}
+
+	_ = stopWatch.Stop()
+	util.Trace.Println(stopWatch.DebugMessage())
 
 	return &loopingSound{buffer: buffer}, nil
 }

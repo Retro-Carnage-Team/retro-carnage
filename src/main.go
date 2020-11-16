@@ -4,7 +4,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage.net/ui"
-	"retro-carnage.net/util"
+	uiUtil "retro-carnage.net/ui/util"
 )
 
 func run() {
@@ -24,8 +24,8 @@ func run() {
 
 	win.SetSmooth(true)
 
-	util.InitializeFonts()
-	util.NewStereo()
+	uiUtil.InitializeFonts()
+	uiUtil.NewStereo()
 
 	var mainScreen = ui.MainScreen{Monitor: monitor, Window: win}
 	mainScreen.Initialize()
