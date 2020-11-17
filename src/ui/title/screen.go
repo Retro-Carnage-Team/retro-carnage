@@ -1,3 +1,5 @@
+// Package title contains the title screen. This screen has a cool background image. You can use the mouse or one of the
+// gamepads to proceed to the next screen.
 package title
 
 import (
