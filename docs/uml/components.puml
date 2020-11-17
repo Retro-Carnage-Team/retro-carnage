@@ -1,0 +1,9 @@
+@startuml
+
+database MongoDB
+
+REST - [Backend]
+[Backend] -down- MongoDB
+[Frontend] - REST
+
+@enduml

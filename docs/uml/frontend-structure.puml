@@ -1,0 +1,15 @@
+@startuml
+
+package "retro-carnage" {
+    package "docs"
+    package "public"
+    package "src" {
+        package "components"
+        package "game"
+        package "screens"
+        file App.tsx
+    }
+    file package.json
+}
+
+@enduml
