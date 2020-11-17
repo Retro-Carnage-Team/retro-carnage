@@ -1,35 +1,37 @@
 package main
 
 import (
-	"github.com/go-gl/glfw/v3.3/glfw"
-	"github.com/rs/zerolog"
-	"runtime"
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
+	"retro-carnage.net/ui"
+	uiUtil "retro-carnage.net/ui/util"
 )
 
-func init() {
-	// This is needed to arrange that main() runs on main thread.
-	// See documentation for functions that are only allowed to be called from the main thread.
-	runtime.LockOSThread()
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+func run() {
+	var monitor = pixelgl.PrimaryMonitor()
+	var pixelX, pixelY = monitor.Size()
+	cfg := pixelgl.WindowConfig{
+		Bounds:  pixel.R(0, 0, pixelX, pixelY),
+		Monitor: monitor,
+		Title:   "RETRO CARNAGE",
+		VSync:   true,
+	}
+
+	win, err := pixelgl.NewWindow(cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	win.SetSmooth(true)
+
+	uiUtil.InitializeFonts()
+	uiUtil.NewStereo()
+
+	var mainScreen = ui.MainScreen{Monitor: monitor, Window: win}
+	mainScreen.Initialize()
+	mainScreen.RunMainLoop()
 }
 
 func main() {
-	err := glfw.Init()
-	if err != nil {
-		panic(err)
-	}
-	defer glfw.Terminate()
-
-	window, err := glfw.CreateWindow(640, 480, "Testing", nil, nil)
-	if err != nil {
-		panic(err)
-	}
-
-	window.MakeContextCurrent()
-
-	for !window.ShouldClose() {
-		// Do OpenGL stuff.
-		window.SwapBuffers()
-		glfw.PollEvents()
-	}
+	pixelgl.Run(run)
 }
