@@ -1,0 +1,15 @@
+@startuml
+
+database MongoDB
+
+package "retro-carnage-backend" {
+    package "src/main/kotlin/net/retro-carnage/backend" {
+        package configuration
+        package errors
+        package usage
+        file BackendApplication.kt
+    }
+    file pom.xml
+}
+
+@enduml
