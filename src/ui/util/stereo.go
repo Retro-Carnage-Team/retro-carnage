@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"retro-carnage.net/assets"
+	"retro-carnage.net/logging"
 	"retro-carnage.net/util"
 	"time"
 )
@@ -42,7 +43,7 @@ func (sb *Stereo) initialize() {
 	var mp3Format = beep.Format{SampleRate: 32000, NumChannels: 2, Precision: 2}
 	err := speaker.Init(mp3Format.SampleRate, mp3Format.SampleRate.N(time.Second/10))
 	if err != nil {
-		util.Error.Println(err.Error())
+		logging.Error.Println(err.Error())
 	}
 
 	sb.mixer = &beep.Mixer{}
@@ -52,7 +53,7 @@ func (sb *Stereo) initialize() {
 	for _, fx := range assets.SoundEffects {
 		sound, err := loadSoundEffect(fx)
 		if err != nil {
-			util.Error.Panicln(err.Error())
+			logging.Error.Panicln(err.Error())
 		} else {
 			sb.effects[fx] = sound
 		}
@@ -84,7 +85,7 @@ func (sb *Stereo) PlaySong(song assets.Song) {
 		var err error = nil
 		aSound, err = loadMusic(song)
 		if err != nil {
-			util.Error.Panicln(err.Error())
+			logging.Error.Panicln(err.Error())
 		}
 		sb.music[song] = aSound
 	}
@@ -110,7 +111,7 @@ func loadSoundEffect(fx assets.SoundEffect) (sound, error) {
 	}
 
 	_ = stopWatch.Stop()
-	util.Trace.Println(stopWatch.DebugMessage())
+	logging.Trace.Println(stopWatch.DebugMessage())
 
 	if isLoopingEffect(fx) {
 		return &loopingSound{buffer: buffer}, nil
@@ -129,7 +130,7 @@ func loadMusic(song assets.Song) (sound, error) {
 	}
 
 	_ = stopWatch.Stop()
-	util.Trace.Println(stopWatch.DebugMessage())
+	logging.Trace.Println(stopWatch.DebugMessage())
 
 	return &loopingSound{buffer: buffer}, nil
 }

@@ -3,7 +3,7 @@ package util
 import (
 	"fmt"
 	"image/color"
-	"retro-carnage.net/util"
+	"retro-carnage.net/logging"
 )
 
 var (
@@ -16,7 +16,7 @@ func parseHexColor(s string) (c color.RGBA) {
 	c.A = 0xff
 	_, err := fmt.Sscanf(s, "#%02x%02x%02x", &c.R, &c.G, &c.B)
 	if nil != err {
-		util.Error.Panicf("Failed to parse Hex formatted color: %v", err)
+		logging.Error.Panicf("Failed to parse Hex formatted color: %v", err)
 	}
 	return
 }

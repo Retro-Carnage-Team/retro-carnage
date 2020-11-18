@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"retro-carnage.net/engine/geometry"
-	"retro-carnage.net/util"
+	"retro-carnage.net/logging"
 	"unicode"
 )
 
@@ -19,7 +19,7 @@ var DefaultAtlas *text.Atlas
 func InitializeFonts() {
 	defaultFont, err := loadTTF(defaultFontPath, 52)
 	if nil != err {
-		util.Error.Panicf("Failed to load font %s: %v", defaultFontPath, err)
+		logging.Error.Panicf("Failed to load font %s: %v", defaultFontPath, err)
 	}
 	DefaultAtlas = text.NewAtlas(defaultFont, text.ASCII, text.RangeTable(unicode.Latin))
 }

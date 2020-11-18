@@ -8,7 +8,7 @@ import (
 func calculateMovementDistance(elapsedTimeInMs int64, distancePerMs float64, maxDistance *float64) float64 {
 	var distance = float64(elapsedTimeInMs) * distancePerMs
 	if nil != maxDistance {
-		return util.MathUtil{}.Min(*maxDistance, distance)
+		return util.Min(*maxDistance, distance)
 	}
 	return distance
 }

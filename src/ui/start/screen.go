@@ -56,9 +56,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 }
 
-func (s *Screen) TearDown() {
-
-}
+func (s *Screen) TearDown() {}
 
 func (s *Screen) String() string {
 	return string(util.Start)

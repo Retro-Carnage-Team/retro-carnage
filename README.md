@@ -20,6 +20,21 @@ Development status 2020-08-25
 [![Watch the video](docs/images/youtube-first-impression.png)](https://youtu.be/W5dJvoZUGt8)
 Development status 2020-04-17
 
+## Build & Run
+
+Retro-Carnage is being developed on Ubuntu Linux (latest). Follow these steps to get the code up & running.  
+
+ - Make sure you have go (>= 1.15) and git installed
+ - Install the required development libraries: `sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev`
+ - Get the code: `git clone https://github.com/huddeldaddel/retro-carnage.git`
+ - Change into the src directory: `cd retro-carnage.net/src`
+ - Install required modules: `go get -d`
+ - Build the application: `go build`
+ - Run the tests: `go test -v ./...`
+ - Move the binary one level up: `mv retro-carnage.net ./..`
+ - Change into the main directory: `cd ..`
+ - Finally: start the game! `./retro-carnage.net`
+
 ## Usage statistics
 
 ![Usage statistics](https://backend.retro-carnage.net/usage/chart "Usage statistics")
