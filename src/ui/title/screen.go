@@ -12,19 +12,24 @@ import (
 	"retro-carnage.net/engine/input"
 	"retro-carnage.net/logging"
 	"retro-carnage.net/ui/common"
-	util "retro-carnage.net/util"
+	"retro-carnage.net/util"
 )
 
 const backgroundImagePath = "./images/backgrounds/title.jpg"
+const screenTimeout = 2000
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
+	inputController       input.Controller
 	screenChangeRequired  common.ScreenChangeCallback
+	screenChangeTimeout   int64
 	textDimensions        map[string]*geometry.Point
 	window                *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(_ input.Controller) {}
+func (s *Screen) SetInputController(controller input.Controller) {
+	s.inputController = controller
+}
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
@@ -39,7 +44,9 @@ func (s *Screen) SetUp() {
 	s.backgroundImageSprite = pixel.NewSprite(backgroundImage, backgroundImage.Bounds())
 }
 
-func (s *Screen) Update(_ int64) {
+func (s *Screen) Update(elapsedTimeInMs int64) {
+	s.screenChangeTimeout += elapsedTimeInMs
+
 	var factorX = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
 	var factorY = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
 	var factor = util.Max(factorX, factorY)
@@ -47,7 +54,10 @@ func (s *Screen) Update(_ int64) {
 	s.backgroundImageSprite.Draw(s.window,
 		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
 
-	// TODO: move to next screen when player clicked
+	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
+	if (nil != uiEventState && uiEventState.PressedButton) || screenTimeout <= s.screenChangeTimeout {
+		s.screenChangeRequired(common.Configuration)
+	}
 }
 
 func (s *Screen) TearDown() {}

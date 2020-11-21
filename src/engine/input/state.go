@@ -25,6 +25,19 @@ func (ds *DeviceState) IsButtonPressed() bool {
 	return ds.Fire || ds.Grenade || ds.ToggleUp || ds.ToggleDown
 }
 
+func (ds *DeviceState) Combine(other *DeviceState) *DeviceState {
+	return &DeviceState{
+		MoveUp:     ds.MoveUp || other.MoveUp,
+		MoveDown:   ds.MoveDown || other.MoveDown,
+		MoveLeft:   ds.MoveLeft || other.MoveLeft,
+		MoveRight:  ds.MoveRight || other.MoveRight,
+		Fire:       ds.Fire || other.Fire,
+		Grenade:    ds.Grenade || other.Grenade,
+		ToggleUp:   ds.ToggleUp || other.ToggleUp,
+		ToggleDown: ds.ToggleDown || other.ToggleDown,
+	}
+}
+
 type UiEventState struct {
 	MovedUp       bool
 	MovedDown     bool
