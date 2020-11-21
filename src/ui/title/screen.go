@@ -9,40 +9,49 @@ import (
 	_ "image/jpeg"
 	"os"
 	"retro-carnage.net/engine/geometry"
+	"retro-carnage.net/engine/input"
 	"retro-carnage.net/logging"
-	"retro-carnage.net/ui/util"
-	commonUtil "retro-carnage.net/util"
+	"retro-carnage.net/ui/common"
+	util "retro-carnage.net/util"
 )
 
 const backgroundImagePath = "./images/backgrounds/title.jpg"
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
-	screenChangeRequired  util.ScreenChangeCallback
+	screenChangeRequired  common.ScreenChangeCallback
 	textDimensions        map[string]*geometry.Point
-	Window                *pixelgl.Window
+	window                *pixelgl.Window
 }
 
-func (s *Screen) SetUp(screenChangeRequired util.ScreenChangeCallback) {
-	s.screenChangeRequired = screenChangeRequired
+func (s *Screen) SetInputController(_ *input.Controller) {}
 
+func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
+	s.screenChangeRequired = callback
+}
+
+func (s *Screen) SetWindow(window *pixelgl.Window) {
+	s.window = window
+}
+
+func (s *Screen) SetUp() {
 	var backgroundImage = loadBackgroundImage()
 	s.backgroundImageSprite = pixel.NewSprite(backgroundImage, backgroundImage.Bounds())
 }
 
 func (s *Screen) Update(_ int64) {
-	var factorX = s.Window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
-	var factorY = s.Window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
-	var factor = commonUtil.Max(factorX, factorY)
+	var factorX = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
+	var factorY = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
+	var factor = util.Max(factorX, factorY)
 
-	s.backgroundImageSprite.Draw(s.Window,
-		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.Window.Bounds().Center()))
+	s.backgroundImageSprite.Draw(s.window,
+		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
 }
 
 func (s *Screen) TearDown() {}
 
 func (s *Screen) String() string {
-	return string(util.Title)
+	return string(common.Title)
 }
 
 func loadBackgroundImage() pixel.Picture {

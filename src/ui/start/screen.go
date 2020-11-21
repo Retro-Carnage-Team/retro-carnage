@@ -11,7 +11,8 @@ import (
 	"image/color"
 	"retro-carnage.net/assets"
 	"retro-carnage.net/engine/geometry"
-	"retro-carnage.net/ui/util"
+	"retro-carnage.net/engine/input"
+	"retro-carnage.net/ui/common"
 )
 
 const txtFirstLine = "RETRO CARNAGE"
@@ -21,28 +22,37 @@ const txtFourthLine = "Inspired by 'DOGS OF WAR'"
 const txtFifthLine = "(C) 1989 by Elite Systems Ltd."
 
 type Screen struct {
-	screenChangeRequired util.ScreenChangeCallback
+	screenChangeRequired common.ScreenChangeCallback
 	screenChangeTimeout  int64
-	stereo               *util.Stereo
+	stereo               *common.Stereo
 	textDimensions       map[string]*geometry.Point
 	themeLoaded          bool
-	Window               *pixelgl.Window
+	window               *pixelgl.Window
 }
 
-func (s *Screen) SetUp(screenChangeRequired util.ScreenChangeCallback) {
-	s.screenChangeRequired = screenChangeRequired
+func (s *Screen) SetInputController(_ *input.Controller) {}
+
+func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
+	s.screenChangeRequired = callback
+}
+
+func (s *Screen) SetWindow(window *pixelgl.Window) {
+	s.window = window
+}
+
+func (s *Screen) SetUp() {
 	s.screenChangeTimeout = 0
-	s.textDimensions = util.GetTextDimensions(text.New(pixel.V(0, 0), util.DefaultAtlas),
+	s.textDimensions = common.GetTextDimensions(text.New(pixel.V(0, 0), common.DefaultAtlas),
 		txtFirstLine, txtSecondLine, txtThirdLine, txtFourthLine, txtFifthLine)
 
-	s.stereo = util.NewStereo()
+	s.stereo = common.NewStereo()
 	s.themeLoaded = false
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.screenChangeTimeout += elapsedTimeInMs
 	if s.themeLoaded {
-		s.screenChangeRequired(util.Title)
+		s.screenChangeRequired(common.Title)
 	}
 	s.renderScreen()
 	if !s.themeLoaded && (s.screenChangeTimeout > 100) {
@@ -59,26 +69,26 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 func (s *Screen) TearDown() {}
 
 func (s *Screen) String() string {
-	return string(util.Start)
+	return string(common.Start)
 }
 
 func (s *Screen) renderScreen() {
-	s.drawLineToScreen(txtFirstLine, 2.5, util.Red)
-	s.drawLineToScreen(txtSecondLine, 1, util.Yellow)
-	s.drawLineToScreen(txtThirdLine, -1, util.Green)
-	s.drawLineToScreen(txtFourthLine, -2.5, util.Green)
-	s.drawLineToScreen(txtFifthLine, -4, util.Green)
+	s.drawLineToScreen(txtFirstLine, 2.5, common.Red)
+	s.drawLineToScreen(txtSecondLine, 1, common.Yellow)
+	s.drawLineToScreen(txtThirdLine, -1, common.Green)
+	s.drawLineToScreen(txtFourthLine, -2.5, common.Green)
+	s.drawLineToScreen(txtFifthLine, -4, common.Green)
 }
 
 func (s *Screen) drawLineToScreen(line string, offsetMultiplier float64, color color.Color) {
-	var vertCenter = s.Window.Bounds().Max.Y / 2
+	var vertCenter = s.window.Bounds().Max.Y / 2
 
 	var lineDimensions = s.textDimensions[line]
-	var lineX = (s.Window.Bounds().Max.X - lineDimensions.X) / 2
+	var lineX = (s.window.Bounds().Max.X - lineDimensions.X) / 2
 	var lineY = vertCenter + offsetMultiplier*lineDimensions.Y
 
-	var txt = text.New(pixel.V(lineX, lineY), util.DefaultAtlas)
+	var txt = text.New(pixel.V(lineX, lineY), common.DefaultAtlas)
 	txt.Color = color
 	_, _ = fmt.Fprint(txt, line)
-	txt.Draw(s.Window, pixel.IM)
+	txt.Draw(s.window, pixel.IM)
 }
