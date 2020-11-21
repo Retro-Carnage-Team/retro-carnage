@@ -23,7 +23,7 @@ type Screen interface {
 	/*--- Initializers for shared properties -------------------------------------------------------------------------*/
 
 	// SetInputController passes the input controller to the screen
-	SetInputController(controller *input.Controller)
+	SetInputController(controller input.Controller)
 	// SetScreenChangeCallback passes a callback function that cann be called to switch to another screen
 	SetScreenChangeCallback(callback ScreenChangeCallback)
 	// SetWindow that displays the game

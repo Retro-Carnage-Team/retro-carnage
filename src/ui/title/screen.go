@@ -24,7 +24,7 @@ type Screen struct {
 	window                *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(_ *input.Controller) {}
+func (s *Screen) SetInputController(_ input.Controller) {}
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
@@ -46,6 +46,8 @@ func (s *Screen) Update(_ int64) {
 
 	s.backgroundImageSprite.Draw(s.window,
 		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
+
+	// TODO: move to next screen when player clicked
 }
 
 func (s *Screen) TearDown() {}

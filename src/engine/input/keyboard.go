@@ -6,8 +6,8 @@ type keyboard struct {
 	Window *pixelgl.Window
 }
 
-func (k *keyboard) State() *State {
-	var result State
+func (k *keyboard) State() *DeviceState {
+	var result DeviceState
 	result.Fire = k.Window.Pressed(pixelgl.KeyLeftControl)
 	result.Grenade = k.Window.Pressed(pixelgl.KeyLeftAlt)
 	result.MoveLeft = k.Window.Pressed(pixelgl.KeyLeft)

@@ -25,7 +25,7 @@ type Screen struct {
 	window               *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(_ *input.Controller) {}
+func (s *Screen) SetInputController(_ input.Controller) {}
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback

@@ -16,13 +16,13 @@ type MainScreen struct {
 	clientScreen common.Screen
 	lastUpdate   time.Time
 	nextScreen   common.Screen
-	inputCtrl    *input.Controller
+	inputCtrl    input.Controller
 	Monitor      *pixelgl.Monitor
 	Window       *pixelgl.Window
 }
 
 func (ms *MainScreen) Initialize() {
-	ms.inputCtrl = &input.Controller{Window: ms.Window}
+	ms.inputCtrl = input.NewController(ms.Window)
 	ms.inputCtrl.HasTwoOrMoreDevices()
 	ms.inputCtrl.AssignControllersToPlayers()
 

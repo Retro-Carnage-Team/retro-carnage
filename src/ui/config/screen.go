@@ -13,7 +13,7 @@ const txtOnePlayerGame = "START 1 PLAYER GAME"
 const txtTwoPlayerGame = "START 2 PLAYER GAME"
 
 type Screen struct {
-	inputController      *input.Controller
+	inputController      input.Controller
 	screenChangeRequired common.ScreenChangeCallback
 	textDimensions       map[string]*geometry.Point
 	window               *pixelgl.Window
@@ -30,7 +30,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 
 func (s *Screen) TearDown() {}
 
-func (s *Screen) SetInputController(controller *input.Controller) {
+func (s *Screen) SetInputController(controller input.Controller) {
 	s.inputController = controller
 }
 
