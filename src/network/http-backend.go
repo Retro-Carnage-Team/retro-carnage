@@ -6,11 +6,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"retro-carnage/logging"
+	"sync"
 	"time"
 )
 
 type httpBackend struct {
 	gameId string
+	mu     sync.Mutex
 }
 
 type usageResponse struct {
@@ -53,24 +55,33 @@ func (hb *httpBackend) StartGameSession() {
 			return
 		}
 
+		hb.mu.Lock()
 		hb.gameId = usage.GameId
+		hb.mu.Unlock()
+
 		logging.Info.Printf("Created game session with ID '%s'", hb.gameId)
 	}
 }
 
 func (hb *httpBackend) ReportGameState(screenName string) {
-	var url = backendUrl + "/usage/" + hb.gameId + "/next-screen/" + screenName
-	response, err := http.Post(url, "application/json", nil)
-	if nil != err {
-		logging.Warning.Printf("Failed to report game state: %v", err)
-		return
-	}
-	defer response.Body.Close()
+	hb.mu.Lock()
+	var gameId = hb.gameId
+	hb.mu.Unlock()
 
-	if response.StatusCode == http.StatusOK {
-		logging.Info.Printf("Reported game progress to screen '%s'", screenName)
-	} else {
-		logging.Warning.Printf("Failed to report game progress to screen '%s'", screenName)
+	if "" != gameId {
+		var url = backendUrl + "/usage/" + gameId + "/next-screen/" + screenName
+		response, err := http.Post(url, "application/json", nil)
+		if nil != err {
+			logging.Warning.Printf("Failed to report game state: %v", err)
+			return
+		}
+		defer response.Body.Close()
+
+		if response.StatusCode == http.StatusOK {
+			logging.Info.Printf("Reported game progress to screen '%s'", screenName)
+		} else {
+			logging.Warning.Printf("Failed to report game progress to screen '%s'", screenName)
+		}
 	}
 }
 

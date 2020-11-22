@@ -4,7 +4,6 @@
 package start
 
 import (
-	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
@@ -81,14 +80,5 @@ func (s *Screen) renderScreen() {
 }
 
 func (s *Screen) drawLineToScreen(line string, offsetMultiplier float64, color color.Color) {
-	var vertCenter = s.window.Bounds().Max.Y / 2
-
-	var lineDimensions = s.textDimensions[line]
-	var lineX = (s.window.Bounds().Max.X - lineDimensions.X) / 2
-	var lineY = vertCenter + offsetMultiplier*lineDimensions.Y
-
-	var txt = text.New(pixel.V(lineX, lineY), common.DefaultAtlas)
-	txt.Color = color
-	_, _ = fmt.Fprint(txt, line)
-	txt.Draw(s.window, pixel.IM)
+	common.DrawLineToScreenCenter(s.window, line, offsetMultiplier, color, s.textDimensions[line])
 }

@@ -56,7 +56,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 
 	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
 	if (nil != uiEventState && uiEventState.PressedButton) || screenTimeout <= s.screenChangeTimeout {
-		s.screenChangeRequired(common.Configuration)
+		s.screenChangeRequired(common.ConfigurationSelect)
 	}
 }
 

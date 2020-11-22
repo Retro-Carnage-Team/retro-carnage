@@ -38,8 +38,9 @@ type Screen interface {
 type ScreenName string
 
 const (
-	Loading       ScreenName = "Loading Screen"
-	Start         ScreenName = "Start Screen"
-	Title         ScreenName = "Title Screen"
-	Configuration ScreenName = "Configuration Screen"
+	Loading             ScreenName = "Loading screen"
+	Start               ScreenName = "Start screen"
+	Title               ScreenName = "Title screen"
+	ConfigurationSelect ScreenName = "Configuration select screen"
+	ConfigurationResult ScreenName = "Configuration result screen"
 )
