@@ -3,12 +3,12 @@ package ui
 import (
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
-	"retro-carnage.net/engine/input"
-	"retro-carnage.net/ui/common"
-	"retro-carnage.net/ui/config"
-	"retro-carnage.net/ui/loading"
-	"retro-carnage.net/ui/start"
-	"retro-carnage.net/ui/title"
+	"retro-carnage/engine/input"
+	"retro-carnage/ui/common"
+	"retro-carnage/ui/config"
+	"retro-carnage/ui/loading"
+	"retro-carnage/ui/start"
+	"retro-carnage/ui/title"
 	"time"
 )
 

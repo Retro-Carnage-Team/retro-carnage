@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"retro-carnage.net/logging"
+	"retro-carnage/logging"
 	"time"
 )
 

@@ -8,9 +8,9 @@ import (
 	"github.com/faiface/beep/speaker"
 	"os"
 	"path/filepath"
-	"retro-carnage.net/assets"
-	"retro-carnage.net/logging"
-	"retro-carnage.net/util"
+	"retro-carnage/assets"
+	"retro-carnage/logging"
+	"retro-carnage/util"
 	"time"
 )
 

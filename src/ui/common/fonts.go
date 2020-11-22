@@ -7,8 +7,8 @@ import (
 	"golang.org/x/image/font"
 	"io/ioutil"
 	"os"
-	"retro-carnage.net/engine/geometry"
-	"retro-carnage.net/logging"
+	"retro-carnage/engine/geometry"
+	"retro-carnage/logging"
 	"unicode"
 )
 

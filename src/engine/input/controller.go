@@ -3,7 +3,7 @@ package input
 import (
 	"errors"
 	"github.com/faiface/pixel/pixelgl"
-	"retro-carnage.net/logging"
+	"retro-carnage/logging"
 )
 
 type Controller interface {

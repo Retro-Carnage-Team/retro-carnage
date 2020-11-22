@@ -9,10 +9,10 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"image/color"
-	"retro-carnage.net/assets"
-	"retro-carnage.net/engine/geometry"
-	"retro-carnage.net/engine/input"
-	"retro-carnage.net/ui/common"
+	"retro-carnage/assets"
+	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/input"
+	"retro-carnage/ui/common"
 )
 
 const txtFirstLine = "RETRO CARNAGE"

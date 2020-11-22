@@ -3,7 +3,7 @@ package common
 import (
 	"fmt"
 	"image/color"
-	"retro-carnage.net/logging"
+	"retro-carnage/logging"
 )
 
 var (

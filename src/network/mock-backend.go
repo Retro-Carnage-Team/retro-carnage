@@ -1,7 +1,7 @@
 package network
 
 import (
-	"retro-carnage.net/logging"
+	"retro-carnage/logging"
 )
 
 type mockBackend struct{}

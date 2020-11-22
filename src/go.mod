@@ -1,4 +1,4 @@
-module retro-carnage.net
+module retro-carnage
 
 go 1.15
 

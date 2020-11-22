@@ -4,9 +4,9 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	"retro-carnage.net/engine/geometry"
-	"retro-carnage.net/engine/input"
-	"retro-carnage.net/ui/common"
+	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/input"
+	"retro-carnage/ui/common"
 )
 
 const txtOnePlayerGame = "START 1 PLAYER GAME"

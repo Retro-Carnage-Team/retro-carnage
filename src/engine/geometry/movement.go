@@ -2,7 +2,7 @@ package geometry
 
 import (
 	"math"
-	"retro-carnage.net/util"
+	"retro-carnage/util"
 )
 
 func calculateMovementDistance(elapsedTimeInMs int64, distancePerMs float64, maxDistance *float64) float64 {

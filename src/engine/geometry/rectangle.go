@@ -2,7 +2,7 @@ package geometry
 
 import (
 	"fmt"
-	"retro-carnage.net/util"
+	"retro-carnage/util"
 )
 
 type Rectangle struct {

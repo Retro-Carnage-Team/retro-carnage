@@ -8,11 +8,11 @@ import (
 	"image"
 	_ "image/jpeg"
 	"os"
-	"retro-carnage.net/engine/geometry"
-	"retro-carnage.net/engine/input"
-	"retro-carnage.net/logging"
-	"retro-carnage.net/ui/common"
-	"retro-carnage.net/util"
+	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/input"
+	"retro-carnage/logging"
+	"retro-carnage/ui/common"
+	"retro-carnage/util"
 )
 
 const backgroundImagePath = "./images/backgrounds/title.jpg"
