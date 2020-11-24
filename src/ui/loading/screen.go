@@ -40,7 +40,7 @@ func (s *Screen) SetUp() {
 	s.textDimensions = common.GetTextDimensions(text.New(pixel.V(0, 0), common.DefaultAtlas),
 		txtFirstLine, txtSecondLine)
 
-	var stereo = common.NewStereo()
+	var stereo = assets.NewStereo()
 	stereo.PlayFx(assets.FxLoading)
 }
 

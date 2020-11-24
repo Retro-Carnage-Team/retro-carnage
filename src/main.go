@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"retro-carnage/assets"
 	"retro-carnage/ui"
 	"retro-carnage/ui/common"
 )
@@ -25,7 +26,7 @@ func run() {
 	win.SetSmooth(true)
 
 	common.InitializeFonts()
-	common.NewStereo()
+	assets.NewStereo()
 
 	var mainScreen = ui.MainScreen{Monitor: monitor, Window: win}
 	mainScreen.Initialize()

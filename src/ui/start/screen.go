@@ -23,7 +23,7 @@ const txtFifthLine = "(C) 1989 by Elite Systems Ltd."
 type Screen struct {
 	screenChangeRequired common.ScreenChangeCallback
 	screenChangeTimeout  int64
-	stereo               *common.Stereo
+	stereo               *assets.Stereo
 	textDimensions       map[string]*geometry.Point
 	themeLoaded          bool
 	window               *pixelgl.Window
@@ -44,7 +44,7 @@ func (s *Screen) SetUp() {
 	s.textDimensions = common.GetTextDimensions(text.New(pixel.V(0, 0), common.DefaultAtlas),
 		txtFirstLine, txtSecondLine, txtThirdLine, txtFourthLine, txtFifthLine)
 
-	s.stereo = common.NewStereo()
+	s.stereo = assets.NewStereo()
 	s.themeLoaded = false
 }
 

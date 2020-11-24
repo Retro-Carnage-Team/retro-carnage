@@ -1,26 +1,24 @@
 package util
 
 type ChangeListener struct {
-	callback      func(value interface{}, property string)
-	propertyNames []string
+	Callback      func(value interface{}, property string)
+	PropertyNames []string
 }
 
 func (cl *ChangeListener) handlesProperty(property string) bool {
-	if 0 == len(cl.propertyNames) {
+	if 0 == len(cl.PropertyNames) {
 		return true
 	}
-
-	for _, propertyName := range cl.propertyNames {
+	for _, propertyName := range cl.PropertyNames {
 		if propertyName == property {
 			return true
 		}
 	}
-
 	return false
 }
 
 func (cl *ChangeListener) Call(value interface{}, property string) {
 	if cl.handlesProperty(property) {
-		cl.callback(value, property)
+		cl.Callback(value, property)
 	}
 }
