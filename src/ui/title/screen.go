@@ -8,41 +8,62 @@ import (
 	"image"
 	_ "image/jpeg"
 	"os"
-	"retro-carnage.net/engine/geometry"
-	"retro-carnage.net/logging"
-	"retro-carnage.net/ui/util"
-	commonUtil "retro-carnage.net/util"
+	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/input"
+	"retro-carnage/logging"
+	"retro-carnage/ui/common"
+	"retro-carnage/util"
 )
 
 const backgroundImagePath = "./images/backgrounds/title.jpg"
+const screenTimeout = 2000
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
-	screenChangeRequired  util.ScreenChangeCallback
+	inputController       input.Controller
+	screenChangeRequired  common.ScreenChangeCallback
+	screenChangeTimeout   int64
 	textDimensions        map[string]*geometry.Point
-	Window                *pixelgl.Window
+	window                *pixelgl.Window
 }
 
-func (s *Screen) SetUp(screenChangeRequired util.ScreenChangeCallback) {
-	s.screenChangeRequired = screenChangeRequired
+func (s *Screen) SetInputController(controller input.Controller) {
+	s.inputController = controller
+}
 
+func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
+	s.screenChangeRequired = callback
+}
+
+func (s *Screen) SetWindow(window *pixelgl.Window) {
+	s.window = window
+}
+
+func (s *Screen) SetUp() {
 	var backgroundImage = loadBackgroundImage()
 	s.backgroundImageSprite = pixel.NewSprite(backgroundImage, backgroundImage.Bounds())
 }
 
-func (s *Screen) Update(_ int64) {
-	var factorX = s.Window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
-	var factorY = s.Window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
-	var factor = commonUtil.Max(factorX, factorY)
+func (s *Screen) Update(elapsedTimeInMs int64) {
+	s.screenChangeTimeout += elapsedTimeInMs
 
-	s.backgroundImageSprite.Draw(s.Window,
-		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.Window.Bounds().Center()))
+	var factorX = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
+	var factorY = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
+	var factor = util.Max(factorX, factorY)
+
+	s.backgroundImageSprite.Draw(s.window,
+		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
+
+	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
+	if (nil != uiEventState && uiEventState.PressedButton) || screenTimeout <= s.screenChangeTimeout {
+		s.screenChangeRequired(common.ConfigurationSelect)
+	}
 }
 
 func (s *Screen) TearDown() {}
 
 func (s *Screen) String() string {
-	return string(util.Title)
+	return string(common.Title)
 }
 
 func loadBackgroundImage() pixel.Picture {

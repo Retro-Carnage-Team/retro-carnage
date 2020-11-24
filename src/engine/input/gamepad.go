@@ -68,8 +68,8 @@ func convertStickAngleToCardinalDirections(angle float64) (up, down, left, right
 	return false, false, false, true
 }
 
-func (g *gamepad) State() *State {
-	var result State
+func (g *gamepad) State() *DeviceState {
+	var result DeviceState
 	result.Fire = g.window.JoystickPressed(g.joystick, pixelgl.ButtonA)
 	result.Grenade = g.window.JoystickPressed(g.joystick, pixelgl.ButtonB)
 	var horizontal = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftX)

@@ -1,15 +1,17 @@
-package util
+package common
 
 import (
 	"fmt"
 	"image/color"
-	"retro-carnage.net/logging"
+	"retro-carnage/logging"
 )
 
 var (
-	Red    = parseHexColor("#ca5512")
-	Yellow = parseHexColor("#fbe356")
+	Black  = parseHexColor("#000000")
 	Green  = parseHexColor("#12a45d")
+	Red    = parseHexColor("#ca5512")
+	White  = parseHexColor("#ffffff")
+	Yellow = parseHexColor("#fbe356")
 )
 
 func parseHexColor(s string) (c color.RGBA) {

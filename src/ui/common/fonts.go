@@ -1,14 +1,17 @@
-package util
+package common
 
 import (
 	"fmt"
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
+	"image/color"
 	"io/ioutil"
 	"os"
-	"retro-carnage.net/engine/geometry"
-	"retro-carnage.net/logging"
+	"retro-carnage/engine/geometry"
+	"retro-carnage/logging"
 	"unicode"
 )
 
@@ -55,4 +58,17 @@ func GetTextDimensions(txt *text.Text, input ...string) map[string]*geometry.Poi
 		txt.Clear()
 	}
 	return result
+}
+
+func DrawLineToScreenCenter(window *pixelgl.Window, line string, offsetMultiplier float64, color color.Color,
+	lineDimensions *geometry.Point) {
+
+	var vertCenter = window.Bounds().Max.Y / 2
+	var lineX = (window.Bounds().Max.X - lineDimensions.X) / 2
+	var lineY = vertCenter + offsetMultiplier*lineDimensions.Y
+
+	var txt = text.New(pixel.V(lineX, lineY), DefaultAtlas)
+	txt.Color = color
+	_, _ = fmt.Fprint(txt, line)
+	txt.Draw(window, pixel.IM)
 }

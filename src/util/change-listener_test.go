@@ -7,7 +7,7 @@ import (
 
 func TestChangeHandlerShouldHandleMatchingProperty(t *testing.T) {
 	const propertyName = "name"
-	var listener = ChangeListener{callback: func(value interface{}, property string) {}, propertyNames: []string{propertyName}}
+	var listener = ChangeListener{Callback: func(value interface{}, property string) {}, PropertyNames: []string{propertyName}}
 	var result = listener.handlesProperty(propertyName)
 
 	assert.Equal(t, true, result)
@@ -15,7 +15,7 @@ func TestChangeHandlerShouldHandleMatchingProperty(t *testing.T) {
 
 func TestChangeHandlerShouldHandleMatchingPropertyFromList(t *testing.T) {
 	const propertyName = "name"
-	var listener = ChangeListener{callback: func(value interface{}, property string) {}, propertyNames: []string{propertyName, "name2"}}
+	var listener = ChangeListener{Callback: func(value interface{}, property string) {}, PropertyNames: []string{propertyName, "name2"}}
 	var result = listener.handlesProperty(propertyName)
 
 	assert.Equal(t, true, result)
@@ -23,14 +23,14 @@ func TestChangeHandlerShouldHandleMatchingPropertyFromList(t *testing.T) {
 
 func TestChangeHandlerShouldNotHandleOtherProperties(t *testing.T) {
 	const propertyName = "name"
-	var listener = ChangeListener{callback: func(value interface{}, property string) {}, propertyNames: []string{propertyName}}
+	var listener = ChangeListener{Callback: func(value interface{}, property string) {}, PropertyNames: []string{propertyName}}
 	var result = listener.handlesProperty("not-name")
 
 	assert.Equal(t, false, result)
 }
 
 func TestChangeHandlerShouldHandleAllPropertiesWhenNoneIsSpecified(t *testing.T) {
-	var listener = ChangeListener{callback: func(value interface{}, property string) {}, propertyNames: []string{}}
+	var listener = ChangeListener{Callback: func(value interface{}, property string) {}, PropertyNames: []string{}}
 	var result = listener.handlesProperty("name")
 
 	assert.Equal(t, true, result)
@@ -47,13 +47,13 @@ func TestChangeHandlerShouldCallSpecifiedCallbackCorrectly(t *testing.T) {
 		assert.Equal(t, propertyNameValue, propertyName)
 	}
 
-	var filteredListener = ChangeListener{callback: callback, propertyNames: []string{propertyNameValue}}
+	var filteredListener = ChangeListener{Callback: callback, PropertyNames: []string{propertyNameValue}}
 	filteredListener.Call(newValue, propertyNameValue)
 	assert.Equal(t, true, called)
 
 	called = false
 
-	var unfilteredListener = ChangeListener{callback: callback, propertyNames: []string{}}
+	var unfilteredListener = ChangeListener{Callback: callback, PropertyNames: []string{}}
 	unfilteredListener.Call(newValue, propertyNameValue)
 	assert.Equal(t, true, called)
 }

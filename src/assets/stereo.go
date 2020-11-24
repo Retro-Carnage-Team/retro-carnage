@@ -1,4 +1,4 @@
-package util
+package assets
 
 import (
 	"errors"
@@ -8,17 +8,16 @@ import (
 	"github.com/faiface/beep/speaker"
 	"os"
 	"path/filepath"
-	"retro-carnage.net/assets"
-	"retro-carnage.net/logging"
-	"retro-carnage.net/util"
+	"retro-carnage/logging"
+	"retro-carnage/util"
 	"time"
 )
 
 // Stereo is the class we use to play music and sound effects throughout the application.
 type Stereo struct {
-	effects map[assets.SoundEffect]sound
+	effects map[SoundEffect]sound
 	mixer   *beep.Mixer
-	music   map[assets.Song]sound
+	music   map[Song]sound
 }
 
 var stereo *Stereo
@@ -49,8 +48,8 @@ func (sb *Stereo) initialize() {
 	sb.mixer = &beep.Mixer{}
 	speaker.Play(sb.mixer)
 
-	sb.effects = make(map[assets.SoundEffect]sound)
-	for _, fx := range assets.SoundEffects {
+	sb.effects = make(map[SoundEffect]sound)
+	for _, fx := range SoundEffects {
 		sound, err := loadSoundEffect(fx)
 		if err != nil {
 			logging.Error.Panicln(err.Error())
@@ -59,11 +58,11 @@ func (sb *Stereo) initialize() {
 		}
 	}
 
-	sb.music = make(map[assets.Song]sound)
+	sb.music = make(map[Song]sound)
 }
 
 // PlayFx starts the playback of a given SoundEffect
-func (sb *Stereo) PlayFx(effect assets.SoundEffect) {
+func (sb *Stereo) PlayFx(effect SoundEffect) {
 	var aSound = sb.effects[effect]
 	if nil != aSound {
 		aSound.play(sb.mixer)
@@ -71,7 +70,7 @@ func (sb *Stereo) PlayFx(effect assets.SoundEffect) {
 }
 
 // StopFX immediately stops the playback of a given SoundEffect
-func (sb *Stereo) StopFx(effect assets.SoundEffect) {
+func (sb *Stereo) StopFx(effect SoundEffect) {
 	var aSound = sb.effects[effect]
 	if nil != aSound {
 		aSound.stop()
@@ -79,7 +78,7 @@ func (sb *Stereo) StopFx(effect assets.SoundEffect) {
 }
 
 // PlaySong starts the playback of a given Song
-func (sb *Stereo) PlaySong(song assets.Song) {
+func (sb *Stereo) PlaySong(song Song) {
 	var aSound = sb.music[song]
 	if nil == aSound {
 		var err error = nil
@@ -93,14 +92,14 @@ func (sb *Stereo) PlaySong(song assets.Song) {
 }
 
 // PlaySong immediately stops the playback of a given Song
-func (sb *Stereo) StopSong(song assets.Song) {
+func (sb *Stereo) StopSong(song Song) {
 	var aSound = sb.music[song]
 	if nil != aSound {
 		aSound.stop()
 	}
 }
 
-func loadSoundEffect(fx assets.SoundEffect) (sound, error) {
+func loadSoundEffect(fx SoundEffect) (sound, error) {
 	stopWatch := util.StopWatch{Name: "Buffering sound effect " + string(fx)}
 	stopWatch.Start()
 
@@ -119,7 +118,7 @@ func loadSoundEffect(fx assets.SoundEffect) (sound, error) {
 	return &basicSound{buffer: buffer}, nil
 }
 
-func loadMusic(song assets.Song) (sound, error) {
+func loadMusic(song Song) (sound, error) {
 	stopWatch := util.StopWatch{Name: "Buffering music: " + string(song)}
 	stopWatch.Start()
 
@@ -153,8 +152,8 @@ func readMp3IntoBuffer(filePath string) (*beep.Buffer, error) {
 	return buffer, nil
 }
 
-func isLoopingEffect(fx assets.SoundEffect) bool {
-	for _, v := range assets.LoopingSoundEffects {
+func isLoopingEffect(fx SoundEffect) bool {
+	for _, v := range LoopingSoundEffects {
 		if v == fx {
 			return true
 		}
