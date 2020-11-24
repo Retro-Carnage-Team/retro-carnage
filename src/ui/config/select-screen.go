@@ -6,6 +6,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
+	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
@@ -104,7 +105,7 @@ func (s *SelectScreen) processUserInput() {
 	if nil != uiEventState {
 		if uiEventState.PressedButton {
 			s.inputController.AssignControllersToPlayers()
-			// TODO: set number of players in player controller
+			characters.PlayerController.StartNewGame(s.selectedOption)
 			s.screenChangeRequired(common.ConfigurationResult)
 		} else if uiEventState.MovedUp && 2 == s.selectedOption {
 			s.selectedOption = 1
