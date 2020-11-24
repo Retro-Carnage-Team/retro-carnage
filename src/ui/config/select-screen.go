@@ -14,8 +14,8 @@ import (
 )
 
 const buttonPadding = 15
-const txtOnePlayerGame = "START 1 PLAYER GAME"
-const txtTwoPlayerGame = "START 2 PLAYER GAME"
+const txtSelectOnePlayerGame = "START 1 PLAYER GAME"
+const txtSelectTwoPlayerGame = "START 2 PLAYER GAME"
 
 type SelectScreen struct {
 	inputController      input.Controller
@@ -28,7 +28,7 @@ type SelectScreen struct {
 func (s *SelectScreen) SetUp() {
 	s.selectedOption = 1
 	s.textDimensions = common.GetTextDimensions(text.New(pixel.V(0, 0), common.DefaultAtlas),
-		txtOnePlayerGame, txtTwoPlayerGame)
+		txtSelectOnePlayerGame, txtSelectTwoPlayerGame)
 }
 
 func (s *SelectScreen) Update(_ int64) {
@@ -36,28 +36,28 @@ func (s *SelectScreen) Update(_ int64) {
 	s.processUserInput()
 
 	var vertCenter = s.window.Bounds().Max.Y / 2
-	var firstLineX = (s.window.Bounds().Max.X - s.textDimensions[txtOnePlayerGame].X) / 2
-	var firstLineY = vertCenter + 1.5*s.textDimensions[txtOnePlayerGame].Y
+	var firstLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectOnePlayerGame].X) / 2
+	var firstLineY = vertCenter + 1.5*s.textDimensions[txtSelectOnePlayerGame].Y
 
 	var txt = text.New(pixel.V(firstLineX, firstLineY), common.DefaultAtlas)
 	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, txtOnePlayerGame)
+	_, _ = fmt.Fprint(txt, txtSelectOnePlayerGame)
 	txt.Draw(s.window, pixel.IM)
 
-	var secondLineX = (s.window.Bounds().Max.X - s.textDimensions[txtTwoPlayerGame].X) / 2
-	var secondLineY = vertCenter + -1.5*s.textDimensions[txtTwoPlayerGame].Y
+	var secondLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectTwoPlayerGame].X) / 2
+	var secondLineY = vertCenter + -1.5*s.textDimensions[txtSelectTwoPlayerGame].Y
 
 	txt = text.New(pixel.V(secondLineX, secondLineY), common.DefaultAtlas)
 	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, txtTwoPlayerGame)
+	_, _ = fmt.Fprint(txt, txtSelectTwoPlayerGame)
 	txt.Draw(s.window, pixel.IM)
 
 	var bottomFirst = firstLineY - buttonPadding
 	var bottomSecond = secondLineY - buttonPadding
-	var topFirst = firstLineY + s.textDimensions[txtOnePlayerGame].Y
-	var topSecond = secondLineY + s.textDimensions[txtTwoPlayerGame].Y
+	var topFirst = firstLineY + s.textDimensions[txtSelectOnePlayerGame].Y
+	var topSecond = secondLineY + s.textDimensions[txtSelectTwoPlayerGame].Y
 	var left = util.Min(firstLineX, secondLineX) - buttonPadding
-	var right = util.Min(firstLineX, secondLineX) + util.Min(s.textDimensions[txtOnePlayerGame].X, s.textDimensions[txtTwoPlayerGame].X) + buttonPadding
+	var right = util.Min(firstLineX, secondLineX) + util.Min(s.textDimensions[txtSelectOnePlayerGame].X, s.textDimensions[txtSelectTwoPlayerGame].X) + buttonPadding
 
 	if 1 == s.selectedOption {
 		imd := imdraw.New(nil)
