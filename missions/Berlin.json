@@ -1,0 +1,45 @@
+{
+  "briefing": "I am Berlin's hottest influencer. 30.000 followers on Insta alone - and that's not even counting Youtube and Twitter. My biggest competitor is envious and spreads the rumour that I am not vegan. Take out my competitor - for $10.000.",
+  "client": "images/tiles/clients/angry-beard-blur-close-up.jpg",
+  "location": {
+    "latitude": 165,
+    "longitude": 677
+  },
+  "music": "MUSIC_BACKGROUND_1",
+  "name": "Berlin",
+  "reward": 100000,
+  "segments": [
+    {
+      "backgrounds": [
+        "bg-dummy-1.jpg",
+        "bg-dummy-2.jpg",
+        "bg-dummy-3.jpg",
+        "bg-dummy-1.jpg",
+        "bg-dummy-2.jpg"
+      ],
+      "direction": "up",
+      "goal": null,
+      "obstacles": [
+        {
+          "x": 400,
+          "y": -2700,
+          "width": 200,
+          "height": 200
+        }
+      ]
+    },
+    {
+      "backgrounds": [
+        "bg-dummy-2.jpg",
+        "bg-dummy-3.jpg",
+        "bg-dummy-1.jpg",
+        "bg-dummy-2.jpg",
+        "bg-dummy-3.jpg"
+      ],
+      "direction": "left",
+      "goal": {"x": -5800, "y":200, "width": 200, "height": 200},
+      "obstacles": []
+    }
+  ],
+  "unfinished": false
+}
