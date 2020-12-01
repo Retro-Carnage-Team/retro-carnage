@@ -62,7 +62,7 @@ func (s *ResultScreen) Update(timeElapsedInMs int64) {
 	}
 
 	if s.timeElapsed >= 2500 {
-		s.screenChangeRequired(common.Map)
+		s.screenChangeRequired(common.Mission)
 	}
 }
 

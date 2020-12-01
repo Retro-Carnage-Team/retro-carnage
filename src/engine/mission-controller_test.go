@@ -7,9 +7,9 @@ import (
 	"testing"
 )
 
-func setUp() (mc *MissionController) {
+func setUp() (mc *MissionCtrl) {
 	assets.MissionRepository.InitializeInTest("./testdata/missions")
-	mc = &MissionController{}
+	mc = &MissionCtrl{}
 	mc.Reset()
 	return mc
 }

@@ -23,7 +23,7 @@ var (
 // You can check the Initialized() method to check when this process has finished.
 func (mr *MissionRepo) Initialize() {
 	mr.initialized = false
-	go mr.loadFromDisk("./Missions")
+	go mr.loadFromDisk("./missions")
 }
 
 // InitializeInTest is the test version of the Initialize method. It starts the asynchronous initialization, loading
@@ -63,8 +63,6 @@ func (mr *MissionRepo) loadFromDisk(directory string) {
 	}
 
 	for _, f := range files {
-		logging.Trace.Printf("loading mission: %s", f)
-
 		mission, err := mr.loadMissionFile(f)
 		if err != nil {
 			logging.Warning.Printf("failed to load mission from file %s: %v", f, err)

@@ -8,6 +8,7 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/config"
 	"retro-carnage/ui/loading"
+	"retro-carnage/ui/mission"
 	"retro-carnage/ui/start"
 	"retro-carnage/ui/title"
 	"time"
@@ -50,6 +51,8 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 		ms.nextScreen = &config.ResultScreen{}
 	case common.ConfigurationSelect:
 		ms.nextScreen = &config.SelectScreen{}
+	case common.Mission:
+		ms.nextScreen = &mission.Screen{}
 	}
 }
 

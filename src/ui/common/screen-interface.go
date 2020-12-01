@@ -43,5 +43,5 @@ const (
 	Title               ScreenName = "Title screen"
 	ConfigurationSelect ScreenName = "Configuration select screen"
 	ConfigurationResult ScreenName = "Configuration result screen"
-	Map                 ScreenName = "Map screen"
+	Mission             ScreenName = "Mission screen"
 )
