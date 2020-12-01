@@ -67,12 +67,7 @@ func (s *Screen) Update(_ int64) {
 		s.initializeMissions()
 	}
 
-	var factorX = s.window.Bounds().Max.X / s.worldMapSprite.Picture().Bounds().Max.X
-	var factorY = s.window.Bounds().Max.X / s.worldMapSprite.Picture().Bounds().Max.X
-	var factor = util.Max(factorX, factorY)
-
-	s.worldMapSprite.Draw(s.window,
-		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
+	s.drawWorldMap()
 
 	if s.missionsInitialized {
 		// TODO: Get input
@@ -88,4 +83,14 @@ func (s *Screen) TearDown() {}
 
 func (s *Screen) String() string {
 	return string(common.Mission)
+}
+
+func (s *Screen) drawWorldMap() {
+	var factorX = (s.window.Bounds().Max.X - 100) / s.worldMapSprite.Picture().Bounds().Max.X
+	var factorY = (s.window.Bounds().Max.X * 3 / 4) / s.worldMapSprite.Picture().Bounds().Max.X
+	var factor = util.Min(factorX, factorY)
+
+	var mapCenter = s.window.Bounds().Center()
+	mapCenter.Y -= s.window.Bounds().Max.Y / 8
+	s.worldMapSprite.Draw(s.window, pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(mapCenter))
 }
