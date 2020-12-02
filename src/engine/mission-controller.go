@@ -65,7 +65,7 @@ func (mc *MissionCtrl) NextMissionNorth(relativeTo *assets.Location) (*assets.Mi
 
 	var lessBuilder = func(missions []*assets.Mission) func(int, int) bool {
 		return func(i, j int) bool {
-			return missions[i].Location.Latitude < missions[j].Location.Latitude
+			return missions[i].Location.Latitude > missions[j].Location.Latitude
 		}
 	}
 

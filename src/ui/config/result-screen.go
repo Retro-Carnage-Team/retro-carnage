@@ -61,7 +61,10 @@ func (s *ResultScreen) Update(timeElapsedInMs int64) {
 		common.DrawLineToScreenCenter(s.window, s.infoTextPlayerTwo, -2.5, common.Yellow, s.textDimensions[s.infoTextPlayerTwo])
 	}
 
-	if s.timeElapsed >= 2500 {
+	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
+	if nil != uiEventState && uiEventState.PressedButton {
+		s.screenChangeRequired(common.Mission)
+	} else if s.timeElapsed >= 2500 {
 		s.screenChangeRequired(common.Mission)
 	}
 }

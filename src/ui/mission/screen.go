@@ -17,7 +17,7 @@ import (
 )
 
 const crossHairImagePath = "./images/tiles/other/crosshair-9-32.png"
-const worldMapImagePath = "./images/backgrounds/world-map.jpg"
+const worldMapImagePath = "./images/tiles/other/world-map.jpg"
 const worldMapWidth = 1280
 const worldMapHeight = 783
 
@@ -77,10 +77,8 @@ func (s *Screen) Update(_ int64) {
 	s.drawWorldMap()
 
 	if s.missionsInitialized {
-		// TODO: Get input
-		// TODO: Update position (if necessary)
+		s.processUserInput()
 		s.drawMissionLocations()
-		// TODO: Draw mission marker
 	}
 
 	// TODO: Draw image of client
@@ -102,7 +100,6 @@ func (s *Screen) drawWorldMap() {
 func (s *Screen) drawMissionLocations() {
 	var factor = s.getWorldMapScalingFactor()
 	var mapCenter = s.getWorldMapCenter()
-
 	var mapBottomLeft = pixel.Vec{
 		X: mapCenter.X - (worldMapWidth*factor)/2,
 		Y: mapCenter.Y - (worldMapHeight*factor)/2,
@@ -113,7 +110,12 @@ func (s *Screen) drawMissionLocations() {
 			X: mapBottomLeft.X + (city.Location.Longitude * factor),
 			Y: mapBottomLeft.Y + (worldMapHeight * factor) - (city.Location.Latitude * factor),
 		}
-		s.drawLocationMarker(cityLocation, common.Orange)
+		// TODO: Draw mission marker for selected mission
+		var color = common.Orange
+		if city.Name == s.selectedMission.Name {
+			color = common.Black
+		}
+		s.drawLocationMarker(cityLocation, color)
 	}
 }
 
@@ -135,4 +137,31 @@ func (s *Screen) drawLocationMarker(location pixel.Vec, color color.Color) {
 	imd.Push(location)
 	imd.Circle(15, 7)
 	imd.Draw(s.window)
+}
+
+func (s *Screen) processUserInput() {
+	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
+	if nil != uiEventState {
+		if uiEventState.PressedButton {
+			s.screenChangeRequired(common.BuyYourWeapons)
+		} else {
+			var nextMission = s.selectedMission
+			var err error = nil
+			if uiEventState.MovedUp {
+				nextMission, err = engine.MissionController.NextMissionNorth(&s.selectedMission.Location)
+			} else if uiEventState.MovedDown {
+				nextMission, err = engine.MissionController.NextMissionSouth(&s.selectedMission.Location)
+			} else if uiEventState.MovedLeft {
+				nextMission, err = engine.MissionController.NextMissionWest(&s.selectedMission.Location)
+			} else if uiEventState.MovedRight {
+				nextMission, err = engine.MissionController.NextMissionEast(&s.selectedMission.Location)
+			}
+			if nil != err {
+				logging.Error.Fatalf("Failed to get next mission north: %v", err)
+			}
+			if nil != nextMission {
+				s.selectedMission = nextMission
+			}
+		}
+	}
 }
