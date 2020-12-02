@@ -9,6 +9,7 @@ import (
 var (
 	Black  = parseHexColor("#000000")
 	Green  = parseHexColor("#12a45d")
+	Orange = parseHexColor("#ffa055")
 	Red    = parseHexColor("#ca5512")
 	White  = parseHexColor("#ffffff")
 	Yellow = parseHexColor("#fbe356")

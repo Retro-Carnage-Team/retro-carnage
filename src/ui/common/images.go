@@ -3,6 +3,8 @@ package common
 import (
 	"github.com/faiface/pixel"
 	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"os"
 	"retro-carnage/logging"
 )

@@ -4,7 +4,9 @@ package mission
 
 import (
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"image/color"
 	"retro-carnage/assets"
 	"retro-carnage/engine"
 	"retro-carnage/engine/geometry"
@@ -14,10 +16,14 @@ import (
 	"retro-carnage/util"
 )
 
+const crossHairImagePath = "./images/tiles/other/crosshair-9-32.png"
 const worldMapImagePath = "./images/backgrounds/world-map.jpg"
+const worldMapWidth = 1280
+const worldMapHeight = 783
 
 type Screen struct {
 	availableMissions    []*assets.Mission
+	crossHairSprite      *pixel.Sprite
 	inputController      input.Controller
 	missionsInitialized  bool
 	screenChangeRequired common.ScreenChangeCallback
@@ -45,6 +51,7 @@ func (s *Screen) SetUp() {
 	} else {
 		s.initializeMissions()
 	}
+	s.crossHairSprite = common.LoadSprite(crossHairImagePath)
 	s.worldMapSprite = common.LoadSprite(worldMapImagePath)
 }
 
@@ -72,7 +79,8 @@ func (s *Screen) Update(_ int64) {
 	if s.missionsInitialized {
 		// TODO: Get input
 		// TODO: Update position (if necessary)
-		// TODO: Draw mission locations
+		s.drawMissionLocations()
+		// TODO: Draw mission marker
 	}
 
 	// TODO: Draw image of client
@@ -86,11 +94,45 @@ func (s *Screen) String() string {
 }
 
 func (s *Screen) drawWorldMap() {
-	var factorX = (s.window.Bounds().Max.X - 100) / s.worldMapSprite.Picture().Bounds().Max.X
-	var factorY = (s.window.Bounds().Max.X * 3 / 4) / s.worldMapSprite.Picture().Bounds().Max.X
-	var factor = util.Min(factorX, factorY)
-
-	var mapCenter = s.window.Bounds().Center()
-	mapCenter.Y -= s.window.Bounds().Max.Y / 8
+	var factor = s.getWorldMapScalingFactor()
+	var mapCenter = s.getWorldMapCenter()
 	s.worldMapSprite.Draw(s.window, pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(mapCenter))
+}
+
+func (s *Screen) drawMissionLocations() {
+	var factor = s.getWorldMapScalingFactor()
+	var mapCenter = s.getWorldMapCenter()
+
+	var mapBottomLeft = pixel.Vec{
+		X: mapCenter.X - (worldMapWidth*factor)/2,
+		Y: mapCenter.Y - (worldMapHeight*factor)/2,
+	}
+
+	for _, city := range s.availableMissions {
+		var cityLocation = pixel.Vec{
+			X: mapBottomLeft.X + (city.Location.Longitude * factor),
+			Y: mapBottomLeft.Y + (worldMapHeight * factor) - (city.Location.Latitude * factor),
+		}
+		s.drawLocationMarker(cityLocation, common.Orange)
+	}
+}
+
+func (s *Screen) getWorldMapScalingFactor() float64 {
+	var factorX = (s.window.Bounds().Max.X - 100) / s.worldMapSprite.Picture().Bounds().Max.X
+	var factorY = (s.window.Bounds().Max.Y * 3 / 4) / s.worldMapSprite.Picture().Bounds().Max.Y
+	return util.Min(factorX, factorY)
+}
+
+func (s *Screen) getWorldMapCenter() (result pixel.Vec) {
+	result = s.window.Bounds().Center()
+	result.Y -= s.window.Bounds().Max.Y / 8
+	return
+}
+
+func (s *Screen) drawLocationMarker(location pixel.Vec, color color.Color) {
+	imd := imdraw.New(nil)
+	imd.Color = color
+	imd.Push(location)
+	imd.Circle(15, 7)
+	imd.Draw(s.window)
 }
