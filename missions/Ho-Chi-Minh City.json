@@ -1,0 +1,13 @@
+{
+  "briefing": "A clan of criminals has taken control of the underworld of Ho Chi Minh City in a bloody conflict. The clan members will stop at nothing to extort money from the little people. We need your help! You must finish off the head of the clan. For that, you'll get $8,000.",
+  "client": "images/tiles/clients/adult-aged-beard-elder.jpg",
+  "location": {
+    "latitude": 338,
+    "longitude": 1018
+  },
+  "music": "MUSIC_BACKGROUND_9",
+  "name": "Ho-Chi-Minh City",
+  "reward": 8000,
+  "segments": [],
+  "unfinished": false
+}
