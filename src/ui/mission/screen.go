@@ -6,7 +6,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"image/color"
 	"retro-carnage/assets"
 	"retro-carnage/engine"
 	"retro-carnage/engine/geometry"
@@ -16,7 +15,11 @@ import (
 	"retro-carnage/util"
 )
 
-const crossHairImagePath = "./images/tiles/other/crosshair-9-32.png"
+const crossHairImagePath = "./images/tiles/other/crosshair.png"
+
+var locationMarkerColor = common.ParseHexColor("#fea400")
+
+const locationMarkerRadius = 10
 const worldMapImagePath = "./images/tiles/other/world-map.jpg"
 const worldMapWidth = 1280
 const worldMapHeight = 783
@@ -110,12 +113,10 @@ func (s *Screen) drawMissionLocations() {
 			X: mapBottomLeft.X + (city.Location.Longitude * factor),
 			Y: mapBottomLeft.Y + (worldMapHeight * factor) - (city.Location.Latitude * factor),
 		}
-		// TODO: Draw mission marker for selected mission
-		var color = common.Orange
+		s.drawLocationMarker(cityLocation)
 		if city.Name == s.selectedMission.Name {
-			color = common.Black
+			s.crossHairSprite.Draw(s.window, pixel.IM.Moved(cityLocation))
 		}
-		s.drawLocationMarker(cityLocation, color)
 	}
 }
 
@@ -131,11 +132,11 @@ func (s *Screen) getWorldMapCenter() (result pixel.Vec) {
 	return
 }
 
-func (s *Screen) drawLocationMarker(location pixel.Vec, color color.Color) {
+func (s *Screen) drawLocationMarker(location pixel.Vec) {
 	imd := imdraw.New(nil)
-	imd.Color = color
+	imd.Color = locationMarkerColor
 	imd.Push(location)
-	imd.Circle(15, 7)
+	imd.Circle(locationMarkerRadius, 5)
 	imd.Draw(s.window)
 }
 

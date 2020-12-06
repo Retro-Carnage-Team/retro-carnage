@@ -7,15 +7,15 @@ import (
 )
 
 var (
-	Black  = parseHexColor("#000000")
-	Green  = parseHexColor("#12a45d")
-	Orange = parseHexColor("#ffa055")
-	Red    = parseHexColor("#ca5512")
-	White  = parseHexColor("#ffffff")
-	Yellow = parseHexColor("#fbe356")
+	Black  = ParseHexColor("#000000")
+	Green  = ParseHexColor("#12a45d")
+	Orange = ParseHexColor("#ffa055")
+	Red    = ParseHexColor("#ca5512")
+	White  = ParseHexColor("#ffffff")
+	Yellow = ParseHexColor("#fbe356")
 )
 
-func parseHexColor(s string) (c color.RGBA) {
+func ParseHexColor(s string) (c color.RGBA) {
 	c.A = 0xff
 	_, err := fmt.Sscanf(s, "#%02x%02x%02x", &c.R, &c.G, &c.B)
 	if nil != err {
