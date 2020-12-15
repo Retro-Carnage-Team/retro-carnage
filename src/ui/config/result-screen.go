@@ -1,9 +1,7 @@
 package config
 
 import (
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
@@ -44,7 +42,7 @@ func (s *ResultScreen) SetUp() {
 		}
 	}
 
-	s.textDimensions = common.GetTextDimensions(text.New(pixel.V(0, 0), common.DefaultAtlas),
+	s.textDimensions = common.GetTextDimensions(common.DefaultFontSize,
 		txtOnePlayerGame, txtTwoPlayerGame, s.infoTextPlayerOne, s.infoTextPlayerTwo)
 }
 

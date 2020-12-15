@@ -4,9 +4,7 @@
 package start
 
 import (
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"image/color"
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
@@ -41,7 +39,7 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 
 func (s *Screen) SetUp() {
 	s.screenChangeTimeout = 0
-	s.textDimensions = common.GetTextDimensions(text.New(pixel.V(0, 0), common.DefaultAtlas),
+	s.textDimensions = common.GetTextDimensions(common.DefaultFontSize,
 		txtFirstLine, txtSecondLine, txtThirdLine, txtFourthLine, txtFifthLine)
 
 	s.stereo = assets.NewStereo()

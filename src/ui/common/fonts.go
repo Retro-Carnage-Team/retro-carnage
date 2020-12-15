@@ -6,7 +6,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
-	"golang.org/x/image/font"
 	"image/color"
 	"io/ioutil"
 	"os"
@@ -16,18 +15,28 @@ import (
 )
 
 const defaultFontPath = "./fonts/XXII-DIRTY-ARMY.ttf"
+const DefaultFontSize = 52
 
-var DefaultAtlas *text.Atlas
+var SizeToFontAtlas map[int]*text.Atlas
 
 func InitializeFonts() {
-	defaultFont, err := loadTTF(defaultFontPath, 52)
+	SizeToFontAtlas = make(map[int]*text.Atlas)
+
+	defaultFont, err := loadTTF(defaultFontPath)
 	if nil != err {
 		logging.Error.Panicf("Failed to load font %s: %v", defaultFontPath, err)
 	}
-	DefaultAtlas = text.NewAtlas(defaultFont, text.ASCII, text.RangeTable(unicode.Latin))
+
+	for i := 16; i <= DefaultFontSize; i += 2 {
+		var fontFace = truetype.NewFace(defaultFont, &truetype.Options{
+			Size:              float64(i),
+			GlyphCacheEntries: 1,
+		})
+		SizeToFontAtlas[i] = text.NewAtlas(fontFace, text.ASCII, text.RangeTable(unicode.Latin))
+	}
 }
 
-func loadTTF(path string, size float64) (font.Face, error) {
+func loadTTF(path string) (*truetype.Font, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -44,14 +53,12 @@ func loadTTF(path string, size float64) (font.Face, error) {
 		return nil, err
 	}
 
-	return truetype.NewFace(font, &truetype.Options{
-		Size:              size,
-		GlyphCacheEntries: 1,
-	}), nil
+	return font, nil
 }
 
-func GetTextDimensions(txt *text.Text, input ...string) map[string]*geometry.Point {
+func GetTextDimensions(fontSize int, input ...string) map[string]*geometry.Point {
 	var result = make(map[string]*geometry.Point)
+	var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
 	for _, line := range input {
 		_, _ = fmt.Fprint(txt, line)
 		result[line] = &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
@@ -67,7 +74,7 @@ func DrawLineToScreenCenter(window *pixelgl.Window, line string, offsetMultiplie
 	var lineX = (window.Bounds().Max.X - lineDimensions.X) / 2
 	var lineY = vertCenter + offsetMultiplier*lineDimensions.Y
 
-	var txt = text.New(pixel.V(lineX, lineY), DefaultAtlas)
+	var txt = text.New(pixel.V(lineX, lineY), SizeToFontAtlas[DefaultFontSize])
 	txt.Color = color
 	_, _ = fmt.Fprint(txt, line)
 	txt.Draw(window, pixel.IM)

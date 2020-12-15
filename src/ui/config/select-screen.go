@@ -27,7 +27,7 @@ type SelectScreen struct {
 
 func (s *SelectScreen) SetUp() {
 	s.selectedOption = 1
-	s.textDimensions = common.GetTextDimensions(text.New(pixel.V(0, 0), common.DefaultAtlas),
+	s.textDimensions = common.GetTextDimensions(common.DefaultFontSize,
 		txtSelectOnePlayerGame, txtSelectTwoPlayerGame)
 }
 
@@ -39,7 +39,7 @@ func (s *SelectScreen) Update(_ int64) {
 	var firstLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectOnePlayerGame].X) / 2
 	var firstLineY = vertCenter + 1.5*s.textDimensions[txtSelectOnePlayerGame].Y
 
-	var txt = text.New(pixel.V(firstLineX, firstLineY), common.DefaultAtlas)
+	var txt = text.New(pixel.V(firstLineX, firstLineY), common.SizeToFontAtlas[common.DefaultFontSize])
 	txt.Color = common.White
 	_, _ = fmt.Fprint(txt, txtSelectOnePlayerGame)
 	txt.Draw(s.window, pixel.IM)
@@ -47,7 +47,7 @@ func (s *SelectScreen) Update(_ int64) {
 	var secondLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectTwoPlayerGame].X) / 2
 	var secondLineY = vertCenter + -1.5*s.textDimensions[txtSelectTwoPlayerGame].Y
 
-	txt = text.New(pixel.V(secondLineX, secondLineY), common.DefaultAtlas)
+	txt = text.New(pixel.V(secondLineX, secondLineY), common.SizeToFontAtlas[common.DefaultFontSize])
 	txt.Color = common.White
 	_, _ = fmt.Fprint(txt, txtSelectTwoPlayerGame)
 	txt.Draw(s.window, pixel.IM)

@@ -37,8 +37,7 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 
 func (s *Screen) SetUp() {
 	s.screenChangeTimeout = 0
-	s.textDimensions = common.GetTextDimensions(text.New(pixel.V(0, 0), common.DefaultAtlas),
-		txtFirstLine, txtSecondLine)
+	s.textDimensions = common.GetTextDimensions(common.DefaultFontSize, txtFirstLine, txtSecondLine)
 
 	var stereo = assets.NewStereo()
 	stereo.PlayFx(assets.FxLoading)
@@ -53,12 +52,12 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	var secondLineX = (s.window.Bounds().Max.X - secondLineDimensions.X) / 2
 	var secondLineY = (s.window.Bounds().Max.Y - (3 * secondLineDimensions.Y)) / 2
 
-	var txt = text.New(pixel.V(firstLineX, firstLineY), common.DefaultAtlas)
+	var txt = text.New(pixel.V(firstLineX, firstLineY), common.SizeToFontAtlas[common.DefaultFontSize])
 	_, _ = fmt.Fprint(txt, txtFirstLine)
 	txt.Color = colornames.Red
 	txt.Draw(s.window, pixel.IM)
 
-	txt = text.New(pixel.V(secondLineX, secondLineY), common.DefaultAtlas)
+	txt = text.New(pixel.V(secondLineX, secondLineY), common.SizeToFontAtlas[common.DefaultFontSize])
 	_, _ = fmt.Fprint(txt, txtSecondLine)
 	txt.Color = colornames.Red
 	txt.Draw(s.window, pixel.IM)
