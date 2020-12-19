@@ -44,5 +44,7 @@ const (
 	ConfigurationSelect ScreenName = "Configuration select screen"
 	ConfigurationResult ScreenName = "Configuration result screen"
 	Mission             ScreenName = "Mission screen"
-	BuyYourWeapons      ScreenName = "Buy your weapons screen"
+	BuyYourWeaponsP1    ScreenName = "Buy your weapons screen (Player 1)"
+	BuyYourWeaponsP2    ScreenName = "Buy your weapons screen (Player 2)"
+	Shop                ScreenName = "Shop"
 )

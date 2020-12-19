@@ -13,7 +13,7 @@ import (
 )
 
 const backgroundImagePath = "./images/backgrounds/title.jpg"
-const screenTimeout = 2000
+const screenTimeout = 5000
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite

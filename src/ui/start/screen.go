@@ -66,9 +66,9 @@ func (s *Screen) String() string {
 
 func (s *Screen) renderScreen() {
 	var renderer = fonts.TextRenderer{Window: s.window}
-	renderer.DrawLineToScreenCenter(txtFirstLine, 2.5, common.Red)
-	renderer.DrawLineToScreenCenter(txtSecondLine, 1, common.Yellow)
-	renderer.DrawLineToScreenCenter(txtThirdLine, -1, common.Green)
+	renderer.DrawLineToScreenCenter(txtFirstLine, 4, common.Red)
+	renderer.DrawLineToScreenCenter(txtSecondLine, 2.8, common.Yellow)
+	renderer.DrawLineToScreenCenter(txtThirdLine, 0, common.Green)
 	renderer.DrawLineToScreenCenter(txtFourthLine, -2.5, common.Green)
-	renderer.DrawLineToScreenCenter(txtFifthLine, -4, common.Green)
+	renderer.DrawLineToScreenCenter(txtFifthLine, -3.7, common.Green)
 }
