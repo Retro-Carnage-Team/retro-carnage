@@ -185,7 +185,7 @@ func (s *Screen) processUserInput() {
 	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
 	if nil != uiEventState {
 		if uiEventState.PressedButton {
-			s.screenChangeRequired(common.BuyYourWeapons)
+			s.screenChangeRequired(common.BuyYourWeaponsP1)
 		} else {
 			var nextMission = s.selectedMission
 			var err error = nil
