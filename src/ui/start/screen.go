@@ -5,11 +5,10 @@ package start
 
 import (
 	"github.com/faiface/pixel/pixelgl"
-	"image/color"
 	"retro-carnage/assets"
-	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
+	"retro-carnage/ui/common/fonts"
 )
 
 const txtFirstLine = "RETRO CARNAGE"
@@ -22,7 +21,6 @@ type Screen struct {
 	screenChangeRequired common.ScreenChangeCallback
 	screenChangeTimeout  int64
 	stereo               *assets.Stereo
-	textDimensions       map[string]*geometry.Point
 	themeLoaded          bool
 	window               *pixelgl.Window
 }
@@ -39,9 +37,6 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 
 func (s *Screen) SetUp() {
 	s.screenChangeTimeout = 0
-	s.textDimensions = common.GetTextDimensions(common.DefaultFontSize,
-		txtFirstLine, txtSecondLine, txtThirdLine, txtFourthLine, txtFifthLine)
-
 	s.stereo = assets.NewStereo()
 	s.themeLoaded = false
 }
@@ -70,13 +65,10 @@ func (s *Screen) String() string {
 }
 
 func (s *Screen) renderScreen() {
-	s.drawLineToScreen(txtFirstLine, 2.5, common.Red)
-	s.drawLineToScreen(txtSecondLine, 1, common.Yellow)
-	s.drawLineToScreen(txtThirdLine, -1, common.Green)
-	s.drawLineToScreen(txtFourthLine, -2.5, common.Green)
-	s.drawLineToScreen(txtFifthLine, -4, common.Green)
-}
-
-func (s *Screen) drawLineToScreen(line string, offsetMultiplier float64, color color.Color) {
-	common.DrawLineToScreenCenter(s.window, line, offsetMultiplier, color, s.textDimensions[line])
+	var renderer = fonts.TextRenderer{Window: s.window}
+	renderer.DrawLineToScreenCenter(txtFirstLine, 2.5, common.Red)
+	renderer.DrawLineToScreenCenter(txtSecondLine, 1, common.Yellow)
+	renderer.DrawLineToScreenCenter(txtThirdLine, -1, common.Green)
+	renderer.DrawLineToScreenCenter(txtFourthLine, -2.5, common.Green)
+	renderer.DrawLineToScreenCenter(txtFifthLine, -4, common.Green)
 }

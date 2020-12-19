@@ -1,12 +1,10 @@
-package common
+package fonts
 
 import (
 	"fmt"
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
-	"image/color"
 	"io/ioutil"
 	"os"
 	"retro-carnage/engine/geometry"
@@ -19,7 +17,7 @@ const DefaultFontSize = 52
 
 var SizeToFontAtlas map[int]*text.Atlas
 
-func InitializeFonts() {
+func Initialize() {
 	SizeToFontAtlas = make(map[int]*text.Atlas)
 
 	defaultFont, err := loadTTF(defaultFontPath)
@@ -58,24 +56,15 @@ func loadTTF(path string) (*truetype.Font, error) {
 
 func GetTextDimensions(fontSize int, input ...string) map[string]*geometry.Point {
 	var result = make(map[string]*geometry.Point)
-	var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
 	for _, line := range input {
-		_, _ = fmt.Fprint(txt, line)
-		result[line] = &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
-		txt.Clear()
+		result[line] = GetTextDimension(fontSize, line)
 	}
 	return result
 }
 
-func DrawLineToScreenCenter(window *pixelgl.Window, line string, offsetMultiplier float64, color color.Color,
-	lineDimensions *geometry.Point) {
-
-	var vertCenter = window.Bounds().Max.Y / 2
-	var lineX = (window.Bounds().Max.X - lineDimensions.X) / 2
-	var lineY = vertCenter + offsetMultiplier*lineDimensions.Y
-
-	var txt = text.New(pixel.V(lineX, lineY), SizeToFontAtlas[DefaultFontSize])
-	txt.Color = color
-	_, _ = fmt.Fprint(txt, line)
-	txt.Draw(window, pixel.IM)
+func GetTextDimension(fontSize int, input string) *geometry.Point {
+	var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
+	_, _ = fmt.Fprint(txt, input)
+	var result = &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
+	return result
 }

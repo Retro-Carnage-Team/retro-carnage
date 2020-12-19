@@ -12,6 +12,7 @@ import (
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
+	"retro-carnage/ui/common/fonts"
 	"retro-carnage/util"
 )
 
@@ -19,21 +20,22 @@ const crossHairImagePath = "./images/tiles/other/crosshair.png"
 
 var locationMarkerColor = common.ParseHexColor("#fea400")
 
+const briefingFontSize = 50
 const locationMarkerRadius = 10
 const worldMapImagePath = "./images/tiles/other/world-map.jpg"
 const worldMapWidth = 1280
 const worldMapHeight = 783
 
 type Screen struct {
-	availableMissions    []*assets.Mission
-	crossHairSprite      *pixel.Sprite
-	inputController      input.Controller
-	missionsInitialized  bool
-	screenChangeRequired common.ScreenChangeCallback
-	selectedMission      *assets.Mission
-	textDimensions       map[string]*geometry.Point
-	window               *pixelgl.Window
-	worldMapSprite       *pixel.Sprite
+	availableMissions         []*assets.Mission
+	crossHairSprite           *pixel.Sprite
+	inputController           input.Controller
+	missionsInitialized       bool
+	missionNameToClientSprite map[string]*pixel.Sprite
+	screenChangeRequired      common.ScreenChangeCallback
+	selectedMission           *assets.Mission
+	window                    *pixelgl.Window
+	worldMapSprite            *pixel.Sprite
 }
 
 func (s *Screen) SetInputController(inputCtrl input.Controller) {
@@ -67,6 +69,11 @@ func (s *Screen) initializeMissions() {
 		logging.Error.Fatalf("List of remaining missions is empty. Game should have ended!")
 	}
 
+	s.missionNameToClientSprite = make(map[string]*pixel.Sprite)
+	for _, mission := range remainingMissions {
+		s.missionNameToClientSprite[mission.Name] = common.LoadSprite(mission.Client)
+	}
+
 	s.availableMissions = remainingMissions
 	s.selectedMission = remainingMissions[0]
 }
@@ -82,10 +89,9 @@ func (s *Screen) Update(_ int64) {
 	if s.missionsInitialized {
 		s.processUserInput()
 		s.drawMissionLocations()
+		s.drawClientPicture()
+		s.drawMissionDescription()
 	}
-
-	// TODO: Draw image of client
-	// TODO: Draw mission briefing
 }
 
 func (s *Screen) TearDown() {}
@@ -117,6 +123,41 @@ func (s *Screen) drawMissionLocations() {
 		if city.Name == s.selectedMission.Name {
 			s.crossHairSprite.Draw(s.window, pixel.IM.Moved(cityLocation))
 		}
+	}
+}
+
+func (s *Screen) drawClientPicture() {
+	var clientSprite = s.missionNameToClientSprite[s.selectedMission.Name]
+	var scalingFactor = (s.window.Bounds().Max.Y * 3 / 16) / clientSprite.Picture().Bounds().Max.Y
+	var margin = s.window.Bounds().Max.Y * 1 / 32
+	var positionX = margin + (clientSprite.Picture().Bounds().Max.X * scalingFactor / 2)
+	var positionY = s.window.Bounds().Max.Y - margin - (clientSprite.Picture().Bounds().Max.Y * scalingFactor / 2)
+
+	clientSprite.Draw(s.window, pixel.IM.
+		Scaled(pixel.Vec{X: 0, Y: 0}, scalingFactor).
+		Moved(pixel.V(positionX, positionY)))
+}
+
+func (s *Screen) drawMissionDescription() {
+	var clientSprite = s.missionNameToClientSprite[s.selectedMission.Name]
+	var scalingFactor = (s.window.Bounds().Max.Y * 3 / 16) / clientSprite.Picture().Bounds().Max.Y
+	var margin = s.window.Bounds().Max.Y * 1 / 32
+
+	var positionX = margin + (clientSprite.Picture().Bounds().Max.X * scalingFactor) + margin
+	var positionY = s.window.Bounds().Max.Y - margin - (clientSprite.Picture().Bounds().Max.Y * scalingFactor)
+	var textAreaWidth = s.window.Bounds().Max.X - positionX - margin
+	var textAreaHeight = s.window.Bounds().Max.Y/4 - margin - margin
+	var text = s.selectedMission.Briefing
+
+	var renderer = fonts.TextRenderer{Window: s.window}
+	textLayout, err := renderer.CalculateTextLayout(text, briefingFontSize, int(textAreaWidth), int(textAreaHeight))
+	if nil == err {
+		renderer.RenderTextLayout(textLayout, briefingFontSize, common.White, &geometry.Point{
+			X: positionX,
+			Y: positionY,
+		})
+	} else {
+		logging.Warning.Fatalf("Failed to render text: %v", err)
 	}
 }
 
