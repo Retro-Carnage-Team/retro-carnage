@@ -1,14 +1,12 @@
 package config
 
 import (
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"retro-carnage/engine/characters"
-	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
+	"retro-carnage/ui/common/fonts"
 )
 
 type ResultScreen struct {
@@ -16,7 +14,6 @@ type ResultScreen struct {
 	infoTextPlayerTwo    string
 	inputController      input.Controller
 	screenChangeRequired common.ScreenChangeCallback
-	textDimensions       map[string]*geometry.Point
 	timeElapsed          int64
 	window               *pixelgl.Window
 }
@@ -43,26 +40,27 @@ func (s *ResultScreen) SetUp() {
 			logging.Warning.Printf("Failed to get controller name for player 1: %v", err)
 		}
 	}
-
-	s.textDimensions = common.GetTextDimensions(text.New(pixel.V(0, 0), common.DefaultAtlas),
-		txtOnePlayerGame, txtTwoPlayerGame, s.infoTextPlayerOne, s.infoTextPlayerTwo)
 }
 
 func (s *ResultScreen) Update(timeElapsedInMs int64) {
 	s.timeElapsed += timeElapsedInMs
 	s.window.Clear(common.Black)
 
+	renderer := fonts.TextRenderer{Window: s.window}
 	if 1 == characters.PlayerController.NumberOfPlayers() {
-		common.DrawLineToScreenCenter(s.window, txtOnePlayerGame, 2, common.Green, s.textDimensions[txtOnePlayerGame])
-		common.DrawLineToScreenCenter(s.window, s.infoTextPlayerOne, -1, common.Yellow, s.textDimensions[s.infoTextPlayerOne])
+		renderer.DrawLineToScreenCenter(txtOnePlayerGame, 2, common.Green)
+		renderer.DrawLineToScreenCenter(s.infoTextPlayerOne, -1, common.Yellow)
 	} else {
-		common.DrawLineToScreenCenter(s.window, txtTwoPlayerGame, 2, common.Green, s.textDimensions[txtTwoPlayerGame])
-		common.DrawLineToScreenCenter(s.window, s.infoTextPlayerOne, -1, common.Yellow, s.textDimensions[s.infoTextPlayerOne])
-		common.DrawLineToScreenCenter(s.window, s.infoTextPlayerTwo, -2.5, common.Yellow, s.textDimensions[s.infoTextPlayerTwo])
+		renderer.DrawLineToScreenCenter(txtTwoPlayerGame, 2, common.Green)
+		renderer.DrawLineToScreenCenter(s.infoTextPlayerOne, -1, common.Yellow)
+		renderer.DrawLineToScreenCenter(s.infoTextPlayerTwo, -2.5, common.Yellow)
 	}
 
-	if s.timeElapsed >= 2500 {
-		s.screenChangeRequired(common.Map)
+	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
+	if nil != uiEventState && uiEventState.PressedButton {
+		s.screenChangeRequired(common.Mission)
+	} else if s.timeElapsed >= 2500 {
+		s.screenChangeRequired(common.Mission)
 	}
 }
 

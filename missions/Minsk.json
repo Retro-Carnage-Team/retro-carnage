@@ -1,0 +1,13 @@
+{
+  "briefing": "My name is Dr. Valentin Pillmann. I have spent most of my life in the ... Zone ... and risked a lot to get hold of a valuable artifact called Nightstar. Bandits robbed me and stole it from me. Get the artifact back and you'll get $8,000.",
+  "client": "images/tiles/clients/adult-aged-black-and-white-close-up.jpg",
+  "location": {
+    "latitude": 158,
+    "longitude": 713
+  },
+  "music": "MUSIC_BACKGROUND_2",
+  "name": "Minsk",
+  "reward": 8000,
+  "segments": [],
+  "unfinished": false
+}

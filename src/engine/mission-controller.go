@@ -7,17 +7,21 @@ import (
 	"sort"
 )
 
-type MissionController struct {
+type MissionCtrl struct {
 	currentMission       *assets.Mission
 	finishedMissionNames []string
 }
 
-func (mc *MissionController) Reset() {
+var (
+	MissionController = &MissionCtrl{finishedMissionNames: make([]string, 0)}
+)
+
+func (mc *MissionCtrl) Reset() {
 	mc.currentMission = nil
 	mc.finishedMissionNames = make([]string, 0)
 }
 
-func (mc *MissionController) RemainingMissions() ([]*assets.Mission, error) {
+func (mc *MissionCtrl) RemainingMissions() ([]*assets.Mission, error) {
 	if !assets.MissionRepository.Initialized() {
 		return nil, errors.New("mission repository has not been initialized, yet")
 	}
@@ -35,11 +39,15 @@ func (mc *MissionController) RemainingMissions() ([]*assets.Mission, error) {
 	return result, nil
 }
 
-func (mc *MissionController) MarkMissionFinished(mission *assets.Mission) {
+func (mc *MissionCtrl) MarkMissionFinished(mission *assets.Mission) {
 	mc.finishedMissionNames = append(mc.finishedMissionNames, mission.Name)
 }
 
-func (mc *MissionController) SelectMission(mission *assets.Mission) {
+func (mc *MissionCtrl) CurrentMission() *assets.Mission {
+	return mc.currentMission
+}
+
+func (mc *MissionCtrl) SelectMission(mission *assets.Mission) {
 	if nil != mission {
 		mc.currentMission = mission
 		for _, player := range characters.PlayerController.RemainingPlayers() {
@@ -50,21 +58,21 @@ func (mc *MissionController) SelectMission(mission *assets.Mission) {
 	}
 }
 
-func (mc *MissionController) NextMissionNorth(relativeTo *assets.Location) (*assets.Mission, error) {
+func (mc *MissionCtrl) NextMissionNorth(relativeTo *assets.Location) (*assets.Mission, error) {
 	var filter = func(mission *assets.Mission) bool {
 		return mission.Location.Latitude < relativeTo.Latitude
 	}
 
 	var lessBuilder = func(missions []*assets.Mission) func(int, int) bool {
 		return func(i, j int) bool {
-			return missions[i].Location.Latitude < missions[j].Location.Latitude
+			return missions[i].Location.Latitude > missions[j].Location.Latitude
 		}
 	}
 
 	return mc.filterAndSortRemainingMissions(filter, lessBuilder)
 }
 
-func (mc *MissionController) NextMissionSouth(relativeTo *assets.Location) (*assets.Mission, error) {
+func (mc *MissionCtrl) NextMissionSouth(relativeTo *assets.Location) (*assets.Mission, error) {
 	var filter = func(mission *assets.Mission) bool {
 		return mission.Location.Latitude > relativeTo.Latitude
 	}
@@ -78,7 +86,7 @@ func (mc *MissionController) NextMissionSouth(relativeTo *assets.Location) (*ass
 	return mc.filterAndSortRemainingMissions(filter, lessBuilder)
 }
 
-func (mc *MissionController) NextMissionWest(relativeTo *assets.Location) (*assets.Mission, error) {
+func (mc *MissionCtrl) NextMissionWest(relativeTo *assets.Location) (*assets.Mission, error) {
 	var filter = func(mission *assets.Mission) bool {
 		return mission.Location.Longitude < relativeTo.Longitude
 	}
@@ -92,7 +100,7 @@ func (mc *MissionController) NextMissionWest(relativeTo *assets.Location) (*asse
 	return mc.filterAndSortRemainingMissions(filter, lessBuilder)
 }
 
-func (mc *MissionController) NextMissionEast(relativeTo *assets.Location) (*assets.Mission, error) {
+func (mc *MissionCtrl) NextMissionEast(relativeTo *assets.Location) (*assets.Mission, error) {
 	var filter = func(mission *assets.Mission) bool {
 		return mission.Location.Longitude > relativeTo.Longitude
 	}
@@ -106,7 +114,7 @@ func (mc *MissionController) NextMissionEast(relativeTo *assets.Location) (*asse
 	return mc.filterAndSortRemainingMissions(filter, lessBuilder)
 }
 
-func (mc *MissionController) filterAndSortRemainingMissions(test func(*assets.Mission) bool, lessBuilder func([]*assets.Mission) func(int, int) bool) (*assets.Mission, error) {
+func (mc *MissionCtrl) filterAndSortRemainingMissions(test func(*assets.Mission) bool, lessBuilder func([]*assets.Mission) func(int, int) bool) (*assets.Mission, error) {
 	var filteredMissions = make([]*assets.Mission, 0)
 	remainingMissions, err := mc.RemainingMissions()
 	if nil != err {

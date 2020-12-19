@@ -5,12 +5,9 @@ package title
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"image"
 	_ "image/jpeg"
-	"os"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
-	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/util"
 )
@@ -40,8 +37,7 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 }
 
 func (s *Screen) SetUp() {
-	var backgroundImage = loadBackgroundImage()
-	s.backgroundImageSprite = pixel.NewSprite(backgroundImage, backgroundImage.Bounds())
+	s.backgroundImageSprite = common.LoadSprite(backgroundImagePath)
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
@@ -64,19 +60,4 @@ func (s *Screen) TearDown() {}
 
 func (s *Screen) String() string {
 	return string(common.Title)
-}
-
-func loadBackgroundImage() pixel.Picture {
-	file, err := os.Open(backgroundImagePath)
-	if err != nil {
-		logging.Error.Fatalf("Failed to load background image for title screen: %v", err)
-		return nil
-	}
-	defer file.Close()
-	img, _, err := image.Decode(file)
-	if err != nil {
-		logging.Error.Fatalf("Failed to decode background image for title screen: %v", err)
-		return nil
-	}
-	return pixel.PictureDataFromImage(img)
 }

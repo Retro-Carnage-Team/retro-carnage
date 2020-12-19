@@ -1,0 +1,13 @@
+{
+  "briefing": "The leader of a local rebel organization bought missiles from me to enforce his legitimate interests. During the handover, special forces of an international military alliance appeared and confiscated the weapons. Return the missiles to my client to restore my reputation. I'll pay you $12,000.",
+  "client": "images/tiles/clients/bald-man-with-a-serious-facial-expression.jpg",
+  "location": {
+    "latitude": 249,
+    "longitude": 684
+  },
+  "music": "MUSIC_BACKGROUND_4",
+  "name": "Tripolis",
+  "reward": 12000,
+  "segments": [],
+  "unfinished": false
+}
