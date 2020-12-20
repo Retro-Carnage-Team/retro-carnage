@@ -2,13 +2,12 @@ package geometry
 
 import (
 	"math"
-	"retro-carnage/util"
 )
 
 func calculateMovementDistance(elapsedTimeInMs int64, distancePerMs float64, maxDistance *float64) float64 {
 	var distance = float64(elapsedTimeInMs) * distancePerMs
 	if nil != maxDistance {
-		return util.Min(*maxDistance, distance)
+		return math.Min(*maxDistance, distance)
 	}
 	return distance
 }

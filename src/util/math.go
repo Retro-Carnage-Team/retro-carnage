@@ -1,13 +1,13 @@
 package util
 
-func Max(a float64, b float64) float64 {
+func MaxInt(a int, b int) int {
 	if a > b {
 		return a
 	}
 	return b
 }
 
-func Min(a float64, b float64) float64 {
+func MinInt(a int, b int) int {
 	if a < b {
 		return a
 	}

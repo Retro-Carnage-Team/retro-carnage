@@ -7,6 +7,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"math"
+	"retro-carnage/engine"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
@@ -24,6 +25,7 @@ const selectionBorderWidth = 5.0
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
 	inputController       input.Controller
+	inventoryController   engine.InventoryController
 	itemNameToSprite      map[string]*pixel.Sprite
 	items                 []inventoryItem
 	PlayerIdx             int
@@ -46,6 +48,7 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 
 func (s *Screen) SetUp() {
 	s.backgroundImageSprite = common.LoadSprite(backgroundImagePath)
+	s.inventoryController = engine.NewInventoryController(s.PlayerIdx)
 	s.selectedItemIdx = 0
 
 	s.items = getAllInventoryItems()

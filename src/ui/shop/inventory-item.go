@@ -7,7 +7,7 @@ type inventoryItem interface {
 	Description() string
 	Image() string
 	Name() string
-	Price() int32
+	Price() int
 }
 
 func getAllInventoryItems() (result []inventoryItem) {

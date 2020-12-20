@@ -2,7 +2,7 @@ package geometry
 
 import (
 	"fmt"
-	"retro-carnage/util"
+	"math"
 )
 
 type Rectangle struct {
@@ -25,10 +25,10 @@ func (r *Rectangle) Subtract(offset *Point) *Rectangle {
 }
 
 func (r *Rectangle) Intersection(other *Rectangle) *Rectangle {
-	var leftX = util.Max(r.X, other.X)
-	var rightX = util.Min(r.X+r.Width, other.X+other.Width)
-	var topY = util.Max(r.Y, other.Y)
-	var bottomY = util.Min(r.Y+r.Height, other.Y+other.Height)
+	var leftX = math.Max(r.X, other.X)
+	var rightX = math.Min(r.X+r.Width, other.X+other.Width)
+	var topY = math.Max(r.Y, other.Y)
+	var bottomY = math.Min(r.Y+r.Height, other.Y+other.Height)
 	if leftX < rightX && topY < bottomY {
 		return &Rectangle{X: leftX, Y: topY, Width: rightX - leftX, Height: bottomY - topY}
 	}
