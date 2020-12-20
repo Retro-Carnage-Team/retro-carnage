@@ -42,7 +42,11 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 			s.millisecondsPassed = 0
 		}
 	} else if s.millisecondsPassed >= timeAfterLastChar {
-		s.screenChangeRequired(common.Shop)
+		if 0 == s.PlayerIdx {
+			s.screenChangeRequired(common.ShopP1)
+		} else {
+			s.screenChangeRequired(common.ShopP2)
+		}
 	}
 	var renderer = fonts.TextRenderer{Window: s.window}
 	renderer.DrawLineToScreenCenter(s.text, 0, common.White)

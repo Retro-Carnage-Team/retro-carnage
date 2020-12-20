@@ -44,7 +44,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.screenChangeTimeout += elapsedTimeInMs
 
 	var factorX = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
-	var factorY = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
+	var factorY = s.window.Bounds().Max.Y / s.backgroundImageSprite.Picture().Bounds().Max.Y
 	var factor = util.Max(factorX, factorY)
 
 	s.backgroundImageSprite.Draw(s.window,
