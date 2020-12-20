@@ -1,18 +1,22 @@
 package shop
 
 import (
+	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 	"math"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
+	"retro-carnage/ui/common/fonts"
 )
 
 const backgroundImagePath = "./images/backgrounds/shop.jpg"
 const bottomBarHeight = 70
+const buttonPadding = 10
 const itemMargin = 10.0
 const itemPadding = 25.0
 const selectionBorderWidth = 5.0
@@ -123,7 +127,7 @@ func (s *Screen) drawItemImages(itemAreas []geometry.Rectangle) {
 }
 
 func (s *Screen) drawBottomBar() {
-	// TODO: draw the content of the bottom bar
+	s.drawExitButton()
 }
 
 func (s *Screen) processUserInput() {
@@ -187,6 +191,26 @@ func (s *Screen) processSelectionMovedLeft() {
 		} else {
 			s.selectedItemIdx -= 1
 		}
+	}
+}
+
+func (s *Screen) drawExitButton() {
+	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, "EXIT SHOP")
+	var lineX = s.window.Bounds().W() - lineDimensions.X - 30
+	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
+	var txt = text.New(pixel.V(lineX, lineY), fonts.SizeToFontAtlas[fonts.DefaultFontSize])
+	txt.Color = common.White
+	_, _ = fmt.Fprint(txt, "EXIT SHOP")
+	txt.Draw(s.window, pixel.IM)
+
+	if -1 == s.selectedItemIdx {
+		imd := imdraw.New(nil)
+		imd.Color = common.Yellow
+		imd.Push(
+			pixel.V(lineX-buttonPadding, lineY-buttonPadding),
+			pixel.V(lineX+buttonPadding*2+lineDimensions.X, lineY+lineDimensions.Y))
+		imd.Rectangle(selectionBorderWidth)
+		imd.Draw(s.window)
 	}
 }
 
