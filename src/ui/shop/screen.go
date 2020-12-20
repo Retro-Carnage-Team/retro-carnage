@@ -7,6 +7,7 @@ import (
 	"math"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
+	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 )
 
@@ -51,6 +52,8 @@ func (s *Screen) SetUp() {
 }
 
 func (s *Screen) Update(_ int64) {
+	s.processUserInput()
+
 	s.drawBackground()
 	s.drawItems()
 	s.drawBottomBar()
@@ -121,6 +124,70 @@ func (s *Screen) drawItemImages(itemAreas []geometry.Rectangle) {
 
 func (s *Screen) drawBottomBar() {
 	// TODO: draw the content of the bottom bar
+}
+
+func (s *Screen) processUserInput() {
+	var eventState, err = s.inputController.GetControllerUiEventState(s.PlayerIdx)
+	if nil != err {
+		logging.Warning.Printf("Failed to get game controller state: %v", err)
+	} else if nil != eventState {
+		if eventState.MovedDown {
+			s.processSelectionMovedDown()
+		}
+		if eventState.MovedUp {
+			s.processSelectionMovedUp()
+		}
+		if eventState.MovedRight {
+			s.processSelectionMovedRight()
+		}
+		if eventState.MovedLeft {
+			s.processSelectionMovedLeft()
+		}
+	}
+}
+
+func (s *Screen) processSelectionMovedDown() {
+	if -1 != s.selectedItemIdx {
+		if 5 <= s.selectedItemIdx/5 {
+			s.selectedItemIdx = -1
+		} else {
+			s.selectedItemIdx += 5
+		}
+	} else {
+		s.selectedItemIdx = 4
+	}
+}
+
+func (s *Screen) processSelectionMovedUp() {
+	if -1 != s.selectedItemIdx {
+		if 5 > s.selectedItemIdx {
+			s.selectedItemIdx = -1
+		} else {
+			s.selectedItemIdx -= 5
+		}
+	} else {
+		s.selectedItemIdx = len(s.items) - 1
+	}
+}
+
+func (s *Screen) processSelectionMovedRight() {
+	if -1 != s.selectedItemIdx {
+		if 4 == s.selectedItemIdx%5 {
+			s.selectedItemIdx -= 4
+		} else {
+			s.selectedItemIdx += 1
+		}
+	}
+}
+
+func (s *Screen) processSelectionMovedLeft() {
+	if -1 != s.selectedItemIdx {
+		if 0 == s.selectedItemIdx%5 {
+			s.selectedItemIdx += 4
+		} else {
+			s.selectedItemIdx -= 1
+		}
+	}
 }
 
 func getItemRect(screenSize pixel.Vec, itemIdx int) geometry.Rectangle {

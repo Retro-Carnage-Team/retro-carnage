@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"retro-carnage/logging"
 	"retro-carnage/util"
+	"strings"
 	"time"
 )
 
@@ -18,6 +19,7 @@ type Stereo struct {
 	effects map[SoundEffect]sound
 	mixer   *beep.Mixer
 	music   map[Song]sound
+	noMusic bool
 }
 
 var stereo *Stereo
@@ -59,6 +61,8 @@ func (sb *Stereo) initialize() {
 	}
 
 	sb.music = make(map[Song]sound)
+
+	sb.noMusic = strings.Contains(os.Getenv("sound"), "no-music")
 }
 
 // PlayFx starts the playback of a given SoundEffect
@@ -79,6 +83,10 @@ func (sb *Stereo) StopFx(effect SoundEffect) {
 
 // PlaySong starts the playback of a given Song
 func (sb *Stereo) PlaySong(song Song) {
+	if sb.noMusic {
+		return
+	}
+
 	var aSound = sb.music[song]
 	if nil == aSound {
 		var err error = nil
