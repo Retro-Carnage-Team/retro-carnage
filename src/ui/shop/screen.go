@@ -7,7 +7,9 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"math"
+	"retro-carnage/assets"
 	"retro-carnage/engine"
+	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
@@ -18,12 +20,14 @@ import (
 const backgroundImagePath = "./images/backgrounds/shop.jpg"
 const bottomBarHeight = 70
 const buttonPadding = 10
+const checkImagePath = "./images/tiles/other/check-circle.png"
 const itemMargin = 10.0
 const itemPadding = 25.0
 const selectionBorderWidth = 5.0
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
+	checkSprite           *pixel.Sprite
 	inputController       input.Controller
 	inventoryController   engine.InventoryController
 	itemNameToSprite      map[string]*pixel.Sprite
@@ -48,6 +52,7 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 
 func (s *Screen) SetUp() {
 	s.backgroundImageSprite = common.LoadSprite(backgroundImagePath)
+	s.checkSprite = common.LoadSprite(checkImagePath)
 	s.inventoryController = engine.NewInventoryController(s.PlayerIdx)
 	s.selectedItemIdx = 0
 
@@ -92,7 +97,8 @@ func (s *Screen) drawItems() {
 
 	s.drawItemBackgrounds(itemAreas)
 	s.drawItemImages(itemAreas)
-	s.selectionBorder(itemAreas)
+	s.drawItemSelectionBorder(itemAreas)
+	s.drawPurchaseStatus(itemAreas)
 }
 
 func (s *Screen) drawItemBackgrounds(itemAreas []geometry.Rectangle) {
@@ -105,7 +111,7 @@ func (s *Screen) drawItemBackgrounds(itemAreas []geometry.Rectangle) {
 	imd.Draw(s.window)
 }
 
-func (s *Screen) selectionBorder(areas []geometry.Rectangle) {
+func (s *Screen) drawItemSelectionBorder(areas []geometry.Rectangle) {
 	if 0 <= s.selectedItemIdx && 30 >= s.selectedItemIdx {
 		var area = areas[s.selectedItemIdx]
 		imd := imdraw.New(nil)
@@ -129,6 +135,22 @@ func (s *Screen) drawItemImages(itemAreas []geometry.Rectangle) {
 	}
 }
 
+func (s *Screen) drawPurchaseStatus(areas []geometry.Rectangle) {
+	var weapons = assets.WeaponCrate.GetAll()
+	for idx, area := range areas {
+		if idx < len(weapons) {
+			var weapon = weapons[idx]
+			if s.inventoryController.WeaponInInventory(weapon.Name()) {
+				s.checkSprite.Draw(s.window, pixel.IM.Moved(pixel.V(
+					area.X+area.Width-s.checkSprite.Picture().Bounds().W(),
+					area.Y+s.checkSprite.Picture().Bounds().H())))
+			}
+		}
+		// TODO: Draw status of grenades
+		// TODO: Draw status of ammunition
+	}
+}
+
 func (s *Screen) drawBottomBar() {
 	s.drawExitButton()
 }
@@ -140,15 +162,15 @@ func (s *Screen) processUserInput() {
 	} else if nil != eventState {
 		if eventState.MovedDown {
 			s.processSelectionMovedDown()
-		}
-		if eventState.MovedUp {
+		} else if eventState.MovedUp {
 			s.processSelectionMovedUp()
-		}
-		if eventState.MovedRight {
+		} else if eventState.MovedRight {
 			s.processSelectionMovedRight()
-		}
-		if eventState.MovedLeft {
+		} else if eventState.MovedLeft {
 			s.processSelectionMovedLeft()
+		}
+		if eventState.PressedButton {
+			s.processButtonPressed()
 		}
 	}
 }
@@ -194,6 +216,22 @@ func (s *Screen) processSelectionMovedLeft() {
 		} else {
 			s.selectedItemIdx -= 1
 		}
+	}
+}
+
+func (s *Screen) processButtonPressed() {
+	if -1 == s.selectedItemIdx {
+		if (0 == s.PlayerIdx) && (2 == characters.PlayerController.NumberOfPlayers()) {
+			s.screenChangeRequired(common.BuyYourWeaponsP2)
+		} else {
+			s.screenChangeRequired(common.LetTheMissionBegin)
+		}
+	} else if len(assets.WeaponCrate.GetAll()) > s.selectedItemIdx {
+		s.inventoryController.BuyWeapon(s.items[s.selectedItemIdx].Name())
+	} else if len(assets.WeaponCrate.GetAll())+len(assets.GrenadeCrate.GetAll()) > s.selectedItemIdx {
+		s.inventoryController.BuyGrenade(s.items[s.selectedItemIdx].Name())
+	} else if len(assets.WeaponCrate.GetAll())+len(assets.GrenadeCrate.GetAll())+len(assets.AmmunitionCrate.GetAll()) > s.selectedItemIdx {
+		s.inventoryController.BuyAmmunition(s.items[s.selectedItemIdx].Name())
 	}
 }
 
