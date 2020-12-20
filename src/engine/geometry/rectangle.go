@@ -24,7 +24,7 @@ func (r *Rectangle) Subtract(offset *Point) *Rectangle {
 	return r
 }
 
-func (r *Rectangle) GetIntersection(other *Rectangle) *Rectangle {
+func (r *Rectangle) Intersection(other *Rectangle) *Rectangle {
 	var leftX = util.Max(r.X, other.X)
 	var rightX = util.Min(r.X+r.Width, other.X+other.Width)
 	var topY = util.Max(r.Y, other.Y)
@@ -35,20 +35,27 @@ func (r *Rectangle) GetIntersection(other *Rectangle) *Rectangle {
 	return nil
 }
 
-func (r *Rectangle) GetLeftBorder() *Line {
+func (r *Rectangle) LeftBorder() *Line {
 	return &Line{Start: &Point{X: r.X, Y: r.Y}, End: &Point{X: r.X, Y: r.Y + r.Height}}
 }
 
-func (r *Rectangle) GetRightBorder() *Line {
+func (r *Rectangle) RightBorder() *Line {
 	return &Line{Start: &Point{X: r.X + r.Width, Y: r.Y}, End: &Point{X: r.X + r.Width, Y: r.Y + r.Height}}
 }
 
-func (r *Rectangle) GetTopBorder() *Line {
+func (r *Rectangle) TopBorder() *Line {
 	return &Line{Start: &Point{X: r.X, Y: r.Y}, End: &Point{X: r.X + r.Width, Y: r.Y}}
 }
 
-func (r *Rectangle) GetBottomBorder() *Line {
+func (r *Rectangle) BottomBorder() *Line {
 	return &Line{Start: &Point{X: r.X, Y: r.Y + r.Height}, End: &Point{X: r.X + r.Width, Y: r.Y + r.Height}}
+}
+
+func (r *Rectangle) Center() *Point {
+	return &Point{
+		X: (r.X + r.X + r.Width) / 2,
+		Y: (r.Y + r.Y + r.Height) / 2,
+	}
 }
 
 func (r *Rectangle) String() string {
