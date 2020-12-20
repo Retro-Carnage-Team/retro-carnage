@@ -16,10 +16,11 @@ import (
 
 // Stereo is the class we use to play music and sound effects throughout the application.
 type Stereo struct {
-	effects map[SoundEffect]sound
-	mixer   *beep.Mixer
-	music   map[Song]sound
-	noMusic bool
+	effects   map[SoundEffect]sound
+	mixer     *beep.Mixer
+	music     map[Song]sound
+	noEffects bool
+	noMusic   bool
 }
 
 var stereo *Stereo
@@ -50,23 +51,30 @@ func (sb *Stereo) initialize() {
 	sb.mixer = &beep.Mixer{}
 	speaker.Play(sb.mixer)
 
+	sb.noEffects = strings.Contains(os.Getenv("sound"), "no-fx")
+	sb.noMusic = strings.Contains(os.Getenv("sound"), "no-music")
+
 	sb.effects = make(map[SoundEffect]sound)
-	for _, fx := range SoundEffects {
-		sound, err := loadSoundEffect(fx)
-		if err != nil {
-			logging.Error.Panicln(err.Error())
-		} else {
-			sb.effects[fx] = sound
+	if !sb.noEffects {
+		for _, fx := range SoundEffects {
+			sound, err := loadSoundEffect(fx)
+			if err != nil {
+				logging.Error.Panicln(err.Error())
+			} else {
+				sb.effects[fx] = sound
+			}
 		}
 	}
 
 	sb.music = make(map[Song]sound)
-
-	sb.noMusic = strings.Contains(os.Getenv("sound"), "no-music")
 }
 
 // PlayFx starts the playback of a given SoundEffect
 func (sb *Stereo) PlayFx(effect SoundEffect) {
+	if sb.noEffects {
+		return
+	}
+
 	var aSound = sb.effects[effect]
 	if nil != aSound {
 		aSound.play(sb.mixer)
