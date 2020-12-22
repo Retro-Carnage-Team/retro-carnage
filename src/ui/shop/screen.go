@@ -156,15 +156,17 @@ func (s *Screen) drawPurchaseStatus(areas []geometry.Rectangle) {
 				imd.Push(
 					pixel.V(area.X+itemPadding, area.Y+itemPadding),
 					pixel.V(area.X+itemPadding+barWidth, area.Y+itemPadding+5))
+				imd.Rectangle(0)
 			}
 		}
 	}
 
-	imd.Rectangle(selectionBorderWidth)
 	imd.Draw(s.window)
 }
 
 func (s *Screen) drawBottomBar() {
+	s.drawCostLabel()
+	s.drawCreditLabel()
 	s.drawExitButton()
 }
 
@@ -249,6 +251,31 @@ func (s *Screen) processButtonPressed() {
 			s.inventoryController.BuyAmmunition(item.Name())
 		}
 	}
+}
+
+func (s *Screen) drawCostLabel() {
+	var content = "COST: -"
+	if -1 != s.selectedItemIdx {
+		content = fmt.Sprintf("COST: %d", s.items[s.selectedItemIdx].Price())
+	}
+
+	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, content)
+	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
+	var txt = text.New(pixel.V(30.0, lineY), fonts.SizeToFontAtlas[fonts.DefaultFontSize])
+	txt.Color = common.White
+	_, _ = fmt.Fprint(txt, content)
+	txt.Draw(s.window, pixel.IM)
+}
+
+func (s *Screen) drawCreditLabel() {
+	var content = fmt.Sprintf("CREDIT: %d", characters.Players[s.PlayerIdx].Cash())
+	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, content)
+	var lineX = (s.window.Bounds().W() - lineDimensions.X) / 2
+	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
+	var txt = text.New(pixel.V(lineX, lineY), fonts.SizeToFontAtlas[fonts.DefaultFontSize])
+	txt.Color = common.White
+	_, _ = fmt.Fprint(txt, content)
+	txt.Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawExitButton() {
