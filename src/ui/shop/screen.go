@@ -7,7 +7,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"math"
-	"retro-carnage/assets"
 	"retro-carnage/engine"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
@@ -31,7 +30,7 @@ type Screen struct {
 	inputController       input.Controller
 	inventoryController   engine.InventoryController
 	itemNameToSprite      map[string]*pixel.Sprite
-	items                 []inventoryItem
+	items                 []*inventoryItem
 	PlayerIdx             int
 	screenChangeRequired  common.ScreenChangeCallback
 	selectedItemIdx       int
@@ -136,19 +135,33 @@ func (s *Screen) drawItemImages(itemAreas []geometry.Rectangle) {
 }
 
 func (s *Screen) drawPurchaseStatus(areas []geometry.Rectangle) {
-	var weapons = assets.WeaponCrate.GetAll()
+	imd := imdraw.New(nil)
+	imd.Color = common.White
+
 	for idx, area := range areas {
-		if idx < len(weapons) {
-			var weapon = weapons[idx]
-			if s.inventoryController.WeaponInInventory(weapon.Name()) {
+		var item = s.items[idx]
+		if item.IsWeapon() {
+			if s.inventoryController.WeaponInInventory(item.Name()) {
 				s.checkSprite.Draw(s.window, pixel.IM.Moved(pixel.V(
 					area.X+area.Width-s.checkSprite.Picture().Bounds().W(),
 					area.Y+s.checkSprite.Picture().Bounds().H())))
 			}
+		} else {
+			var ratio, err = item.OwnedPortion(s.PlayerIdx)
+			if nil != err {
+				logging.Error.Fatalf("failed to get ratio of owned ammo: %v", err)
+			}
+			if ratio > 0 {
+				var barWidth = (area.Width - itemPadding - itemPadding) * ratio
+				imd.Push(
+					pixel.V(area.X+itemPadding, area.Y+itemPadding),
+					pixel.V(area.X+itemPadding+barWidth, area.Y+itemPadding+5))
+			}
 		}
-		// TODO: Draw status of grenades
-		// TODO: Draw status of ammunition
 	}
+
+	imd.Rectangle(selectionBorderWidth)
+	imd.Draw(s.window)
 }
 
 func (s *Screen) drawBottomBar() {
@@ -226,12 +239,15 @@ func (s *Screen) processButtonPressed() {
 		} else {
 			s.screenChangeRequired(common.LetTheMissionBegin)
 		}
-	} else if len(assets.WeaponCrate.GetAll()) > s.selectedItemIdx {
-		s.inventoryController.BuyWeapon(s.items[s.selectedItemIdx].Name())
-	} else if len(assets.WeaponCrate.GetAll())+len(assets.GrenadeCrate.GetAll()) > s.selectedItemIdx {
-		s.inventoryController.BuyGrenade(s.items[s.selectedItemIdx].Name())
-	} else if len(assets.WeaponCrate.GetAll())+len(assets.GrenadeCrate.GetAll())+len(assets.AmmunitionCrate.GetAll()) > s.selectedItemIdx {
-		s.inventoryController.BuyAmmunition(s.items[s.selectedItemIdx].Name())
+	} else {
+		var item = s.items[s.selectedItemIdx]
+		if item.IsWeapon() {
+			s.inventoryController.BuyWeapon(item.Name())
+		} else if item.IsGrenade() {
+			s.inventoryController.BuyGrenade(item.Name())
+		} else if item.IsAmmunition() {
+			s.inventoryController.BuyAmmunition(item.Name())
+		}
 	}
 }
 
