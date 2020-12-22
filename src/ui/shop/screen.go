@@ -5,8 +5,8 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"math"
+	"retro-carnage/assets"
 	"retro-carnage/engine"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
@@ -22,7 +22,26 @@ const buttonPadding = 10
 const checkImagePath = "./images/tiles/other/check-circle.png"
 const itemMargin = 10.0
 const itemPadding = 25.0
+const labelAmmo = "Ammo: "
+const labelLength = "Length: "
+const labelPackageSize = "Package Size: "
+const labelPrice = "Price: "
+const labelRange = "Range: "
+const labelSpeed = "Speed: "
+const labelWeight = "Weight: "
+const modalFontSize = 36
+const modalColumnSpace = 45
+const modalLabelSpace = 15
+const modalTableSpace = 30
 const selectionBorderWidth = 5.0
+
+type modalButton int
+
+const (
+	buttonBuyWeapon modalButton = iota
+	buttonBuyAmmo
+	buttonCloseModal
+)
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
@@ -31,6 +50,9 @@ type Screen struct {
 	inventoryController   engine.InventoryController
 	itemNameToSprite      map[string]*pixel.Sprite
 	items                 []*inventoryItem
+	labelDimensions       map[string]*geometry.Point
+	modalButtonSelection  modalButton
+	modalVisible          bool
 	PlayerIdx             int
 	screenChangeRequired  common.ScreenChangeCallback
 	selectedItemIdx       int
@@ -53,7 +75,10 @@ func (s *Screen) SetUp() {
 	s.backgroundImageSprite = common.LoadSprite(backgroundImagePath)
 	s.checkSprite = common.LoadSprite(checkImagePath)
 	s.inventoryController = engine.NewInventoryController(s.PlayerIdx)
+	s.labelDimensions = fonts.GetTextDimensions(modalFontSize, labelAmmo, labelLength, labelPackageSize, labelPrice,
+		labelRange, labelSpeed, labelWeight)
 	s.selectedItemIdx = 0
+	s.modalVisible = false
 
 	s.items = getAllInventoryItems()
 	s.itemNameToSprite = make(map[string]*pixel.Sprite)
@@ -68,6 +93,10 @@ func (s *Screen) Update(_ int64) {
 	s.drawBackground()
 	s.drawItems()
 	s.drawBottomBar()
+
+	if s.modalVisible {
+		s.drawModal()
+	}
 }
 
 func (s *Screen) TearDown() {}
@@ -235,6 +264,36 @@ func (s *Screen) processSelectionMovedLeft() {
 }
 
 func (s *Screen) processButtonPressed() {
+	if s.modalVisible {
+		s.processButtonPressedOnModal()
+	} else {
+		s.processButtonPressedOnShop()
+	}
+}
+
+func (s *Screen) processButtonPressedOnModal() {
+	var item = s.items[s.selectedItemIdx]
+	switch s.modalButtonSelection {
+	case buttonBuyWeapon:
+		s.inventoryController.BuyWeapon(item.Name())
+	case buttonBuyAmmo:
+		if item.IsWeapon() {
+			weapon, err := assets.WeaponCrate.GetByName(item.Name())
+			if nil != err {
+				logging.Error.Fatalf("failed to get weapon named %s: %v", item.Name(), err)
+			}
+			s.inventoryController.BuyAmmunition(weapon.Ammo())
+		} else if item.IsGrenade() {
+			s.inventoryController.BuyGrenade(item.Name())
+		} else if item.IsAmmunition() {
+			s.inventoryController.BuyAmmunition(item.Name())
+		}
+	case buttonCloseModal:
+		s.modalVisible = false
+	}
+}
+
+func (s *Screen) processButtonPressedOnShop() {
 	if -1 == s.selectedItemIdx {
 		if (0 == s.PlayerIdx) && (2 == characters.PlayerController.NumberOfPlayers()) {
 			s.screenChangeRequired(common.BuyYourWeaponsP2)
@@ -242,15 +301,19 @@ func (s *Screen) processButtonPressed() {
 			s.screenChangeRequired(common.LetTheMissionBegin)
 		}
 	} else {
-		var item = s.items[s.selectedItemIdx]
-		if item.IsWeapon() {
-			s.inventoryController.BuyWeapon(item.Name())
-		} else if item.IsGrenade() {
-			s.inventoryController.BuyGrenade(item.Name())
-		} else if item.IsAmmunition() {
-			s.inventoryController.BuyAmmunition(item.Name())
-		}
+		s.showModal()
 	}
+}
+
+func (s *Screen) showModal() {
+	if s.isModalButtonBuyWeaponAvailable() {
+		s.modalButtonSelection = buttonBuyWeapon
+	} else if s.isModalButtonBuyAmmunitionAvailable() {
+		s.modalButtonSelection = buttonBuyAmmo
+	} else {
+		s.modalButtonSelection = buttonCloseModal
+	}
+	s.modalVisible = true
 }
 
 func (s *Screen) drawCostLabel() {
@@ -261,10 +324,7 @@ func (s *Screen) drawCostLabel() {
 
 	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, content)
 	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
-	var txt = text.New(pixel.V(30.0, lineY), fonts.SizeToFontAtlas[fonts.DefaultFontSize])
-	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, content)
-	txt.Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(30.0, lineY), fonts.DefaultFontSize, common.White, content).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawCreditLabel() {
@@ -272,20 +332,14 @@ func (s *Screen) drawCreditLabel() {
 	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, content)
 	var lineX = (s.window.Bounds().W() - lineDimensions.X) / 2
 	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
-	var txt = text.New(pixel.V(lineX, lineY), fonts.SizeToFontAtlas[fonts.DefaultFontSize])
-	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, content)
-	txt.Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(lineX, lineY), fonts.DefaultFontSize, common.White, content).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawExitButton() {
 	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, "EXIT SHOP")
 	var lineX = s.window.Bounds().W() - lineDimensions.X - 30
 	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
-	var txt = text.New(pixel.V(lineX, lineY), fonts.SizeToFontAtlas[fonts.DefaultFontSize])
-	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, "EXIT SHOP")
-	txt.Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(lineX, lineY), fonts.DefaultFontSize, common.White, "EXIT SHOP").Draw(s.window, pixel.IM)
 
 	if -1 == s.selectedItemIdx {
 		imd := imdraw.New(nil)
@@ -296,6 +350,114 @@ func (s *Screen) drawExitButton() {
 		imd.Rectangle(selectionBorderWidth)
 		imd.Draw(s.window)
 	}
+}
+
+func (s *Screen) drawModal() {
+	s.drawModalHeader()
+	s.drawModalBody()
+	// TODO: Draw footer
+}
+
+func (s *Screen) drawModalHeader() {
+	imd := imdraw.New(nil)
+	imd.Color = common.ModalBg
+	imd.Push(
+		pixel.V(s.window.Bounds().W()/5, s.window.Bounds().H()-100),
+		pixel.V(s.window.Bounds().W()*4/5, s.window.Bounds().H()-100-bottomBarHeight))
+	imd.Rectangle(0)
+	imd.Draw(s.window)
+
+	var itemName = s.items[s.selectedItemIdx].Name()
+	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, itemName)
+	var lineX = (s.window.Bounds().W() / 5) + 30
+	var lineY = s.window.Bounds().H() - 100 - bottomBarHeight + (bottomBarHeight-lineDimensions.Y)/2
+	fonts.BuildText(pixel.V(lineX, lineY), fonts.DefaultFontSize, common.White, itemName).Draw(s.window, pixel.IM)
+}
+
+func (s *Screen) drawModalBody() {
+	var item = s.items[s.selectedItemIdx]
+	if item.IsWeapon() {
+		s.drawModalBodyWeaponTable(item)
+	} else {
+		s.drawModalBodyAmmoGrenadeTable(item)
+	}
+}
+
+func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
+
+}
+
+func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
+	var priceValue = fmt.Sprintf("$%d", item.Price())
+	var packageSizeValue = ""
+	var rangeValue = ""
+
+	if item.IsAmmunition() {
+		var ammo, err = assets.AmmunitionCrate.GetByName(item.Name())
+		if nil != err {
+			logging.Error.Fatalf("ammunition %s not found: %v", item.Name(), err)
+		}
+		packageSizeValue = fmt.Sprintf("%d", ammo.PackageSize())
+	} else {
+		var grenade, err = assets.GrenadeCrate.GetByName(item.Name())
+		if nil != err {
+			logging.Error.Fatalf("grenade %s not found: %v", item.Name(), err)
+		}
+		packageSizeValue = fmt.Sprintf("%d", grenade.PackageSize())
+		rangeValue = fmt.Sprintf("%d m", grenade.MovementDistance())
+	}
+
+	var maxLabelWidth = math.Max(
+		s.labelDimensions[labelPrice].X, math.Max(
+			s.labelDimensions[labelPackageSize].X,
+			s.labelDimensions[labelRange].X))
+	var maxValueWidth = math.Max(
+		fonts.GetTextDimension(modalFontSize, priceValue).X, math.Max(
+			fonts.GetTextDimension(modalFontSize, packageSizeValue).X,
+			fonts.GetTextDimension(modalFontSize, rangeValue).X))
+
+	var labelX = (s.window.Bounds().W() - maxLabelWidth - modalLabelSpace - maxValueWidth) / 2
+	var valueX = labelX + maxLabelWidth + modalColumnSpace
+	var labelY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableSpace - s.labelDimensions[labelPrice].Y
+	fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.White, labelPrice).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.White, priceValue).Draw(s.window, pixel.IM)
+
+	labelY -= 1.2 * s.labelDimensions[labelPrice].Y
+	fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.White, labelPackageSize).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.White, packageSizeValue).Draw(s.window, pixel.IM)
+
+	if item.IsGrenade() {
+		labelY -= 1.2 * s.labelDimensions[labelPrice].Y
+		fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.White, labelRange).Draw(s.window, pixel.IM)
+		fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.White, rangeValue).Draw(s.window, pixel.IM)
+	}
+}
+
+func (s *Screen) isModalButtonBuyWeaponAvailable() bool {
+	return s.selectedItemIdx != -1 &&
+		s.items[s.selectedItemIdx].IsWeapon() &&
+		s.inventoryController.WeaponProcurable(s.items[s.selectedItemIdx].Name())
+}
+
+func (s *Screen) isModalButtonBuyAmmunitionAvailable() bool {
+	if s.selectedItemIdx == -1 {
+		return false
+	}
+
+	var item = s.items[s.selectedItemIdx]
+	if item.IsGrenade() {
+		return s.inventoryController.GrenadeProcurable(item.Name())
+	}
+
+	var ammoName = item.Name()
+	if item.IsWeapon() {
+		var weapon, err = assets.WeaponCrate.GetByName(item.Name())
+		if nil != err {
+			logging.Error.Fatalf("failed to get ammo by weapon name: %v", err)
+		}
+		ammoName = weapon.Ammo()
+	}
+	return s.inventoryController.AmmunitionProcurable(ammoName)
 }
 
 func getItemRect(screenSize pixel.Vec, itemIdx int) geometry.Rectangle {

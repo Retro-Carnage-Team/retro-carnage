@@ -5,6 +5,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
+	"image/color"
 	"io/ioutil"
 	"os"
 	"retro-carnage/engine/geometry"
@@ -66,4 +67,11 @@ func GetTextDimension(fontSize int, input string) *geometry.Point {
 	var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
 	_, _ = fmt.Fprint(txt, input)
 	return &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
+}
+
+func BuildText(position pixel.Vec, fontSize int, color color.Color, content string) *text.Text {
+	var txt = text.New(position, SizeToFontAtlas[fontSize])
+	txt.Color = color
+	_, _ = fmt.Fprint(txt, content)
+	return txt
 }
