@@ -154,7 +154,7 @@ func (s *Screen) drawItemBackgrounds(itemAreas []geometry.Rectangle) {
 }
 
 func (s *Screen) drawItemSelectionBorder(areas []geometry.Rectangle) {
-	if 0 <= s.selectedItemIdx && 30 >= s.selectedItemIdx {
+	if 0 <= s.selectedItemIdx && 30 >= s.selectedItemIdx && !s.modalVisible {
 		var area = areas[s.selectedItemIdx]
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
@@ -362,44 +362,47 @@ func (s *Screen) drawExitButton() {
 
 func (s *Screen) drawModal() {
 	s.drawModalHeader()
-	s.drawModalBody()
-	// TODO: Draw footer
+	var bodyLowerBorder = s.drawModalBody()
+	s.drawModalFooter(bodyLowerBorder)
 }
 
 func (s *Screen) drawModalHeader() {
 	imd := imdraw.New(nil)
 	imd.Color = common.ModalBg
 	imd.Push(
-		pixel.V(s.window.Bounds().W()/5, s.window.Bounds().H()-100),
-		pixel.V(s.window.Bounds().W()*4/5, s.window.Bounds().H()-100-bottomBarHeight))
+		pixel.V(s.getModalLeftBorder(), s.window.Bounds().H()-100),
+		pixel.V(s.getModalRightBorder(), s.window.Bounds().H()-100-bottomBarHeight))
 	imd.Rectangle(0)
 	imd.Draw(s.window)
 
 	var itemName = s.items[s.selectedItemIdx].Name()
 	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, itemName)
-	var lineX = (s.window.Bounds().W() / 5) + 30
+	var lineX = s.getModalLeftBorder() + 30
 	var lineY = s.window.Bounds().H() - 100 - bottomBarHeight + (bottomBarHeight-lineDimensions.Y)/2
 	fonts.BuildText(pixel.V(lineX, lineY), fonts.DefaultFontSize, common.White, itemName).Draw(s.window, pixel.IM)
 }
 
-func (s *Screen) drawModalBody() {
+func (s *Screen) drawModalBody() float64 {
 	var item = s.items[s.selectedItemIdx]
 
 	var textRenderer = fonts.TextRenderer{Window: s.window}
-	textLayout, err := textRenderer.CalculateTextLayout(item.Description(), modalFontSize, int(s.window.Bounds().W()*3/5)-modalLabelSpace*2, int(s.window.Bounds().H()-300))
+
+	var textWidth = s.getModalRightBorder() - s.getModalLeftBorder() - modalLabelSpace - modalLabelSpace
+	textLayout, err := textRenderer.CalculateTextLayout(item.Description(), modalFontSize, int(textWidth), int(s.window.Bounds().H()-300))
 	if nil != err {
 		logging.Warning.Fatalf("text is too large for modal")
-		return
+		return 0
 	}
 
 	var tableAreaHeight = s.labelDimensions[labelPrice].Y*3.4 + modalTableVMargin*2
 	var descriptionAreaHeight = textLayout.Height()
+	var modalBodyLowerBorder = s.window.Bounds().H() - 100 - bottomBarHeight - tableAreaHeight - descriptionAreaHeight - modalTableVMargin
 
 	imd := imdraw.New(nil)
 	imd.Color = common.White
 	imd.Push(
-		pixel.V(s.window.Bounds().W()/5, s.window.Bounds().H()-100-bottomBarHeight),
-		pixel.V(s.window.Bounds().W()*4/5, s.window.Bounds().H()-100-bottomBarHeight-tableAreaHeight-descriptionAreaHeight-modalTableVMargin))
+		pixel.V(s.getModalLeftBorder(), s.window.Bounds().H()-100-bottomBarHeight),
+		pixel.V(s.getModalRightBorder(), modalBodyLowerBorder))
 	imd.Rectangle(0)
 	imd.Draw(s.window)
 
@@ -411,12 +414,13 @@ func (s *Screen) drawModalBody() {
 
 	var lineY = s.window.Bounds().H() - 100 - bottomBarHeight - tableAreaHeight
 	var atlas = fonts.SizeToFontAtlas[modalFontSize]
-	var txt = text.New(pixel.V(s.window.Bounds().W()/5+modalLabelSpace, lineY-textLayout.Lines()[0].Dimension().Y), atlas)
+	var txt = text.New(pixel.V(s.getModalLeftBorder()+modalLabelSpace, lineY-textLayout.Lines()[0].Dimension().Y), atlas)
 	txt.Color = common.Black
 	for _, line := range textLayout.Lines() {
 		_, _ = fmt.Fprintln(txt, line.Text())
 	}
 	txt.Draw(s.window, pixel.IM)
+	return modalBodyLowerBorder
 }
 
 func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
@@ -486,6 +490,17 @@ func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
 	fonts.BuildMultiLineText(pixel.V(valueX, labelY), modalFontSize, common.Black, []string{priceValue, packageSizeValue, thirdValue}).Draw(s.window, pixel.IM)
 }
 
+func (s *Screen) drawModalFooter(upperBorder float64) {
+	imd := imdraw.New(nil)
+	imd.Color = common.ModalBg
+	imd.Push(
+		pixel.V(s.getModalLeftBorder(), upperBorder),
+		pixel.V(s.getModalRightBorder(), upperBorder-bottomBarHeight))
+	imd.Rectangle(0)
+	imd.Draw(s.window)
+
+}
+
 func (s *Screen) isModalButtonBuyWeaponAvailable() bool {
 	return s.selectedItemIdx != -1 &&
 		s.items[s.selectedItemIdx].IsWeapon() &&
@@ -508,6 +523,14 @@ func (s *Screen) isModalButtonBuyAmmunitionAvailable() bool {
 		ammoName = weapon.Ammo()
 	}
 	return s.inventoryController.AmmunitionProcurable(ammoName)
+}
+
+func (s *Screen) getModalLeftBorder() float64 {
+	return (s.window.Bounds().W() / 5) + 50
+}
+
+func (s *Screen) getModalRightBorder() float64 {
+	return (s.window.Bounds().W() * 4 / 5) - 50
 }
 
 func getItemRect(screenSize pixel.Vec, itemIdx int) geometry.Rectangle {

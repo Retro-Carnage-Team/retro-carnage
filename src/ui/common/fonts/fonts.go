@@ -17,9 +17,11 @@ const defaultFontPath = "./fonts/XXII-DIRTY-ARMY.ttf"
 const DefaultFontSize = 52
 
 var SizeToFontAtlas map[int]*text.Atlas
+var textDimensionCache map[string]*geometry.Point
 
 func Initialize() {
 	SizeToFontAtlas = make(map[int]*text.Atlas)
+	textDimensionCache = make(map[string]*geometry.Point)
 
 	defaultFont, err := loadTTF(defaultFontPath)
 	if nil != err {
@@ -64,9 +66,15 @@ func GetTextDimensions(fontSize int, input ...string) map[string]*geometry.Point
 }
 
 func GetTextDimension(fontSize int, input string) *geometry.Point {
-	var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
-	_, _ = fmt.Fprint(txt, input)
-	return &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
+	var key = fmt.Sprintf("%d___%s", fontSize, input)
+	var value = textDimensionCache[key]
+	if nil == value {
+		var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
+		_, _ = fmt.Fprint(txt, input)
+		value = &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
+		textDimensionCache[key] = value
+	}
+	return value
 }
 
 func GetMaxTextWidth(fontSize int, input []string) float64 {
