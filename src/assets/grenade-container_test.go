@@ -10,7 +10,6 @@ func TestGrenadeCrateGetAll(t *testing.T) {
 }
 
 func TestGrenadeCrateGetByNameValid(t *testing.T) {
-	grenade, err := GrenadeCrate.GetByName("DM41")
-	assert.Nil(t, err)
+	grenade := GrenadeCrate.GetByName("DM41")
 	assert.Equal(t, 500, int(grenade.Price()))
 }

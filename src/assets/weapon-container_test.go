@@ -10,7 +10,6 @@ func TestWeaponCrateGetAll(t *testing.T) {
 }
 
 func TestWeaponCrateGetByNameValid(t *testing.T) {
-	weapon, err := WeaponCrate.GetByName("Panzerfaust 44")
-	assert.Nil(t, err)
+	weapon := WeaponCrate.GetByName("Panzerfaust 44")
 	assert.Equal(t, RPG, weapon.WeaponType())
 }
