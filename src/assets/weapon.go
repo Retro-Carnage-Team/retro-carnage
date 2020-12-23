@@ -26,7 +26,7 @@ type Weapon struct {
 }
 
 func (w *Weapon) Ammo() string {
-	return w.name
+	return w.ammo
 }
 
 func (w *Weapon) BulletInterval() int {

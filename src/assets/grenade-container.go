@@ -1,6 +1,8 @@
 package assets
 
-import "errors"
+import (
+	"retro-carnage/logging"
+)
 
 type GrenadeContainer struct {
 	grenades []*Grenade
@@ -10,13 +12,14 @@ func (gc *GrenadeContainer) GetAll() []*Grenade {
 	return gc.grenades
 }
 
-func (gc *GrenadeContainer) GetByName(name string) (*Grenade, error) {
+func (gc *GrenadeContainer) GetByName(name string) *Grenade {
 	for _, grenade := range gc.grenades {
 		if grenade.Name() == name {
-			return grenade, nil
+			return grenade
 		}
 	}
-	return nil, errors.New("no such element")
+	logging.Error.Fatalf("There is no type of grenade named %s", name)
+	return nil
 }
 
 var (

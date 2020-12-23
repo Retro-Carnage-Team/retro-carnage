@@ -12,10 +12,10 @@ func TestStopSomeTask(t *testing.T) {
 	time.Sleep(250 * time.Millisecond)
 	stopWatch.Stop()
 
-	assert.InDelta(t, 250, stopWatch.Duration, 50)
+	assert.InDelta(t, 250, stopWatch.totalDuration, 50)
 }
 
 func TestStopNamedTask(t *testing.T) {
-	var stopWatch = &StopWatch{Name: "Buffering sound effect MP5.mp3", Duration: 250}
-	assert.Equal(t, "Buffering sound effect MP5.mp3 took 250 ms", stopWatch.DebugMessage())
+	var stopWatch = &StopWatch{Name: "Buffering sound effect MP5.mp3", totalDuration: 250, startedTimes: 1}
+	assert.Equal(t, "1 executions of Buffering sound effect MP5.mp3 took 250 ms (avg)", stopWatch.PrintDebugMessage())
 }

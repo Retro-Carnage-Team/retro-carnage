@@ -3,7 +3,6 @@ package engine
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
-	"retro-carnage/logging"
 	"retro-carnage/util"
 )
 
@@ -28,12 +27,7 @@ func (ic *InventoryController) AmmunitionCount(ammunitionName string) int {
 
 // AmmunitionProcurable returns whether or not a player can purchase more ammunition of the specified type.
 func (ic *InventoryController) AmmunitionProcurable(ammunitionName string) bool {
-	var ammunition, err = assets.AmmunitionCrate.GetByName(ammunitionName)
-	if nil != err {
-		logging.Error.Fatalf("No such ammunition: %s", ammunitionName)
-		return false
-	}
-
+	var ammunition = assets.AmmunitionCrate.GetByName(ammunitionName)
 	var player = characters.Players[ic.playerIdx]
 	var currentAmount = player.AmmunitionCount(ammunitionName)
 	return (currentAmount < ammunition.MaxCount()) && (player.Cash() >= ammunition.Price())
@@ -42,11 +36,7 @@ func (ic *InventoryController) AmmunitionProcurable(ammunitionName string) bool 
 // BuyAmmunition purchases a box of ammunition of the specified type.
 func (ic *InventoryController) BuyAmmunition(ammunitionName string) {
 	if ic.AmmunitionProcurable(ammunitionName) {
-		var ammunition, err = assets.AmmunitionCrate.GetByName(ammunitionName)
-		if nil != err {
-			logging.Error.Fatalf("No such ammunition: %s", ammunitionName)
-		}
-
+		var ammunition = assets.AmmunitionCrate.GetByName(ammunitionName)
 		var player = characters.Players[ic.playerIdx]
 		var increasedCount = player.AmmunitionCount(ammunitionName) + ammunition.PackageSize()
 		player.SetAmmunitionCount(ammunitionName, util.MinInt(increasedCount, ammunition.MaxCount()))
@@ -94,12 +84,7 @@ func (ic *InventoryController) GrenadeCount(grenadeName string) int {
 
 // GrenadeProcurable returns whether or not a player can purchase more grenades of the specified type.
 func (ic *InventoryController) GrenadeProcurable(grenadeName string) bool {
-	var grenade, err = assets.GrenadeCrate.GetByName(grenadeName)
-	if nil != err {
-		logging.Error.Fatalf("No such grenade: %s", grenadeName)
-		return false
-	}
-
+	var grenade = assets.GrenadeCrate.GetByName(grenadeName)
 	var player = characters.Players[ic.playerIdx]
 	var currentAmount = player.GrenadeCount(grenadeName)
 	return (currentAmount < grenade.MaxCount()) && (player.Cash() >= grenade.Price())
@@ -108,11 +93,7 @@ func (ic *InventoryController) GrenadeProcurable(grenadeName string) bool {
 // BuyGrenade purchases a grenade of the specified type.
 func (ic *InventoryController) BuyGrenade(grenadeName string) {
 	if ic.GrenadeProcurable(grenadeName) {
-		var grenade, err = assets.GrenadeCrate.GetByName(grenadeName)
-		if nil != err {
-			logging.Error.Fatalf("No such grenade: %s", grenadeName)
-		}
-
+		var grenade = assets.GrenadeCrate.GetByName(grenadeName)
 		var player = characters.Players[ic.playerIdx]
 		var increasedCount = player.GrenadeCount(grenadeName) + grenade.PackageSize()
 		player.SetGrenadeCount(grenadeName, util.MinInt(increasedCount, grenade.MaxCount()))
@@ -130,11 +111,7 @@ func (ic *InventoryController) WeaponInInventory(weaponName string) bool {
 
 // WeaponProcurable returns whether or not a player can purchase the specified weapon.
 func (ic *InventoryController) WeaponProcurable(weaponName string) bool {
-	var weapon, err = assets.WeaponCrate.GetByName(weaponName)
-	if nil != err {
-		logging.Error.Fatalf("No such weapon: %s", weaponName)
-	}
-
+	var weapon = assets.WeaponCrate.GetByName(weaponName)
 	var player = characters.Players[ic.playerIdx]
 	return !player.WeaponInInventory(weaponName) && player.Cash() >= weapon.Price()
 }
@@ -142,11 +119,7 @@ func (ic *InventoryController) WeaponProcurable(weaponName string) bool {
 // BuyWeapon purchases the specified weapon.
 func (ic *InventoryController) BuyWeapon(weaponName string) {
 	if ic.WeaponProcurable(weaponName) {
-		var weapon, err = assets.WeaponCrate.GetByName(weaponName)
-		if nil != err {
-			logging.Error.Fatalf("No such weapon: %s", weaponName)
-		}
-
+		var weapon = assets.WeaponCrate.GetByName(weaponName)
 		var player = characters.Players[ic.playerIdx]
 		player.SetWeaponInInventory(weaponName, true)
 		player.SetCash(player.Cash() - weapon.Price())

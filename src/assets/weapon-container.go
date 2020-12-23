@@ -1,7 +1,7 @@
 package assets
 
 import (
-	"errors"
+	"retro-carnage/logging"
 )
 
 type WeaponContainer struct {
@@ -12,13 +12,14 @@ func (wc *WeaponContainer) GetAll() []*Weapon {
 	return wc.weapons
 }
 
-func (wc *WeaponContainer) GetByName(name string) (*Weapon, error) {
+func (wc *WeaponContainer) GetByName(name string) *Weapon {
 	for _, weapon := range wc.weapons {
 		if weapon.Name() == name {
-			return weapon, nil
+			return weapon
 		}
 	}
-	return nil, errors.New("no such element")
+	logging.Error.Fatalf("failed to find weapon named %s", name)
+	return nil
 }
 
 var (

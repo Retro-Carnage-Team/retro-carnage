@@ -1,6 +1,8 @@
 package assets
 
-import "errors"
+import (
+	"retro-carnage/logging"
+)
 
 type AmmunitionContainer struct {
 	ammunition []*Ammunition
@@ -10,13 +12,14 @@ func (ac *AmmunitionContainer) GetAll() []*Ammunition {
 	return ac.ammunition
 }
 
-func (ac *AmmunitionContainer) GetByName(name string) (*Ammunition, error) {
+func (ac *AmmunitionContainer) GetByName(name string) *Ammunition {
 	for _, ammo := range ac.ammunition {
 		if ammo.Name() == name {
-			return ammo, nil
+			return ammo
 		}
 	}
-	return nil, errors.New("no such element")
+	logging.Error.Fatalf("no such ammunition: %s", name)
+	return nil
 }
 
 var (

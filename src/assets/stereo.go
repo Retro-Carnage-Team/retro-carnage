@@ -126,7 +126,7 @@ func loadSoundEffect(fx SoundEffect) (sound, error) {
 	}
 
 	_ = stopWatch.Stop()
-	logging.Trace.Println(stopWatch.DebugMessage())
+	logging.Trace.Println(stopWatch.PrintDebugMessage())
 
 	if isLoopingEffect(fx) {
 		return &loopingSound{buffer: buffer}, nil
@@ -145,7 +145,7 @@ func loadMusic(song Song) (sound, error) {
 	}
 
 	_ = stopWatch.Stop()
-	logging.Trace.Println(stopWatch.DebugMessage())
+	logging.Trace.Println(stopWatch.PrintDebugMessage())
 
 	return &loopingSound{buffer: buffer}, nil
 }

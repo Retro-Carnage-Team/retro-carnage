@@ -5,6 +5,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine"
@@ -14,6 +15,7 @@ import (
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
+	"retro-carnage/util"
 )
 
 const backgroundImagePath = "./images/backgrounds/shop.jpg"
@@ -30,9 +32,9 @@ const labelRange = "Range: "
 const labelSpeed = "Speed: "
 const labelWeight = "Weight: "
 const modalFontSize = 36
-const modalColumnSpace = 45
+const modalColumnSpace = 200
 const modalLabelSpace = 15
-const modalTableSpace = 30
+const modalTableVMargin = 30
 const selectionBorderWidth = 5.0
 
 type modalButton int
@@ -56,6 +58,7 @@ type Screen struct {
 	PlayerIdx             int
 	screenChangeRequired  common.ScreenChangeCallback
 	selectedItemIdx       int
+	stopWatch             *util.StopWatch
 	window                *pixelgl.Window
 }
 
@@ -85,9 +88,15 @@ func (s *Screen) SetUp() {
 	for _, item := range s.items {
 		s.itemNameToSprite[item.Name()] = common.LoadSprite(item.Image())
 	}
+
+	s.stopWatch = &util.StopWatch{Name: "Render process"}
 }
 
 func (s *Screen) Update(_ int64) {
+	if s.modalVisible {
+		s.stopWatch.Start()
+	}
+
 	s.processUserInput()
 
 	s.drawBackground()
@@ -96,6 +105,11 @@ func (s *Screen) Update(_ int64) {
 
 	if s.modalVisible {
 		s.drawModal()
+	}
+
+	if s.modalVisible {
+		s.stopWatch.Stop()
+		logging.Trace.Print(s.stopWatch.PrintDebugMessage())
 	}
 }
 
@@ -176,10 +190,7 @@ func (s *Screen) drawPurchaseStatus(areas []geometry.Rectangle) {
 					area.Y+s.checkSprite.Picture().Bounds().H())))
 			}
 		} else {
-			var ratio, err = item.OwnedPortion(s.PlayerIdx)
-			if nil != err {
-				logging.Error.Fatalf("failed to get ratio of owned ammo: %v", err)
-			}
+			var ratio = item.OwnedPortion(s.PlayerIdx)
 			if ratio > 0 {
 				var barWidth = (area.Width - itemPadding - itemPadding) * ratio
 				imd.Push(
@@ -204,9 +215,9 @@ func (s *Screen) processUserInput() {
 	if nil != err {
 		logging.Warning.Printf("Failed to get game controller state: %v", err)
 	} else if nil != eventState {
-		if eventState.MovedDown {
+		if eventState.MovedDown && !s.modalVisible {
 			s.processSelectionMovedDown()
-		} else if eventState.MovedUp {
+		} else if eventState.MovedUp && !s.modalVisible {
 			s.processSelectionMovedUp()
 		} else if eventState.MovedRight {
 			s.processSelectionMovedRight()
@@ -278,10 +289,7 @@ func (s *Screen) processButtonPressedOnModal() {
 		s.inventoryController.BuyWeapon(item.Name())
 	case buttonBuyAmmo:
 		if item.IsWeapon() {
-			weapon, err := assets.WeaponCrate.GetByName(item.Name())
-			if nil != err {
-				logging.Error.Fatalf("failed to get weapon named %s: %v", item.Name(), err)
-			}
+			weapon := assets.WeaponCrate.GetByName(item.Name())
 			s.inventoryController.BuyAmmunition(weapon.Ammo())
 		} else if item.IsGrenade() {
 			s.inventoryController.BuyGrenade(item.Name())
@@ -376,15 +384,100 @@ func (s *Screen) drawModalHeader() {
 
 func (s *Screen) drawModalBody() {
 	var item = s.items[s.selectedItemIdx]
+
+	var textRenderer = fonts.TextRenderer{Window: s.window}
+	textLayout, err := textRenderer.CalculateTextLayout(item.Description(), modalFontSize, int(s.window.Bounds().W()*3/5)-modalLabelSpace*2, int(s.window.Bounds().H()-300))
+	if nil != err {
+		logging.Warning.Printf("text is too large for modal")
+	}
+
+	var tableAreaHeight = s.labelDimensions[labelPrice].Y*3.4 + modalTableVMargin*2
+	var descriptionAreaHeight = textLayout.Height()
+
+	imd := imdraw.New(nil)
+	imd.Color = common.White
+	imd.Push(
+		pixel.V(s.window.Bounds().W()/5, s.window.Bounds().H()-100-bottomBarHeight),
+		pixel.V(s.window.Bounds().W()*4/5, s.window.Bounds().H()-100-bottomBarHeight-tableAreaHeight-descriptionAreaHeight-modalTableVMargin))
+	imd.Rectangle(0)
+	imd.Draw(s.window)
+
 	if item.IsWeapon() {
 		s.drawModalBodyWeaponTable(item)
 	} else {
 		s.drawModalBodyAmmoGrenadeTable(item)
 	}
+
+	var lineY = s.window.Bounds().H() - 100 - bottomBarHeight - tableAreaHeight
+	var atlas = fonts.SizeToFontAtlas[modalFontSize]
+	for idx, line := range textLayout.Lines() {
+		if 0 == idx {
+			lineY -= line.Dimension().Y
+		} else {
+			lineY -= line.Dimension().Y * 1.2
+		}
+		var txt = text.New(pixel.V(s.window.Bounds().W()/5+modalLabelSpace, lineY), atlas)
+		txt.Color = common.Black
+		_, _ = fmt.Fprint(txt, line.Text())
+		txt.Draw(s.window, pixel.IM)
+	}
+
+	textRenderer.RenderTextLayout(textLayout, modalFontSize, common.Black, &geometry.Point{
+		X: s.window.Bounds().W()/5 + modalLabelSpace,
+		Y: s.window.Bounds().H() - 100 - bottomBarHeight - tableAreaHeight - descriptionAreaHeight,
+	})
 }
 
 func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
+	var weapon = assets.WeaponCrate.GetByName(item.Name())
+	var priceValue = fmt.Sprintf("$%d", item.Price())
+	var rangeValue = fmt.Sprintf("%d m", weapon.BulletRange())
+	var speedValue = "Single shot"
+	if 0 < weapon.BulletInterval() {
+		speedValue = fmt.Sprintf("%d / minute", 60000/weapon.BulletInterval())
+	}
 
+	var maxLabelWidth = util.Max([]float64{
+		s.labelDimensions[labelPrice].X,
+		s.labelDimensions[labelAmmo].X,
+		s.labelDimensions[labelLength].X,
+		s.labelDimensions[labelSpeed].X,
+		s.labelDimensions[labelRange].X,
+		s.labelDimensions[labelWeight].X,
+	})
+
+	var maxValueWidth = util.Max([]float64{
+		fonts.GetTextDimension(modalFontSize, priceValue).X,
+		fonts.GetTextDimension(modalFontSize, weapon.Ammo()).X,
+		fonts.GetTextDimension(modalFontSize, weapon.Length()).X,
+		fonts.GetTextDimension(modalFontSize, speedValue).X,
+		fonts.GetTextDimension(modalFontSize, rangeValue).X,
+		fonts.GetTextDimension(modalFontSize, weapon.Weight()).X,
+	})
+
+	var columnWidth = maxLabelWidth + modalLabelSpace + maxValueWidth
+	var firstColumnLabelX = s.window.Bounds().W()/2 - columnWidth - modalColumnSpace/2
+	var firstColumnValueX = firstColumnLabelX + maxLabelWidth + modalLabelSpace
+	var secondColumnLabelX = firstColumnValueX + maxValueWidth + modalColumnSpace
+	var secondColumnValueX = secondColumnLabelX + maxLabelWidth + modalLabelSpace
+
+	var firstRowY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y
+	fonts.BuildText(pixel.V(firstColumnLabelX, firstRowY), modalFontSize, common.Black, labelPrice).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(firstColumnValueX, firstRowY), modalFontSize, common.Black, priceValue).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(secondColumnLabelX, firstRowY), modalFontSize, common.Black, labelSpeed).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(secondColumnValueX, firstRowY), modalFontSize, common.Black, speedValue).Draw(s.window, pixel.IM)
+
+	var secondRowY = firstRowY - 1.2*s.labelDimensions[labelPrice].Y
+	fonts.BuildText(pixel.V(firstColumnLabelX, secondRowY), modalFontSize, common.Black, labelAmmo).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(firstColumnValueX, secondRowY), modalFontSize, common.Black, weapon.Ammo()).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(secondColumnLabelX, secondRowY), modalFontSize, common.Black, labelRange).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(secondColumnValueX, secondRowY), modalFontSize, common.Black, rangeValue).Draw(s.window, pixel.IM)
+
+	var thirdRowY = secondRowY - 1.2*s.labelDimensions[labelPrice].Y
+	fonts.BuildText(pixel.V(firstColumnLabelX, thirdRowY), modalFontSize, common.Black, labelLength).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(firstColumnValueX, thirdRowY), modalFontSize, common.Black, weapon.Length()).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(secondColumnLabelX, thirdRowY), modalFontSize, common.Black, labelWeight).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(secondColumnValueX, thirdRowY), modalFontSize, common.Black, weapon.Weight()).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
@@ -393,43 +486,39 @@ func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
 	var rangeValue = ""
 
 	if item.IsAmmunition() {
-		var ammo, err = assets.AmmunitionCrate.GetByName(item.Name())
-		if nil != err {
-			logging.Error.Fatalf("ammunition %s not found: %v", item.Name(), err)
-		}
+		var ammo = assets.AmmunitionCrate.GetByName(item.Name())
 		packageSizeValue = fmt.Sprintf("%d", ammo.PackageSize())
 	} else {
-		var grenade, err = assets.GrenadeCrate.GetByName(item.Name())
-		if nil != err {
-			logging.Error.Fatalf("grenade %s not found: %v", item.Name(), err)
-		}
+		var grenade = assets.GrenadeCrate.GetByName(item.Name())
 		packageSizeValue = fmt.Sprintf("%d", grenade.PackageSize())
 		rangeValue = fmt.Sprintf("%d m", grenade.MovementDistance())
 	}
 
-	var maxLabelWidth = math.Max(
-		s.labelDimensions[labelPrice].X, math.Max(
-			s.labelDimensions[labelPackageSize].X,
-			s.labelDimensions[labelRange].X))
-	var maxValueWidth = math.Max(
-		fonts.GetTextDimension(modalFontSize, priceValue).X, math.Max(
-			fonts.GetTextDimension(modalFontSize, packageSizeValue).X,
-			fonts.GetTextDimension(modalFontSize, rangeValue).X))
+	var maxLabelWidth = util.Max([]float64{
+		s.labelDimensions[labelPrice].X,
+		s.labelDimensions[labelPackageSize].X,
+		s.labelDimensions[labelRange].X,
+	})
+	var maxValueWidth = util.Max([]float64{
+		fonts.GetTextDimension(modalFontSize, priceValue).X,
+		fonts.GetTextDimension(modalFontSize, packageSizeValue).X,
+		fonts.GetTextDimension(modalFontSize, rangeValue).X,
+	})
 
 	var labelX = (s.window.Bounds().W() - maxLabelWidth - modalLabelSpace - maxValueWidth) / 2
 	var valueX = labelX + maxLabelWidth + modalColumnSpace
-	var labelY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableSpace - s.labelDimensions[labelPrice].Y
-	fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.White, labelPrice).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.White, priceValue).Draw(s.window, pixel.IM)
+	var labelY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y
+	fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.Black, labelPrice).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.Black, priceValue).Draw(s.window, pixel.IM)
 
 	labelY -= 1.2 * s.labelDimensions[labelPrice].Y
-	fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.White, labelPackageSize).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.White, packageSizeValue).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.Black, labelPackageSize).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.Black, packageSizeValue).Draw(s.window, pixel.IM)
 
 	if item.IsGrenade() {
 		labelY -= 1.2 * s.labelDimensions[labelPrice].Y
-		fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.White, labelRange).Draw(s.window, pixel.IM)
-		fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.White, rangeValue).Draw(s.window, pixel.IM)
+		fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.Black, labelRange).Draw(s.window, pixel.IM)
+		fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.Black, rangeValue).Draw(s.window, pixel.IM)
 	}
 }
 
@@ -451,10 +540,7 @@ func (s *Screen) isModalButtonBuyAmmunitionAvailable() bool {
 
 	var ammoName = item.Name()
 	if item.IsWeapon() {
-		var weapon, err = assets.WeaponCrate.GetByName(item.Name())
-		if nil != err {
-			logging.Error.Fatalf("failed to get ammo by weapon name: %v", err)
-		}
+		var weapon = assets.WeaponCrate.GetByName(item.Name())
 		ammoName = weapon.Ammo()
 	}
 	return s.inventoryController.AmmunitionProcurable(ammoName)

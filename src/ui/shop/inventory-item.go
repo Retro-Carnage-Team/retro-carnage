@@ -1,9 +1,9 @@
 package shop
 
 import (
-	"errors"
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
+	"retro-carnage/logging"
 )
 
 // inventoryItemDelegate defines the shared functionality of grenades, ammunition and weapons.
@@ -47,23 +47,18 @@ func (ii *inventoryItem) IsAmmunition() bool {
 	return !ii.IsWeapon() && !ii.IsGrenade()
 }
 
-func (ii *inventoryItem) OwnedPortion(playerIdx int) (float64, error) {
+func (ii *inventoryItem) OwnedPortion(playerIdx int) float64 {
 	if ii.IsWeapon() {
-		return 0, errors.New("this method should be used for grenades and ammunition only")
+		logging.Error.Fatal("this method should be used for grenades and ammunition only")
+		return 0.0
 	} else if ii.IsGrenade() {
 		var owned = characters.Players[playerIdx].GrenadeCount(ii.Name())
-		var grenade, err = assets.GrenadeCrate.GetByName(ii.Name())
-		if nil != err {
-			return 0, err
-		}
-		return float64(owned) / float64(grenade.MaxCount()), nil
+		var grenade = assets.GrenadeCrate.GetByName(ii.Name())
+		return float64(owned) / float64(grenade.MaxCount())
 	} else {
 		var owned = characters.Players[playerIdx].AmmunitionCount(ii.Name())
-		var ammunition, err = assets.AmmunitionCrate.GetByName(ii.Name())
-		if nil != err {
-			return 0, err
-		}
-		return float64(owned) / float64(ammunition.MaxCount()), nil
+		var ammunition = assets.AmmunitionCrate.GetByName(ii.Name())
+		return float64(owned) / float64(ammunition.MaxCount())
 	}
 }
 
