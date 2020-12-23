@@ -19,7 +19,7 @@ func (tl *TextLayout) Height() float64 {
 		result += tl.lines[0].Dimension().Y
 	}
 	if 2 <= len(tl.lines) {
-		result += (float64(len(tl.lines)) - 1) * tl.lines[0].Dimension().Y * 1.2
+		result += (float64(len(tl.lines)) - 1) * tl.lines[0].Dimension().Y * 1.1
 	}
 	return result
 }

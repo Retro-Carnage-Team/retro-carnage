@@ -69,9 +69,26 @@ func GetTextDimension(fontSize int, input string) *geometry.Point {
 	return &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
 }
 
+func GetMaxTextWidth(fontSize int, input []string) float64 {
+	var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
+	for _, line := range input {
+		_, _ = fmt.Fprintln(txt, line)
+	}
+	return txt.Bounds().W()
+}
+
 func BuildText(position pixel.Vec, fontSize int, color color.Color, content string) *text.Text {
 	var txt = text.New(position, SizeToFontAtlas[fontSize])
 	txt.Color = color
 	_, _ = fmt.Fprint(txt, content)
+	return txt
+}
+
+func BuildMultiLineText(position pixel.Vec, fontSize int, color color.Color, content []string) *text.Text {
+	var txt = text.New(position, SizeToFontAtlas[fontSize])
+	txt.Color = color
+	for _, line := range content {
+		_, _ = fmt.Fprintln(txt, line)
+	}
 	return txt
 }

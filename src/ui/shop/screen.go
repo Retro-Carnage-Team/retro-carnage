@@ -388,7 +388,8 @@ func (s *Screen) drawModalBody() {
 	var textRenderer = fonts.TextRenderer{Window: s.window}
 	textLayout, err := textRenderer.CalculateTextLayout(item.Description(), modalFontSize, int(s.window.Bounds().W()*3/5)-modalLabelSpace*2, int(s.window.Bounds().H()-300))
 	if nil != err {
-		logging.Warning.Printf("text is too large for modal")
+		logging.Warning.Fatalf("text is too large for modal")
+		return
 	}
 
 	var tableAreaHeight = s.labelDimensions[labelPrice].Y*3.4 + modalTableVMargin*2
@@ -410,22 +411,12 @@ func (s *Screen) drawModalBody() {
 
 	var lineY = s.window.Bounds().H() - 100 - bottomBarHeight - tableAreaHeight
 	var atlas = fonts.SizeToFontAtlas[modalFontSize]
-	for idx, line := range textLayout.Lines() {
-		if 0 == idx {
-			lineY -= line.Dimension().Y
-		} else {
-			lineY -= line.Dimension().Y * 1.2
-		}
-		var txt = text.New(pixel.V(s.window.Bounds().W()/5+modalLabelSpace, lineY), atlas)
-		txt.Color = common.Black
-		_, _ = fmt.Fprint(txt, line.Text())
-		txt.Draw(s.window, pixel.IM)
+	var txt = text.New(pixel.V(s.window.Bounds().W()/5+modalLabelSpace, lineY-textLayout.Lines()[0].Dimension().Y), atlas)
+	txt.Color = common.Black
+	for _, line := range textLayout.Lines() {
+		_, _ = fmt.Fprintln(txt, line.Text())
 	}
-
-	textRenderer.RenderTextLayout(textLayout, modalFontSize, common.Black, &geometry.Point{
-		X: s.window.Bounds().W()/5 + modalLabelSpace,
-		Y: s.window.Bounds().H() - 100 - bottomBarHeight - tableAreaHeight - descriptionAreaHeight,
-	})
+	txt.Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
@@ -438,21 +429,12 @@ func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
 	}
 
 	var maxLabelWidth = util.Max([]float64{
-		s.labelDimensions[labelPrice].X,
-		s.labelDimensions[labelAmmo].X,
-		s.labelDimensions[labelLength].X,
-		s.labelDimensions[labelSpeed].X,
-		s.labelDimensions[labelRange].X,
-		s.labelDimensions[labelWeight].X,
+		s.labelDimensions[labelPrice].X, s.labelDimensions[labelAmmo].X, s.labelDimensions[labelLength].X,
+		s.labelDimensions[labelSpeed].X, s.labelDimensions[labelRange].X, s.labelDimensions[labelWeight].X,
 	})
 
-	var maxValueWidth = util.Max([]float64{
-		fonts.GetTextDimension(modalFontSize, priceValue).X,
-		fonts.GetTextDimension(modalFontSize, weapon.Ammo()).X,
-		fonts.GetTextDimension(modalFontSize, weapon.Length()).X,
-		fonts.GetTextDimension(modalFontSize, speedValue).X,
-		fonts.GetTextDimension(modalFontSize, rangeValue).X,
-		fonts.GetTextDimension(modalFontSize, weapon.Weight()).X,
+	var maxValueWidth = fonts.GetMaxTextWidth(modalFontSize, []string{
+		priceValue, weapon.Ammo(), weapon.Length(), speedValue, rangeValue, weapon.Weight(),
 	})
 
 	var columnWidth = maxLabelWidth + modalLabelSpace + maxValueWidth
@@ -462,22 +444,10 @@ func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
 	var secondColumnValueX = secondColumnLabelX + maxLabelWidth + modalLabelSpace
 
 	var firstRowY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y
-	fonts.BuildText(pixel.V(firstColumnLabelX, firstRowY), modalFontSize, common.Black, labelPrice).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(firstColumnValueX, firstRowY), modalFontSize, common.Black, priceValue).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(secondColumnLabelX, firstRowY), modalFontSize, common.Black, labelSpeed).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(secondColumnValueX, firstRowY), modalFontSize, common.Black, speedValue).Draw(s.window, pixel.IM)
-
-	var secondRowY = firstRowY - 1.2*s.labelDimensions[labelPrice].Y
-	fonts.BuildText(pixel.V(firstColumnLabelX, secondRowY), modalFontSize, common.Black, labelAmmo).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(firstColumnValueX, secondRowY), modalFontSize, common.Black, weapon.Ammo()).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(secondColumnLabelX, secondRowY), modalFontSize, common.Black, labelRange).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(secondColumnValueX, secondRowY), modalFontSize, common.Black, rangeValue).Draw(s.window, pixel.IM)
-
-	var thirdRowY = secondRowY - 1.2*s.labelDimensions[labelPrice].Y
-	fonts.BuildText(pixel.V(firstColumnLabelX, thirdRowY), modalFontSize, common.Black, labelLength).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(firstColumnValueX, thirdRowY), modalFontSize, common.Black, weapon.Length()).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(secondColumnLabelX, thirdRowY), modalFontSize, common.Black, labelWeight).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(secondColumnValueX, thirdRowY), modalFontSize, common.Black, weapon.Weight()).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(firstColumnLabelX, firstRowY), modalFontSize, common.Black, []string{labelPrice, labelAmmo, labelLength}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(firstColumnValueX, firstRowY), modalFontSize, common.Black, []string{priceValue, weapon.Ammo(), weapon.Length()}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(secondColumnLabelX, firstRowY), modalFontSize, common.Black, []string{labelSpeed, labelRange, labelWeight}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(secondColumnValueX, firstRowY), modalFontSize, common.Black, []string{speedValue, rangeValue, weapon.Weight()}).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
@@ -495,31 +465,25 @@ func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
 	}
 
 	var maxLabelWidth = util.Max([]float64{
-		s.labelDimensions[labelPrice].X,
-		s.labelDimensions[labelPackageSize].X,
-		s.labelDimensions[labelRange].X,
+		s.labelDimensions[labelPrice].X, s.labelDimensions[labelPackageSize].X, s.labelDimensions[labelRange].X,
 	})
-	var maxValueWidth = util.Max([]float64{
-		fonts.GetTextDimension(modalFontSize, priceValue).X,
-		fonts.GetTextDimension(modalFontSize, packageSizeValue).X,
-		fonts.GetTextDimension(modalFontSize, rangeValue).X,
+	var maxValueWidth = fonts.GetMaxTextWidth(modalFontSize, []string{
+		priceValue, packageSizeValue, rangeValue,
 	})
 
 	var labelX = (s.window.Bounds().W() - maxLabelWidth - modalLabelSpace - maxValueWidth) / 2
 	var valueX = labelX + maxLabelWidth + modalColumnSpace
 	var labelY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y
-	fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.Black, labelPrice).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.Black, priceValue).Draw(s.window, pixel.IM)
 
-	labelY -= 1.2 * s.labelDimensions[labelPrice].Y
-	fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.Black, labelPackageSize).Draw(s.window, pixel.IM)
-	fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.Black, packageSizeValue).Draw(s.window, pixel.IM)
-
+	var thirdLabel = ""
+	var thirdValue = ""
 	if item.IsGrenade() {
-		labelY -= 1.2 * s.labelDimensions[labelPrice].Y
-		fonts.BuildText(pixel.V(labelX, labelY), modalFontSize, common.Black, labelRange).Draw(s.window, pixel.IM)
-		fonts.BuildText(pixel.V(valueX, labelY), modalFontSize, common.Black, rangeValue).Draw(s.window, pixel.IM)
+		thirdLabel = labelRange
+		thirdValue = rangeValue
 	}
+
+	fonts.BuildMultiLineText(pixel.V(labelX, labelY), modalFontSize, common.Black, []string{labelPrice, labelPackageSize, thirdLabel}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(valueX, labelY), modalFontSize, common.Black, []string{priceValue, packageSizeValue, thirdValue}).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) isModalButtonBuyWeaponAvailable() bool {
