@@ -5,11 +5,12 @@ import (
 	"golang.org/x/image/colornames"
 	"retro-carnage/engine/input"
 	"retro-carnage/network"
-	buy_your_weapons "retro-carnage/ui/buy-your-weapons"
+	byw "retro-carnage/ui/buy-your-weapons"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/config"
 	"retro-carnage/ui/loading"
 	"retro-carnage/ui/mission"
+	"retro-carnage/ui/shop"
 	"retro-carnage/ui/start"
 	"retro-carnage/ui/title"
 	"time"
@@ -55,9 +56,13 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 	case common.Mission:
 		ms.nextScreen = &mission.Screen{}
 	case common.BuyYourWeaponsP1:
-		ms.nextScreen = &buy_your_weapons.Screen{PlayerIdx: 0}
+		ms.nextScreen = &byw.Screen{PlayerIdx: 0}
 	case common.BuyYourWeaponsP2:
-		ms.nextScreen = &buy_your_weapons.Screen{PlayerIdx: 1}
+		ms.nextScreen = &byw.Screen{PlayerIdx: 1}
+	case common.ShopP1:
+		ms.nextScreen = &shop.Screen{PlayerIdx: 0}
+	case common.ShopP2:
+		ms.nextScreen = &shop.Screen{PlayerIdx: 1}
 	}
 }
 

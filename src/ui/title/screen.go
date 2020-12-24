@@ -6,10 +6,10 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	_ "image/jpeg"
+	"math"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
-	"retro-carnage/util"
 )
 
 const backgroundImagePath = "./images/backgrounds/title.jpg"
@@ -44,8 +44,8 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.screenChangeTimeout += elapsedTimeInMs
 
 	var factorX = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
-	var factorY = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
-	var factor = util.Max(factorX, factorY)
+	var factorY = s.window.Bounds().Max.Y / s.backgroundImageSprite.Picture().Bounds().Max.Y
+	var factor = math.Max(factorX, factorY)
 
 	s.backgroundImageSprite.Draw(s.window,
 		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))

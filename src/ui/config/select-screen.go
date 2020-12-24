@@ -6,12 +6,12 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
+	"math"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
-	"retro-carnage/util"
 )
 
 const buttonPadding = 15
@@ -57,8 +57,8 @@ func (s *SelectScreen) Update(_ int64) {
 	var bottomSecond = secondLineY - buttonPadding
 	var topFirst = firstLineY + s.textDimensions[txtSelectOnePlayerGame].Y
 	var topSecond = secondLineY + s.textDimensions[txtSelectTwoPlayerGame].Y
-	var left = util.Min(firstLineX, secondLineX) - buttonPadding
-	var right = util.Min(firstLineX, secondLineX) + util.Min(s.textDimensions[txtSelectOnePlayerGame].X, s.textDimensions[txtSelectTwoPlayerGame].X) + buttonPadding
+	var left = math.Min(firstLineX, secondLineX) - buttonPadding
+	var right = math.Min(firstLineX, secondLineX) + math.Min(s.textDimensions[txtSelectOnePlayerGame].X, s.textDimensions[txtSelectTwoPlayerGame].X) + buttonPadding
 
 	if 1 == s.selectedOption {
 		imd := imdraw.New(nil)

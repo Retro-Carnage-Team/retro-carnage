@@ -5,12 +5,12 @@ type Grenade struct {
 	explosive        string
 	image            string
 	imageRotated     string
-	maxCount         int32
-	movementDistance int32
-	movementSpeed    float32
+	maxCount         int
+	movementDistance int
+	movementSpeed    float64
 	name             string
-	packageSize      int32
-	price            int32
+	packageSize      int
+	price            int
 	weight           string
 }
 
@@ -30,15 +30,15 @@ func (g *Grenade) ImageRotated() string {
 	return g.imageRotated
 }
 
-func (g *Grenade) MaxCount() int32 {
+func (g *Grenade) MaxCount() int {
 	return g.maxCount
 }
 
-func (g *Grenade) MovementDistance() int32 {
+func (g *Grenade) MovementDistance() int {
 	return g.movementDistance
 }
 
-func (g *Grenade) MovementSpeed() float32 {
+func (g *Grenade) MovementSpeed() float64 {
 	return g.movementSpeed
 }
 
@@ -46,11 +46,11 @@ func (g *Grenade) Name() string {
 	return g.name
 }
 
-func (g *Grenade) PackageSize() int32 {
+func (g *Grenade) PackageSize() int {
 	return g.packageSize
 }
 
-func (g *Grenade) Price() int32 {
+func (g *Grenade) Price() int {
 	return g.price
 }
 

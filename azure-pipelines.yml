@@ -29,4 +29,6 @@ steps:
       command: "test"
       arguments: "-v ./..."
       workingDirectory: "$(System.DefaultWorkingDirectory)/src"
+    env:
+      sound: "no-fx;no-music"
     displayName: Test application

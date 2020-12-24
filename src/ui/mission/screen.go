@@ -6,6 +6,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine"
 	"retro-carnage/engine/geometry"
@@ -13,7 +14,6 @@ import (
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
-	"retro-carnage/util"
 )
 
 const crossHairImagePath = "./images/tiles/other/crosshair.png"
@@ -164,7 +164,7 @@ func (s *Screen) drawMissionDescription() {
 func (s *Screen) getWorldMapScalingFactor() float64 {
 	var factorX = (s.window.Bounds().Max.X - 100) / s.worldMapSprite.Picture().Bounds().Max.X
 	var factorY = (s.window.Bounds().Max.Y * 3 / 4) / s.worldMapSprite.Picture().Bounds().Max.Y
-	return util.Min(factorX, factorY)
+	return math.Min(factorX, factorY)
 }
 
 func (s *Screen) getWorldMapCenter() (result pixel.Vec) {
@@ -185,6 +185,7 @@ func (s *Screen) processUserInput() {
 	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
 	if nil != uiEventState {
 		if uiEventState.PressedButton {
+			engine.MissionController.SelectMission(s.selectedMission)
 			s.screenChangeRequired(common.BuyYourWeaponsP1)
 		} else {
 			var nextMission = s.selectedMission
@@ -199,7 +200,7 @@ func (s *Screen) processUserInput() {
 				nextMission, err = engine.MissionController.NextMissionEast(&s.selectedMission.Location)
 			}
 			if nil != err {
-				logging.Error.Fatalf("Failed to get next mission north: %v", err)
+				logging.Error.Fatalf("Failed to get next mission: %v", err)
 			}
 			if nil != nextMission {
 				s.selectedMission = nextMission

@@ -214,7 +214,7 @@ func checkCollisionOnDiagonalDirection(provider *collisionCheckForDiagonalDirect
 
 func getCollisionForMovementUp(movingRect *Rectangle, stillRect *Rectangle, distance *Point) *Point {
 	var collisionCheck collisionCheckForCardinalDirection
-	collisionCheck.border = stillRect.GetBottomBorder()
+	collisionCheck.border = stillRect.BottomBorder()
 	collisionCheck.firstVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y}, End: &Point{X: movingRect.X, Y: movingRect.Y + distance.Y}}
 	collisionCheck.secondVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y + distance.Y}}
 	return checkCollisionOnCardinalDirection(&collisionCheck)
@@ -222,7 +222,7 @@ func getCollisionForMovementUp(movingRect *Rectangle, stillRect *Rectangle, dist
 
 func getCollisionForMovementDown(movingRect *Rectangle, stillRect *Rectangle, distance *Point) *Point {
 	var collisionCheck collisionCheckForCardinalDirection
-	collisionCheck.border = stillRect.GetTopBorder()
+	collisionCheck.border = stillRect.TopBorder()
 	collisionCheck.firstVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + distance.X, Y: movingRect.Y + movingRect.Height + distance.Y}}
 	collisionCheck.secondVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y + movingRect.Height + distance.Y}}
 	return checkCollisionOnCardinalDirection(&collisionCheck)
@@ -230,7 +230,7 @@ func getCollisionForMovementDown(movingRect *Rectangle, stillRect *Rectangle, di
 
 func getCollisionForMovementLeft(movingRect *Rectangle, stillRect *Rectangle, distance *Point) *Point {
 	var collisionCheck collisionCheckForCardinalDirection
-	collisionCheck.border = stillRect.GetRightBorder()
+	collisionCheck.border = stillRect.RightBorder()
 	collisionCheck.firstVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y}, End: &Point{X: movingRect.X + distance.X, Y: movingRect.Y}}
 	collisionCheck.secondVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + distance.X, Y: movingRect.Y + movingRect.Height}}
 	return checkCollisionOnCardinalDirection(&collisionCheck)
@@ -238,7 +238,7 @@ func getCollisionForMovementLeft(movingRect *Rectangle, stillRect *Rectangle, di
 
 func getCollisionForMovementRight(movingRect *Rectangle, stillRect *Rectangle, distance *Point) *Point {
 	var collisionCheck collisionCheckForCardinalDirection
-	collisionCheck.border = stillRect.GetLeftBorder()
+	collisionCheck.border = stillRect.LeftBorder()
 	collisionCheck.firstVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y}}
 	collisionCheck.secondVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y + movingRect.Height}}
 	return checkCollisionOnCardinalDirection(&collisionCheck)
@@ -246,8 +246,8 @@ func getCollisionForMovementRight(movingRect *Rectangle, stillRect *Rectangle, d
 
 func getMaxUpRightMovement(movingRect *Rectangle, stillRect *Rectangle, distance *Point) *Point {
 	var collisionCheck collisionCheckForDiagonalDirection
-	collisionCheck.firstBorder = stillRect.GetLeftBorder()
-	collisionCheck.secondBorder = stillRect.GetBottomBorder()
+	collisionCheck.firstBorder = stillRect.LeftBorder()
+	collisionCheck.secondBorder = stillRect.BottomBorder()
 	collisionCheck.firstVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y}, End: &Point{X: movingRect.X + distance.X, Y: movingRect.Y + distance.Y}}
 	collisionCheck.secondVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y + distance.Y}}
 	collisionCheck.thirdVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y + movingRect.Height + distance.Y}}
@@ -256,8 +256,8 @@ func getMaxUpRightMovement(movingRect *Rectangle, stillRect *Rectangle, distance
 
 func getMaxDownRightMovement(movingRect *Rectangle, stillRect *Rectangle, distance *Point) *Point {
 	var collisionCheck collisionCheckForDiagonalDirection
-	collisionCheck.firstBorder = stillRect.GetLeftBorder()
-	collisionCheck.secondBorder = stillRect.GetTopBorder()
+	collisionCheck.firstBorder = stillRect.LeftBorder()
+	collisionCheck.secondBorder = stillRect.TopBorder()
 	collisionCheck.firstVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + distance.X, Y: movingRect.Y + movingRect.Height + distance.Y}}
 	collisionCheck.secondVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y + movingRect.Height + distance.Y}}
 	collisionCheck.thirdVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y + distance.Y}}
@@ -266,8 +266,8 @@ func getMaxDownRightMovement(movingRect *Rectangle, stillRect *Rectangle, distan
 
 func getMaxUpLeftMovement(movingRect *Rectangle, stillRect *Rectangle, distance *Point) *Point {
 	var collisionCheck collisionCheckForDiagonalDirection
-	collisionCheck.firstBorder = stillRect.GetRightBorder()
-	collisionCheck.secondBorder = stillRect.GetBottomBorder()
+	collisionCheck.firstBorder = stillRect.RightBorder()
+	collisionCheck.secondBorder = stillRect.BottomBorder()
 	collisionCheck.firstVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y}, End: &Point{X: movingRect.X + distance.X, Y: movingRect.Y + distance.Y}}
 	collisionCheck.secondVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + distance.X, Y: movingRect.Y + movingRect.Height + distance.Y}}
 	collisionCheck.thirdVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y + distance.Y}}
@@ -276,8 +276,8 @@ func getMaxUpLeftMovement(movingRect *Rectangle, stillRect *Rectangle, distance 
 
 func getMaxDownLeftMovement(movingRect *Rectangle, stillRect *Rectangle, distance *Point) *Point {
 	var collisionCheck collisionCheckForDiagonalDirection
-	collisionCheck.firstBorder = stillRect.GetRightBorder()
-	collisionCheck.secondBorder = stillRect.GetTopBorder()
+	collisionCheck.firstBorder = stillRect.RightBorder()
+	collisionCheck.secondBorder = stillRect.TopBorder()
 	collisionCheck.firstVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y}, End: &Point{X: movingRect.X + distance.X, Y: movingRect.Y + distance.Y}}
 	collisionCheck.secondVector = &Line{Start: &Point{X: movingRect.X, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + distance.X, Y: movingRect.Y + movingRect.Height + distance.Y}}
 	collisionCheck.thirdVector = &Line{Start: &Point{X: movingRect.X + movingRect.Width, Y: movingRect.Y + movingRect.Height}, End: &Point{X: movingRect.X + movingRect.Width + distance.X, Y: movingRect.Y + movingRect.Height + distance.Y}}

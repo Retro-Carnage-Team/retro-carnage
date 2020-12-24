@@ -7,12 +7,14 @@ import (
 )
 
 var (
-	Black  = ParseHexColor("#000000")
-	Green  = ParseHexColor("#12a45d")
-	Orange = ParseHexColor("#ffa055")
-	Red    = ParseHexColor("#ca5512")
-	White  = ParseHexColor("#ffffff")
-	Yellow = ParseHexColor("#fbe356")
+	Black      = ParseHexColor("#000000")
+	Green      = ParseHexColor("#12a45d")
+	ModalBg    = ParseHexColor("#2f4f4e")
+	OliveGreen = ParseHexColor("#897c2a")
+	Orange     = ParseHexColor("#ffa055")
+	Red        = ParseHexColor("#ca5512")
+	White      = ParseHexColor("#ffffff")
+	Yellow     = ParseHexColor("#fbe356")
 )
 
 func ParseHexColor(s string) (c color.RGBA) {

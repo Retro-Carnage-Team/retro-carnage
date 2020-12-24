@@ -5,6 +5,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
+	"image/color"
 	"io/ioutil"
 	"os"
 	"retro-carnage/engine/geometry"
@@ -16,9 +17,11 @@ const defaultFontPath = "./fonts/XXII-DIRTY-ARMY.ttf"
 const DefaultFontSize = 52
 
 var SizeToFontAtlas map[int]*text.Atlas
+var textDimensionCache map[string]*geometry.Point
 
 func Initialize() {
 	SizeToFontAtlas = make(map[int]*text.Atlas)
+	textDimensionCache = make(map[string]*geometry.Point)
 
 	defaultFont, err := loadTTF(defaultFontPath)
 	if nil != err {
@@ -63,8 +66,37 @@ func GetTextDimensions(fontSize int, input ...string) map[string]*geometry.Point
 }
 
 func GetTextDimension(fontSize int, input string) *geometry.Point {
+	var key = fmt.Sprintf("%d___%s", fontSize, input)
+	var value = textDimensionCache[key]
+	if nil == value {
+		var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
+		_, _ = fmt.Fprint(txt, input)
+		value = &geometry.Point{X: txt.Bounds().W(), Y: txt.Bounds().H()}
+		textDimensionCache[key] = value
+	}
+	return value
+}
+
+func GetMaxTextWidth(fontSize int, input []string) float64 {
 	var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
-	_, _ = fmt.Fprint(txt, input)
-	var result = &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
-	return result
+	for _, line := range input {
+		_, _ = fmt.Fprintln(txt, line)
+	}
+	return txt.Bounds().W()
+}
+
+func BuildText(position pixel.Vec, fontSize int, color color.Color, content string) *text.Text {
+	var txt = text.New(position, SizeToFontAtlas[fontSize])
+	txt.Color = color
+	_, _ = fmt.Fprint(txt, content)
+	return txt
+}
+
+func BuildMultiLineText(position pixel.Vec, fontSize int, color color.Color, content []string) *text.Text {
+	var txt = text.New(position, SizeToFontAtlas[fontSize])
+	txt.Color = color
+	for _, line := range content {
+		_, _ = fmt.Fprintln(txt, line)
+	}
+	return txt
 }

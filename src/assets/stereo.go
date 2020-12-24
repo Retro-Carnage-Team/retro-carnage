@@ -10,14 +10,17 @@ import (
 	"path/filepath"
 	"retro-carnage/logging"
 	"retro-carnage/util"
+	"strings"
 	"time"
 )
 
 // Stereo is the class we use to play music and sound effects throughout the application.
 type Stereo struct {
-	effects map[SoundEffect]sound
-	mixer   *beep.Mixer
-	music   map[Song]sound
+	effects   map[SoundEffect]sound
+	mixer     *beep.Mixer
+	music     map[Song]sound
+	noEffects bool
+	noMusic   bool
 }
 
 var stereo *Stereo
@@ -48,13 +51,18 @@ func (sb *Stereo) initialize() {
 	sb.mixer = &beep.Mixer{}
 	speaker.Play(sb.mixer)
 
+	sb.noEffects = strings.Contains(os.Getenv("sound"), "no-fx")
+	sb.noMusic = strings.Contains(os.Getenv("sound"), "no-music")
+
 	sb.effects = make(map[SoundEffect]sound)
-	for _, fx := range SoundEffects {
-		sound, err := loadSoundEffect(fx)
-		if err != nil {
-			logging.Error.Panicln(err.Error())
-		} else {
-			sb.effects[fx] = sound
+	if !sb.noEffects {
+		for _, fx := range SoundEffects {
+			sound, err := loadSoundEffect(fx)
+			if err != nil {
+				logging.Error.Panicln(err.Error())
+			} else {
+				sb.effects[fx] = sound
+			}
 		}
 	}
 
@@ -63,6 +71,10 @@ func (sb *Stereo) initialize() {
 
 // PlayFx starts the playback of a given SoundEffect
 func (sb *Stereo) PlayFx(effect SoundEffect) {
+	if sb.noEffects {
+		return
+	}
+
 	var aSound = sb.effects[effect]
 	if nil != aSound {
 		aSound.play(sb.mixer)
@@ -79,6 +91,10 @@ func (sb *Stereo) StopFx(effect SoundEffect) {
 
 // PlaySong starts the playback of a given Song
 func (sb *Stereo) PlaySong(song Song) {
+	if sb.noMusic {
+		return
+	}
+
 	var aSound = sb.music[song]
 	if nil == aSound {
 		var err error = nil
@@ -110,7 +126,7 @@ func loadSoundEffect(fx SoundEffect) (sound, error) {
 	}
 
 	_ = stopWatch.Stop()
-	logging.Trace.Println(stopWatch.DebugMessage())
+	logging.Trace.Println(stopWatch.PrintDebugMessage())
 
 	if isLoopingEffect(fx) {
 		return &loopingSound{buffer: buffer}, nil
@@ -129,7 +145,7 @@ func loadMusic(song Song) (sound, error) {
 	}
 
 	_ = stopWatch.Stop()
-	logging.Trace.Println(stopWatch.DebugMessage())
+	logging.Trace.Println(stopWatch.PrintDebugMessage())
 
 	return &loopingSound{buffer: buffer}, nil
 }

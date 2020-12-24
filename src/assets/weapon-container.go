@@ -1,7 +1,7 @@
 package assets
 
 import (
-	"errors"
+	"retro-carnage/logging"
 )
 
 type WeaponContainer struct {
@@ -12,13 +12,14 @@ func (wc *WeaponContainer) GetAll() []*Weapon {
 	return wc.weapons
 }
 
-func (wc *WeaponContainer) GetByName(name string) (*Weapon, error) {
+func (wc *WeaponContainer) GetByName(name string) *Weapon {
 	for _, weapon := range wc.weapons {
 		if weapon.Name() == name {
-			return weapon, nil
+			return weapon
 		}
 	}
-	return nil, errors.New("no such element")
+	logging.Error.Fatalf("failed to find weapon named %s", name)
+	return nil
 }
 
 var (
@@ -33,7 +34,7 @@ func initializeWeapons() []*Weapon {
 		bulletInterval: 0,
 		bulletRange:    350,
 		bulletSpeed:    1.2,
-		description:    "The P7 is a German 9×19mm semi-automatic pistol designed by Helmut Weldle and produced by Heckler & Koch GmbH (H&K) of Oberndorf am Neckar. It was revealed to the public for the first time in 1976. Prompted by the 1972 Munich Olympics Massacre, the German police decided to replace the .32 ACP Walther PP with a similarly sized but more effective 9×19mm Parabellum pistol. The new firearm was to meet the following requirements: chamber the 9×19mm Parabellum cartridge, weigh no more than 1,000 g (35 oz), the pistol's dimensions would not exceed 180 × 130 × 34 mm, it should have a muzzle energy of no less than 500 J and a service life of at least 10,000-rounds. The pistol was also to be fully ambidextrous, safe to carry with a loaded chamber (both holstered and concealed in a pocket), and able to be quickly drawn and instantly ready to fire. Series production of the P7 started in 1979. Shortly after, the pistol was adopted by the German Federal Police's counter-terrorism unit (GSG 9) and the German Army's special forces formations. The P7 was produced primarily by H&K but also under license by the Greek defense firm Hellenic Arms Industry as well as in Mexico by the Departamento de Industria Militar (DIM), as a sidearm for general officers and staff. The pistol was also exported to several countries.",
+		description:    "The P7 is a German 9×19mm semi-automatic pistol designed by Helmut Weldle and produced by Heckler & Koch GmbH (H&K) of Oberndorf am Neckar. It was revealed to the public for the first time in 1976. Prompted by the 1972 Munich Olympics Massacre, the German police decided to replace the .32 ACP Walther PP with a similarly sized but more effective 9×19mm Parabellum pistol. The new firearm was to meet the following requirements: chamber the 9×19mm Parabellum cartridge, weigh no more than 1,000 g (35 oz), the pistol's dimensions would not exceed 180 * 130 * 34 mm, it should have a muzzle energy of no less than 500 J and a service life of at least 10,000-rounds. The pistol was also to be fully ambidextrous, safe to carry with a loaded chamber (both holstered and concealed in a pocket), and able to be quickly drawn and instantly ready to fire. Series production of the P7 started in 1979. Shortly after, the pistol was adopted by the German Federal Police's counter-terrorism unit (GSG 9) and the German Army's special forces formations. The P7 was produced primarily by H&K but also under license by the Greek defense firm Hellenic Arms Industry as well as in Mexico by the Departamento de Industria Militar (DIM), as a sidearm for general officers and staff. The pistol was also exported to several countries.",
 		image:          "images/tiles/weapons/HK-P7.png",
 		imageRotated:   "images/tiles/weapons/HK-P7-r.png",
 		length:         "17,1 cm",

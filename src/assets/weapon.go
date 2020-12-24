@@ -11,33 +11,33 @@ const (
 
 type Weapon struct {
 	ammo           string
-	bulletInterval int32   // offset between two bullets in ms
-	bulletRange    int32   // in pixels
-	bulletSpeed    float32 // pixels per ms
+	bulletInterval int     // offset between two bullets in ms
+	bulletRange    int     // in pixels
+	bulletSpeed    float64 // pixels per ms
 	description    string
 	image          string
 	imageRotated   string
 	length         string
 	name           string
-	price          int32
+	price          int
 	sound          SoundEffect
 	weaponType     WeaponType
 	weight         string
 }
 
 func (w *Weapon) Ammo() string {
-	return w.name
+	return w.ammo
 }
 
-func (w *Weapon) BulletInterval() int32 {
+func (w *Weapon) BulletInterval() int {
 	return w.bulletInterval
 }
 
-func (w *Weapon) BulletRange() int32 {
+func (w *Weapon) BulletRange() int {
 	return w.bulletRange
 }
 
-func (w *Weapon) BulletSpeed() float32 {
+func (w *Weapon) BulletSpeed() float64 {
 	return w.bulletSpeed
 }
 
@@ -61,7 +61,7 @@ func (w *Weapon) Name() string {
 	return w.name
 }
 
-func (w *Weapon) Price() int32 {
+func (w *Weapon) Price() int {
 	return w.price
 }
 

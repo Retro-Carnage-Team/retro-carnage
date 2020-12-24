@@ -2,7 +2,7 @@ package geometry
 
 import (
 	"fmt"
-	"retro-carnage/util"
+	"math"
 )
 
 type Rectangle struct {
@@ -24,31 +24,38 @@ func (r *Rectangle) Subtract(offset *Point) *Rectangle {
 	return r
 }
 
-func (r *Rectangle) GetIntersection(other *Rectangle) *Rectangle {
-	var leftX = util.Max(r.X, other.X)
-	var rightX = util.Min(r.X+r.Width, other.X+other.Width)
-	var topY = util.Max(r.Y, other.Y)
-	var bottomY = util.Min(r.Y+r.Height, other.Y+other.Height)
+func (r *Rectangle) Intersection(other *Rectangle) *Rectangle {
+	var leftX = math.Max(r.X, other.X)
+	var rightX = math.Min(r.X+r.Width, other.X+other.Width)
+	var topY = math.Max(r.Y, other.Y)
+	var bottomY = math.Min(r.Y+r.Height, other.Y+other.Height)
 	if leftX < rightX && topY < bottomY {
 		return &Rectangle{X: leftX, Y: topY, Width: rightX - leftX, Height: bottomY - topY}
 	}
 	return nil
 }
 
-func (r *Rectangle) GetLeftBorder() *Line {
+func (r *Rectangle) LeftBorder() *Line {
 	return &Line{Start: &Point{X: r.X, Y: r.Y}, End: &Point{X: r.X, Y: r.Y + r.Height}}
 }
 
-func (r *Rectangle) GetRightBorder() *Line {
+func (r *Rectangle) RightBorder() *Line {
 	return &Line{Start: &Point{X: r.X + r.Width, Y: r.Y}, End: &Point{X: r.X + r.Width, Y: r.Y + r.Height}}
 }
 
-func (r *Rectangle) GetTopBorder() *Line {
+func (r *Rectangle) TopBorder() *Line {
 	return &Line{Start: &Point{X: r.X, Y: r.Y}, End: &Point{X: r.X + r.Width, Y: r.Y}}
 }
 
-func (r *Rectangle) GetBottomBorder() *Line {
+func (r *Rectangle) BottomBorder() *Line {
 	return &Line{Start: &Point{X: r.X, Y: r.Y + r.Height}, End: &Point{X: r.X + r.Width, Y: r.Y + r.Height}}
+}
+
+func (r *Rectangle) Center() *Point {
+	return &Point{
+		X: (r.X + r.X + r.Width) / 2,
+		Y: (r.Y + r.Y + r.Height) / 2,
+	}
 }
 
 func (r *Rectangle) String() string {
