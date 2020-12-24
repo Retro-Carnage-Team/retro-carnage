@@ -89,7 +89,7 @@ func (s *Screen) SetUp() {
 		s.itemNameToSprite[item.Name()] = common.LoadSprite(item.Image())
 	}
 
-	s.stopWatch = &util.StopWatch{Name: "Render process"}
+	s.stopWatch = &util.StopWatch{Name: "Shop render process"}
 }
 
 func (s *Screen) Update(_ int64) {
@@ -255,7 +255,17 @@ func (s *Screen) processSelectionMovedUp() {
 }
 
 func (s *Screen) processSelectionMovedRight() {
-	if -1 != s.selectedItemIdx {
+	if s.modalVisible {
+		if s.modalButtonSelection == buttonBuyWeapon {
+			if s.isModalButtonBuyAmmunitionAvailable() {
+				s.modalButtonSelection = buttonBuyAmmo
+			} else {
+				s.modalButtonSelection = buttonCloseModal
+			}
+		} else if s.modalButtonSelection == buttonBuyAmmo {
+			s.modalButtonSelection = buttonCloseModal
+		}
+	} else if -1 != s.selectedItemIdx {
 		if 4 == s.selectedItemIdx%5 {
 			s.selectedItemIdx -= 4
 		} else {
@@ -265,7 +275,17 @@ func (s *Screen) processSelectionMovedRight() {
 }
 
 func (s *Screen) processSelectionMovedLeft() {
-	if -1 != s.selectedItemIdx {
+	if s.modalVisible {
+		if s.modalButtonSelection == buttonBuyAmmo && s.isModalButtonBuyWeaponAvailable() {
+			s.modalButtonSelection = buttonBuyWeapon
+		} else if s.modalButtonSelection == buttonCloseModal {
+			if s.isModalButtonBuyAmmunitionAvailable() {
+				s.modalButtonSelection = buttonBuyAmmo
+			} else if s.isModalButtonBuyWeaponAvailable() {
+				s.modalButtonSelection = buttonBuyWeapon
+			}
+		}
+	} else if -1 != s.selectedItemIdx {
 		if 0 == s.selectedItemIdx%5 {
 			s.selectedItemIdx += 4
 		} else {
@@ -287,6 +307,11 @@ func (s *Screen) processButtonPressedOnModal() {
 	switch s.modalButtonSelection {
 	case buttonBuyWeapon:
 		s.inventoryController.BuyWeapon(item.Name())
+		if s.isModalButtonBuyAmmunitionAvailable() {
+			s.modalButtonSelection = buttonBuyAmmo
+		} else {
+			s.modalButtonSelection = buttonCloseModal
+		}
 	case buttonBuyAmmo:
 		if item.IsWeapon() {
 			weapon := assets.WeaponCrate.GetByName(item.Name())
@@ -295,6 +320,9 @@ func (s *Screen) processButtonPressedOnModal() {
 			s.inventoryController.BuyGrenade(item.Name())
 		} else if item.IsAmmunition() {
 			s.inventoryController.BuyAmmunition(item.Name())
+		}
+		if !s.isModalButtonBuyAmmunitionAvailable() {
+			s.modalButtonSelection = buttonCloseModal
 		}
 	case buttonCloseModal:
 		s.modalVisible = false
@@ -508,11 +536,9 @@ func (s *Screen) drawModalFooter(upperBorder float64) {
 	}
 
 	var leftBorder = s.drawModalCloseButton(upperBorder, upperBorder-bottomBarHeight)
-
 	if s.isModalButtonBuyAmmunitionAvailable() {
 		leftBorder = s.drawModalBuyAmmoButton(upperBorder, upperBorder-bottomBarHeight, leftBorder)
 	}
-
 	if s.isModalButtonBuyWeaponAvailable() {
 		s.drawModalBuyWeaponButton(upperBorder, upperBorder-bottomBarHeight, leftBorder)
 	}
