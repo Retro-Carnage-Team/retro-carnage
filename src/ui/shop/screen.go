@@ -520,34 +520,9 @@ func (s *Screen) drawModalFooter(upperBorder float64) {
 
 func (s *Screen) drawModalCloseButton(top float64, bottom float64) (leftBorder float64) {
 	var lineDimensions = fonts.GetTextDimension(modalFontSize, "CLOSE")
+	var rightBorder = s.getModalRightBorder() - 30
 	leftBorder = s.getModalRightBorder() - 30 - lineDimensions.X - buttonPadding - buttonPadding
-
-	//------------------------------------------------
-	// TODO: Move this following block into a function
-	//------------------------------------------------
-	var upperRight = pixel.V(s.getModalRightBorder()-30, top-buttonPadding)
-	var lowerLeft = pixel.V(leftBorder, bottom+buttonPadding)
-	imd := imdraw.New(nil)
-	imd.Color = common.Black
-	imd.Push(upperRight, lowerLeft)
-	imd.Rectangle(0)
-	imd.Draw(s.window)
-
-	var buttonHeight = top - buttonPadding - bottom - buttonPadding
-	var buttonTextX = s.getModalRightBorder() - 30 - lineDimensions.X - buttonPadding
-	var buttonTextY = bottom + buttonPadding + (buttonHeight-lineDimensions.Y)/2
-	fonts.
-		BuildText(pixel.V(buttonTextX, buttonTextY), modalFontSize, common.White, "CLOSE").
-		Draw(s.window, pixel.IM)
-
-	if s.modalButtonSelection == buttonCloseModal {
-		imd := imdraw.New(nil)
-		imd.Color = common.Yellow
-		imd.Push(upperRight, lowerLeft)
-		imd.Rectangle(selectionBorderWidth)
-		imd.Draw(s.window)
-	}
-	//------------------------------------------------
+	s.drawModalButton(top, bottom, rightBorder, leftBorder, lineDimensions, "CLOSE", buttonCloseModal)
 	return
 }
 
@@ -556,33 +531,7 @@ func (s *Screen) drawModalBuyAmmoButton(top float64, bottom float64, closeButton
 	var lineDimensions = fonts.GetTextDimension(modalFontSize, labelText)
 	var rightBorder = closeButtonLeft - 30
 	leftBorder = rightBorder - lineDimensions.X - buttonPadding - buttonPadding
-
-	//------------------------------------------------
-	// TODO: Move this following block into a function
-	//------------------------------------------------
-	var upperRight = pixel.V(rightBorder, top-buttonPadding)
-	var lowerLeft = pixel.V(leftBorder, bottom+buttonPadding)
-	imd := imdraw.New(nil)
-	imd.Color = common.Black
-	imd.Push(upperRight, lowerLeft)
-	imd.Rectangle(0)
-	imd.Draw(s.window)
-
-	var buttonHeight = top - buttonPadding - bottom - buttonPadding
-	var buttonTextX = leftBorder + buttonPadding
-	var buttonTextY = bottom + buttonPadding + (buttonHeight-lineDimensions.Y)/2
-	fonts.
-		BuildText(pixel.V(buttonTextX, buttonTextY), modalFontSize, common.White, labelText).
-		Draw(s.window, pixel.IM)
-
-	if s.modalButtonSelection == buttonBuyAmmo {
-		imd := imdraw.New(nil)
-		imd.Color = common.Yellow
-		imd.Push(upperRight, lowerLeft)
-		imd.Rectangle(selectionBorderWidth)
-		imd.Draw(s.window)
-	}
-	//------------------------------------------------
+	s.drawModalButton(top, bottom, rightBorder, leftBorder, lineDimensions, labelText, buttonBuyAmmo)
 	return
 }
 
@@ -591,10 +540,10 @@ func (s *Screen) drawModalBuyWeaponButton(top float64, bottom float64, buyAmmoBu
 	var lineDimensions = fonts.GetTextDimension(modalFontSize, labelText)
 	var rightBorder = buyAmmoButtonLeft - 30
 	var leftBorder = rightBorder - lineDimensions.X - buttonPadding - buttonPadding
+	s.drawModalButton(top, bottom, rightBorder, leftBorder, lineDimensions, labelText, buttonBuyWeapon)
+}
 
-	//------------------------------------------------
-	// TODO: Move this following block into a function
-	//------------------------------------------------
+func (s *Screen) drawModalButton(top float64, bottom float64, rightBorder float64, leftBorder float64, lineDimensions *geometry.Point, labelText string, _type modalButton) {
 	var upperRight = pixel.V(rightBorder, top-buttonPadding)
 	var lowerLeft = pixel.V(leftBorder, bottom+buttonPadding)
 
@@ -611,14 +560,13 @@ func (s *Screen) drawModalBuyWeaponButton(top float64, bottom float64, buyAmmoBu
 		BuildText(pixel.V(buttonTextX, buttonTextY), modalFontSize, common.White, labelText).
 		Draw(s.window, pixel.IM)
 
-	if s.modalButtonSelection == buttonBuyWeapon {
+	if s.modalButtonSelection == _type {
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
 		imd.Push(upperRight, lowerLeft)
 		imd.Rectangle(selectionBorderWidth)
 		imd.Draw(s.window)
 	}
-	//------------------------------------------------
 }
 
 func (s *Screen) getModalBuyAmmoButtonLabel() string {
