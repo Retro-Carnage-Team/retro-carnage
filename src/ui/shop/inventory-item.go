@@ -40,26 +40,34 @@ func (ii *inventoryItem) IsWeapon() bool {
 }
 
 func (ii *inventoryItem) IsGrenade() bool {
-	return ii.index < len(assets.WeaponCrate.GetAll())+len(assets.GrenadeCrate.GetAll())
+	return ii.index >= len(assets.WeaponCrate.GetAll()) &&
+		ii.index < len(assets.WeaponCrate.GetAll())+len(assets.GrenadeCrate.GetAll())
 }
 
 func (ii *inventoryItem) IsAmmunition() bool {
 	return !ii.IsWeapon() && !ii.IsGrenade()
 }
 
-func (ii *inventoryItem) OwnedPortion(playerIdx int) float64 {
+// OwnedFromMax returns the current number of these item in inventory and their max count.
+func (ii *inventoryItem) OwnedFromMax(playerIdx int) (int, int) {
 	if ii.IsWeapon() {
 		logging.Error.Fatal("this method should be used for grenades and ammunition only")
-		return 0.0
+		return 0, 0
 	} else if ii.IsGrenade() {
 		var owned = characters.Players[playerIdx].GrenadeCount(ii.Name())
 		var grenade = assets.GrenadeCrate.GetByName(ii.Name())
-		return float64(owned) / float64(grenade.MaxCount())
+		return owned, grenade.MaxCount()
 	} else {
 		var owned = characters.Players[playerIdx].AmmunitionCount(ii.Name())
 		var ammunition = assets.AmmunitionCrate.GetByName(ii.Name())
-		return float64(owned) / float64(ammunition.MaxCount())
+		return owned, ammunition.MaxCount()
 	}
+}
+
+// OwnedPortion returns the portion of this item's max item count that the user already owns.
+func (ii *inventoryItem) OwnedPortion(playerIdx int) float64 {
+	var owned, max = ii.OwnedFromMax(playerIdx)
+	return float64(owned) / float64(max)
 }
 
 func getAllInventoryItems() (result []*inventoryItem) {

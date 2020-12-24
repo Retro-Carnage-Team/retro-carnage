@@ -108,7 +108,7 @@ func (s *Screen) Update(_ int64) {
 	}
 
 	if s.modalVisible {
-		s.stopWatch.Stop()
+		_ = s.stopWatch.Stop()
 		logging.Trace.Print(s.stopWatch.PrintDebugMessage())
 	}
 }
@@ -499,6 +499,166 @@ func (s *Screen) drawModalFooter(upperBorder float64) {
 	imd.Rectangle(0)
 	imd.Draw(s.window)
 
+	var hint = s.getModalFooterStatusHint()
+	if "" != hint {
+		var lineDimensions = fonts.GetTextDimension(modalFontSize, hint)
+		var lineX = s.getModalLeftBorder() + 30
+		var lineY = upperBorder - lineDimensions.Y - (bottomBarHeight-lineDimensions.Y)/2
+		fonts.BuildText(pixel.V(lineX, lineY), modalFontSize, common.OliveGreen, hint).Draw(s.window, pixel.IM)
+	}
+
+	var leftBorder = s.drawModalCloseButton(upperBorder, upperBorder-bottomBarHeight)
+
+	if s.isModalButtonBuyAmmunitionAvailable() {
+		leftBorder = s.drawModalBuyAmmoButton(upperBorder, upperBorder-bottomBarHeight, leftBorder)
+	}
+
+	if s.isModalButtonBuyWeaponAvailable() {
+		s.drawModalBuyWeaponButton(upperBorder, upperBorder-bottomBarHeight, leftBorder)
+	}
+}
+
+func (s *Screen) drawModalCloseButton(top float64, bottom float64) (leftBorder float64) {
+	var lineDimensions = fonts.GetTextDimension(modalFontSize, "CLOSE")
+	leftBorder = s.getModalRightBorder() - 30 - lineDimensions.X - buttonPadding - buttonPadding
+
+	//------------------------------------------------
+	// TODO: Move this following block into a function
+	//------------------------------------------------
+	var upperRight = pixel.V(s.getModalRightBorder()-30, top-buttonPadding)
+	var lowerLeft = pixel.V(leftBorder, bottom+buttonPadding)
+	imd := imdraw.New(nil)
+	imd.Color = common.Black
+	imd.Push(upperRight, lowerLeft)
+	imd.Rectangle(0)
+	imd.Draw(s.window)
+
+	var buttonHeight = top - buttonPadding - bottom - buttonPadding
+	var buttonTextX = s.getModalRightBorder() - 30 - lineDimensions.X - buttonPadding
+	var buttonTextY = bottom + buttonPadding + (buttonHeight-lineDimensions.Y)/2
+	fonts.
+		BuildText(pixel.V(buttonTextX, buttonTextY), modalFontSize, common.White, "CLOSE").
+		Draw(s.window, pixel.IM)
+
+	if s.modalButtonSelection == buttonCloseModal {
+		imd := imdraw.New(nil)
+		imd.Color = common.Yellow
+		imd.Push(upperRight, lowerLeft)
+		imd.Rectangle(selectionBorderWidth)
+		imd.Draw(s.window)
+	}
+	//------------------------------------------------
+	return
+}
+
+func (s *Screen) drawModalBuyAmmoButton(top float64, bottom float64, closeButtonLeft float64) (leftBorder float64) {
+	var labelText = s.getModalBuyAmmoButtonLabel()
+	var lineDimensions = fonts.GetTextDimension(modalFontSize, labelText)
+	var rightBorder = closeButtonLeft - 30
+	leftBorder = rightBorder - lineDimensions.X - buttonPadding - buttonPadding
+
+	//------------------------------------------------
+	// TODO: Move this following block into a function
+	//------------------------------------------------
+	var upperRight = pixel.V(rightBorder, top-buttonPadding)
+	var lowerLeft = pixel.V(leftBorder, bottom+buttonPadding)
+	imd := imdraw.New(nil)
+	imd.Color = common.Black
+	imd.Push(upperRight, lowerLeft)
+	imd.Rectangle(0)
+	imd.Draw(s.window)
+
+	var buttonHeight = top - buttonPadding - bottom - buttonPadding
+	var buttonTextX = leftBorder + buttonPadding
+	var buttonTextY = bottom + buttonPadding + (buttonHeight-lineDimensions.Y)/2
+	fonts.
+		BuildText(pixel.V(buttonTextX, buttonTextY), modalFontSize, common.White, labelText).
+		Draw(s.window, pixel.IM)
+
+	if s.modalButtonSelection == buttonBuyAmmo {
+		imd := imdraw.New(nil)
+		imd.Color = common.Yellow
+		imd.Push(upperRight, lowerLeft)
+		imd.Rectangle(selectionBorderWidth)
+		imd.Draw(s.window)
+	}
+	//------------------------------------------------
+	return
+}
+
+func (s *Screen) drawModalBuyWeaponButton(top float64, bottom float64, buyAmmoButtonLeft float64) {
+	var labelText = "BUY WEAPON"
+	var lineDimensions = fonts.GetTextDimension(modalFontSize, labelText)
+	var rightBorder = buyAmmoButtonLeft - 30
+	var leftBorder = rightBorder - lineDimensions.X - buttonPadding - buttonPadding
+
+	//------------------------------------------------
+	// TODO: Move this following block into a function
+	//------------------------------------------------
+	var upperRight = pixel.V(rightBorder, top-buttonPadding)
+	var lowerLeft = pixel.V(leftBorder, bottom+buttonPadding)
+
+	imd := imdraw.New(nil)
+	imd.Color = common.Black
+	imd.Push(upperRight, lowerLeft)
+	imd.Rectangle(0)
+	imd.Draw(s.window)
+
+	var buttonHeight = top - buttonPadding - bottom - buttonPadding
+	var buttonTextX = leftBorder + buttonPadding
+	var buttonTextY = bottom + buttonPadding + (buttonHeight-lineDimensions.Y)/2
+	fonts.
+		BuildText(pixel.V(buttonTextX, buttonTextY), modalFontSize, common.White, labelText).
+		Draw(s.window, pixel.IM)
+
+	if s.modalButtonSelection == buttonBuyWeapon {
+		imd := imdraw.New(nil)
+		imd.Color = common.Yellow
+		imd.Push(upperRight, lowerLeft)
+		imd.Rectangle(selectionBorderWidth)
+		imd.Draw(s.window)
+	}
+	//------------------------------------------------
+}
+
+func (s *Screen) getModalBuyAmmoButtonLabel() string {
+	var item = s.items[s.selectedItemIdx]
+	if item.IsWeapon() {
+		var weapon = assets.WeaponCrate.GetByName(item.Name())
+		var ammo = assets.AmmunitionCrate.GetByName(weapon.Ammo())
+		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", ammo.PackageSize(), ammo.Price())
+	} else if item.IsAmmunition() {
+		var ammo = assets.AmmunitionCrate.GetByName(item.Name())
+		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", ammo.PackageSize(), ammo.Price())
+	} else {
+		var grenade = assets.GrenadeCrate.GetByName(item.Name())
+		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", grenade.PackageSize(), grenade.Price())
+	}
+}
+
+func (s *Screen) getModalFooterStatusHint() string {
+	var item = s.items[s.selectedItemIdx]
+	if item.IsWeapon() {
+		var weapon = assets.WeaponCrate.GetByName(item.Name())
+		if s.inventoryController.WeaponInInventory(item.Name()) {
+			for _, ammo := range s.items {
+				if ammo.Name() == weapon.Ammo() {
+					var owned, max = ammo.OwnedFromMax(s.PlayerIdx)
+					return fmt.Sprintf("You own this weapon and %d of %d bullets", owned, max)
+				}
+			}
+			logging.Error.Fatalf("Failed to find ammo item: %s", weapon.Ammo())
+		} else {
+			return "You don't own this weapon yet"
+		}
+	}
+
+	var _type = "bullets"
+	if item.IsGrenade() {
+		_type = "grenades"
+	}
+	var owned, max = item.OwnedFromMax(s.PlayerIdx)
+	return fmt.Sprintf("You own %d of %d of these %s", owned, max, _type)
 }
 
 func (s *Screen) isModalButtonBuyWeaponAvailable() bool {

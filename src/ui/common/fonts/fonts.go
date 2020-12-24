@@ -71,7 +71,7 @@ func GetTextDimension(fontSize int, input string) *geometry.Point {
 	if nil == value {
 		var txt = text.New(pixel.V(0, 0), SizeToFontAtlas[fontSize])
 		_, _ = fmt.Fprint(txt, input)
-		value = &geometry.Point{X: txt.Dot.X, Y: txt.LineHeight}
+		value = &geometry.Point{X: txt.Bounds().W(), Y: txt.Bounds().H()}
 		textDimensionCache[key] = value
 	}
 	return value
