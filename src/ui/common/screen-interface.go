@@ -49,4 +49,5 @@ const (
 	ShopP1              ScreenName = "Shop (Player 1)"
 	ShopP2              ScreenName = "Shop (Player 2)"
 	LetTheMissionBegin  ScreenName = "Let the mission begin screen"
+	Game                ScreenName = "Game screen"
 )
