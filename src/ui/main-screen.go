@@ -8,6 +8,7 @@ import (
 	byw "retro-carnage/ui/buy-your-weapons"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/config"
+	lb "retro-carnage/ui/lets-begin"
 	"retro-carnage/ui/loading"
 	"retro-carnage/ui/mission"
 	"retro-carnage/ui/shop"
@@ -63,6 +64,8 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 		ms.nextScreen = &shop.Screen{PlayerIdx: 0}
 	case common.ShopP2:
 		ms.nextScreen = &shop.Screen{PlayerIdx: 1}
+	case common.LetTheMissionBegin:
+		ms.nextScreen = &lb.Screen{}
 	}
 }
 
