@@ -7,12 +7,13 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	_ "image/jpeg"
 	"math"
+	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
 )
 
-const backgroundImagePath = "./images/backgrounds/title.jpg"
+const backgroundImagePath = "images/other/title.jpg"
 const screenTimeout = 5000
 
 type Screen struct {
@@ -37,7 +38,7 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 }
 
 func (s *Screen) SetUp() {
-	s.backgroundImageSprite = common.LoadSprite(backgroundImagePath)
+	s.backgroundImageSprite = assets.SpriteRepository.Get(backgroundImagePath)
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {

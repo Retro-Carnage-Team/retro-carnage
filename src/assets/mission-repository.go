@@ -5,7 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"retro-carnage/logging"
-	"strings"
+	"retro-carnage/util"
 	"sync"
 )
 
@@ -57,7 +57,7 @@ func (mr *MissionRepo) ByName(name string) (*Mission, error) {
 func (mr *MissionRepo) loadFromDisk(directory string) {
 	mr.Missions = make([]*Mission, 0)
 
-	files, err := mr.getMissionFiles(directory)
+	files, err := util.GetJsonFilesOfDirectory(directory)
 	if err != nil {
 		logging.Error.Fatalf("failed to access mission folder: %v", err)
 	}
@@ -73,25 +73,6 @@ func (mr *MissionRepo) loadFromDisk(directory string) {
 	mr.initializationMutex.Lock()
 	mr.initialized = true
 	mr.initializationMutex.Unlock()
-}
-
-func (mr *MissionRepo) getMissionFiles(directory string) ([]string, error) {
-	if !strings.HasSuffix(directory, "/") {
-		directory += "/"
-	}
-
-	files, err := ioutil.ReadDir(directory)
-	if err != nil {
-		return nil, err
-	}
-
-	var result = make([]string, 0)
-	for _, f := range files {
-		if !f.IsDir() && strings.HasSuffix(f.Name(), ".json") {
-			result = append(result, directory+f.Name())
-		}
-	}
-	return result, nil
 }
 
 func (mr *MissionRepo) loadMissionFile(filePath string) (*Mission, error) {

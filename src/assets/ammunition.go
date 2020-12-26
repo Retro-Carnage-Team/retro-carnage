@@ -1,34 +1,26 @@
 package assets
 
 type Ammunition struct {
-	description string
-	image       string
-	maxCount    int
-	name        string
-	packageSize int
-	price       int
+	Description string
+	Image       string
+	MaxCount    int
+	Name        string
+	PackageSize int
+	Price       int
 }
 
-func (a *Ammunition) Description() string {
-	return a.description
+func (a *Ammunition) GetDescription() string {
+	return a.Description
 }
 
-func (a *Ammunition) Image() string {
-	return a.image
+func (a *Ammunition) GetImage() string {
+	return a.Image
 }
 
-func (a *Ammunition) MaxCount() int {
-	return a.maxCount
+func (a *Ammunition) GetName() string {
+	return a.Name
 }
 
-func (a *Ammunition) Name() string {
-	return a.name
-}
-
-func (a *Ammunition) PackageSize() int {
-	return a.packageSize
-}
-
-func (a *Ammunition) Price() int {
-	return a.price
+func (a *Ammunition) GetPrice() int {
+	return a.Price
 }

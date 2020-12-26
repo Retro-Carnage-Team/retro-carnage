@@ -16,13 +16,13 @@ import (
 	"retro-carnage/ui/common/fonts"
 )
 
-const crossHairImagePath = "./images/tiles/other/crosshair.png"
+const crossHairImagePath = "images/other/crosshair.png"
 
 var locationMarkerColor = common.ParseHexColor("#fea400")
 
 const briefingFontSize = 50
 const locationMarkerRadius = 10
-const worldMapImagePath = "./images/tiles/other/world-map.jpg"
+const worldMapImagePath = "images/other/world-map.jpg"
 const worldMapWidth = 1280
 const worldMapHeight = 783
 
@@ -56,8 +56,8 @@ func (s *Screen) SetUp() {
 	} else {
 		s.initializeMissions()
 	}
-	s.crossHairSprite = common.LoadSprite(crossHairImagePath)
-	s.worldMapSprite = common.LoadSprite(worldMapImagePath)
+	s.crossHairSprite = assets.SpriteRepository.Get(crossHairImagePath)
+	s.worldMapSprite = assets.SpriteRepository.Get(worldMapImagePath)
 }
 
 func (s *Screen) initializeMissions() {
@@ -71,7 +71,7 @@ func (s *Screen) initializeMissions() {
 
 	s.missionNameToClientSprite = make(map[string]*pixel.Sprite)
 	for _, mission := range remainingMissions {
-		s.missionNameToClientSprite[mission.Name] = common.LoadSprite(mission.Client)
+		s.missionNameToClientSprite[mission.Name] = assets.SpriteRepository.Get(mission.Client)
 	}
 
 	s.availableMissions = remainingMissions

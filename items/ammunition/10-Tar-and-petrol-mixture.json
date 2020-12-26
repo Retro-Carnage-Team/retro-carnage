@@ -1,0 +1,8 @@
+{
+  "description": "The petrol and propellant for the Flammenwerfer 41 comes in separate tanks carried on the back. These tanks hold 11.8 litres of tar and petrol mixture called Flammoel 19. The Flammenwerfer 41 proved to be more reliable and easier to operate than its predecessor, it had an increased range of 32 metres and was lighter weighing in at 28.7 kilograms.",
+  "image": "images/weapons/Napalm.png",
+  "maxCount": 1000,
+  "name": "Tar and petrol mixture",
+  "packageSize": 50,
+  "price": 1000
+}

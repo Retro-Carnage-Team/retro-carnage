@@ -1,11 +1,17 @@
 package assets
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"retro-carnage/logging"
+	"retro-carnage/util"
+	"sync"
 )
 
 type GrenadeContainer struct {
-	grenades []*Grenade
+	grenades            []*Grenade
+	initialized         bool
+	initializationMutex sync.Mutex
 }
 
 func (gc *GrenadeContainer) GetAll() []*Grenade {
@@ -14,7 +20,7 @@ func (gc *GrenadeContainer) GetAll() []*Grenade {
 
 func (gc *GrenadeContainer) GetByName(name string) *Grenade {
 	for _, grenade := range gc.grenades {
-		if grenade.Name() == name {
+		if grenade.Name == name {
 			return grenade
 		}
 	}
@@ -23,39 +29,64 @@ func (gc *GrenadeContainer) GetByName(name string) *Grenade {
 }
 
 var (
-	GrenadeCrate = GrenadeContainer{grenades: initializeGrenades()}
+	GrenadeCrate = GrenadeContainer{}
 )
 
-func initializeGrenades() []*Grenade {
+// Initialize starts the asynchronous initialization. It will load all grenade files from the items/grenades folder.
+// You can check the Initialized() method to check when this process has finished.
+func (gc *GrenadeContainer) Initialize() {
+	gc.initialized = false
+	go gc.loadFromDisk("items/grenades/")
+}
+
+// InitializeInTest is the test version of the Initialize method. It starts the asynchronous initialization, loading
+// grenade files from a given location instead of the default folder. This version doesn't work asynchronously.
+// You don't need to check the Initialized() method for when this process has finished.
+func (gc *GrenadeContainer) InitializeInTest(folder string) {
+	gc.initialized = true
+	gc.loadFromDisk(folder)
+}
+
+func (gc *GrenadeContainer) Initialized() bool {
+	gc.initializationMutex.Lock()
+	defer gc.initializationMutex.Unlock()
+	return gc.initialized
+}
+
+func (gc *GrenadeContainer) loadFromDisk(directory string) {
 	var result = make([]*Grenade, 0)
 
-	result = append(result, &Grenade{
-		description:      "The DM41 is a fragmentation hand grenade and based on the US-American M26A2 hand grenade with fuse M215. The M26 entered service around 1952 and was used in combat during the Korean War. Its distinct lemon shape led it to being nicknamed the 'lemon grenade' (compare the Russian F1 grenade and American Mk 2 'pineapple' grenade, with similar nicknames). Fragmentation is enhanced by a special pre-notched fragmentation coil that lies along the inside of the grenade's body. This coil had a circular cross-section in the M26 grenade and an improved square cross-section in the M26A1 and later designs.",
-		explosive:        "150 g",
-		image:            "images/tiles/weapons/DM41.png",
-		imageRotated:     "images/tiles/weapons/DM41-r.png",
-		maxCount:         100,
-		movementDistance: 450,
-		movementSpeed:    0.8,
-		name:             "DM41",
-		packageSize:      5,
-		price:            500,
-		weight:           "0.450 kg",
-	})
+	files, err := util.GetJsonFilesOfDirectory(directory)
+	if err != nil {
+		logging.Error.Fatalf("failed to access grenade folder: %v", err)
+	}
 
-	result = append(result, &Grenade{
-		description:      "The Stielhandgranate (German for 'stick hand grenade') was a German hand grenade of unique design. It was the standard issue of the German Empire during World War I, and became the widespread issue of Nazi Germany's Wehrmacht during World War II. The very distinctive appearance led to it being called a 'stick grenade', or 'potato masher' in British Army slang, and is today one of the most easily recognized infantry weapons of the 20th century.",
-		explosive:        "170 g",
-		image:            "images/tiles/weapons/M24.png",
-		imageRotated:     "images/tiles/weapons/M24-r.png",
-		maxCount:         100,
-		movementDistance: 550,
-		movementSpeed:    0.85,
-		name:             "Stielhandgranate 24",
-		packageSize:      5,
-		price:            600,
-		weight:           "0.595 kg",
-	})
+	for _, f := range files {
+		grenade, err := gc.loadGrenadeFile(f)
+		if err != nil {
+			logging.Warning.Printf("failed to load grenade from file %s: %v", f, err)
+		}
+		result = append(result, grenade)
+	}
 
-	return result
+	gc.grenades = result
+
+	gc.initializationMutex.Lock()
+	gc.initialized = true
+	gc.initializationMutex.Unlock()
+}
+
+func (gc *GrenadeContainer) loadGrenadeFile(filePath string) (*Grenade, error) {
+	logging.Trace.Printf("loading grenade: %s", filePath)
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	var grenade = &Grenade{}
+	err = json.Unmarshal(data, grenade)
+	if err != nil {
+		return nil, err
+	}
+	return grenade, nil
 }

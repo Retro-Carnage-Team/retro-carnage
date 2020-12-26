@@ -1,0 +1,15 @@
+{
+  "ammo": "9 x 19 mm",
+  "bulletInterval": 0,
+  "bulletRange": 350,
+  "bulletSpeed": 1.2,
+  "description": "The SIG P210 is a locked breech self loading, semi-automatic pistol (which is the normal design for common modern pistols) designed and manufactured in Neuhausen am Rheinfall (Canton of Schaffhausen, Switzerland) by SIG from 1948 until 2006. It is of all-steel construction chambered in 9×19mm Parabellum and 7.65×21mm Parabellum. It was used from 1949 to 1975 by the Swiss army and police units. It was also adopted and is still in service with the Military of Denmark, in 1951 by the German Bundespolizei and in shooting sports. The pistols were decommissioned and replaced by the SIG Sauer P220 developed in 1975. Swiss production of the P210 continued until 2006. A new model, the P210 Legend, was introduced by SIG Sauer GMBH of Germany in 2010, and another, the P210A, was introduced by SIG Sauer Inc. of New Hampshire in the United States in 2017.",
+  "image": "images/weapons/SIG-P210.png",
+  "imageRotated": "images/weapons/SIG-P210-r.png",
+  "length": "21.5 cm",
+  "name": "P210",
+  "price": 220,
+  "sound": "pistol2.mp3",
+  "weaponType": 0,
+  "weight": "0.970 kg"
+}

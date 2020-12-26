@@ -18,10 +18,10 @@ import (
 	"retro-carnage/util"
 )
 
-const backgroundImagePath = "./images/backgrounds/shop.jpg"
+const backgroundImagePath = "images/other/shop.jpg"
 const bottomBarHeight = 70
 const buttonPadding = 10
-const checkImagePath = "./images/tiles/other/check-circle.png"
+const checkImagePath = "images/other/check-circle.png"
 const itemMargin = 10.0
 const itemPadding = 25.0
 const labelAmmo = "Ammo: "
@@ -75,8 +75,8 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 }
 
 func (s *Screen) SetUp() {
-	s.backgroundImageSprite = common.LoadSprite(backgroundImagePath)
-	s.checkSprite = common.LoadSprite(checkImagePath)
+	s.backgroundImageSprite = assets.SpriteRepository.Get(backgroundImagePath)
+	s.checkSprite = assets.SpriteRepository.Get(checkImagePath)
 	s.inventoryController = engine.NewInventoryController(s.PlayerIdx)
 	s.labelDimensions = fonts.GetTextDimensions(modalFontSize, labelAmmo, labelLength, labelPackageSize, labelPrice,
 		labelRange, labelSpeed, labelWeight)
@@ -86,7 +86,7 @@ func (s *Screen) SetUp() {
 	s.items = getAllInventoryItems()
 	s.itemNameToSprite = make(map[string]*pixel.Sprite)
 	for _, item := range s.items {
-		s.itemNameToSprite[item.Name()] = common.LoadSprite(item.Image())
+		s.itemNameToSprite[item.Name()] = assets.SpriteRepository.Get(item.Image())
 	}
 
 	s.stopWatch = &util.StopWatch{Name: "Shop render process"}
@@ -315,7 +315,7 @@ func (s *Screen) processButtonPressedOnModal() {
 	case buttonBuyAmmo:
 		if item.IsWeapon() {
 			weapon := assets.WeaponCrate.GetByName(item.Name())
-			s.inventoryController.BuyAmmunition(weapon.Ammo())
+			s.inventoryController.BuyAmmunition(weapon.Ammo)
 		} else if item.IsGrenade() {
 			s.inventoryController.BuyGrenade(item.Name())
 		} else if item.IsAmmunition() {
@@ -454,10 +454,10 @@ func (s *Screen) drawModalBody() float64 {
 func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
 	var weapon = assets.WeaponCrate.GetByName(item.Name())
 	var priceValue = fmt.Sprintf("$%d", item.Price())
-	var rangeValue = fmt.Sprintf("%d m", weapon.BulletRange())
+	var rangeValue = fmt.Sprintf("%d m", weapon.BulletRange)
 	var speedValue = "Single shot"
-	if 0 < weapon.BulletInterval() {
-		speedValue = fmt.Sprintf("%d / minute", 60000/weapon.BulletInterval())
+	if 0 < weapon.BulletInterval {
+		speedValue = fmt.Sprintf("%d / minute", 60000/weapon.BulletInterval)
 	}
 
 	var maxLabelWidth = util.Max([]float64{
@@ -466,7 +466,7 @@ func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
 	})
 
 	var maxValueWidth = fonts.GetMaxTextWidth(modalFontSize, []string{
-		priceValue, weapon.Ammo(), weapon.Length(), speedValue, rangeValue, weapon.Weight(),
+		priceValue, weapon.Ammo, weapon.Length, speedValue, rangeValue, weapon.Weight,
 	})
 
 	var columnWidth = maxLabelWidth + modalLabelSpace + maxValueWidth
@@ -477,9 +477,9 @@ func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
 
 	var firstRowY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y
 	fonts.BuildMultiLineText(pixel.V(firstColumnLabelX, firstRowY), modalFontSize, common.Black, []string{labelPrice, labelAmmo, labelLength}).Draw(s.window, pixel.IM)
-	fonts.BuildMultiLineText(pixel.V(firstColumnValueX, firstRowY), modalFontSize, common.Black, []string{priceValue, weapon.Ammo(), weapon.Length()}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(firstColumnValueX, firstRowY), modalFontSize, common.Black, []string{priceValue, weapon.Ammo, weapon.Length}).Draw(s.window, pixel.IM)
 	fonts.BuildMultiLineText(pixel.V(secondColumnLabelX, firstRowY), modalFontSize, common.Black, []string{labelSpeed, labelRange, labelWeight}).Draw(s.window, pixel.IM)
-	fonts.BuildMultiLineText(pixel.V(secondColumnValueX, firstRowY), modalFontSize, common.Black, []string{speedValue, rangeValue, weapon.Weight()}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(secondColumnValueX, firstRowY), modalFontSize, common.Black, []string{speedValue, rangeValue, weapon.Weight}).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
@@ -489,11 +489,11 @@ func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
 
 	if item.IsAmmunition() {
 		var ammo = assets.AmmunitionCrate.GetByName(item.Name())
-		packageSizeValue = fmt.Sprintf("%d", ammo.PackageSize())
+		packageSizeValue = fmt.Sprintf("%d", ammo.PackageSize)
 	} else {
 		var grenade = assets.GrenadeCrate.GetByName(item.Name())
-		packageSizeValue = fmt.Sprintf("%d", grenade.PackageSize())
-		rangeValue = fmt.Sprintf("%d m", grenade.MovementDistance())
+		packageSizeValue = fmt.Sprintf("%d", grenade.PackageSize)
+		rangeValue = fmt.Sprintf("%d m", grenade.MovementDistance)
 	}
 
 	var maxLabelWidth = util.Max([]float64{
@@ -599,14 +599,14 @@ func (s *Screen) getModalBuyAmmoButtonLabel() string {
 	var item = s.items[s.selectedItemIdx]
 	if item.IsWeapon() {
 		var weapon = assets.WeaponCrate.GetByName(item.Name())
-		var ammo = assets.AmmunitionCrate.GetByName(weapon.Ammo())
-		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", ammo.PackageSize(), ammo.Price())
+		var ammo = assets.AmmunitionCrate.GetByName(weapon.Ammo)
+		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", ammo.PackageSize, ammo.Price)
 	} else if item.IsAmmunition() {
 		var ammo = assets.AmmunitionCrate.GetByName(item.Name())
-		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", ammo.PackageSize(), ammo.Price())
+		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", ammo.PackageSize, ammo.Price)
 	} else {
 		var grenade = assets.GrenadeCrate.GetByName(item.Name())
-		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", grenade.PackageSize(), grenade.Price())
+		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", grenade.PackageSize, grenade.Price)
 	}
 }
 
@@ -616,12 +616,12 @@ func (s *Screen) getModalFooterStatusHint() string {
 		var weapon = assets.WeaponCrate.GetByName(item.Name())
 		if s.inventoryController.WeaponInInventory(item.Name()) {
 			for _, ammo := range s.items {
-				if ammo.Name() == weapon.Ammo() {
+				if ammo.Name() == weapon.Ammo {
 					var owned, max = ammo.OwnedFromMax(s.PlayerIdx)
 					return fmt.Sprintf("You own this weapon and %d of %d bullets", owned, max)
 				}
 			}
-			logging.Error.Fatalf("Failed to find ammo item: %s", weapon.Ammo())
+			logging.Error.Fatalf("Failed to find ammo item: %s", weapon.Ammo)
 		} else {
 			return "You don't own this weapon yet"
 		}
@@ -654,7 +654,7 @@ func (s *Screen) isModalButtonBuyAmmunitionAvailable() bool {
 	var ammoName = item.Name()
 	if item.IsWeapon() {
 		var weapon = assets.WeaponCrate.GetByName(item.Name())
-		ammoName = weapon.Ammo()
+		ammoName = weapon.Ammo
 	}
 	return s.inventoryController.AmmunitionProcurable(ammoName)
 }

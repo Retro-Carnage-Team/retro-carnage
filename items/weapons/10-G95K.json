@@ -1,0 +1,15 @@
+{
+  "ammo": "5.56 x 45 mm",
+  "bulletInterval": 100,
+  "bulletRange": 550,
+  "bulletSpeed": 1.4,
+  "description": "The Heckler & Koch HK416 is an assault rifle designed and manufactured by the German company Heckler & Koch. Although its design is based on the AR-15 class of items, specifically the Colt M4 carbine family issued to the U.S. military, it uses a proprietary short-stroke gas piston system derived from the ArmaLite AR-18 (the same system was also used in Heckler & Koch's earlier G36 family of rifles). It is the standard assault rifle of the Norwegian Armed Forces, selected by the French Armed Forces to replace the FAMAS, and was the weapon used by SEAL Team Six to kill Osama Bin Laden in 2011.",
+  "image": "images/weapons/HK416N.png",
+  "imageRotated": "images/weapons/HK416N-r.png",
+  "length": "103.7 cm",
+  "name": "G95K",
+  "price": 9800,
+  "sound": "G95K.mp3",
+  "weaponType": 1,
+  "weight": "3.850 kg"
+}
