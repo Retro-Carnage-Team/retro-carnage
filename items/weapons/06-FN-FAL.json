@@ -1,0 +1,15 @@
+{
+  "ammo": "7.62 x 51 mm",
+  "bulletInterval": 80,
+  "bulletRange": 500,
+  "bulletSpeed": 1.4,
+  "description": "The FAL (French: Fusil Automatique Léger, English: Light Automatic Rifle) is a battle rifle designed by Belgian small arms designer Dieudonné Saive and manufactured by FN Herstal. During the Cold War the FAL was adopted by many countries of the North Atlantic Treaty Organization (NATO), with the notable exception of the United States. It is one of the most widely used rifles in history, having been used by more than 90 countries. Because of its prevalence and widespread usage among the militaries of many NATO and first world countries during the Cold War, it was given the title 'The right arm of the Free World'. It is chambered for the 7.62×51mm NATO cartridge (although originally designed for the .280 British intermediate cartridge). The British Commonwealth variant of the FAL was redesigned from FN's metrical FAL into British imperial units and was produced under licence as the L1A1 Self-Loading Rifle.",
+  "image": "images/weapons/FAL-G1.png",
+  "imageRotated": "images/weapons/FAL-G1-r.png",
+  "length": "109 cm",
+  "name": "FN FAL",
+  "price": 1600,
+  "sound": "FNFAL.mp3",
+  "weaponType": 1,
+  "weight": "4.25 kg"
+}

@@ -1,0 +1,8 @@
+{
+  "description": "The 5.45×39mm cartridge is a rimless bottlenecked intermediate cartridge. It was introduced into service in 1974 by the Soviet Union for use with the new AK-74. The 5.45×39mm gradually supplemented, then largely replaced the 7.62×39mm cartridge in Soviet and Warsaw Pact service as the primary military service rifle cartridge.",
+  "image": "images/weapons/5.45x39.png",
+  "maxCount": 10000,
+  "name": "5.45 x 39 mm",
+  "packageSize": 100,
+  "price": 120
+}

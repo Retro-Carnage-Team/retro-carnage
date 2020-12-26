@@ -1,0 +1,15 @@
+{
+  "ammo": "7.62 x 63 mm",
+  "bulletInterval": 125,
+  "bulletRange": 600,
+  "bulletSpeed": 1.4,
+  "description": "The Browning Automatic Rifle (BAR) is a family of American automatic rifles and machine guns used by the United States and numerous other countries during the 20th century. The primary variant of the BAR series was the M1918, chambered for the .30-06 Springfield rifle cartridge and designed by John Browning in 1917 for the American Expeditionary Forces in Europe as a replacement for the French-made Chauchat and M1909 Benét–Mercié machine guns that US forces had previously been issued. The BAR was designed to be carried by infantrymen during an assault advance while supported by the sling over the shoulder, or to be fired from the hip. This is a concept called 'walking fire'—thought to be necessary for the individual soldier during trench warfare. The BAR never entirely lived up to the original hopes of the war department as either a rifle or a machine gun. The U.S. Army, in practice, used the BAR as a light machine gun, often fired from a bipod (introduced on models after 1938). A variant of the original M1918 BAR, the Colt Monitor Machine Rifle, remains the lightest production automatic firearm chambered for the .30-06 Springfield cartridge, though the limited capacity of its standard 20-round magazine tended to hamper its utility in that role. Although the weapon did see some action in World War I, the BAR did not become standard issue in the US Army until 1938, when it was issued to squads as a portable light machine gun. The BAR saw extensive service in both World War II and the Korean War and saw limited service in the Vietnam War. The US Army began phasing out the BAR in the late 1950s, when it was intended to be replaced by a squad automatic weapon (SAW) variant of the M14, and was without a portable light machine gun until the introduction of the M60 machine gun in 1957.",
+  "image": "images/weapons/BarM1918VWM.png",
+  "imageRotated": "images/weapons/BarM1918VWM-r.png",
+  "length": "119.4 cm",
+  "name": "B.A.R.",
+  "price": 11400,
+  "sound": "BAR.mp3",
+  "weaponType": 1,
+  "weight": "7.25 kg"
+}

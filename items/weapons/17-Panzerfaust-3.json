@@ -1,0 +1,15 @@
+{
+  "ammo": "110 mm",
+  "bulletInterval": 0,
+  "bulletRange": 900,
+  "bulletSpeed": 1.3,
+  "description": "The Panzerfaust 3 is a modern disposable recoilless anti-tank weapon, which was developed between 1978 and 1985 and put into service by the Bundeswehr in 1992. It was first ordered in 1973 to provide West German infantry with an effective weapon against contemporary Soviet armour, thereby replacing West Germany's aging PzF 44 Light Lanze launchers and the heavy Carl Gustaf 84 mm anti-tank recoilless rifle manufactured in Sweden. The Panzerfaust 3 is operated by at least 11 countries and has first seen combat in Afghanistan.",
+  "image": "images/weapons/Panzerfaust-3.png",
+  "imageRotated": "images/weapons/Panzerfaust-3-r.png",
+  "length": "88 cm",
+  "name": "Panzerfaust 3",
+  "price": 4200,
+  "sound": "rlauncher.mp3",
+  "weaponType": 2,
+  "weight": "12.9 kg"
+}

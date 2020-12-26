@@ -6,12 +6,12 @@ import (
 	"retro-carnage/logging"
 )
 
-// inventoryItemDelegate defines the shared functionality of grenades, ammunition and weapons.
+// inventoryItemDelegate defines the shared functionality of grenades, ammunition and items.
 type inventoryItemDelegate interface {
-	Description() string
-	Image() string
-	Name() string
-	Price() int
+	GetDescription() string
+	GetImage() string
+	GetName() string
+	GetPrice() int
 }
 
 type inventoryItem struct {
@@ -20,19 +20,19 @@ type inventoryItem struct {
 }
 
 func (ii *inventoryItem) Description() string {
-	return ii.delegate.Description()
+	return ii.delegate.GetDescription()
 }
 
 func (ii *inventoryItem) Image() string {
-	return ii.delegate.Image()
+	return ii.delegate.GetImage()
 }
 
 func (ii *inventoryItem) Name() string {
-	return ii.delegate.Name()
+	return ii.delegate.GetName()
 }
 
 func (ii *inventoryItem) Price() int {
-	return ii.delegate.Price()
+	return ii.delegate.GetPrice()
 }
 
 func (ii *inventoryItem) IsWeapon() bool {
@@ -56,11 +56,11 @@ func (ii *inventoryItem) OwnedFromMax(playerIdx int) (int, int) {
 	} else if ii.IsGrenade() {
 		var owned = characters.Players[playerIdx].GrenadeCount(ii.Name())
 		var grenade = assets.GrenadeCrate.GetByName(ii.Name())
-		return owned, grenade.MaxCount()
+		return owned, grenade.MaxCount
 	} else {
 		var owned = characters.Players[playerIdx].AmmunitionCount(ii.Name())
 		var ammunition = assets.AmmunitionCrate.GetByName(ii.Name())
-		return owned, ammunition.MaxCount()
+		return owned, ammunition.MaxCount
 	}
 }
 

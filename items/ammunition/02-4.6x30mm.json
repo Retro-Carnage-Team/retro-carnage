@@ -1,0 +1,8 @@
+{
+  "description": "The HK 4.6×30mm cartridge is a type of ammunition primarily used in the Heckler & Koch MP7 Personal defense weapon (PDW). It is designed to minimize weight and recoil while increasing penetration of body armor. It features a bottlenecked case and a pointed, steel-core, brass-jacketed bullet. Compared to standard intermediate cartridges one can carry more 4.6×30mm ammunition due to the lighter weight and relative small dimensions of the cartridge. Also, due to the lighter weight of the bullet, aiming in rapid fire is much easier as recoil depends much on the weight of the bullet. CRISAT testing shows that because of the smaller diameter and high projectile velocity of the round, body armor penetration is higher than that of traditional handgun projectiles. A series of tests performed by NATO in the United Kingdom and France indicated that 5.7×28mm was a superior cartridge. The results of the NATO tests were analyzed by a group of experts from France, the United States, Canada, and the United Kingdom and the group's conclusion was that the 5.7×28mm was undoubtedly the more efficient cartridge.",
+  "image": "images/weapons/4.6x30.png",
+  "maxCount": 10000,
+  "name": "4.6 x 30 mm",
+  "packageSize": 100,
+  "price": 110
+}

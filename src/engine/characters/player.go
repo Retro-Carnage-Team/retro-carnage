@@ -14,7 +14,7 @@ const (
 	PlayerPropertyLives          = "lives"
 	PlayerPropertyScore          = "score"
 	PlayerPropertySelectedWeapon = "selected-weapon"
-	PlayerPropertyWeapons        = "weapons"
+	PlayerPropertyWeapons        = "items"
 )
 
 var (
@@ -83,20 +83,20 @@ func (p *Player) AmmunitionForSelectedWeapon() int {
 	} else {
 		var weapon = p.SelectedWeapon()
 		if nil != weapon {
-			return p.AmmunitionCount(weapon.Ammo())
+			return p.AmmunitionCount(weapon.Ammo)
 		} else {
 			var grenade = p.SelectedGrenade()
 			if nil == grenade {
 				return 0
 			}
-			return p.GrenadeCount(grenade.Name())
+			return p.GrenadeCount(grenade.Name)
 		}
 	}
 }
 
 func (p *Player) AutomaticWeaponSelected() bool {
 	var weapon = p.SelectedWeapon()
-	return (nil != weapon) && (assets.Automatic == weapon.WeaponType())
+	return (nil != weapon) && (assets.Automatic == weapon.WeaponType)
 }
 
 func (p *Player) Cash() int {
@@ -119,7 +119,7 @@ func (p *Player) SetGrenadeCount(grenade string, count int) {
 
 func (p *Player) GrenadeSelected() bool {
 	for _, grenade := range assets.GrenadeCrate.GetAll() {
-		if grenade.Name() == *p.selectedWeaponName {
+		if grenade.Name == *p.selectedWeaponName {
 			return true
 		}
 	}
@@ -141,7 +141,7 @@ func (p *Player) SetLives(lives int) {
 
 func (p *Player) PistolSelected() bool {
 	var weapon = p.SelectedWeapon()
-	return (nil != weapon) && (assets.Pistol == weapon.WeaponType())
+	return (nil != weapon) && (assets.Pistol == weapon.WeaponType)
 }
 
 func (p *Player) Reset() {
@@ -156,7 +156,7 @@ func (p *Player) Reset() {
 
 func (p *Player) RpgSelected() bool {
 	var weapon = p.SelectedWeapon()
-	return (nil != weapon) && (assets.RPG == weapon.WeaponType())
+	return (nil != weapon) && (assets.RPG == weapon.WeaponType)
 }
 
 func (p *Player) Score() int {
@@ -173,7 +173,7 @@ func (p *Player) SelectedGrenade() *assets.Grenade {
 		return nil
 	}
 	for _, grenade := range assets.GrenadeCrate.GetAll() {
-		if grenade.Name() == *p.selectedWeaponName {
+		if grenade.Name == *p.selectedWeaponName {
 			return grenade
 		}
 	}
@@ -185,7 +185,7 @@ func (p *Player) SelectedWeapon() *assets.Weapon {
 		return nil
 	}
 	for _, weapon := range assets.WeaponCrate.GetAll() {
-		if weapon.Name() == *p.selectedWeaponName {
+		if weapon.GetName() == *p.selectedWeaponName {
 			return weapon
 		}
 	}
@@ -260,14 +260,14 @@ func (p *Player) notifyListeners(value interface{}, property string) {
 func (p *Player) getNamesOfWeaponsAndGrenadesInInventory() []*string {
 	var result = make([]*string, 0)
 	for _, weapon := range assets.WeaponCrate.GetAll() {
-		if p.weapons[weapon.Name()] {
-			var temp = weapon.Name()
+		if p.weapons[weapon.GetName()] {
+			var temp = weapon.GetName()
 			result = append(result, &temp)
 		}
 	}
 	for _, grenade := range assets.GrenadeCrate.GetAll() {
-		if 0 < p.grenades[grenade.Name()] {
-			var temp = grenade.Name()
+		if 0 < p.grenades[grenade.Name] {
+			var temp = grenade.Name
 			result = append(result, &temp)
 		}
 	}

@@ -1,0 +1,8 @@
+{
+  "description": "The 7.62×51mm NATO is a rimless bottlenecked rifle cartridge developed in the 1950s as a standard for small arms among NATO countries. It is sometimes confused with the similarly named Russian 7.62×54mmR cartridge, a slightly longer, rimmed cartridge. It was introduced in U.S. service in the M14 rifle and M60 machine gun in the late 1950s. The M14 was superseded in U.S. service as the infantry adopted the 5.56×45mm NATO M16 rifle. However, the M14 and many other firearms that use the 7.62×51mm NATO round remain in service, especially in the case of various marksman/sniper rifles, medium machine guns/general-purpose machine guns such as the M240, and various rifles in use by special operations forces. The cartridge is used both by infantry and on mounted and crew-served weapons mounted to vehicles, aircraft and ships. Although not identical, the 7.62×51mm NATO and the commercial .308 Winchester cartridges are similar enough that they can be loaded into rifles chambered for the other round, but the Winchester .308 cartridges are typically loaded to higher pressures than 7.62×51mm NATO service cartridges. Even though the Sporting Arms and Ammunition Manufacturers' Institute (SAAMI) does not consider it unsafe to fire the commercial round in weapons chambered for the NATO round, there is significant discussion about compatible chamber and muzzle pressures between the two cartridges based on powder loads and wall thicknesses of the military compared to commercial rounds.",
+  "image": "images/weapons/7.62x51.png",
+  "maxCount": 10000,
+  "name": "7.62 x 51 mm",
+  "packageSize": 100,
+  "price": 130
+}

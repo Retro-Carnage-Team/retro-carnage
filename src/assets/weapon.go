@@ -3,76 +3,40 @@ package assets
 type WeaponType int
 
 const (
-	Pistol WeaponType = iota
-	Automatic
-	RPG
-	Flamethrower
+	Pistol       WeaponType = 0
+	Automatic    WeaponType = 1
+	RPG          WeaponType = 2
+	Flamethrower WeaponType = 3
 )
 
 type Weapon struct {
-	ammo           string
-	bulletInterval int     // offset between two bullets in ms
-	bulletRange    int     // in pixels
-	bulletSpeed    float64 // pixels per ms
-	description    string
-	image          string
-	imageRotated   string
-	length         string
-	name           string
-	price          int
-	sound          SoundEffect
-	weaponType     WeaponType
-	weight         string
+	Ammo           string
+	BulletInterval int     // offset between two bullets in ms
+	BulletRange    int     // in pixels
+	BulletSpeed    float64 // pixels per ms
+	Description    string
+	Image          string
+	ImageRotated   string
+	Length         string
+	Name           string
+	Price          int
+	Sound          SoundEffect
+	WeaponType     WeaponType
+	Weight         string
 }
 
-func (w *Weapon) Ammo() string {
-	return w.ammo
+func (w *Weapon) GetDescription() string {
+	return w.Description
 }
 
-func (w *Weapon) BulletInterval() int {
-	return w.bulletInterval
+func (w *Weapon) GetImage() string {
+	return w.Image
 }
 
-func (w *Weapon) BulletRange() int {
-	return w.bulletRange
+func (w *Weapon) GetName() string {
+	return w.Name
 }
 
-func (w *Weapon) BulletSpeed() float64 {
-	return w.bulletSpeed
-}
-
-func (w *Weapon) Description() string {
-	return w.description
-}
-
-func (w *Weapon) Image() string {
-	return w.image
-}
-
-func (w *Weapon) ImageRotated() string {
-	return w.imageRotated
-}
-
-func (w *Weapon) Length() string {
-	return w.length
-}
-
-func (w *Weapon) Name() string {
-	return w.name
-}
-
-func (w *Weapon) Price() int {
-	return w.price
-}
-
-func (w *Weapon) Sound() SoundEffect {
-	return w.sound
-}
-
-func (w *Weapon) WeaponType() WeaponType {
-	return w.weaponType
-}
-
-func (w *Weapon) Weight() string {
-	return w.weight
+func (w *Weapon) GetPrice() int {
+	return w.Price
 }

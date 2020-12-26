@@ -1,0 +1,8 @@
+{
+  "description": "The Panzerfaust 3 consists of the reusable grip and the cartridge. The cartridge in turn is divided into the launch tube and the bullet. The projectile head is located outside the barrel, which means that the dimensions of the head can be selected independently of the calibre of the launch barrel. It consists of two parts - the spacer tube and the active charge. Against armoured targets such as tanks, the spacer tube is pulled out, against soft targets such as trucks and buildings it remains inserted. This standard cartridge works on the hollow charge principle and can penetrate up to 700 mm of armour steel.",
+  "image": "images/weapons/BS71.png",
+  "maxCount": 100,
+  "name": "110 mm",
+  "packageSize": 1,
+  "price": 3000
+}

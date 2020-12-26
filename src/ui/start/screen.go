@@ -43,7 +43,7 @@ func (s *Screen) SetUp() {
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.screenChangeTimeout += elapsedTimeInMs
-	if s.themeLoaded {
+	if s.themeLoaded && assets.SpriteRepository.Initialized() {
 		s.screenChangeRequired(common.Title)
 	}
 	s.renderScreen()

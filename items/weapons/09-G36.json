@@ -1,0 +1,15 @@
+{
+  "ammo": "5.56 x 45 mm",
+  "bulletInterval": 115,
+  "bulletRange": 550,
+  "bulletSpeed": 1.4,
+  "description": "The G36 is a 5.56×45mm assault rifle, designed in the early 1990s by Heckler & Koch in Germany as a replacement for the heavier 7.62mm G3 battle rifle. It was accepted into service with the Bundeswehr in 1997, replacing the G3. The G36 is gas-operated and feeds from a 30-round detachable box magazine or 100-round C-Mag drum magazine.",
+  "image": "images/weapons/G36.png",
+  "imageRotated": "images/weapons/G36-r.png",
+  "length": "99.9 cm",
+  "name": "G36",
+  "price": 3000,
+  "sound": "G36.mp3",
+  "weaponType": 1,
+  "weight": "3.63 kg"
+}
