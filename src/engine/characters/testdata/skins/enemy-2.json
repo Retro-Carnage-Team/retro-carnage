@@ -1,0 +1,12 @@
+{
+  "name": "enemy-2",
+  "frames": {
+    "up_right": [],
+    "right": [],
+    "down_right": [],
+    "down": [],
+    "down_left": [],
+    "left": [],
+    "up_left": []
+  }
+}

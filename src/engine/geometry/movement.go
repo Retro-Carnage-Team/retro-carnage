@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-func calculateMovementDistance(elapsedTimeInMs int64, distancePerMs float64, maxDistance *float64) float64 {
+func CalculateMovementDistance(elapsedTimeInMs int64, distancePerMs float64, maxDistance *float64) float64 {
 	var distance = float64(elapsedTimeInMs) * distancePerMs
 	if nil != maxDistance {
 		return math.Min(*maxDistance, distance)
@@ -15,7 +15,7 @@ func calculateMovementDistance(elapsedTimeInMs int64, distancePerMs float64, max
 type movementCallbackFunc func(direction Direction, distance float64, diagonalDistance float64) float64
 
 func calculateMovement(elapsedTimeInMs int64, direction Direction, distancePerMs float64, maxDistance *float64, fn movementCallbackFunc) float64 {
-	var distanceExact = calculateMovementDistance(elapsedTimeInMs, distancePerMs, maxDistance)
+	var distanceExact = CalculateMovementDistance(elapsedTimeInMs, distancePerMs, maxDistance)
 	var diagonalDistance = math.Round(math.Sqrt((distanceExact * distanceExact) / 2))
 	var distance = math.Round(distanceExact)
 	return fn(direction, distance, diagonalDistance)
