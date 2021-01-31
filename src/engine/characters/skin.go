@@ -7,6 +7,7 @@ import (
 )
 
 type Skin struct {
+	DeathAnimation    []SkinFrame            `json:"deathAnimation"`
 	FramesByDirection map[string][]SkinFrame `json:"frames"`
 	Name              string                 `json:"name"`
 }

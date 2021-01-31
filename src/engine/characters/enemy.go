@@ -19,15 +19,11 @@ func (e *Enemy) Activate() {
 	e.Active = true
 
 	if Person == e.Type {
-		/*
-			e.SpriteSupplier = &EnemyPersonSpriteSupplier{
-				direction: e.ViewingDirection,
-				durationSinceLastTile: 0,
-				lastSprite: nil,
-				spriteGenerator: nil,
-				tileSet:
-			 	 e.Skin, )
-		*/
+		e.SpriteSupplier = &EnemyPersonSpriteSupplier{
+			lastDirection:         e.ViewingDirection,
+			durationSinceLastTile: 0,
+			lastIndex:             -1,
+		}
 	}
 
 	if Landmine == e.Type {
