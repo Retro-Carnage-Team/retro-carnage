@@ -14,10 +14,17 @@ type EnemyPersonSpriteSupplier struct {
 	durationSinceLastTile int64
 	lastDirection         geometry.Direction
 	lastIndex             int
+	wasDying              bool
 }
 
 func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy Enemy) *graphics.SpriteWithOffset {
 	if enemy.Dying {
+		if !supplier.wasDying {
+			supplier.durationSinceLastTile = 0
+			supplier.lastIndex = 0
+			supplier.wasDying = true
+		}
+
 		var deathFrames = enemySkins[enemy.Skin].DeathAnimation
 		supplier.durationSinceLastTile += msSinceLastSprite
 		if supplier.durationSinceLastTile > DurationOfDeathAnimationFrame {
@@ -25,6 +32,7 @@ func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy
 		}
 		return deathFrames[supplier.lastIndex].ToSpriteWithOffset()
 	} else {
+		supplier.wasDying = false
 		if supplier.lastDirection != enemy.ViewingDirection {
 			supplier.durationSinceLastTile = 0
 			supplier.lastIndex = 0

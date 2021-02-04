@@ -14,6 +14,7 @@ type SkinFrame struct {
 func (sf *SkinFrame) ToSpriteWithOffset() *graphics.SpriteWithOffset {
 	return &graphics.SpriteWithOffset{
 		Offset: sf.Offset,
+		Source: sf.SpritePath,
 		Sprite: assets.SpriteRepository.Get(sf.SpritePath),
 	}
 }

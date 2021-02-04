@@ -309,5 +309,49 @@
         }
       }
     ]
-  }
+  },
+  "deathAnimation": [
+    {
+      "sprite": "images/tiles/enemy-0/death/1.png",
+      "offset": {
+        "x": -45,
+        "y": -30
+      }
+    },
+    {
+      "sprite": "images/tiles/enemy-0/death/2.png",
+      "offset": {
+        "x": -45,
+        "y": -30
+      }
+    },
+    {
+      "sprite": "images/tiles/enemy-0/death/3.png",
+      "offset": {
+        "x": -45,
+        "y": -30
+      }
+    },
+    {
+      "sprite": "images/tiles/enemy-0/death/4.png",
+      "offset": {
+        "x": -45,
+        "y": -30
+      }
+    },
+    {
+      "sprite": "images/tiles/enemy-0/death/5.png",
+      "offset": {
+        "x": -45,
+        "y": -30
+      }
+    },
+    {
+      "sprite": "images/tiles/enemy-0/death/6.png",
+      "offset": {
+        "x": -45,
+        "y": -30
+      }
+    }
+  ]
 }

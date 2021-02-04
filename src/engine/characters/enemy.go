@@ -22,11 +22,16 @@ func (e *Enemy) Activate() {
 		e.SpriteSupplier = &EnemyPersonSpriteSupplier{
 			lastDirection:         e.ViewingDirection,
 			durationSinceLastTile: 0,
-			lastIndex:             -1,
+			lastIndex:             0,
 		}
 	}
 
 	if Landmine == e.Type {
 		e.SpriteSupplier = &EnemyLandmineSpriteSupplier{}
 	}
+}
+
+func (e *Enemy) Die() {
+	e.Dying = true
+	e.DyingAnimationCountDown = 1
 }
