@@ -1,5 +1,6 @@
 package geometry
 
+// Direction specifies one of eight possible directions (cardinal and diagonal).
 type Direction struct {
 	Name  string
 	up    bool
@@ -20,6 +21,9 @@ var (
 	directions = [...]Direction{Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft}
 )
 
+// GetDirectionForCardinals returns the direction that is specified by the combination of given cardinal directions.
+// If no such direction exists (e.g. if no parameter is true or if opposite cardinal directions are true) it will return
+// nil.
 func GetDirectionForCardinals(up bool, down bool, left bool, right bool) *Direction {
 	for _, dir := range directions {
 		if dir.up == up && dir.right == right && dir.down == down && dir.left == left {

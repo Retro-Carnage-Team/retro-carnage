@@ -34,4 +34,5 @@ func (e *Enemy) Activate() {
 func (e *Enemy) Die() {
 	e.Dying = true
 	e.DyingAnimationCountDown = 1
+	// TODO: Play sound effect when enemy is a person
 }

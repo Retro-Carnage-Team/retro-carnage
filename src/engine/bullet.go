@@ -16,6 +16,9 @@ var (
 	bulletOffsetForPlayer1 = buildBulletOffsetForPlayer1()
 )
 
+// TODO: Bullet offsets should not be hardcoded.
+// They depend on the player / enemy skin. So there should be two factories (player / enemy). These factories should get
+// their values from the skin.
 func buildBulletOffsetForPlayer0() (result map[geometry.Direction]*geometry.Point) {
 	result = make(map[geometry.Direction]*geometry.Point)
 	result[geometry.Up] = &geometry.Point{X: 80, Y: -BulletHeight}
