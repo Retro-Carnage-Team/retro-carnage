@@ -25,6 +25,7 @@ func LoadingScreenInitDone() bool {
 // StartScreenInit is called when the start screen is shown.
 func StartScreenInit() {
 	go characters.InitEnemySkins("skins")
+	go characters.InitPlayerSkins("skins")
 }
 
 // TitleScreenInit is called when the title screen is shown.

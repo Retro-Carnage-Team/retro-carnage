@@ -26,8 +26,3 @@ func InitEnemySkins(skinsDirectory string) {
 		}
 	}
 }
-
-// GetDurationOfDeathAnimation returns the duration of an enemy death animation in milliseconds
-func GetDurationOfDeathAnimation(skin EnemySkin) int {
-	return len(enemySkins[skin].DeathAnimation) * DurationOfDeathAnimationFrame
-}

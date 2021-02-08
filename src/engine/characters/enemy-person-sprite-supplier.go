@@ -36,10 +36,10 @@ func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy
 		if supplier.lastDirection != enemy.ViewingDirection {
 			supplier.durationSinceLastTile = 0
 			supplier.lastIndex = 0
-			var skinFrame = enemySkins[enemy.Skin].FramesByDirection[enemy.ViewingDirection.Name][supplier.lastIndex]
+			var skinFrame = enemySkins[enemy.Skin].MovementByDirection[enemy.ViewingDirection.Name][supplier.lastIndex]
 			return skinFrame.ToSpriteWithOffset()
 		} else {
-			var skinFrames = enemySkins[enemy.Skin].FramesByDirection[enemy.ViewingDirection.Name]
+			var skinFrames = enemySkins[enemy.Skin].MovementByDirection[enemy.ViewingDirection.Name]
 			supplier.durationSinceLastTile += msSinceLastSprite
 			if supplier.durationSinceLastTile > DurationOfMovementFrame {
 				supplier.lastIndex = (supplier.lastIndex + 1) % len(skinFrames)

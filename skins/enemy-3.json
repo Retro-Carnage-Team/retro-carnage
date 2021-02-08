@@ -1,6 +1,6 @@
 {
   "name": "enemy-3",
-  "frames": {
+  "movement": {
     "up_right": [
       {
         "sprite": "images/tiles/enemy-3/up_right/1.png",
@@ -310,5 +310,6 @@
       }
     ]
   },
-  "deathAnimation": []
+  "deathAnimation": [],
+  "idle": {}
 }

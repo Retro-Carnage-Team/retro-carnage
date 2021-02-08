@@ -1,6 +1,6 @@
 {
   "name": "enemy-3",
-  "frames": {
+  "movement": {
     "up_right": [],
     "right": [],
     "down_right": [],
@@ -9,5 +9,6 @@
     "left": [],
     "up_left": []
   },
-  "deathAnimation": []
+  "deathAnimation": [],
+  "idle": {}
 }

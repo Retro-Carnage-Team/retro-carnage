@@ -7,9 +7,15 @@ import (
 )
 
 type Skin struct {
-	DeathAnimation    []SkinFrame            `json:"deathAnimation"`
-	FramesByDirection map[string][]SkinFrame `json:"frames"`
-	Name              string                 `json:"name"`
+	DeathAnimation      []SkinFrame            `json:"deathAnimation"`
+	Idle                map[string]SkinFrame   `json:"idle"`
+	MovementByDirection map[string][]SkinFrame `json:"movement"`
+	Name                string                 `json:"name"`
+}
+
+// DurationOfDeathAnimation returns the duration of a death animation in milliseconds
+func (s *Skin) DurationOfDeathAnimation() int64 {
+	return int64(len(s.DeathAnimation) * DurationOfDeathAnimationFrame)
 }
 
 func loadSkin(filePath string) Skin {
