@@ -18,7 +18,7 @@ func (s *Skin) DurationOfDeathAnimation() int64 {
 	return int64(len(s.DeathAnimation) * DurationOfDeathAnimationFrame)
 }
 
-func loadSkin(filePath string) Skin {
+func loadSkin(filePath string) *Skin {
 	logging.Trace.Printf("loading skin: %s", filePath)
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -30,5 +30,5 @@ func loadSkin(filePath string) Skin {
 	if err != nil {
 		logging.Error.Fatalf("failed to parse skin file %s: %v", filePath, err)
 	}
-	return skin
+	return &skin
 }

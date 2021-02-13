@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	enemySkins     map[EnemySkin]Skin
+	enemySkins     map[EnemySkin]*Skin
 	enemySkinNames = []EnemySkin{WoodlandWithSMG, GreyJumperWithRifle, DigitalWithPistols, WoodlandWithBulletproofVest}
 )
 
@@ -20,7 +20,7 @@ var (
 // be stored as JSON files.
 func InitEnemySkins(skinsDirectory string) {
 	if nil == enemySkins {
-		enemySkins = make(map[EnemySkin]Skin)
+		enemySkins = make(map[EnemySkin]*Skin)
 		for _, skin := range enemySkinNames {
 			enemySkins[skin] = loadSkin(fmt.Sprintf("%s/%s.json", skinsDirectory, skin))
 		}

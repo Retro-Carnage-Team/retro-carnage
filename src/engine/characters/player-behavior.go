@@ -55,7 +55,7 @@ func (pb *PlayerBehavior) Update(userInput *input.DeviceState) {
 	pb.TriggerReleased = pb.Firing && !userInput.Fire
 	pb.Firing = userInput.Fire
 	if playerWantsToMove {
-		pb.Direction = pb.getDirection(userInput.MoveUp, userInput.MoveDown, userInput.MoveLeft, userInput.MoveRight)
+		pb.Direction = pb.direction(userInput.MoveUp, userInput.MoveDown, userInput.MoveLeft, userInput.MoveRight)
 	}
 
 	if !pb.NextWeapon && userInput.ToggleUp {
@@ -71,10 +71,14 @@ func (pb *PlayerBehavior) Update(userInput *input.DeviceState) {
 
 // GetDirection returns the geometry.Direction specified by combination of the given cardinal directions. Returns the
 // last direction of the player of no such direction exists (e.g. if none of the given parameters is true).
-func (pb *PlayerBehavior) getDirection(up bool, down bool, left bool, right bool) geometry.Direction {
+func (pb *PlayerBehavior) direction(up bool, down bool, left bool, right bool) geometry.Direction {
 	var direction = geometry.GetDirectionForCardinals(up, down, left, right)
 	if nil == direction {
 		return pb.Direction
 	}
 	return *direction
+}
+
+func (pb *PlayerBehavior) Idle() bool {
+	return !pb.Dying && !pb.Moving
 }
