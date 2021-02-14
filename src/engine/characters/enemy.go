@@ -20,9 +20,9 @@ func (e *Enemy) Activate() {
 
 	if Person == e.Type {
 		e.SpriteSupplier = &EnemyPersonSpriteSupplier{
-			lastDirection:         e.ViewingDirection,
-			durationSinceLastTile: 0,
-			lastIndex:             0,
+			lastDirection:           e.ViewingDirection,
+			durationSinceLastSprite: 0,
+			lastIndex:               0,
 		}
 	}
 
