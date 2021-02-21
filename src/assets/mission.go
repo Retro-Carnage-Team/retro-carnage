@@ -8,11 +8,11 @@ type Location struct {
 }
 
 type Segment struct {
-	Backgrounds []string `json:"backgrounds"`
-	Direction   string   `json:"direction"`
+	Backgrounds []string             `json:"backgrounds"`
+	Direction   string               `json:"direction"`
+	Goal        *geometry.Rectangle  `json:"goal"`
+	Obstacles   []geometry.Rectangle `json:"obstacles"`
 	// enemies  []Enemy              `json:"enemies"`
-	Goal      *geometry.Rectangle  `json:"goal"`
-	Obstacles []geometry.Rectangle `json:"obstacles"`
 }
 
 type Mission struct {

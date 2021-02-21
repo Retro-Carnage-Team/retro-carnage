@@ -21,6 +21,13 @@ func (p *Point) Add(other *Point) *Point {
 	}
 }
 
+func (p *Point) Multiply(factor float64) *Point {
+	return &Point{
+		X: p.X * factor,
+		Y: p.Y * factor,
+	}
+}
+
 func (p *Point) ToVec() pixel.Vec {
 	return pixel.V(p.X, p.Y)
 }

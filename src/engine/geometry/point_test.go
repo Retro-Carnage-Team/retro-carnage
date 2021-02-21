@@ -17,6 +17,12 @@ func TestAdd(t *testing.T) {
 	assert.Equal(t, "Point[X: 3.00000, Y: 5.00000]", result.String())
 }
 
+func TestMultiply(t *testing.T) {
+	var p1 = &Point{1, 2}
+	var result = p1.Multiply(3)
+	assert.Equal(t, "Point[X: 3.00000, Y: 6.00000]", result.String())
+}
+
 func TestToVec(t *testing.T) {
 	var p1 = &Point{1, 2}
 	var result = p1.ToVec()
