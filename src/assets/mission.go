@@ -1,6 +1,8 @@
 package assets
 
-import "retro-carnage/engine/geometry"
+import (
+	"retro-carnage/engine/geometry"
+)
 
 type Location struct {
 	Latitude  float64 `json:"latitude"`
@@ -12,7 +14,7 @@ type Segment struct {
 	Direction   string               `json:"direction"`
 	Goal        *geometry.Rectangle  `json:"goal"`
 	Obstacles   []geometry.Rectangle `json:"obstacles"`
-	// enemies  []Enemy              `json:"enemies"`
+	// enemies     []characters.Enemy   `json:"enemies"`
 }
 
 type Mission struct {

@@ -32,7 +32,7 @@ type LevelController struct {
 	Backgrounds                 []graphics.SpriteWithOffset
 }
 
-func NewLevelController(mission *assets.Mission) *LevelController {
+func NewLevelController(segments []assets.Segment) *LevelController {
 	var result = &LevelController{
 		currentSegmentIdx:           0,
 		distanceToScroll:            0,
@@ -40,11 +40,11 @@ func NewLevelController(mission *assets.Mission) *LevelController {
 		enemies:                     make([]characters.Enemy, 0),
 		goal:                        nil,
 		obstacles:                   make([]geometry.Rectangle, 0),
-		segments:                    mission.Segments,
+		segments:                    segments,
 		segmentScrollLengthInPixels: 0,
 		Backgrounds:                 make([]graphics.SpriteWithOffset, 0),
 	}
-	result.loadSegment(&mission.Segments[result.currentSegmentIdx])
+	result.loadSegment(&segments[result.currentSegmentIdx])
 	return result
 }
 
@@ -68,7 +68,7 @@ func (lc *LevelController) loadSegment(segment *assets.Segment) {
 	lc.distanceToScroll = 0
 }
 
-func (lc *LevelController) progressToNextSegment() {
+func (lc *LevelController) ProgressToNextSegment() {
 	if lc.currentSegmentIdx+1 < len(lc.segments) {
 		lc.currentSegmentIdx++
 		lc.loadSegment(&lc.segments[lc.currentSegmentIdx])
@@ -131,43 +131,118 @@ func (lc *LevelController) scroll(pixels float64) geometry.Point {
 }
 
 func (lc *LevelController) scrollUp(pixels float64) geometry.Point {
-	for _, background := range lc.Backgrounds {
-		background.Offset.Y += pixels
+	for idx, _ := range lc.Backgrounds {
+		lc.Backgrounds[idx].Offset.Y += pixels
 	}
 	if nil != lc.goal {
 		lc.goal.Y += pixels
 	}
 	if 0 <= lc.Backgrounds[len(lc.Backgrounds)-1].Offset.Y {
 		lc.Backgrounds[len(lc.Backgrounds)-1].Offset.Y = 0
-		lc.progressToNextSegment()
+		lc.ProgressToNextSegment()
 	}
 	return geometry.Point{X: 0, Y: -pixels}
 }
 
 func (lc *LevelController) scrollLeft(pixels float64) geometry.Point {
-	for _, background := range lc.Backgrounds {
-		background.Offset.X += pixels
+	for idx, _ := range lc.Backgrounds {
+		lc.Backgrounds[idx].Offset.X += pixels
 	}
 	if nil != lc.goal {
 		lc.goal.X += pixels
 	}
 	if 0 <= lc.Backgrounds[len(lc.Backgrounds)-1].Offset.X {
 		lc.Backgrounds[len(lc.Backgrounds)-1].Offset.X = 0
-		lc.progressToNextSegment()
+		lc.ProgressToNextSegment()
 	}
 	return geometry.Point{X: -pixels, Y: 0}
 }
 
 func (lc *LevelController) scrollRight(pixels float64) geometry.Point {
-	for _, background := range lc.Backgrounds {
-		background.Offset.X -= pixels
+	for idx, _ := range lc.Backgrounds {
+		lc.Backgrounds[idx].Offset.X -= pixels
 	}
 	if nil != lc.goal {
 		lc.goal.X -= pixels
 	}
 	if 0 >= lc.Backgrounds[len(lc.Backgrounds)-1].Offset.X {
 		lc.Backgrounds[len(lc.Backgrounds)-1].Offset.X = 0
-		lc.progressToNextSegment()
+		lc.ProgressToNextSegment()
 	}
 	return geometry.Point{X: pixels, Y: 0}
+}
+
+func (lc *LevelController) VisibleTiles() []graphics.SpriteWithOffset {
+	var result = make([]graphics.SpriteWithOffset, 0)
+	var negativeScreenSize = float64(ScreenSize * -1)
+	for _, background := range lc.Backgrounds {
+		var x = background.Offset.X
+		var y = background.Offset.Y
+		if (negativeScreenSize < x) && (ScreenSize > x) && (negativeScreenSize < y) && (ScreenSize > y) {
+			result = append(result, background)
+		}
+	}
+	return result
+}
+
+func (lc *LevelController) distanceBehindScrollBarrier(playerPositions []geometry.Rectangle) float64 {
+	var direction = lc.segments[lc.currentSegmentIdx].Direction
+	if geometry.Up.Name == direction {
+		var topMostPosition = float64(ScreenSize)
+		for _, pos := range playerPositions {
+			topMostPosition = math.Min(topMostPosition, pos.Y)
+		}
+		return ScrollBarrierUp - topMostPosition
+	}
+	if geometry.Left.Name == direction {
+		var leftMostPosition = float64(ScreenSize)
+		for _, pos := range playerPositions {
+			leftMostPosition = math.Min(leftMostPosition, pos.X)
+		}
+		return ScrollBarrierLeft - leftMostPosition
+	}
+	if geometry.Right.Name == direction {
+		var rightMostPosition float64 = 0
+		for _, pos := range playerPositions {
+			rightMostPosition = math.Max(rightMostPosition, pos.X+pos.Width)
+		}
+		return rightMostPosition - ScrollBarrierRight
+	}
+
+	// should not happen
+	logging.Error.Fatalf("Level segment has unknown direction: %s", direction)
+	return 0
+}
+
+func (lc *LevelController) GoalReached(playerPositions []geometry.Rectangle) bool {
+	if nil != lc.goal {
+		for _, playerPosition := range playerPositions {
+			if nil != playerPosition.Intersection(lc.goal) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (lc *LevelController) ObstaclesOnScreen() []geometry.Rectangle {
+	var direction = lc.segments[lc.currentSegmentIdx].Direction
+	var scrollAdjustment = geometry.Point{X: 0, Y: 0}
+	switch direction {
+	case geometry.Up.Name:
+		scrollAdjustment = geometry.Point{X: 0, Y: lc.distanceScrolled}
+	case geometry.Left.Name:
+		scrollAdjustment = geometry.Point{X: lc.distanceScrolled, Y: 0}
+	case geometry.Right.Name:
+		scrollAdjustment = geometry.Point{X: -1 * lc.distanceScrolled, Y: 0}
+	}
+
+	var result = make([]geometry.Rectangle, 0)
+	for _, obstacle := range lc.obstacles {
+		var adjustedObstaclePosition = obstacle.Add(&scrollAdjustment)
+		if nil != adjustedObstaclePosition.Intersection(&ScreenRect) {
+			result = append(result, *adjustedObstaclePosition)
+		}
+	}
+	return result
 }
