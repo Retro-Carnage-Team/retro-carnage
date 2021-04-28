@@ -43,11 +43,7 @@ func (s *Screen) SetUp() {
 	var stereo = assets.NewStereo()
 	stereo.PlayFx(assets.FxLoading)
 
-	assets.AmmunitionCrate.Initialize()
-	assets.GrenadeCrate.Initialize()
-	assets.WeaponCrate.Initialize()
-
-	assets.SpriteRepository.Initialize()
+	common.LoadingScreenInit()
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
@@ -70,10 +66,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	txt.Draw(s.window, pixel.IM)
 
 	s.screenChangeTimeout += elapsedTimeInMs
-	if s.screenChangeTimeout >= screenTimeout &&
-		assets.AmmunitionCrate.Initialized() &&
-		assets.GrenadeCrate.Initialized() &&
-		assets.WeaponCrate.Initialized() {
+	if s.screenChangeTimeout >= screenTimeout && common.LoadingScreenInitDone() {
 		s.screenChangeRequired(common.Start)
 	}
 }

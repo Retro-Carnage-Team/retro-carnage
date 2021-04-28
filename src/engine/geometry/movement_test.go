@@ -6,13 +6,13 @@ import (
 )
 
 func TestCalculateMovementDistance(t *testing.T) {
-	var result = calculateMovementDistance(int64(10), 1.3, nil)
+	var result = CalculateMovementDistance(int64(10), 1.3, nil)
 	assert.InDelta(t, 13.0, result, 0.00001)
 }
 
 func TestCalculateMovementDistanceWithMaximum(t *testing.T) {
 	var max = 11.0
-	var result = calculateMovementDistance(10, 1.3, &max)
+	var result = CalculateMovementDistance(10, 1.3, &max)
 	assert.InDelta(t, 11, result, 0.00001)
 }
 

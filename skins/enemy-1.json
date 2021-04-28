@@ -1,0 +1,315 @@
+{
+  "name": "enemy-1",
+  "movement": {
+    "up_right": [
+      {
+        "sprite": "images/tiles/enemy-1/up_right/1.png",
+        "offset": {
+          "x": -20,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_right/2.png",
+        "offset": {
+          "x": -20,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_right/3.png",
+        "offset": {
+          "x": -20,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_right/4.png",
+        "offset": {
+          "x": -20,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_right/5.png",
+        "offset": {
+          "x": -20,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_right/6.png",
+        "offset": {
+          "x": -20,
+          "y": -30
+        }
+      }
+    ],
+    "right": [
+      {
+        "sprite": "images/tiles/enemy-1/right/1.png",
+        "offset": {
+          "x": -30,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/right/2.png",
+        "offset": {
+          "x": -30,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/right/3.png",
+        "offset": {
+          "x": -30,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/right/4.png",
+        "offset": {
+          "x": -30,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/right/5.png",
+        "offset": {
+          "x": -30,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/right/6.png",
+        "offset": {
+          "x": -30,
+          "y": -30
+        }
+      }
+    ],
+    "down_right": [
+      {
+        "sprite": "images/tiles/enemy-1/down_right/1.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_right/2.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_right/3.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_right/4.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_right/5.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_right/6.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      }
+    ],
+    "down": [
+      {
+        "sprite": "images/tiles/enemy-1/down/1.png",
+        "offset": {
+          "x": -3,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down/2.png",
+        "offset": {
+          "x": -3,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down/3.png",
+        "offset": {
+          "x": -3,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down/4.png",
+        "offset": {
+          "x": -3,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down/5.png",
+        "offset": {
+          "x": -3,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down/6.png",
+        "offset": {
+          "x": -3,
+          "y": -30
+        }
+      }
+    ],
+    "down_left": [
+      {
+        "sprite": "images/tiles/enemy-1/down_left/1.png",
+        "offset": {
+          "x": -55,
+          "y": -34
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_left/2.png",
+        "offset": {
+          "x": -55,
+          "y": -34
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_left/3.png",
+        "offset": {
+          "x": -55,
+          "y": -34
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_left/4.png",
+        "offset": {
+          "x": -55,
+          "y": -34
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_left/5.png",
+        "offset": {
+          "x": -55,
+          "y": -34
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/down_left/6.png",
+        "offset": {
+          "x": -55,
+          "y": -34
+        }
+      }
+    ],
+    "left": [
+      {
+        "sprite": "images/tiles/enemy-1/left/1.png",
+        "offset": {
+          "x": -55,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/left/2.png",
+        "offset": {
+          "x": -55,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/left/3.png",
+        "offset": {
+          "x": -55,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/left/4.png",
+        "offset": {
+          "x": -55,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/left/5.png",
+        "offset": {
+          "x": -55,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/left/6.png",
+        "offset": {
+          "x": -55,
+          "y": -30
+        }
+      }
+    ],
+    "up_left": [
+      {
+        "sprite": "images/tiles/enemy-1/up_left/1.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_left/2.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_left/3.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_left/4.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_left/5.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      },
+      {
+        "sprite": "images/tiles/enemy-1/up_left/6.png",
+        "offset": {
+          "x": -5,
+          "y": -30
+        }
+      }
+    ]
+  },
+  "deathAnimation": [],
+  "idle": {}
+}

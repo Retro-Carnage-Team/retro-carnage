@@ -6,8 +6,8 @@ import (
 )
 
 type Point struct {
-	X float64
-	Y float64
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
 }
 
 func (p *Point) String() string {
@@ -18,6 +18,13 @@ func (p *Point) Add(other *Point) *Point {
 	return &Point{
 		X: p.X + other.X,
 		Y: p.Y + other.Y,
+	}
+}
+
+func (p *Point) Multiply(factor float64) *Point {
+	return &Point{
+		X: p.X * factor,
+		Y: p.Y * factor,
 	}
 }
 

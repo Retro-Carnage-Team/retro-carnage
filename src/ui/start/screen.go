@@ -39,11 +39,13 @@ func (s *Screen) SetUp() {
 	s.screenChangeTimeout = 0
 	s.stereo = assets.NewStereo()
 	s.themeLoaded = false
+
+	common.StartScreenInit()
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.screenChangeTimeout += elapsedTimeInMs
-	if s.themeLoaded && assets.SpriteRepository.Initialized() {
+	if s.themeLoaded {
 		s.screenChangeRequired(common.Title)
 	}
 	s.renderScreen()

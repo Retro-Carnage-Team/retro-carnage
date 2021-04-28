@@ -1,0 +1,14 @@
+{
+  "name": "enemy-3",
+  "movement": {
+    "up_right": [],
+    "right": [],
+    "down_right": [],
+    "down": [],
+    "down_left": [],
+    "left": [],
+    "up_left": []
+  },
+  "deathAnimation": [],
+  "idle": {}
+}

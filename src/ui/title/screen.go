@@ -39,6 +39,7 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 
 func (s *Screen) SetUp() {
 	s.backgroundImageSprite = assets.SpriteRepository.Get(backgroundImagePath)
+	common.TitleScreenInit()
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
