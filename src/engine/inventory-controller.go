@@ -20,7 +20,7 @@ func NewInventoryController(playerIdx int) InventoryController {
 	}
 }
 
-// Returns the current number of bullets of the specified ammunition type.
+// AmmunitionCount returns the current number of bullets of the specified ammunition type.
 func (ic *InventoryController) AmmunitionCount(ammunitionName string) int {
 	return characters.Players[ic.playerIdx].AmmunitionCount(ammunitionName)
 }
@@ -77,7 +77,7 @@ func (ic *InventoryController) RemoveAmmunition() bool {
 	return false
 }
 
-// Returns the current number of grenades of the specified type.
+// GrenadeCount returns the current number of grenades of the specified type.
 func (ic *InventoryController) GrenadeCount(grenadeName string) int {
 	return characters.Players[ic.playerIdx].GrenadeCount(grenadeName)
 }

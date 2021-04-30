@@ -5,5 +5,5 @@ import (
 )
 
 type EnemySpriteSupplier interface {
-	Sprite(elapsedTimeInMs int64, enemy Enemy) *graphics.SpriteWithOffset
+	Sprite(elapsedTimeInMs int64, enemy ActiveEnemy) *graphics.SpriteWithOffset
 }

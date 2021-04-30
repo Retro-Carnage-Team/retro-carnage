@@ -9,9 +9,7 @@ import (
 func TestPersonReturnsSpritesOfAnimation(t *testing.T) {
 	InitEnemySkins("testdata/skins")
 	var person = buildEnemyPerson()
-	person.Activate() // happens when the landmine becomes visible
-
-	var spriteSupplier = person.SpriteSupplier
+	var spriteSupplier = NewEnemyPersonSpriteSupplier(person.ViewingDirection)
 	assert.NotNil(t, spriteSupplier)
 
 	assert.Equal(t, "images/tiles/enemy-0/down/1.png", spriteSupplier.Sprite(1, person).Source)
@@ -22,9 +20,8 @@ func TestPersonReturnsSpritesOfAnimation(t *testing.T) {
 func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
 	InitEnemySkins("testdata/skins")
 	var person = buildEnemyPerson()
-	person.Activate() // happens when the landmine becomes visible
+	var spriteSupplier = NewEnemyPersonSpriteSupplier(person.ViewingDirection)
 
-	var spriteSupplier = person.SpriteSupplier
 	assert.NotNil(t, spriteSupplier)
 	assert.Equal(t, "images/tiles/enemy-0/down/1.png", spriteSupplier.Sprite(1, person).Source)
 
@@ -34,10 +31,8 @@ func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
 	assert.Equal(t, "images/tiles/enemy-0/death/2.png", spriteSupplier.Sprite(DurationOfDeathAnimationFrame, person).Source)
 }
 
-func buildEnemyPerson() Enemy {
-	return Enemy{
-		ActivationDistance:      0,
-		Active:                  false,
+func buildEnemyPerson() ActiveEnemy {
+	return ActiveEnemy{
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               []EnemyMovement{},

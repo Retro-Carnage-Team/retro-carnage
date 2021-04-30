@@ -17,7 +17,15 @@ type EnemyPersonSpriteSupplier struct {
 	wasDying                bool
 }
 
-func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy Enemy) *graphics.SpriteWithOffset {
+func NewEnemyPersonSpriteSupplier(direction geometry.Direction) *EnemyPersonSpriteSupplier {
+	return &EnemyPersonSpriteSupplier{
+		lastDirection:           direction,
+		durationSinceLastSprite: 0,
+		lastIndex:               0,
+	}
+}
+
+func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy ActiveEnemy) *graphics.SpriteWithOffset {
 	if enemy.Dying {
 		if !supplier.wasDying {
 			supplier.durationSinceLastSprite = 0

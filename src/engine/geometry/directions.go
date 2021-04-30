@@ -32,3 +32,14 @@ func GetDirectionForCardinals(up bool, down bool, left bool, right bool) *Direct
 	}
 	return nil
 }
+
+// GetDirectionByName returns the direction that is specified by name.
+// If no such direction exists it will return nil.
+func GetDirectionByName(name string) *Direction {
+	for _, dir := range directions {
+		if dir.Name == name {
+			return &dir
+		}
+	}
+	return nil
+}

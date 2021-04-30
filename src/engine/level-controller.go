@@ -24,7 +24,7 @@ type LevelController struct {
 	currentSegmentIdx           int
 	distanceToScroll            float64
 	distanceScrolled            float64
-	enemies                     []characters.Enemy
+	enemies                     []assets.Enemy
 	goal                        *geometry.Rectangle
 	obstacles                   []geometry.Rectangle
 	segments                    []assets.Segment
@@ -37,7 +37,7 @@ func NewLevelController(segments []assets.Segment) *LevelController {
 		currentSegmentIdx:           0,
 		distanceToScroll:            0,
 		distanceScrolled:            0,
-		enemies:                     make([]characters.Enemy, 0),
+		enemies:                     make([]assets.Enemy, 0),
 		goal:                        nil,
 		obstacles:                   make([]geometry.Rectangle, 0),
 		segments:                    segments,
@@ -62,7 +62,7 @@ func (lc *LevelController) loadSegment(segment *assets.Segment) {
 	}
 
 	lc.segmentScrollLengthInPixels = 1500 * float64(len(lc.Backgrounds)-1)
-	lc.enemies = make([]characters.Enemy, 0)
+	lc.enemies = make([]assets.Enemy, 0)
 	lc.obstacles = segment.Obstacles
 	lc.distanceScrolled = 0
 	lc.distanceToScroll = 0
@@ -75,15 +75,14 @@ func (lc *LevelController) ProgressToNextSegment() {
 	}
 }
 
-/**
- * Returns a those character.Enemy instances that have been activated since the last scroll movement
- */
-func (lc *LevelController) ActivatedEnemies() []characters.Enemy {
-	var result = make([]characters.Enemy, 0)
-	var newEnemySlice = make([]characters.Enemy, 0)
+// ActivatedEnemies returns a those character.Enemy instances that have been activated since the last scroll movement
+func (lc *LevelController) ActivatedEnemies() []characters.ActiveEnemy {
+	var result = make([]characters.ActiveEnemy, 0)
+	var newEnemySlice = make([]assets.Enemy, 0)
 	for _, enemy := range lc.enemies {
 		if lc.distanceScrolled >= enemy.ActivationDistance {
-			result = append(result, enemy)
+			var activatedEnemy = lc.activateEnemy(&enemy)
+			result = append(result, activatedEnemy)
 		} else {
 			newEnemySlice = append(newEnemySlice, enemy)
 		}
@@ -243,6 +242,45 @@ func (lc *LevelController) ObstaclesOnScreen() []geometry.Rectangle {
 		if nil != adjustedObstaclePosition.Intersection(&ScreenRect) {
 			result = append(result, *adjustedObstaclePosition)
 		}
+	}
+	return result
+}
+
+func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy {
+	var direction = geometry.GetDirectionByName(e.Direction)
+	if nil == direction {
+		logging.Error.Fatalf("no such direction: %s", direction.Name)
+	}
+
+	if !characters.IsEnemySkin(e.Skin) {
+		logging.Error.Fatalf("no such enemy skin: %s", e.Skin)
+	}
+
+	var result = characters.ActiveEnemy{
+		Dying:                   false,
+		DyingAnimationCountDown: 0,
+		Movements:               lc.convertEnemyMovements(e.Movements),
+		Position:                &e.Position,
+		Skin:                    characters.EnemySkin(e.Skin),
+		ViewingDirection:        *direction,
+	}
+
+	if int(characters.Person) == e.Type {
+		result.SpriteSupplier = characters.NewEnemyPersonSpriteSupplier(result.ViewingDirection)
+	}
+
+	if int(characters.Landmine) == e.Type {
+		result.SpriteSupplier = &characters.EnemyLandmineSpriteSupplier{}
+	}
+
+	return result
+}
+
+func (lc *LevelController) convertEnemyMovements(movements []assets.EnemyMovement) []characters.EnemyMovement {
+	var result = make([]characters.EnemyMovement, 0)
+	for _, movement := range movements {
+		var enemyMovement = characters.NewEnemyMovement(&movement)
+		result = append(result, enemyMovement)
 	}
 	return result
 }

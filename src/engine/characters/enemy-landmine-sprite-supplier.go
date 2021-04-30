@@ -12,7 +12,7 @@ const (
 	landmineSprite = "images/tiles/environment/Tellermine-43.png"
 )
 
-func (supplier *EnemyLandmineSpriteSupplier) Sprite(int64, Enemy) *graphics.SpriteWithOffset {
+func (supplier *EnemyLandmineSpriteSupplier) Sprite(int64, ActiveEnemy) *graphics.SpriteWithOffset {
 	var sprite = assets.SpriteRepository.Get(landmineSprite)
 	var offset = geometry.Point{X: 0, Y: 0}
 	return &graphics.SpriteWithOffset{

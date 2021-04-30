@@ -7,9 +7,8 @@ import (
 )
 
 func TestLandmineReturnsStaticSprite(t *testing.T) {
-	var landmine = Enemy{
-		ActivationDistance:      0,
-		Active:                  false,
+	InitEnemySkins("testdata/skins")
+	var landmine = ActiveEnemy{
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               []EnemyMovement{},
@@ -24,9 +23,8 @@ func TestLandmineReturnsStaticSprite(t *testing.T) {
 		Type:             Landmine,
 		ViewingDirection: geometry.Down,
 	}
-	landmine.Activate() // happens when the landmine becomes visible
 
-	var spriteSupplier = landmine.SpriteSupplier
+	var spriteSupplier = EnemyLandmineSpriteSupplier{}
 	assert.NotNil(t, spriteSupplier)
 
 	var sprite = spriteSupplier.Sprite(0, landmine)

@@ -26,3 +26,12 @@ func InitEnemySkins(skinsDirectory string) {
 		}
 	}
 }
+
+func IsEnemySkin(name string) bool {
+	for _, skin := range enemySkinNames {
+		if string(skin) == name {
+			return true
+		}
+	}
+	return false
+}
