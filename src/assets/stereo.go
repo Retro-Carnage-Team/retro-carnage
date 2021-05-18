@@ -81,7 +81,7 @@ func (sb *Stereo) PlayFx(effect SoundEffect) {
 	}
 }
 
-// StopFX immediately stops the playback of a given SoundEffect
+// StopFx immediately stops the playback of a given SoundEffect
 func (sb *Stereo) StopFx(effect SoundEffect) {
 	var aSound = sb.effects[effect]
 	if nil != aSound {
@@ -107,7 +107,7 @@ func (sb *Stereo) PlaySong(song Song) {
 	aSound.play(sb.mixer)
 }
 
-// PlaySong immediately stops the playback of a given Song
+// StopSong immediately stops the playback of a given Song
 func (sb *Stereo) StopSong(song Song) {
 	var aSound = sb.music[song]
 	if nil != aSound {
