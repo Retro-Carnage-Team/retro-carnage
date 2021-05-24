@@ -7,10 +7,10 @@ import (
 )
 
 type GameEngine struct {
-	bullets []Bullet
-	enemies []*characters.ActiveEnemy
-	// explosives []*Explosive
-	// explosions []*Explosion
+	bullets         []Bullet
+	enemies         []*characters.ActiveEnemy
+	explosives      []*Explosive
+	explosions      []*Explosion
 	kills           []int
 	levelController LevelController
 	lost            bool

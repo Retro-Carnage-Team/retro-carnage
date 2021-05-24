@@ -45,7 +45,7 @@ func buildBulletOffsetForPlayer1() (result map[geometry.Direction]*geometry.Poin
 	return
 }
 
-// Bullets are projectiles that have been fired by a player or enemy.
+// Bullet is a projectile that has been fired by a player or enemy.
 type Bullet struct {
 	distanceMoved    float64
 	distanceToTarget float64
@@ -96,7 +96,7 @@ func (b *Bullet) applyPlayerOffset() {
 	}
 }
 
-// Moves the Bullet. Returns true if the Bullet reached it's destination
+// Move moves the Bullet. Returns true if the Bullet reached it's destination
 func (b *Bullet) Move(elapsedTimeInMs int64) bool {
 	if b.distanceMoved < b.distanceToTarget {
 		var maxDistance = b.distanceToTarget - b.distanceMoved
