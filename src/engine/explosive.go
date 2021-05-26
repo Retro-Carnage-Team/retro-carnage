@@ -17,7 +17,7 @@ type Explosive struct {
 	direction         geometry.Direction
 	FiredByPlayer     bool
 	FiredByPlayerIdx  int
-	Position          geometry.Rectangle
+	position          *geometry.Rectangle
 	speed             float64
 	SpriteSupplier    ExplosiveSpriteSupplier
 	ExplodesOnContact bool
@@ -29,8 +29,12 @@ func (e *Explosive) Move(elapsedTimeInMs int64) bool {
 	if e.distanceMoved < e.distanceToTarget {
 		var maxDistance = e.distanceToTarget - e.distanceMoved
 		e.distanceMoved += geometry.CalculateMovementDistance(elapsedTimeInMs, e.speed, &maxDistance)
-		e.Position.X += geometry.CalculateMovementX(elapsedTimeInMs, e.direction, e.speed, &maxDistance)
-		e.Position.Y += geometry.CalculateMovementY(elapsedTimeInMs, e.direction, e.speed, &maxDistance)
+		e.position.X += geometry.CalculateMovementX(elapsedTimeInMs, e.direction, e.speed, &maxDistance)
+		e.position.Y += geometry.CalculateMovementY(elapsedTimeInMs, e.direction, e.speed, &maxDistance)
 	}
 	return e.distanceMoved >= e.distanceToTarget
+}
+
+func (e *Explosive) Position() *geometry.Rectangle {
+	return e.position
 }

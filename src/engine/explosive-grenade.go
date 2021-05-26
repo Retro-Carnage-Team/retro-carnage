@@ -44,7 +44,7 @@ func newExplosiveGrenade(
 			direction:        direction,
 			FiredByPlayer:    false,
 			FiredByPlayerIdx: -1,
-			Position: geometry.Rectangle{
+			position: &geometry.Rectangle{
 				X:      attackerPosition.X + offset.X,
 				Y:      attackerPosition.Y + offset.Y,
 				Width:  GrenadeWidth,

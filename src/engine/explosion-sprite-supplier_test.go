@@ -11,10 +11,10 @@ func TestSpritesShouldAppearWithCorrectTiming(t *testing.T) {
 	var result = explosionSpriteSupplier.Sprite(0)
 	assert.Equal(t, "images/tiles/explosion/0.png", result.Source)
 
-	result = explosionSpriteSupplier.Sprite(DurationOfFrame - 5)
+	result = explosionSpriteSupplier.Sprite(DurationOfExplosionFrame - 5)
 	assert.Equal(t, "images/tiles/explosion/0.png", result.Source)
 
-	result = explosionSpriteSupplier.Sprite(DurationOfFrame - 5)
+	result = explosionSpriteSupplier.Sprite(DurationOfExplosionFrame - 5)
 	assert.Equal(t, "images/tiles/explosion/1.png", result.Source)
 }
 

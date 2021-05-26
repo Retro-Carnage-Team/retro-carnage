@@ -4,7 +4,8 @@ import "retro-carnage/engine/geometry"
 
 const (
 	MinPlayerDistanceToBorder = 25
-	// Screen.width = 1500 / 2.000 milliseconds = 0.75 px / ms
+	// PlayerMovementPerMs is the player's speed in pixel / second.
+	// The value is from this calculation: Screen.width = 1500 / 2.000 milliseconds = 0.75 px / ms
 	PlayerMovementPerMs = 0.75
 )
 
@@ -12,13 +13,13 @@ func UpdatePlayerMovement(
 	elapsedTimeInMs int64,
 	direction geometry.Direction,
 	oldPosition *geometry.Rectangle,
-	obstacles []geometry.Rectangle,
+	obstacles []*geometry.Rectangle,
 ) *geometry.Rectangle {
 	var movement = getMovementVector(elapsedTimeInMs, direction)
 	var updated = false
 	var updatedPosition = oldPosition
 	for _, obstacle := range obstacles {
-		var restrictedMovement = geometry.StopMovementOnCollision(updatedPosition, &obstacle, direction, &movement)
+		var restrictedMovement = geometry.StopMovementOnCollision(updatedPosition, obstacle, direction, &movement)
 		if nil != restrictedMovement {
 			updated = true
 			updatedPosition = restrictedMovement

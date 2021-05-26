@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	DurationOfFrame          = 25 // in ms
+	DurationOfExplosionFrame = 25 // in ms
 	Folder                   = "images/tiles/explosion"
 	NumberOfExplosionSprites = 48
 )
@@ -24,7 +24,7 @@ type ExplosionSpriteSupplier struct {
 
 func (ess *ExplosionSpriteSupplier) Sprite(elapsedTimeInMs int64) *graphics.SpriteWithOffset {
 	ess.duration += elapsedTimeInMs
-	var idx = int(ess.duration / DurationOfFrame)
+	var idx = int(ess.duration / DurationOfExplosionFrame)
 	return explosionSprites[util.MinInt(len(explosionSprites)-1, idx)]
 }
 

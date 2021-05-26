@@ -130,7 +130,7 @@ func (lc *LevelController) scroll(pixels float64) geometry.Point {
 }
 
 func (lc *LevelController) scrollUp(pixels float64) geometry.Point {
-	for idx, _ := range lc.Backgrounds {
+	for idx := range lc.Backgrounds {
 		lc.Backgrounds[idx].Offset.Y += pixels
 	}
 	if nil != lc.goal {
@@ -144,7 +144,7 @@ func (lc *LevelController) scrollUp(pixels float64) geometry.Point {
 }
 
 func (lc *LevelController) scrollLeft(pixels float64) geometry.Point {
-	for idx, _ := range lc.Backgrounds {
+	for idx := range lc.Backgrounds {
 		lc.Backgrounds[idx].Offset.X += pixels
 	}
 	if nil != lc.goal {
@@ -158,7 +158,7 @@ func (lc *LevelController) scrollLeft(pixels float64) geometry.Point {
 }
 
 func (lc *LevelController) scrollRight(pixels float64) geometry.Point {
-	for idx, _ := range lc.Backgrounds {
+	for idx := range lc.Backgrounds {
 		lc.Backgrounds[idx].Offset.X -= pixels
 	}
 	if nil != lc.goal {
@@ -171,7 +171,7 @@ func (lc *LevelController) scrollRight(pixels float64) geometry.Point {
 	return geometry.Point{X: pixels, Y: 0}
 }
 
-func (lc *LevelController) VisibleTiles() []graphics.SpriteWithOffset {
+func (lc *LevelController) VisibleBackgrounds() []graphics.SpriteWithOffset {
 	var result = make([]graphics.SpriteWithOffset, 0)
 	var negativeScreenSize = float64(ScreenSize * -1)
 	for _, background := range lc.Backgrounds {
@@ -213,7 +213,7 @@ func (lc *LevelController) distanceBehindScrollBarrier(playerPositions []geometr
 	return 0
 }
 
-func (lc *LevelController) GoalReached(playerPositions []geometry.Rectangle) bool {
+func (lc *LevelController) GoalReached(playerPositions []*geometry.Rectangle) bool {
 	if nil != lc.goal {
 		for _, playerPosition := range playerPositions {
 			if nil != playerPosition.Intersection(lc.goal) {
@@ -249,7 +249,7 @@ func (lc *LevelController) ObstaclesOnScreen() []geometry.Rectangle {
 func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy {
 	var direction = geometry.GetDirectionByName(e.Direction)
 	if nil == direction {
-		logging.Error.Fatalf("no such direction: %s", direction.Name)
+		logging.Error.Fatalf("no such direction: %s", e.Direction)
 	}
 
 	if !characters.IsEnemySkin(e.Skin) {

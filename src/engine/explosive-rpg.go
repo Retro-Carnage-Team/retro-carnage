@@ -25,7 +25,7 @@ func NewExplosiveRpg(
 			direction:        direction,
 			FiredByPlayer:    true,
 			FiredByPlayerIdx: playerIdx,
-			Position: geometry.Rectangle{
+			position: &geometry.Rectangle{
 				X:      playerPosition.X + offset.X,
 				Y:      playerPosition.Y + offset.Y,
 				Width:  RpgWidth,
