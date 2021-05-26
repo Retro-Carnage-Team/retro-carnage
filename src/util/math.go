@@ -19,6 +19,20 @@ func MinInt(a int, b int) int {
 	return b
 }
 
+func MaxInt64(a int64, b int64) int64 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func MinInt64(a int64, b int64) int64 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 func Max(input []float64) float64 {
 	if 0 == len(input) {
 		logging.Error.Fatalf("Cannot get max of empty slice")

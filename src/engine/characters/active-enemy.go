@@ -7,7 +7,7 @@ import (
 type ActiveEnemy struct {
 	Dying                   bool
 	DyingAnimationCountDown int64
-	Movements               []EnemyMovement
+	Movements               []*EnemyMovement
 	Position                *geometry.Rectangle
 	Skin                    EnemySkin
 	SpriteSupplier          EnemySpriteSupplier

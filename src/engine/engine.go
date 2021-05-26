@@ -5,6 +5,9 @@ import (
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
+	"retro-carnage/engine/input"
+	"retro-carnage/logging"
+	"retro-carnage/util"
 )
 
 type GameEngine struct {
@@ -12,6 +15,7 @@ type GameEngine struct {
 	enemies         []*characters.ActiveEnemy
 	explosives      []*Explosive
 	explosions      []*Explosion
+	inputController input.Controller
 	kills           []int
 	levelController *LevelController
 	lost            bool
@@ -51,6 +55,10 @@ func NewGameEngine(mission *assets.Mission) *GameEngine {
 func (ge *GameEngine) InitializeGameState() {
 }
 
+func (ge *GameEngine) SetInputController(controller input.Controller) {
+	ge.inputController = controller
+}
+
 func (ge *GameEngine) Backgrounds() []graphics.SpriteWithOffset {
 	return ge.levelController.VisibleBackgrounds()
 }
@@ -81,40 +89,36 @@ updateGameState = (elapsedTimeInMs: number) => {
       this.enemies.push(...activatedEnemies.map((e) => new ActiveEnemy(e)));
     }
   };
-
-  updatePlayerBehavior = (elapsedTimeInMs: number) => {
-    PlayerController.getRemainingPlayers().forEach((p) => {
-      const behavior = this.playerBehaviors[p.index];
-      if (behavior.dying) {
-        behavior.dyingAnimationCountDown -= Math.floor(elapsedTimeInMs);
-        if (0 >= behavior.dyingAnimationCountDown) {
-          behavior.dying = false;
-          behavior.dyingAnimationCountDown = 0;
-          PlayerController.killPlayer(p.index);
-          if (p.isAlive()) {
-            behavior.invincible = true;
-            behavior.invincibilityCountDown = 1500;
-          }
-        }
-      } else {
-        if (behavior.invincible) {
-          behavior.invincibilityCountDown -= Math.floor(elapsedTimeInMs);
-          if (0 >= behavior.invincibilityCountDown) {
-            behavior.invincible = false;
-            behavior.invincibilityCountDown = 0;
-          }
-        }
-        const inputState = InputController.inputProviders[p.index]();
-        if (inputState && !behavior.dying) {
-          behavior.update(inputState);
-        }
-      }
-    });
-
-    this.lost = 0 === PlayerController.getRemainingPlayers().length;
-  };
-
 */
+
+func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
+	for _, player := range characters.PlayerController.RemainingPlayers() {
+		var behavior = ge.playerBehaviors[player.Index()]
+		if behavior.Dying {
+			behavior.DyingAnimationCountDown -= elapsedTimeInMs
+			if 0 >= behavior.DyingAnimationCountDown {
+				behavior.Dying = false
+				behavior.DyingAnimationCountDown = 0
+				characters.PlayerController.KillPlayer(player)
+				if player.Alive() {
+					behavior.StartInvincibility()
+				}
+			}
+		} else {
+			if behavior.Invincible {
+				behavior.UpdateInvincibility(elapsedTimeInMs)
+			}
+
+			var inputState, err = ge.inputController.GetControllerDeviceState(player.Index())
+			if nil != err {
+				logging.Warning.Printf("Failed to get input state for player %d: %v\n", player.Index(), err)
+			} else if (nil != inputState) && !behavior.Dying {
+				behavior.Update(inputState)
+			}
+		}
+	}
+	ge.lost = 0 == len(characters.PlayerController.RemainingPlayers())
+}
 
 func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, obstacles []*geometry.Rectangle) {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
@@ -131,46 +135,58 @@ func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, ob
 	}
 }
 
-/*
-  updateEnemies = (elapsedTimeInMs: number) => {
-    function updateDeathAnimationCountDown(enemy: ActiveEnemy): ActiveEnemy {
-      if (enemy.dying) {
-        enemy.dyingAnimationCountDown -= Math.floor(elapsedTimeInMs);
-      }
-      return enemy;
-    }
+func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
+	var enemies = ge.updateEnemiesDeaths(elapsedTimeInMs)
+	for _, enemy := range enemies {
+		if !enemy.Dying && (characters.Person == enemy.Type) && (0 < len(enemy.Movements)) {
+			var remaining = elapsedTimeInMs
+			for (0 < remaining) && (0 < len(enemy.Movements)) {
+				var currentMovement = enemy.Movements[0]
+				var duration = util.MinInt64(remaining, currentMovement.Duration-currentMovement.TimeElapsed)
+				enemy.Position.Add(&geometry.Point{
+					X: float64(duration) * currentMovement.OffsetXPerMs,
+					Y: float64(duration) * currentMovement.OffsetYPerMs,
+				})
+				remaining -= duration
+				currentMovement.TimeElapsed += duration
+				if currentMovement.TimeElapsed >= currentMovement.Duration {
+					enemy.Movements = ge.removeFirstEnemyMovement(enemy.Movements)
+				}
+			}
+		}
+	}
+	ge.enemies = enemies
+}
 
-    this.enemies = this.enemies
-      .map(updateDeathAnimationCountDown)
-      .filter((enemy) => !enemy.dying || 0 <= enemy.dyingAnimationCountDown);
+func (ge *GameEngine) removeFirstEnemyMovement(movements []*characters.EnemyMovement) []*characters.EnemyMovement {
+	if 1 == len(movements) {
+		return []*characters.EnemyMovement{}
+	}
+	movements[0] = nil
+	return movements[1:]
+}
 
-    this.enemies
-      .filter((e) => !e.dying && EnemyType.Person === e.type)
-      .forEach((enemy) => {
-        let remaining = elapsedTimeInMs;
-        let currentMovement = enemy.movements.find(
-          (m) => m.timeElapsed < m.duration
-        );
-        while (currentMovement && 0 < remaining) {
-          const duration = Math.min(
-            remaining,
-            currentMovement.duration - currentMovement.timeElapsed
-          );
-          enemy.position.add({
-            x: duration * currentMovement.offsetXPerMs,
-            y: duration * currentMovement.offsetYPerMs,
-          });
-          remaining -= duration;
-          currentMovement.timeElapsed += duration;
-          if (0 < remaining) {
-            currentMovement = enemy.movements.find(
-              (m) => m.timeElapsed < m.duration
-            );
-          }
-        }
-      });
-  };
-*/
+// updateEnemiesDeaths updates the dying animation countdown of all active enemies.
+// Returns those enemies that have a remaining count down > 0.
+func (ge *GameEngine) updateEnemiesDeaths(elapsedTimeInMs int64) []*characters.ActiveEnemy {
+	var enemies = ge.enemies
+	for i := len(enemies) - 1; i >= 0; i-- {
+		var enemy = enemies[i]
+		if enemy.Dying {
+			enemy.DyingAnimationCountDown -= elapsedTimeInMs
+		}
+		if enemy.Dying && 0 <= enemy.DyingAnimationCountDown {
+			enemies = ge.removeEnemy(enemies, i)
+		}
+	}
+	return enemies
+}
+
+func (ge *GameEngine) removeEnemy(enemies []*characters.ActiveEnemy, idx int) []*characters.ActiveEnemy {
+	enemies[idx] = enemies[len(enemies)-1]
+	enemies[len(enemies)-1] = nil
+	return enemies[:len(enemies)-1]
+}
 
 func (ge *GameEngine) updateExplosions(elapsedTimeInMs int64) {
 	const durationOfExplosion = DurationOfExplosionFrame * NumberOfExplosionSprites
@@ -186,26 +202,35 @@ func (ge *GameEngine) updateExplosions(elapsedTimeInMs int64) {
 
 func (ge *GameEngine) removeExplosion(explosions []*Explosion, idx int) []*Explosion {
 	explosions[idx] = explosions[len(explosions)-1]
+	explosions[len(explosions)-1] = nil
 	return explosions[:len(explosions)-1]
 }
 
-/*
-  updateExplosives = (elapsedTimeInMs: number, obstacles: Rectangle[]) => {
-    this.explosives = this.explosives.filter((explosive) => {
-      let done = explosive.move(elapsedTimeInMs);
-      if (!done && explosive.explodesOnContact) {
-        const collision = obstacles.find((obstacle) =>
-          obstacle.getIntersection(explosive.position)
-        );
-        done = !!collision;
-      }
-      if (done) {
-        this.detonateExplosive(explosive);
-      }
-      return !done;
-    });
-  };
-*/
+func (ge *GameEngine) updateExplosives(elapsedTimeInMs int64, obstacles []*geometry.Rectangle) {
+	var explosives = ge.explosives
+	for i := len(explosives) - 1; i >= 0; i-- {
+		var explosive = explosives[i]
+		var done = explosive.Move(elapsedTimeInMs)
+		if !done && explosive.ExplodesOnContact {
+			for _, obstacle := range obstacles {
+				if !done && (nil != obstacle.Intersection(explosive.position)) {
+					done = true
+				}
+			}
+		}
+		if done {
+			ge.detonateExplosive(explosive)
+			explosives = ge.removeExplosive(explosives, i)
+		}
+	}
+	ge.explosives = explosives
+}
+
+func (ge *GameEngine) removeExplosive(explosives []*Explosive, idx int) []*Explosive {
+	explosives[idx] = explosives[len(explosives)-1]
+	explosives[len(explosives)-1] = nil
+	return explosives[:len(explosives)-1]
+}
 
 func (ge *GameEngine) detonateExplosive(explosive *Explosive) {
 	ge.explosions = append(ge.explosions, NewExplosion(explosive.FiredByPlayer, explosive.FiredByPlayerIdx, explosive))
@@ -231,6 +256,7 @@ func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []*geometry
 
 func (ge *GameEngine) removeBullet(bullets []*Bullet, idx int) []*Bullet {
 	bullets[idx] = bullets[len(bullets)-1]
+	bullets[len(bullets)-1] = nil
 	return bullets[:len(bullets)-1]
 }
 

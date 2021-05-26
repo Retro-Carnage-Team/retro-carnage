@@ -10,9 +10,8 @@ type EnemyMovement struct {
 }
 
 func NewEnemyMovement(e *assets.EnemyMovement) EnemyMovement {
-	var result = EnemyMovement{
+	return EnemyMovement{
 		EnemyMovement: e,
 		TimeElapsed:   0,
 	}
-	return result
 }

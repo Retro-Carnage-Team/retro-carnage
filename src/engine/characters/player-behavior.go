@@ -5,6 +5,10 @@ import (
 	"retro-carnage/engine/input"
 )
 
+const (
+	PlayerInvincibilityTimeout = 1500
+)
+
 // PlayerBehavior contains all player state that is valid for the duration of a single mission only.
 type PlayerBehavior struct {
 	Player                  *Player
@@ -81,4 +85,17 @@ func (pb *PlayerBehavior) direction(up bool, down bool, left bool, right bool) g
 
 func (pb *PlayerBehavior) Idle() bool {
 	return !pb.Dying && !pb.Moving
+}
+
+func (pb *PlayerBehavior) StartInvincibility() {
+	pb.Invincible = true
+	pb.InvincibilityCountDown = PlayerInvincibilityTimeout
+}
+
+func (pb *PlayerBehavior) UpdateInvincibility(elapsedTimeInMs int64) {
+	pb.InvincibilityCountDown -= elapsedTimeInMs
+	if 0 >= pb.InvincibilityCountDown {
+		pb.Invincible = false
+		pb.InvincibilityCountDown = 0
+	}
 }

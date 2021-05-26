@@ -34,8 +34,8 @@ func (pc *PlayerCtrl) RemainingPlayers() []*Player {
 }
 
 // KillPlayer decreases the number of lives of the specified player by one
-func (pc *PlayerCtrl) KillPlayer(playerIdx int) {
-	pc.ConfiguredPlayers()[playerIdx].lives -= 1
+func (pc *PlayerCtrl) KillPlayer(player *Player) {
+	player.lives -= 1
 }
 
 // StartNewGame initializes the controller for a new game of numberOfPlayers players

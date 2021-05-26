@@ -10,7 +10,7 @@ type Location struct {
 }
 
 type EnemyMovement struct {
-	Duration     float64 `json:"duration"`
+	Duration     int64   `json:"duration"`
 	OffsetXPerMs float64 `json:"offsetXPerMs"`
 	OffsetYPerMs float64 `json:"offsetYPerMs"`
 }
