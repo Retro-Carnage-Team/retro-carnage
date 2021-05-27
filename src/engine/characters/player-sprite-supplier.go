@@ -5,6 +5,11 @@ import (
 	"retro-carnage/engine/graphics"
 )
 
+const (
+	DurationOfPlayerDeathAnimationFrame = 75 // in ms
+	DurationOfPlayerMovementFrame       = 75 // in ms
+)
+
 type PlayerSpriteSupplier struct {
 	directionOfLastSprite   geometry.Direction
 	durationSinceLastSprite int64
@@ -35,7 +40,7 @@ func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, behavior *PlayerB
 		return pss.spriteForIdlePlayer(behavior)
 	} else {
 		pss.durationSinceLastSprite += elapsedTimeInMs
-		if (DurationOfMovementFrame <= pss.durationSinceLastSprite) || (nil == pss.lastSprite) {
+		if (DurationOfPlayerMovementFrame <= pss.durationSinceLastSprite) || (nil == pss.lastSprite) {
 			pss.durationSinceLastSprite = 0
 			var frames = pss.skin.MovementByDirection[behavior.Direction.Name]
 			if pss.wasMoving {
@@ -67,7 +72,7 @@ func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, behavior *PlayerB
 func (pss *PlayerSpriteSupplier) spriteForDyingPlayer() *graphics.SpriteWithOffset {
 	var deathFrames = pss.skin.DeathAnimation
 	if pss.wasDying {
-		if DurationOfDeathAnimationFrame <= pss.durationSinceLastSprite {
+		if DurationOfPlayerDeathAnimationFrame <= pss.durationSinceLastSprite {
 			pss.lastIndex = (pss.lastIndex + 1) % len(deathFrames)
 			pss.lastSprite = deathFrames[pss.lastIndex].ToSpriteWithOffset()
 		}

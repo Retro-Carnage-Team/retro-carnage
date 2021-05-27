@@ -6,8 +6,9 @@ import (
 )
 
 const (
-	DurationOfDeathAnimationFrame = 75 // in ms
-	DurationOfMovementFrame       = 75 // in ms
+	DurationOfEnemyDeathAnimationFrame = 75 // in ms
+	DurationOfEnemyDeathAnimation      = DurationOfEnemyDeathAnimationFrame * 20
+	DurationOfEnemyMovementFrame       = 75 // in ms
 )
 
 type EnemyPersonSpriteSupplier struct {
@@ -35,7 +36,7 @@ func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy
 
 		var deathSprites = enemySkins[enemy.Skin].DeathAnimation
 		supplier.durationSinceLastSprite += msSinceLastSprite
-		if supplier.durationSinceLastSprite > DurationOfDeathAnimationFrame {
+		if supplier.durationSinceLastSprite > DurationOfEnemyDeathAnimationFrame {
 			supplier.lastIndex = (supplier.lastIndex + 1) % len(deathSprites)
 		}
 		return deathSprites[supplier.lastIndex].ToSpriteWithOffset()
@@ -49,7 +50,7 @@ func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy
 		} else {
 			var skinFrames = enemySkins[enemy.Skin].MovementByDirection[enemy.ViewingDirection.Name]
 			supplier.durationSinceLastSprite += msSinceLastSprite
-			if supplier.durationSinceLastSprite > DurationOfMovementFrame {
+			if supplier.durationSinceLastSprite > DurationOfEnemyMovementFrame {
 				supplier.lastIndex = (supplier.lastIndex + 1) % len(skinFrames)
 			}
 			return skinFrames[supplier.lastIndex].ToSpriteWithOffset()

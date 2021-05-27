@@ -50,8 +50,8 @@ type Bullet struct {
 	distanceMoved    float64
 	distanceToTarget float64
 	direction        geometry.Direction
-	FiredByPlayer    bool
-	PlayerIdx        int
+	firedByPlayer    bool
+	playerIdx        int
 	Position         *geometry.Rectangle
 	speed            float64
 }
@@ -67,8 +67,8 @@ func NewBulletFiredByPlayer(
 		distanceMoved:    0,
 		distanceToTarget: float64(selectedWeapon.BulletRange),
 		direction:        direction,
-		FiredByPlayer:    true,
-		PlayerIdx:        playerIdx,
+		firedByPlayer:    true,
+		playerIdx:        playerIdx,
 		Position: &geometry.Rectangle{
 			X:      playerPosition.X,
 			Y:      playerPosition.Y,
@@ -82,12 +82,12 @@ func NewBulletFiredByPlayer(
 }
 
 func (b *Bullet) applyPlayerOffset() {
-	if !b.FiredByPlayer || b.PlayerIdx < 0 || b.PlayerIdx > 1 {
+	if !b.firedByPlayer || b.playerIdx < 0 || b.playerIdx > 1 {
 		logging.Error.Fatal("Failed to apply player offset due to invalid parameters")
 	}
 
 	var offsets = bulletOffsetForPlayer0
-	if 1 == b.PlayerIdx {
+	if 1 == b.playerIdx {
 		offsets = bulletOffsetForPlayer1
 	}
 	var offsetValue = offsets[b.direction]

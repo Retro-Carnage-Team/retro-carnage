@@ -34,9 +34,9 @@ func TestSprite0IsReturnedWhenPlayerStartsToMove(t *testing.T) {
 
 	behavior.Moving = true
 	behavior.Direction = geometry.Up
-	var result = spriteSupplier.Sprite(DurationOfMovementFrame, behavior)
+	var result = spriteSupplier.Sprite(DurationOfPlayerMovementFrame, behavior)
 	assert.Equal(t, "images/tiles/player-1/up/1.png", result.Source)
-	result = spriteSupplier.Sprite(DurationOfMovementFrame, behavior)
+	result = spriteSupplier.Sprite(DurationOfPlayerMovementFrame, behavior)
 	assert.Equal(t, "images/tiles/player-1/up/2.png", result.Source)
 }
 
@@ -71,7 +71,7 @@ func TestPlaysAnimationInLoop(t *testing.T) {
 
 	for j := 0; j < 2; j++ {
 		for i := 0; i < spriteCount; i++ {
-			var sprite = spriteSupplier.Sprite(DurationOfMovementFrame, behavior)
+			var sprite = spriteSupplier.Sprite(DurationOfPlayerMovementFrame, behavior)
 			var expectedPath = fmt.Sprintf("images/tiles/player-1/up/%d.png", i+1)
 			assert.Equal(t, expectedPath, sprite.Source)
 		}

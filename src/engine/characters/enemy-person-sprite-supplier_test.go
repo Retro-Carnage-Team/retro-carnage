@@ -14,7 +14,7 @@ func TestPersonReturnsSpritesOfAnimation(t *testing.T) {
 
 	assert.Equal(t, "images/tiles/enemy-0/down/1.png", spriteSupplier.Sprite(1, person).Source)
 	assert.Equal(t, "images/tiles/enemy-0/down/1.png", spriteSupplier.Sprite(2, person).Source)
-	assert.Equal(t, "images/tiles/enemy-0/down/2.png", spriteSupplier.Sprite(DurationOfMovementFrame, person).Source)
+	assert.Equal(t, "images/tiles/enemy-0/down/2.png", spriteSupplier.Sprite(DurationOfEnemyMovementFrame, person).Source)
 }
 
 func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
@@ -28,7 +28,7 @@ func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
 	person.Die()
 
 	assert.Equal(t, "images/tiles/enemy-0/death/1.png", spriteSupplier.Sprite(2, person).Source)
-	assert.Equal(t, "images/tiles/enemy-0/death/2.png", spriteSupplier.Sprite(DurationOfDeathAnimationFrame, person).Source)
+	assert.Equal(t, "images/tiles/enemy-0/death/2.png", spriteSupplier.Sprite(DurationOfEnemyDeathAnimationFrame, person).Source)
 }
 
 func buildEnemyPerson() ActiveEnemy {

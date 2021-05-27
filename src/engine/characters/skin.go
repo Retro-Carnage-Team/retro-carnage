@@ -15,7 +15,7 @@ type Skin struct {
 
 // DurationOfDeathAnimation returns the duration of a death animation in milliseconds
 func (s *Skin) DurationOfDeathAnimation() int64 {
-	return int64(len(s.DeathAnimation) * DurationOfDeathAnimationFrame)
+	return int64(len(s.DeathAnimation) * DurationOfPlayerDeathAnimationFrame)
 }
 
 func loadSkin(filePath string) *Skin {

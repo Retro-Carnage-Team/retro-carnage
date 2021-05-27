@@ -406,61 +406,60 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
     });
   };
 
-  // Check if players collide with explosions / bullets / enemies
-  checkEnemiesForDeadlyCollisions = () => {
-    this.enemies.forEach((enemy) => {
-      if (!enemy.dying) {
-        let death = false;
-        let killer = null;
-        this.explosions.forEach((explosion) => {
-          const deadlyExplosion =
-            null !== enemy.position.getIntersection(explosion.position);
-          if (deadlyExplosion) {
-            killer = explosion.playerIdx;
-          }
-          death = death || deadlyExplosion;
-        });
-
-        if (EnemyType.Person === enemy.type) {
-          // Bullets, flamethrowers and RPGs are useful only against persons
-          this.bullets.forEach((bullet) => {
-            const deadlyShot =
-              null !== enemy.position.getIntersection(bullet.position);
-            if (deadlyShot) {
-              killer = bullet.playerIdx;
-            }
-            death = death || deadlyShot;
-          });
-
-          this.explosives = this.explosives.filter((explosive) => {
-            let explode =
-              explosive.explodesOnContact &&
-              explosive.position.getIntersection(enemy.position);
-            if (explode) {
-              this.detonateExplosive(explosive);
-              death = true;
-            }
-            return !explode;
-          });
-        }
-
-        if (death) {
-          enemy.dying = true;
-          enemy.dyingAnimationCountDown = 1;
-          if (null !== killer) {
-            this.kills[killer] += 1;
-          }
-          if (EnemyType.Person === enemy.type) {
-            SoundBoard.play(
-              FX_DEATH_ENEMIES[Math.floor(Math.random() * Math.floor(8))]
-            );
-            enemy.dyingAnimationCountDown = DURATION_OF_DEATH_ANIMATION_ENEMY;
-          }
-        }
-      }
-    });
-  };
 */
+
+func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
+	for _, enemy := range ge.enemies {
+		if !enemy.Dying {
+			var death = false
+			var killer = -1
+
+			// Check for hits by explosion
+			for _, explosion := range ge.explosions {
+				var deadlyExplosion = nil != enemy.Position.Intersection(explosion.Position)
+				if deadlyExplosion {
+					killer = explosion.playerIdx
+				}
+				death = death || deadlyExplosion
+			}
+
+			// Check for hits by bullets, flamethrowers and RPGs (useful only against persons)
+			if characters.Person == enemy.Type {
+				for _, bullet := range ge.bullets {
+					var deadlyShot = nil != enemy.Position.Intersection(bullet.Position)
+					if deadlyShot {
+						killer = bullet.playerIdx
+					}
+					death = death || deadlyShot
+				}
+
+				var explosives = ge.explosives
+				for i := len(explosives) - 1; i >= 0; i-- {
+					var explosive = explosives[i]
+					var explode = explosive.ExplodesOnContact && nil != explosive.position.Intersection(enemy.Position)
+					if explode {
+						ge.detonateExplosive(explosive)
+						death = true
+						explosives = ge.removeExplosive(explosives, i)
+					}
+				}
+				ge.explosives = explosives
+			}
+
+			if death {
+				enemy.Dying = true
+				enemy.DyingAnimationCountDown = 1
+				if -1 != killer {
+					ge.kills[killer] += 1
+				}
+				if characters.Person == enemy.Type {
+					assets.NewStereo().PlayFx(assets.RandomEnemyDeathSoundEffect())
+					enemy.DyingAnimationCountDown = characters.DurationOfEnemyDeathAnimation
+				}
+			}
+		}
+	}
+}
 
 func (ge *GameEngine) checkIfPlayerReachedLevelGoal() {
 	if ge.levelController.GoalReached(ge.playerPositions) {

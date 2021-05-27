@@ -21,7 +21,7 @@ func TestPlayerCtrl_KillPlayer(t *testing.T) {
 	playerController.StartNewGame(2)
 
 	for {
-		playerController.KillPlayer(0)
+		playerController.KillPlayer(Players[0])
 		if 0 == Players[0].lives {
 			break
 		}

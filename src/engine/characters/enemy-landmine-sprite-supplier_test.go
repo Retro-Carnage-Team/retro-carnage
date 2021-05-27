@@ -31,7 +31,7 @@ func TestLandmineReturnsStaticSprite(t *testing.T) {
 	assert.NotNil(t, sprite)
 	assert.Equal(t, landmineSprite, sprite.Source)
 
-	sprite = spriteSupplier.Sprite(DurationOfMovementFrame*1.4, landmine)
+	sprite = spriteSupplier.Sprite(DurationOfEnemyMovementFrame*1.4, landmine)
 	assert.NotNil(t, sprite)
 	assert.Equal(t, landmineSprite, sprite.Source)
 }

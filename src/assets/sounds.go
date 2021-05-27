@@ -1,5 +1,10 @@
 package assets
 
+import (
+	"math/rand"
+	"time"
+)
+
 type SoundEffect string
 type Song string
 
@@ -61,5 +66,13 @@ var SoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxCash, FxDeathEnemy0, F
 var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5,
 	FxMp7, FxUzi}
 
+var EnemyDeathsSoundEffects = []SoundEffect{FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2, FxDeathEnemy3, FxDeathEnemy4,
+	FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7}
+
 var Music = []Song{BackgroundSong1, BackgroundSong2, BackgroundSong3, BackgroundSong4, BackgroundSong5, BackgroundSong6,
 	BackgroundSong7, BackgroundSong8, BackgroundSong9, BackgroundSong10, BackgroundSong11, BackgroundSong12, ThemeSong}
+
+func RandomEnemyDeathSoundEffect() SoundEffect {
+	rand.Seed(time.Now().Unix())
+	return EnemyDeathsSoundEffects[rand.Intn(len(EnemyDeathsSoundEffects))]
+}
