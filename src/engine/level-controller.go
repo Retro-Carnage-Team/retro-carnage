@@ -260,10 +260,10 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               lc.convertEnemyMovements(e.Movements),
-		Position:                &e.Position,
 		Skin:                    characters.EnemySkin(e.Skin),
 		ViewingDirection:        *direction,
 	}
+	result.SetPosition(&e.Position)
 
 	if int(characters.Person) == e.Type {
 		result.SpriteSupplier = characters.NewEnemyPersonSpriteSupplier(result.ViewingDirection)

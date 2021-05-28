@@ -7,13 +7,13 @@ import (
 )
 
 type ExplosiveGrenade struct {
-	Explosive
+	*Explosive
 }
 
 // NewExplosiveGrenadeByPlayer builds an ExplosiveGrenade objects for Grenades thrown by players.
 func NewExplosiveGrenadeByPlayer(
 	playerIdx int,
-	playerPosition geometry.Rectangle,
+	playerPosition *geometry.Rectangle,
 	direction geometry.Direction,
 	selectedWeapon *assets.Grenade,
 ) *ExplosiveGrenade {
@@ -25,20 +25,20 @@ func NewExplosiveGrenadeByPlayer(
 
 // NewExplosiveGrenadeByEnemy builds an ExplosiveGrenade objects for Grenades thrown by enemies.
 func NewExplosiveGrenadeByEnemy(
-	enemyPosition geometry.Rectangle,
+	enemyPosition *geometry.Rectangle,
 	direction geometry.Direction,
 ) *ExplosiveGrenade {
 	return newExplosiveGrenade(enemyPosition, direction, assets.GrenadeCrate.GetByName("DM41"))
 }
 
 func newExplosiveGrenade(
-	attackerPosition geometry.Rectangle,
+	attackerPosition *geometry.Rectangle,
 	direction geometry.Direction,
 	selectedWeapon *assets.Grenade,
 ) *ExplosiveGrenade {
 	var offset = grenadeOffsets(direction)
 	return &ExplosiveGrenade{
-		Explosive: Explosive{
+		Explosive: &Explosive{
 			distanceMoved:    0,
 			distanceToTarget: float64(selectedWeapon.MovementDistance),
 			direction:        direction,

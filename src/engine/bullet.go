@@ -59,9 +59,9 @@ type Bullet struct {
 // NewBulletFiredByPlayer creates and returns a new instance of Bullet.
 func NewBulletFiredByPlayer(
 	playerIdx int,
-	playerPosition geometry.Rectangle,
+	playerPosition *geometry.Rectangle,
 	direction geometry.Direction,
-	selectedWeapon assets.Weapon,
+	selectedWeapon *assets.Weapon,
 ) (result *Bullet) {
 	result = &Bullet{
 		distanceMoved:    0,

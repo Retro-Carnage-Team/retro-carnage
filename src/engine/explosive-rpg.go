@@ -7,21 +7,21 @@ import (
 )
 
 type ExplosiveRpg struct {
-	Explosive
+	*Explosive
 }
 
 // NewExplosiveRpg builds an ExplosiveRpg.
 func NewExplosiveRpg(
 	playerIdx int,
-	playerPosition geometry.Rectangle,
+	playerPosition *geometry.Rectangle,
 	direction geometry.Direction,
-	selectedRpg *assets.Grenade,
+	selectedRpg *assets.Weapon,
 ) *ExplosiveRpg {
 	var offset = rpgOffset(playerIdx, direction)
 	return &ExplosiveRpg{
-		Explosive: Explosive{
+		Explosive: &Explosive{
 			distanceMoved:    0,
-			distanceToTarget: float64(selectedRpg.MovementDistance),
+			distanceToTarget: float64(selectedRpg.BulletRange),
 			direction:        direction,
 			FiredByPlayer:    true,
 			FiredByPlayerIdx: playerIdx,
@@ -31,7 +31,7 @@ func NewExplosiveRpg(
 				Width:  RpgWidth,
 				Height: RpgHeight,
 			},
-			speed:             selectedRpg.MovementSpeed,
+			speed:             selectedRpg.BulletSpeed,
 			SpriteSupplier:    NewRpgSpriteSupplier(direction),
 			ExplodesOnContact: true,
 		},

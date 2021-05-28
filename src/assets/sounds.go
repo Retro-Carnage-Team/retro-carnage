@@ -76,3 +76,11 @@ func RandomEnemyDeathSoundEffect() SoundEffect {
 	rand.Seed(time.Now().Unix())
 	return EnemyDeathsSoundEffects[rand.Intn(len(EnemyDeathsSoundEffects))]
 }
+
+func DeathFxForPlayer(playerIdx int) SoundEffect {
+	if 0 == playerIdx {
+		return FxDeathPlayer1
+	} else {
+		return FxDeathPlayer2
+	}
+}

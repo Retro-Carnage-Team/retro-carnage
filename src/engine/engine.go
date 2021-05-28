@@ -11,33 +11,37 @@ import (
 )
 
 type GameEngine struct {
-	bullets         []*Bullet
-	enemies         []*characters.ActiveEnemy
-	explosives      []*Explosive
-	explosions      []*Explosion
-	inputController input.Controller
-	kills           []int
-	levelController *LevelController
-	lost            bool
-	mission         *assets.Mission
-	playerBehaviors []*characters.PlayerBehavior
-	playerPositions []*geometry.Rectangle
-	won             bool
+	bullets             []*Bullet
+	enemies             []*characters.ActiveEnemy
+	explosives          []*Explosive
+	explosions          []*Explosion
+	inputController     input.Controller
+	inventoryController []*InventoryController
+	kills               []int
+	levelController     *LevelController
+	lost                bool
+	mission             *assets.Mission
+	playerBehaviors     []*characters.PlayerBehavior
+	playerPositions     []*geometry.Rectangle
+	stereo              *assets.Stereo
+	won                 bool
 }
 
 func NewGameEngine(mission *assets.Mission) *GameEngine {
 	var result = &GameEngine{
-		bullets:         make([]*Bullet, 0),
-		enemies:         make([]*characters.ActiveEnemy, 0),
-		explosives:      make([]*Explosive, 0),
-		explosions:      make([]*Explosion, 0),
-		kills:           []int{0, 0},
-		levelController: NewLevelController(mission.Segments),
-		lost:            false,
-		mission:         mission,
-		playerBehaviors: make([]*characters.PlayerBehavior, 0),
-		playerPositions: make([]*geometry.Rectangle, 0),
-		won:             false,
+		bullets:             make([]*Bullet, 0),
+		enemies:             make([]*characters.ActiveEnemy, 0),
+		explosives:          make([]*Explosive, 0),
+		explosions:          make([]*Explosion, 0),
+		inventoryController: make([]*InventoryController, 0),
+		kills:               []int{0, 0},
+		levelController:     NewLevelController(mission.Segments),
+		lost:                false,
+		mission:             mission,
+		playerBehaviors:     make([]*characters.PlayerBehavior, 0),
+		playerPositions:     make([]*geometry.Rectangle, 0),
+		stereo:              assets.NewStereo(),
+		won:                 false,
 	}
 
 	for idx, p := range characters.PlayerController.ConfiguredPlayers() {
@@ -48,6 +52,9 @@ func NewGameEngine(mission *assets.Mission) *GameEngine {
 			Width:  PlayerHitRectWidth,
 			Height: PlayerHitRectHeight,
 		})
+
+		var inventoryController = NewInventoryController(idx)
+		result.inventoryController = append(result.inventoryController, &inventoryController)
 	}
 	return result
 }
@@ -143,7 +150,7 @@ func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
 			for (0 < remaining) && (0 < len(enemy.Movements)) {
 				var currentMovement = enemy.Movements[0]
 				var duration = util.MinInt64(remaining, currentMovement.Duration-currentMovement.TimeElapsed)
-				enemy.Position.Add(&geometry.Point{
+				enemy.Position().Add(&geometry.Point{
 					X: float64(duration) * currentMovement.OffsetXPerMs,
 					Y: float64(duration) * currentMovement.OffsetYPerMs,
 				})
@@ -234,7 +241,7 @@ func (ge *GameEngine) removeExplosive(explosives []*Explosive, idx int) []*Explo
 
 func (ge *GameEngine) detonateExplosive(explosive *Explosive) {
 	ge.explosions = append(ge.explosions, NewExplosion(explosive.FiredByPlayer, explosive.FiredByPlayerIdx, explosive))
-	assets.NewStereo().PlayFx(assets.FxGrenade1)
+	ge.stereo.PlayFx(assets.FxGrenade1)
 }
 
 func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []*geometry.Rectangle) {
@@ -271,142 +278,104 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 		explosion.Position.Subtract(scrollOffset)
 	}
 	for _, enemy := range ge.enemies {
-		enemy.Position.Subtract(scrollOffset)
+		enemy.Position().Subtract(scrollOffset)
 	}
 	for _, bullet := range ge.bullets {
 		bullet.Position.Subtract(scrollOffset)
 	}
 }
 
-/*
-  handleWeaponAction = (elapsedTimeInMs: number) => {
-    const _this = this;
-    function fireBullet(p: Player, behavior: PlayerBehavior): void {
-      const weapon = p.getSelectedWeapon() as Weapon;
-      const position = _this.playerPositions[p.index];
-      const bullet = new Bullet(p.index, position, behavior.direction, weapon);
-      bullet.applyOffset(
-        0 === p.index ? BulletOffsetForPlayer0 : BulletOffsetForPlayer1
-      );
-      _this.bullets.push(bullet);
-      behavior.timeSinceLastBullet = 0;
-    }
+func (ge *GameEngine) handleWeaponAction(elapsedTimeInMs int64) {
+	for _, player := range characters.PlayerController.RemainingPlayers() {
+		var behavior = ge.playerBehaviors[player.Index()]
+		if !behavior.Dying {
+			var playerPosition = ge.playerPositions[player.Index()]
+			if behavior.TriggerPressed {
+				if player.GrenadeSelected() && ge.inventoryController[player.Index()].RemoveAmmunition() {
+					ge.explosives = append(ge.explosives, NewExplosiveGrenadeByPlayer(
+						player.Index(),
+						playerPosition,
+						behavior.Direction,
+						player.SelectedGrenade(),
+					).Explosive)
+				} else if player.RpgSelected() && ge.inventoryController[player.Index()].RemoveAmmunition() {
+					var weapon = player.SelectedWeapon()
+					ge.stereo.PlayFx(weapon.Sound)
+					ge.explosives = append(
+						ge.explosives,
+						NewExplosiveRpg(player.Index(), playerPosition, behavior.Direction, weapon).Explosive,
+					)
+				} else if player.PistolSelected() || player.AutomaticWeaponSelected() &&
+					ge.inventoryController[player.Index()].RemoveAmmunition() {
+					ge.stereo.PlayFx(player.SelectedWeapon().Sound)
+					ge.fireBullet(player, behavior)
+				}
+			} else if behavior.Firing && player.AutomaticWeaponSelected() &&
+				ge.inventoryController[player.Index()].RemoveAmmunition() {
+				behavior.TimeSinceLastBullet += elapsedTimeInMs
+				var weapon = player.SelectedWeapon()
+				if int64(weapon.BulletInterval) <= behavior.TimeSinceLastBullet {
+					ge.fireBullet(player, behavior)
+				}
+			}
 
-    PlayerController.getRemainingPlayers().forEach((p) => {
-      const behavior = this.playerBehaviors[p.index];
-      if (!behavior.dying) {
-        const playerPosition = this.playerPositions[p.index];
-        if (behavior.triggerPressed) {
-          if (
-            p.isGrenadeSelected() &&
-            InventoryController.removeAmmunition(p.index)
-          ) {
-            this.explosives.push(
-              new ExplosiveGrenade(
-                p.index,
-                new Rectangle(
-                  playerPosition.x,
-                  playerPosition.y,
-                  GRENADE_WIDTH,
-                  GRENADE_HEIGHT
-                ),
-                behavior.direction,
-                p.getSelectedWeapon() as Grenade
-              )
-            );
-          } else if (
-            p.isRpgSelected() &&
-            InventoryController.removeAmmunition(p.index)
-          ) {
-            const weapon = p.getSelectedWeapon() as Weapon;
-            if (weapon.sound) SoundBoard.play(weapon.sound);
-            this.explosives.push(
-              new ExplosiveRPG(
-                p.index,
-                new Rectangle(
-                  playerPosition.x,
-                  playerPosition.y,
-                  RPG_WIDTH,
-                  RPG_HEIGHT
-                ),
-                behavior.direction,
-                p.getSelectedWeapon() as Weapon
-              )
-            );
-          } else if (
-            (p.isPistolSelected() || p.isAutomaticWeaponSelected()) &&
-            InventoryController.removeAmmunition(p.index)
-          ) {
-            const weapon = p.getSelectedWeapon() as Weapon;
-            if (weapon.sound) SoundBoard.play(weapon.sound);
-            fireBullet(p, behavior);
-          }
-        } else if (
-          behavior.firing &&
-          p.isAutomaticWeaponSelected() &&
-          InventoryController.removeAmmunition(p.index)
-        ) {
-          behavior.timeSinceLastBullet += elapsedTimeInMs;
-          const weapon = p.getSelectedWeapon() as Weapon;
-          if (weapon.bulletInterval! <= behavior.timeSinceLastBullet) {
-            fireBullet(p, behavior);
-          }
-        }
+			if behavior.TriggerReleased && player.AutomaticWeaponSelected() {
+				ge.stereo.StopFx(player.SelectedWeapon().Sound)
+			}
+		}
+	}
+}
 
-        if (behavior.triggerReleased && p.isAutomaticWeaponSelected()) {
-          const weapon = p.getSelectedWeapon() as Weapon;
-          SoundBoard.stop(weapon.sound!);
-        }
-      }
-    });
-  };
+func (ge *GameEngine) fireBullet(player *characters.Player, behavior *characters.PlayerBehavior) {
+	var weapon = player.SelectedWeapon()
+	var position = ge.playerPositions[player.Index()]
+	var bullet = NewBulletFiredByPlayer(player.Index(), position, behavior.Direction, weapon)
+	bullet.applyPlayerOffset()
+	ge.bullets = append(ge.bullets, bullet)
+	behavior.TimeSinceLastBullet = 0
+}
 
-  // Check if players collide with explosions / bullets / enemies
-  checkPlayersForDeadlyCollisions = () => {
-    PlayerController.getRemainingPlayers().forEach((p) => {
-      const behavior = this.playerBehaviors[p.index];
-      if (!behavior.dying && !behavior.invincible) {
-        const rect = this.playerPositions[p.index];
-        let death = false;
-        this.enemies.forEach((enemy) => {
-          const collisionWithEnemy = rect.getIntersection(enemy.position);
-          if (collisionWithEnemy) {
-            if (EnemyType.Landmine === enemy.type) {
-              this.explosions.push(
-                new Explosion({
-                  playerIdx: null,
-                  position: enemy.position,
-                })
-              );
-              SoundBoard.play(FX_GRENADE_2);
-            }
-            death = true;
-          }
-        });
-        this.explosions.forEach((explosion) => {
-          death = death || null !== rect.getIntersection(explosion.position);
-        });
-        this.bullets.forEach((bullet) => {
-          death = death || null !== rect.getIntersection(bullet.position);
-        });
-        if (death) {
-          if (p.isAutomaticWeaponSelected() && behavior.firing) {
-            SoundBoard.stop((p.getSelectedWeapon() as Weapon).sound!);
-          }
-          SoundBoard.play(
-            0 === p.index ? FX_DEATH_PLAYER_1 : FX_DEATH_PLAYER_2
-          );
-          behavior.dying = true;
-          behavior.dyingAnimationCountDown =
-            0 === p.index
-              ? DURATION_OF_DEATH_ANIMATION_PLAYER_0
-              : DURATION_OF_DEATH_ANIMATION_PLAYER_1;
-        }
-      }
-    });
-  };
+func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
+	for _, player := range characters.PlayerController.RemainingPlayers() {
+		var behavior = ge.playerBehaviors[player.Index()]
+		if !behavior.Dying && !behavior.Invincible {
+			var rect = ge.playerPositions[player.Index()]
+			var death = false
 
-*/
+			for _, enemy := range ge.enemies {
+				var collisionWithEnemy = rect.Intersection(enemy.Position())
+				if nil != collisionWithEnemy {
+					if characters.Landmine == enemy.Type {
+						ge.explosions = append(ge.explosions, NewExplosion(false, -1, enemy))
+						ge.stereo.PlayFx(assets.FxGrenade2)
+					}
+					death = true
+				}
+			}
+
+			if !death {
+				for _, explosion := range ge.explosions {
+					death = death || (nil != rect.Intersection(explosion.Position))
+				}
+			}
+
+			if !death {
+				for _, bullet := range ge.bullets {
+					death = death || (nil != rect.Intersection(bullet.Position))
+				}
+			}
+
+			if death {
+				if player.AutomaticWeaponSelected() && behavior.Firing {
+					ge.stereo.StopFx(player.SelectedWeapon().Sound)
+				}
+				ge.stereo.PlayFx(assets.DeathFxForPlayer(player.Index()))
+				behavior.Dying = true
+				behavior.DyingAnimationCountDown = characters.SkinForPlayer(player.Index()).DurationOfDeathAnimation()
+			}
+		}
+	}
+}
 
 func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 	for _, enemy := range ge.enemies {
@@ -416,7 +385,7 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 
 			// Check for hits by explosion
 			for _, explosion := range ge.explosions {
-				var deadlyExplosion = nil != enemy.Position.Intersection(explosion.Position)
+				var deadlyExplosion = nil != enemy.Position().Intersection(explosion.Position)
 				if deadlyExplosion {
 					killer = explosion.playerIdx
 				}
@@ -426,7 +395,7 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 			// Check for hits by bullets, flamethrowers and RPGs (useful only against persons)
 			if characters.Person == enemy.Type {
 				for _, bullet := range ge.bullets {
-					var deadlyShot = nil != enemy.Position.Intersection(bullet.Position)
+					var deadlyShot = nil != enemy.Position().Intersection(bullet.Position)
 					if deadlyShot {
 						killer = bullet.playerIdx
 					}
@@ -436,7 +405,7 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 				var explosives = ge.explosives
 				for i := len(explosives) - 1; i >= 0; i-- {
 					var explosive = explosives[i]
-					var explode = explosive.ExplodesOnContact && nil != explosive.position.Intersection(enemy.Position)
+					var explode = explosive.ExplodesOnContact && nil != explosive.Position().Intersection(enemy.Position())
 					if explode {
 						ge.detonateExplosive(explosive)
 						death = true
@@ -453,7 +422,7 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 					ge.kills[killer] += 1
 				}
 				if characters.Person == enemy.Type {
-					assets.NewStereo().PlayFx(assets.RandomEnemyDeathSoundEffect())
+					ge.stereo.PlayFx(assets.RandomEnemyDeathSoundEffect())
 					enemy.DyingAnimationCountDown = characters.DurationOfEnemyDeathAnimation
 				}
 			}

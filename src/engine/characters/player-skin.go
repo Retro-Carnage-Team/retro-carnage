@@ -15,3 +15,7 @@ func InitPlayerSkins(skinsDirectory string) {
 		playerSkins = append(playerSkins, loadSkin(fmt.Sprintf("%s/player-1.json", skinsDirectory)))
 	}
 }
+
+func SkinForPlayer(playerIdx int) *Skin {
+	return playerSkins[playerIdx]
+}
