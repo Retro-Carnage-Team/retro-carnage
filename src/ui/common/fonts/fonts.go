@@ -14,27 +14,53 @@ import (
 )
 
 const defaultFontPath = "./fonts/XXII-DIRTY-ARMY.ttf"
-const DefaultFontSize = 52
 
-var SizeToFontAtlas map[int]*text.Atlas
-var textDimensionCache map[string]*geometry.Point
+var (
+	SizeToFontAtlas    map[int]*text.Atlas
+	textDimensionCache map[string]*geometry.Point
+	windowWidth        float64
+)
 
-func Initialize() {
+func Initialize(width float64) {
 	SizeToFontAtlas = make(map[int]*text.Atlas)
 	textDimensionCache = make(map[string]*geometry.Point)
+	windowWidth = width
 
 	defaultFont, err := loadTTF(defaultFontPath)
 	if nil != err {
 		logging.Error.Panicf("Failed to load font %s: %v", defaultFontPath, err)
 	}
 
-	for i := 16; i <= DefaultFontSize; i += 2 {
+	var defaultFontSize = DefaultFontSize()
+	for i := 12; i <= defaultFontSize; i += 2 {
 		var fontFace = truetype.NewFace(defaultFont, &truetype.Options{
 			Size:              float64(i),
 			GlyphCacheEntries: 1,
 		})
 		SizeToFontAtlas[i] = text.NewAtlas(fontFace, text.ASCII, text.RangeTable(unicode.Latin))
 	}
+}
+
+func DefaultFontSize() int {
+	if windowWidth <= 1024 {
+		return 24
+	}
+	if windowWidth <= 1280 {
+		return 26
+	}
+	if windowWidth <= 1440 {
+		return 28
+	}
+	if windowWidth <= 1600 {
+		return 30
+	}
+	if windowWidth <= 2560 {
+		return 36
+	}
+	if windowWidth <= 3440 {
+		return 48
+	}
+	return 52
 }
 
 func loadTTF(path string) (*truetype.Font, error) {

@@ -18,24 +18,26 @@ import (
 	"retro-carnage/util"
 )
 
-const backgroundImagePath = "images/other/shop.jpg"
-const bottomBarHeight = 70
-const buttonPadding = 10
-const checkImagePath = "images/other/check-circle.png"
-const itemMargin = 10.0
-const itemPadding = 25.0
-const labelAmmo = "Ammo: "
-const labelLength = "Length: "
-const labelPackageSize = "Package Size: "
-const labelPrice = "Price: "
-const labelRange = "Range: "
-const labelSpeed = "Speed: "
-const labelWeight = "Weight: "
-const modalFontSize = 36
-const modalColumnSpace = 200
-const modalLabelSpace = 15
-const modalTableVMargin = 30
-const selectionBorderWidth = 5.0
+const (
+	backgroundImagePath  = "images/other/shop.jpg"
+	bottomBarHeight      = 70
+	buttonPadding        = 10
+	checkImagePath       = "images/other/check-circle.png"
+	footerHintMinWidth   = 1600
+	itemMargin           = 10.0
+	itemPadding          = 25.0
+	labelAmmo            = "Ammo: "
+	labelLength          = "Length: "
+	labelPackageSize     = "Package Size: "
+	labelPrice           = "Price: "
+	labelRange           = "Range: "
+	labelSpeed           = "Speed: "
+	labelWeight          = "Weight: "
+	modalColumnSpace     = 200
+	modalLabelSpace      = 15
+	modalTableVMargin    = 30
+	selectionBorderWidth = 5.0
+)
 
 type modalButton int
 
@@ -48,12 +50,14 @@ const (
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
 	checkSprite           *pixel.Sprite
+	defaultFontSize       int
 	inputController       input.Controller
 	inventoryController   engine.InventoryController
 	itemNameToSprite      map[string]*pixel.Sprite
 	items                 []*inventoryItem
 	labelDimensions       map[string]*geometry.Point
 	modalButtonSelection  modalButton
+	modalFontSize         int
 	modalVisible          bool
 	PlayerIdx             int
 	screenChangeRequired  common.ScreenChangeCallback
@@ -77,8 +81,10 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 func (s *Screen) SetUp() {
 	s.backgroundImageSprite = assets.SpriteRepository.Get(backgroundImagePath)
 	s.checkSprite = assets.SpriteRepository.Get(checkImagePath)
+	s.defaultFontSize = fonts.DefaultFontSize()
+	s.modalFontSize = calcModalFontSize(s.defaultFontSize)
 	s.inventoryController = engine.NewInventoryController(s.PlayerIdx)
-	s.labelDimensions = fonts.GetTextDimensions(modalFontSize, labelAmmo, labelLength, labelPackageSize, labelPrice,
+	s.labelDimensions = fonts.GetTextDimensions(s.modalFontSize, labelAmmo, labelLength, labelPackageSize, labelPrice,
 		labelRange, labelSpeed, labelWeight)
 	s.selectedItemIdx = 0
 	s.modalVisible = false
@@ -92,13 +98,20 @@ func (s *Screen) SetUp() {
 	s.stopWatch = &util.StopWatch{Name: "Shop render process"}
 }
 
+func calcModalFontSize(defaultFontSize int) int {
+	var result = int(float64(defaultFontSize) * 0.7)
+	if 0 != result%2 {
+		result++
+	}
+	return result
+}
+
 func (s *Screen) Update(_ int64) {
 	if s.modalVisible {
 		s.stopWatch.Start()
 	}
 
 	s.processUserInput()
-
 	s.drawBackground()
 	s.drawItems()
 	s.drawBottomBar()
@@ -358,24 +371,24 @@ func (s *Screen) drawCostLabel() {
 		content = fmt.Sprintf("COST: %d", s.items[s.selectedItemIdx].Price())
 	}
 
-	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, content)
+	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, content)
 	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
-	fonts.BuildText(pixel.V(30.0, lineY), fonts.DefaultFontSize, common.White, content).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(30.0, lineY), s.defaultFontSize, common.White, content).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawCreditLabel() {
 	var content = fmt.Sprintf("CREDIT: %d", characters.Players[s.PlayerIdx].Cash())
-	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, content)
+	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, content)
 	var lineX = (s.window.Bounds().W() - lineDimensions.X) / 2
 	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
-	fonts.BuildText(pixel.V(lineX, lineY), fonts.DefaultFontSize, common.White, content).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(lineX, lineY), s.defaultFontSize, common.White, content).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawExitButton() {
-	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, "EXIT SHOP")
+	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, "EXIT SHOP")
 	var lineX = s.window.Bounds().W() - lineDimensions.X - 30
 	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
-	fonts.BuildText(pixel.V(lineX, lineY), fonts.DefaultFontSize, common.White, "EXIT SHOP").Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(lineX, lineY), s.defaultFontSize, common.White, "EXIT SHOP").Draw(s.window, pixel.IM)
 
 	if -1 == s.selectedItemIdx {
 		imd := imdraw.New(nil)
@@ -404,10 +417,10 @@ func (s *Screen) drawModalHeader() {
 	imd.Draw(s.window)
 
 	var itemName = s.items[s.selectedItemIdx].Name()
-	var lineDimensions = fonts.GetTextDimension(fonts.DefaultFontSize, itemName)
+	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, itemName)
 	var lineX = s.getModalLeftBorder() + 30
 	var lineY = s.window.Bounds().H() - 100 - bottomBarHeight + (bottomBarHeight-lineDimensions.Y)/2
-	fonts.BuildText(pixel.V(lineX, lineY), fonts.DefaultFontSize, common.White, itemName).Draw(s.window, pixel.IM)
+	fonts.BuildText(pixel.V(lineX, lineY), s.defaultFontSize, common.White, itemName).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawModalBody() float64 {
@@ -416,7 +429,12 @@ func (s *Screen) drawModalBody() float64 {
 	var textRenderer = fonts.TextRenderer{Window: s.window}
 
 	var textWidth = s.getModalRightBorder() - s.getModalLeftBorder() - modalLabelSpace - modalLabelSpace
-	textLayout, err := textRenderer.CalculateTextLayout(item.Description(), modalFontSize, int(textWidth), int(s.window.Bounds().H()-300))
+	textLayout, err := textRenderer.CalculateTextLayout(
+		item.Description(),
+		s.modalFontSize,
+		int(textWidth),
+		int(s.window.Bounds().H()-300),
+	)
 	if nil != err {
 		logging.Warning.Fatalf("text is too large for modal")
 		return 0
@@ -441,7 +459,7 @@ func (s *Screen) drawModalBody() float64 {
 	}
 
 	var lineY = s.window.Bounds().H() - 100 - bottomBarHeight - tableAreaHeight
-	var atlas = fonts.SizeToFontAtlas[modalFontSize]
+	var atlas = fonts.SizeToFontAtlas[s.modalFontSize]
 	var txt = text.New(pixel.V(s.getModalLeftBorder()+modalLabelSpace, lineY-textLayout.Lines()[0].Dimension().Y), atlas)
 	txt.Color = common.Black
 	for _, line := range textLayout.Lines() {
@@ -465,7 +483,7 @@ func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
 		s.labelDimensions[labelSpeed].X, s.labelDimensions[labelRange].X, s.labelDimensions[labelWeight].X,
 	})
 
-	var maxValueWidth = fonts.GetMaxTextWidth(modalFontSize, []string{
+	var maxValueWidth = fonts.GetMaxTextWidth(s.modalFontSize, []string{
 		priceValue, weapon.Ammo, weapon.Length, speedValue, rangeValue, weapon.Weight,
 	})
 
@@ -476,10 +494,10 @@ func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
 	var secondColumnValueX = secondColumnLabelX + maxLabelWidth + modalLabelSpace
 
 	var firstRowY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y
-	fonts.BuildMultiLineText(pixel.V(firstColumnLabelX, firstRowY), modalFontSize, common.Black, []string{labelPrice, labelAmmo, labelLength}).Draw(s.window, pixel.IM)
-	fonts.BuildMultiLineText(pixel.V(firstColumnValueX, firstRowY), modalFontSize, common.Black, []string{priceValue, weapon.Ammo, weapon.Length}).Draw(s.window, pixel.IM)
-	fonts.BuildMultiLineText(pixel.V(secondColumnLabelX, firstRowY), modalFontSize, common.Black, []string{labelSpeed, labelRange, labelWeight}).Draw(s.window, pixel.IM)
-	fonts.BuildMultiLineText(pixel.V(secondColumnValueX, firstRowY), modalFontSize, common.Black, []string{speedValue, rangeValue, weapon.Weight}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(firstColumnLabelX, firstRowY), s.modalFontSize, common.Black, []string{labelPrice, labelAmmo, labelLength}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(firstColumnValueX, firstRowY), s.modalFontSize, common.Black, []string{priceValue, weapon.Ammo, weapon.Length}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(secondColumnLabelX, firstRowY), s.modalFontSize, common.Black, []string{labelSpeed, labelRange, labelWeight}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(secondColumnValueX, firstRowY), s.modalFontSize, common.Black, []string{speedValue, rangeValue, weapon.Weight}).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
@@ -499,7 +517,7 @@ func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
 	var maxLabelWidth = util.Max([]float64{
 		s.labelDimensions[labelPrice].X, s.labelDimensions[labelPackageSize].X, s.labelDimensions[labelRange].X,
 	})
-	var maxValueWidth = fonts.GetMaxTextWidth(modalFontSize, []string{
+	var maxValueWidth = fonts.GetMaxTextWidth(s.modalFontSize, []string{
 		priceValue, packageSizeValue, rangeValue,
 	})
 
@@ -514,8 +532,8 @@ func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
 		thirdValue = rangeValue
 	}
 
-	fonts.BuildMultiLineText(pixel.V(labelX, labelY), modalFontSize, common.Black, []string{labelPrice, labelPackageSize, thirdLabel}).Draw(s.window, pixel.IM)
-	fonts.BuildMultiLineText(pixel.V(valueX, labelY), modalFontSize, common.Black, []string{priceValue, packageSizeValue, thirdValue}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(labelX, labelY), s.modalFontSize, common.Black, []string{labelPrice, labelPackageSize, thirdLabel}).Draw(s.window, pixel.IM)
+	fonts.BuildMultiLineText(pixel.V(valueX, labelY), s.modalFontSize, common.Black, []string{priceValue, packageSizeValue, thirdValue}).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawModalFooter(upperBorder float64) {
@@ -527,12 +545,16 @@ func (s *Screen) drawModalFooter(upperBorder float64) {
 	imd.Rectangle(0)
 	imd.Draw(s.window)
 
-	var hint = s.getModalFooterStatusHint()
-	if "" != hint {
-		var lineDimensions = fonts.GetTextDimension(modalFontSize, hint)
-		var lineX = s.getModalLeftBorder() + 30
-		var lineY = upperBorder - lineDimensions.Y - (bottomBarHeight-lineDimensions.Y)/2
-		fonts.BuildText(pixel.V(lineX, lineY), modalFontSize, common.OliveGreen, hint).Draw(s.window, pixel.IM)
+	if footerHintMinWidth <= s.window.Bounds().W() {
+		var hint = s.getModalFooterStatusHint()
+		if "" != hint {
+			var lineDimensions = fonts.GetTextDimension(s.modalFontSize, hint)
+			var lineX = s.getModalLeftBorder() + 30
+			var lineY = upperBorder - lineDimensions.Y - (bottomBarHeight-lineDimensions.Y)/2
+			fonts.
+				BuildText(pixel.V(lineX, lineY), s.modalFontSize, common.OliveGreen, hint).
+				Draw(s.window, pixel.IM)
+		}
 	}
 
 	var leftBorder = s.drawModalCloseButton(upperBorder, upperBorder-bottomBarHeight)
@@ -545,7 +567,7 @@ func (s *Screen) drawModalFooter(upperBorder float64) {
 }
 
 func (s *Screen) drawModalCloseButton(top float64, bottom float64) (leftBorder float64) {
-	var lineDimensions = fonts.GetTextDimension(modalFontSize, "CLOSE")
+	var lineDimensions = fonts.GetTextDimension(s.modalFontSize, "CLOSE")
 	var rightBorder = s.getModalRightBorder() - 30
 	leftBorder = s.getModalRightBorder() - 30 - lineDimensions.X - buttonPadding - buttonPadding
 	s.drawModalButton(top, bottom, rightBorder, leftBorder, lineDimensions, "CLOSE", buttonCloseModal)
@@ -554,7 +576,7 @@ func (s *Screen) drawModalCloseButton(top float64, bottom float64) (leftBorder f
 
 func (s *Screen) drawModalBuyAmmoButton(top float64, bottom float64, closeButtonLeft float64) (leftBorder float64) {
 	var labelText = s.getModalBuyAmmoButtonLabel()
-	var lineDimensions = fonts.GetTextDimension(modalFontSize, labelText)
+	var lineDimensions = fonts.GetTextDimension(s.modalFontSize, labelText)
 	var rightBorder = closeButtonLeft - 30
 	leftBorder = rightBorder - lineDimensions.X - buttonPadding - buttonPadding
 	s.drawModalButton(top, bottom, rightBorder, leftBorder, lineDimensions, labelText, buttonBuyAmmo)
@@ -563,7 +585,7 @@ func (s *Screen) drawModalBuyAmmoButton(top float64, bottom float64, closeButton
 
 func (s *Screen) drawModalBuyWeaponButton(top float64, bottom float64, buyAmmoButtonLeft float64) {
 	var labelText = "BUY WEAPON"
-	var lineDimensions = fonts.GetTextDimension(modalFontSize, labelText)
+	var lineDimensions = fonts.GetTextDimension(s.modalFontSize, labelText)
 	var rightBorder = buyAmmoButtonLeft - 30
 	var leftBorder = rightBorder - lineDimensions.X - buttonPadding - buttonPadding
 	s.drawModalButton(top, bottom, rightBorder, leftBorder, lineDimensions, labelText, buttonBuyWeapon)
@@ -583,7 +605,7 @@ func (s *Screen) drawModalButton(top float64, bottom float64, rightBorder float6
 	var buttonTextX = leftBorder + buttonPadding
 	var buttonTextY = bottom + buttonPadding + (buttonHeight-lineDimensions.Y)/2
 	fonts.
-		BuildText(pixel.V(buttonTextX, buttonTextY), modalFontSize, common.White, labelText).
+		BuildText(pixel.V(buttonTextX, buttonTextY), s.modalFontSize, common.White, labelText).
 		Draw(s.window, pixel.IM)
 
 	if s.modalButtonSelection == _type {

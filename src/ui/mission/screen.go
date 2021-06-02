@@ -16,15 +16,18 @@ import (
 	"retro-carnage/ui/common/fonts"
 )
 
-const crossHairImagePath = "images/other/crosshair.png"
+const (
+	crossHairImagePath   = "images/other/crosshair.png"
+	locationMarkerRadius = 10
+	worldMapImagePath    = "images/other/world-map.jpg"
+	worldMapWidth        = 1280
+	worldMapHeight       = 783
+)
 
-var locationMarkerColor = common.ParseHexColor("#fea400")
-
-const briefingFontSize = 50
-const locationMarkerRadius = 10
-const worldMapImagePath = "images/other/world-map.jpg"
-const worldMapWidth = 1280
-const worldMapHeight = 783
+var (
+	briefingFontSize    = fonts.DefaultFontSize() - 2
+	locationMarkerColor = common.ParseHexColor("#fea400")
+)
 
 type Screen struct {
 	availableMissions         []*assets.Mission

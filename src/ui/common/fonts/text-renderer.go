@@ -20,13 +20,14 @@ type TextRenderer struct {
 // The vertical position of the line can be modified with the offsetMultiplier parameter. Positive offsetMultiplier
 // values move the line up, negative values down.
 func (tr *TextRenderer) DrawLineToScreenCenter(line string, offsetMultiplier float64, color color.Color) {
-	var lineDimensions = GetTextDimension(DefaultFontSize, line)
+	var defaultFontSize = DefaultFontSize()
+	var lineDimensions = GetTextDimension(defaultFontSize, line)
 
 	var vertCenter = tr.Window.Bounds().Max.Y / 2
 	var lineX = (tr.Window.Bounds().Max.X - lineDimensions.X) / 2
 	var lineY = vertCenter + offsetMultiplier*lineDimensions.Y
 
-	var txt = text.New(pixel.V(lineX, lineY), SizeToFontAtlas[DefaultFontSize])
+	var txt = text.New(pixel.V(lineX, lineY), SizeToFontAtlas[defaultFontSize])
 	txt.Color = color
 	_, _ = fmt.Fprint(txt, line)
 	txt.Draw(tr.Window, pixel.IM)

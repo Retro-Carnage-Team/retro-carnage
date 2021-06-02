@@ -19,6 +19,7 @@ const txtSelectOnePlayerGame = "START 1 PLAYER GAME"
 const txtSelectTwoPlayerGame = "START 2 PLAYER GAME"
 
 type SelectScreen struct {
+	defaultFontSize      int
 	inputController      input.Controller
 	screenChangeRequired common.ScreenChangeCallback
 	selectedOption       int
@@ -27,8 +28,9 @@ type SelectScreen struct {
 }
 
 func (s *SelectScreen) SetUp() {
+	s.defaultFontSize = fonts.DefaultFontSize()
 	s.selectedOption = 1
-	s.textDimensions = fonts.GetTextDimensions(fonts.DefaultFontSize,
+	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize,
 		txtSelectOnePlayerGame, txtSelectTwoPlayerGame)
 }
 
@@ -40,7 +42,7 @@ func (s *SelectScreen) Update(_ int64) {
 	var firstLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectOnePlayerGame].X) / 2
 	var firstLineY = vertCenter + 1.5*s.textDimensions[txtSelectOnePlayerGame].Y
 
-	var txt = text.New(pixel.V(firstLineX, firstLineY), fonts.SizeToFontAtlas[fonts.DefaultFontSize])
+	var txt = text.New(pixel.V(firstLineX, firstLineY), fonts.SizeToFontAtlas[s.defaultFontSize])
 	txt.Color = common.White
 	_, _ = fmt.Fprint(txt, txtSelectOnePlayerGame)
 	txt.Draw(s.window, pixel.IM)
@@ -48,7 +50,7 @@ func (s *SelectScreen) Update(_ int64) {
 	var secondLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectTwoPlayerGame].X) / 2
 	var secondLineY = vertCenter + -1.5*s.textDimensions[txtSelectTwoPlayerGame].Y
 
-	txt = text.New(pixel.V(secondLineX, secondLineY), fonts.SizeToFontAtlas[fonts.DefaultFontSize])
+	txt = text.New(pixel.V(secondLineX, secondLineY), fonts.SizeToFontAtlas[s.defaultFontSize])
 	txt.Color = common.White
 	_, _ = fmt.Fprint(txt, txtSelectTwoPlayerGame)
 	txt.Draw(s.window, pixel.IM)
@@ -58,7 +60,9 @@ func (s *SelectScreen) Update(_ int64) {
 	var topFirst = firstLineY + s.textDimensions[txtSelectOnePlayerGame].Y
 	var topSecond = secondLineY + s.textDimensions[txtSelectTwoPlayerGame].Y
 	var left = math.Min(firstLineX, secondLineX) - buttonPadding
-	var right = math.Min(firstLineX, secondLineX) + math.Min(s.textDimensions[txtSelectOnePlayerGame].X, s.textDimensions[txtSelectTwoPlayerGame].X) + buttonPadding
+	var right = math.Min(firstLineX, secondLineX) +
+		math.Min(s.textDimensions[txtSelectOnePlayerGame].X, s.textDimensions[txtSelectTwoPlayerGame].X) +
+		buttonPadding
 
 	if 1 == s.selectedOption {
 		imd := imdraw.New(nil)
