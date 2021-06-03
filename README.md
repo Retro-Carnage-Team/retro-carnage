@@ -4,37 +4,30 @@
 
 # RETRO CARNAGE
 
-The goal of this project is to build a modern multi-directional scrolling shooter - a worthy successor of the classic
-1989 video game [Dogs of War](https://gamesdb.launchbox-app.com/games/details/41090) by
-[Elite Systems](http://www.elite-systems.co.uk).
+The goal of this project is to take you back to your childhood by building a modern multi-directional scrolling shooter.
+Once finished, Retro-Carnage is going to be a worthy successor of classic video games like
+[Ikari Warriors](https://en.wikipedia.org/wiki/Ikari_Warriors) by [SNK](http://www.snk-corp.co.jp/),
+[Warzone](https://core-design.com/warzone.html) by [Core Design](https://core-design.com/), or
+[Dogs of War](https://en.wikipedia.org/wiki/Dogs_of_War_(1989_video_game))
+by [Elite Systems](http://www.elite-systems.co.uk).
 
-This game is currently under active development. At the moment you can test different concepts of the game but there is
-no gripping gameplay.
+This game is currently being developed - but not ready to get played, yet.
 
-An unfinished game does not deter you? Then you can find the current state of development on the official homepage of
-the game: [http://www.retro-carnage.net](http://www.retro-carnage.net).
-
-[![Watch the video](docs/images/youtube-2020-08-25.png)](https://youtu.be/IeUowwMaIB4)
+[![Watch the video](docs/images/youtube-2021-06-03.png)](https://youtu.be/7Id8BZXu6S0)
 Development status 2020-08-25
-
-[![Watch the video](docs/images/youtube-first-impression.png)](https://youtu.be/W5dJvoZUGt8)
-Development status 2020-04-17
 
 ## Build & Run
 
-Retro-Carnage is being developed on Ubuntu Linux (latest). Follow these steps to get the code up & running.  
+Retro-Carnage is being developed on Ubuntu Linux (latest). Follow these steps to get the code up & running (manually).
 
- - Make sure you have go (>= 1.15) and git installed
- - Install the required development libraries: `sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev`
- - Get the code: `git clone https://github.com/huddeldaddel/retro-carnage.git`
- - Change into the src directory: `cd retro-carnage.net/src`
- - Install required modules: `go get -d`
- - Build the application: `go build`
- - Run the tests: `go test -v ./...`
- - Move the binary one level up: `mv retro-carnage.net ./..`
- - Change into the main directory: `cd ..`
- - Finally: start the game! `./retro-carnage.net`
+- Make sure you have go (>= 1.16) and git installed
+- Then install the required development libraries: `sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev`
+- Get the code: `git clone https://github.com/huddeldaddel/retro-carnage.git`
+- Change into the src directory: `cd retro-carnage/src`
+- Install required modules: `go get -d`
+- Build the application: `go build`
+- Move the binary one level up: `mv retro-carnage ./..`
+- Change into the main directory: `cd ..`
+- Finally: start the game! `./retro-carnage`
 
-## Usage statistics
-
-![Usage statistics](https://backend.retro-carnage.net/usage/chart "Usage statistics")
+The repository contains IDE configurations for JetBrains Goland to test and run the game.

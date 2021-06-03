@@ -12,8 +12,8 @@ func run() {
 	var monitor = pixelgl.PrimaryMonitor()
 	var pixelX, pixelY = monitor.Size()
 	// Set variables to different values to adjust window size
-	//pixelX = 1600.0
-	//pixelY = 1200.0
+	// pixelX = 1280.0
+	// pixelY = 800.0
 	cfg := pixelgl.WindowConfig{
 		Bounds: pixel.R(0, 0, pixelX, pixelY),
 		// commenting out this line will make the app run in a window instead of full screen
