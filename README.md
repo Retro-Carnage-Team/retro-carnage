@@ -4,17 +4,17 @@
 
 # RETRO CARNAGE
 
-The goal of this project is to take you back to your childhood by building a modern multi-directional scrolling shooter.
-Once finished, Retro-Carnage is going to be a worthy successor of classic video games like
-[Ikari Warriors](https://en.wikipedia.org/wiki/Ikari_Warriors) by [SNK](http://www.snk-corp.co.jp/),
-[Warzone](https://core-design.com/warzone.html) by [Core Design](https://core-design.com/), or
+The goal of this project is to take you back to the best part of your childhood. To do this, we are building a modern
+multidirectional scrolling shooter. Once finished, Retro-Carnage is going to be a worthy successor of classic video
+games like [Ikari Warriors](https://en.wikipedia.org/wiki/Ikari_Warriors) by [SNK](http://www.snk-corp.co.jp/),
+[War Zone](https://core-design.com/warzone.html) by [Core Design](https://core-design.com/), or
 [Dogs of War](https://en.wikipedia.org/wiki/Dogs_of_War_(1989_video_game))
 by [Elite Systems](http://www.elite-systems.co.uk).
 
 This game is currently being developed - but not ready to get played, yet.
 
 [![Watch the video](docs/images/youtube-2021-06-03.png)](https://youtu.be/7Id8BZXu6S0)
-Development status 2020-08-25
+Development status as of 2021-06-03
 
 ## Build & Run
 
