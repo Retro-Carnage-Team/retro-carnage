@@ -31,7 +31,7 @@ type Screen interface {
 
 	/*--- Other ------------------------------------------------------------------------------------------------------*/
 
-	// Should return the ScreenName of the Screen
+	// String should return the ScreenName of the Screen
 	String() string
 }
 

@@ -91,7 +91,7 @@ func (lc *LevelController) ActivatedEnemies() []characters.ActiveEnemy {
 	return result
 }
 
-func (lc *LevelController) UpdatePosition(elapsedTimeInMs int64, playerPositions []geometry.Rectangle) geometry.Point {
+func (lc *LevelController) UpdatePosition(elapsedTimeInMs int64, playerPositions []*geometry.Rectangle) geometry.Point {
 	// TODO: This currently ignores the position of the second player.
 	// We should only scroll if we don't kick the other player out of the visible area
 
@@ -184,7 +184,7 @@ func (lc *LevelController) VisibleBackgrounds() []graphics.SpriteWithOffset {
 	return result
 }
 
-func (lc *LevelController) distanceBehindScrollBarrier(playerPositions []geometry.Rectangle) float64 {
+func (lc *LevelController) distanceBehindScrollBarrier(playerPositions []*geometry.Rectangle) float64 {
 	var direction = lc.segments[lc.currentSegmentIdx].Direction
 	if geometry.Up.Name == direction {
 		var topMostPosition = float64(ScreenSize)
@@ -224,7 +224,7 @@ func (lc *LevelController) GoalReached(playerPositions []*geometry.Rectangle) bo
 	return false
 }
 
-func (lc *LevelController) ObstaclesOnScreen() []geometry.Rectangle {
+func (lc *LevelController) ObstaclesOnScreen() []*geometry.Rectangle {
 	var direction = lc.segments[lc.currentSegmentIdx].Direction
 	var scrollAdjustment = geometry.Point{X: 0, Y: 0}
 	switch direction {
@@ -236,11 +236,11 @@ func (lc *LevelController) ObstaclesOnScreen() []geometry.Rectangle {
 		scrollAdjustment = geometry.Point{X: -1 * lc.distanceScrolled, Y: 0}
 	}
 
-	var result = make([]geometry.Rectangle, 0)
+	var result = make([]*geometry.Rectangle, 0)
 	for _, obstacle := range lc.obstacles {
 		var adjustedObstaclePosition = obstacle.Add(&scrollAdjustment)
 		if nil != adjustedObstaclePosition.Intersection(&ScreenRect) {
-			result = append(result, *adjustedObstaclePosition)
+			result = append(result, adjustedObstaclePosition)
 		}
 	}
 	return result

@@ -61,13 +61,13 @@ func TestShouldCalculateOffsetsForBackgroundsForDirectionRight(t *testing.T) {
 func TestShouldCalculateHowFarThePlayerIsBehindTheScrollBarrierForDirectionUp(t *testing.T) {
 	var controller = NewLevelController(buildTestSegments())
 
-	var result = controller.distanceBehindScrollBarrier([]geometry.Rectangle{posPlayerOne, posPlayerTwo})
+	var result = controller.distanceBehindScrollBarrier([]*geometry.Rectangle{&posPlayerOne, &posPlayerTwo})
 	assert.InDelta(t, 100, result, 0.0001)
 
-	result = controller.distanceBehindScrollBarrier([]geometry.Rectangle{posPlayerTwo, posPlayerOne})
+	result = controller.distanceBehindScrollBarrier([]*geometry.Rectangle{&posPlayerTwo, &posPlayerOne})
 	assert.InDelta(t, 100, result, 0.0001)
 
-	result = controller.distanceBehindScrollBarrier([]geometry.Rectangle{posPlayerOne})
+	result = controller.distanceBehindScrollBarrier([]*geometry.Rectangle{&posPlayerOne})
 	assert.InDelta(t, -200, result, 0.0001)
 }
 
@@ -75,13 +75,13 @@ func TestShouldCalculateHowFarThePlayerIsBehindTheScrollBarrierForDirectionLeft(
 	var controller = NewLevelController(buildTestSegments())
 	controller.ProgressToNextSegment()
 
-	var result = controller.distanceBehindScrollBarrier([]geometry.Rectangle{posPlayerOne, posPlayerTwo})
+	var result = controller.distanceBehindScrollBarrier([]*geometry.Rectangle{&posPlayerOne, &posPlayerTwo})
 	assert.InDelta(t, 500, result, 0.0001)
 
-	result = controller.distanceBehindScrollBarrier([]geometry.Rectangle{posPlayerTwo, posPlayerOne})
+	result = controller.distanceBehindScrollBarrier([]*geometry.Rectangle{&posPlayerTwo, &posPlayerOne})
 	assert.InDelta(t, 500, result, 0.0001)
 
-	result = controller.distanceBehindScrollBarrier([]geometry.Rectangle{posPlayerTwo})
+	result = controller.distanceBehindScrollBarrier([]*geometry.Rectangle{&posPlayerTwo})
 	assert.InDelta(t, 0, result, 0.0001)
 }
 
@@ -90,20 +90,20 @@ func TestShouldCalculateHowFarThePlayerIsBehindTheScrollBarrierForDirectionRight
 	controller.ProgressToNextSegment()
 	controller.ProgressToNextSegment()
 
-	var result = controller.distanceBehindScrollBarrier([]geometry.Rectangle{posPlayerOne, posPlayerTwo})
+	var result = controller.distanceBehindScrollBarrier([]*geometry.Rectangle{&posPlayerOne, &posPlayerTwo})
 	assert.InDelta(t, 590, result, 0.0001)
 
-	result = controller.distanceBehindScrollBarrier([]geometry.Rectangle{posPlayerTwo, posPlayerOne})
+	result = controller.distanceBehindScrollBarrier([]*geometry.Rectangle{&posPlayerTwo, &posPlayerOne})
 	assert.InDelta(t, 590, result, 0.0001)
 
-	result = controller.distanceBehindScrollBarrier([]geometry.Rectangle{posPlayerOne})
+	result = controller.distanceBehindScrollBarrier([]*geometry.Rectangle{&posPlayerOne})
 	assert.InDelta(t, 90, result, 0.0001)
 }
 
 func TestShouldScrollUpWhenDirectionIsUpAndPlayerIsAtTheTop(t *testing.T) {
 	var controller = NewLevelController(buildTestSegments())
 
-	var offset = controller.UpdatePosition(50, []geometry.Rectangle{posPlayerTop})
+	var offset = controller.UpdatePosition(50, []*geometry.Rectangle{&posPlayerTop})
 	assert.InDelta(t, 0, offset.X, 0.0001)
 	assert.InDelta(t, -15, offset.Y, 0.0001)
 	assert.InDelta(t, 0, controller.Backgrounds[0].Offset.X, 0.0001)
@@ -111,7 +111,7 @@ func TestShouldScrollUpWhenDirectionIsUpAndPlayerIsAtTheTop(t *testing.T) {
 	assert.InDelta(t, 0, controller.Backgrounds[1].Offset.X, 0.0001)
 	assert.InDelta(t, -1485, controller.Backgrounds[1].Offset.Y, 0.0001)
 
-	offset = controller.UpdatePosition(90, []geometry.Rectangle{posPlayerTop})
+	offset = controller.UpdatePosition(90, []*geometry.Rectangle{&posPlayerTop})
 	assert.InDelta(t, 0, offset.X, 0.0001)
 	assert.InDelta(t, -27, offset.Y, 0.0001)
 	assert.InDelta(t, 0, controller.Backgrounds[0].Offset.X, 0.0001)

@@ -19,12 +19,12 @@ type GameEngine struct {
 	inventoryController []*InventoryController
 	kills               []int
 	levelController     *LevelController
-	lost                bool
+	Lost                bool
 	mission             *assets.Mission
 	playerBehaviors     []*characters.PlayerBehavior
 	playerPositions     []*geometry.Rectangle
 	stereo              *assets.Stereo
-	won                 bool
+	Won                 bool
 }
 
 func NewGameEngine(mission *assets.Mission) *GameEngine {
@@ -36,12 +36,12 @@ func NewGameEngine(mission *assets.Mission) *GameEngine {
 		inventoryController: make([]*InventoryController, 0),
 		kills:               []int{0, 0},
 		levelController:     NewLevelController(mission.Segments),
-		lost:                false,
+		Lost:                false,
 		mission:             mission,
 		playerBehaviors:     make([]*characters.PlayerBehavior, 0),
 		playerPositions:     make([]*geometry.Rectangle, 0),
 		stereo:              assets.NewStereo(),
-		won:                 false,
+		Won:                 false,
 	}
 
 	for idx, p := range characters.PlayerController.ConfiguredPlayers() {
@@ -70,33 +70,28 @@ func (ge *GameEngine) Backgrounds() []graphics.SpriteWithOffset {
 	return ge.levelController.VisibleBackgrounds()
 }
 
-/*
-updateGameState = (elapsedTimeInMs: number) => {
-    this.updatePlayerBehavior(elapsedTimeInMs);
-    const obstacles = this.levelController.getObstaclesOnScreen();
-    this.updatePlayerPositionWithMovement(elapsedTimeInMs, obstacles);
-    this.updateEnemies(elapsedTimeInMs);
-    this.updateBullets(elapsedTimeInMs, obstacles);
-    this.updateExplosions(elapsedTimeInMs);
-    this.updateExplosives(elapsedTimeInMs, obstacles);
-    this.handleWeaponAction(elapsedTimeInMs);
+func (ge *GameEngine) UpdateGameState(elapsedTimeInMs int64) {
+	ge.updatePlayerBehavior(elapsedTimeInMs)
+	var obstacles = ge.levelController.ObstaclesOnScreen()
+	ge.updatePlayerPositionWithMovement(elapsedTimeInMs, obstacles)
+	ge.updateEnemies(elapsedTimeInMs)
+	ge.updateBullets(elapsedTimeInMs, obstacles)
+	ge.updateExplosions(elapsedTimeInMs)
+	ge.updateExplosives(elapsedTimeInMs, obstacles)
+	ge.handleWeaponAction(elapsedTimeInMs)
 
-    this.checkPlayersForDeadlyCollisions();
-    this.checkEnemiesForDeadlyCollisions();
-    this.checkIfPlayerReachedLevelGoal();
+	ge.checkPlayersForDeadlyCollisions()
+	ge.checkEnemiesForDeadlyCollisions()
+	ge.checkIfPlayerReachedLevelGoal()
 
-    const scrollOffsets = this.levelController.updatePosition(
-      elapsedTimeInMs,
-      this.playerPositions
-    );
-    this.updateAllPositionsWithScrollOffset(scrollOffsets);
+	var scrollOffsets = ge.levelController.UpdatePosition(elapsedTimeInMs, ge.playerPositions)
+	ge.updateAllPositionsWithScrollOffset(&scrollOffsets)
 
-    const activatedEnemies = this.levelController.getActivatedEnemies();
-    if (0 < activatedEnemies.length) {
-      this.enemies.push(...activatedEnemies.map((e) => new ActiveEnemy(e)));
-    }
-  };
-*/
+	var activatedEnemies = ge.levelController.ActivatedEnemies()
+	for _, activatedEnemy := range activatedEnemies {
+		ge.enemies = append(ge.enemies, &activatedEnemy)
+	}
+}
 
 func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
@@ -124,7 +119,7 @@ func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
 			}
 		}
 	}
-	ge.lost = 0 == len(characters.PlayerController.RemainingPlayers())
+	ge.Lost = 0 == len(characters.PlayerController.RemainingPlayers())
 }
 
 func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, obstacles []*geometry.Rectangle) {
@@ -432,6 +427,6 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 
 func (ge *GameEngine) checkIfPlayerReachedLevelGoal() {
 	if ge.levelController.GoalReached(ge.playerPositions) {
-		ge.won = true
+		ge.Won = true
 	}
 }
