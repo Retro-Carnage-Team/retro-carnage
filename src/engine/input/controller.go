@@ -8,10 +8,10 @@ import (
 
 type Controller interface {
 	AssignControllersToPlayers()
-	GetControllerDeviceState(playerIdx int) (*DeviceState, error)
-	GetControllerName(playerIdx int) (string, error)
-	GetControllerUiEventState(playerIdx int) (*UiEventState, error)
-	GetControllerUiEventStateCombined() *UiEventState
+	ControllerDeviceState(playerIdx int) (*DeviceState, error)
+	ControllerName(playerIdx int) (string, error)
+	ControllerUiEventState(playerIdx int) (*UiEventState, error)
+	ControllerUiEventStateCombined() *UiEventState
 	HasTwoOrMoreDevices() bool
 }
 
@@ -69,7 +69,7 @@ func (c *controllerImplementation) AssignControllersToPlayers() {
 	}
 }
 
-func (c *controllerImplementation) GetControllerName(playerIdx int) (string, error) {
+func (c *controllerImplementation) ControllerName(playerIdx int) (string, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
 		logging.Error.Printf("Invalid player index: %d", playerIdx)
 		return "", errors.New("invalid argument: no such player")
@@ -77,7 +77,7 @@ func (c *controllerImplementation) GetControllerName(playerIdx int) (string, err
 	return c.inputSources[playerIdx].Name(), nil
 }
 
-func (c *controllerImplementation) GetControllerDeviceState(playerIdx int) (*DeviceState, error) {
+func (c *controllerImplementation) ControllerDeviceState(playerIdx int) (*DeviceState, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
 		logging.Error.Printf("Invalid player index: %d", playerIdx)
 		return nil, errors.New("invalid argument: no such player")
@@ -113,13 +113,13 @@ func (c *controllerImplementation) getControllerDeviceStateCombined() *DeviceSta
 
 // GetControllerUiEventState returns a UiEventState struct holding UI events. Especially the first call can returns nil
 // without being in error state. Callers thus should check the result pointer before accessing it.
-func (c *controllerImplementation) GetControllerUiEventState(playerIdx int) (*UiEventState, error) {
+func (c *controllerImplementation) ControllerUiEventState(playerIdx int) (*UiEventState, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
 		logging.Error.Printf("Invalid player index: %d", playerIdx)
 		return nil, errors.New("invalid argument: no such player")
 	}
 
-	var newState, err = c.GetControllerDeviceState(playerIdx)
+	var newState, err = c.ControllerDeviceState(playerIdx)
 	if nil != err {
 		return nil, err
 	}
@@ -149,7 +149,7 @@ func (c *controllerImplementation) GetControllerUiEventState(playerIdx int) (*Ui
 // The difference between GetControllerUiEventState and GetControllerUiEventStateCombined is that this method returns a
 // struct that contains the values for all input devices. So you can use this method before the input devices are
 // assigned to players.
-func (c *controllerImplementation) GetControllerUiEventStateCombined() *UiEventState {
+func (c *controllerImplementation) ControllerUiEventStateCombined() *UiEventState {
 	var newState = c.getControllerDeviceStateCombined()
 	var result *UiEventState = nil
 	if nil == c.deviceStateCombined {

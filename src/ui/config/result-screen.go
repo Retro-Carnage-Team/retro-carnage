@@ -25,7 +25,7 @@ func (s *ResultScreen) SetUp() {
 	s.infoTextPlayerOne = "PLAYER 1: "
 	s.infoTextPlayerTwo = "PLAYER 2: "
 
-	name, err := s.inputController.GetControllerName(0)
+	name, err := s.inputController.ControllerName(0)
 	if nil == err {
 		s.infoTextPlayerOne += name
 	} else {
@@ -33,7 +33,7 @@ func (s *ResultScreen) SetUp() {
 	}
 
 	if 2 == characters.PlayerController.NumberOfPlayers() {
-		name, err = s.inputController.GetControllerName(1)
+		name, err = s.inputController.ControllerName(1)
 		if nil == err {
 			s.infoTextPlayerTwo += name
 		} else {
@@ -56,7 +56,7 @@ func (s *ResultScreen) Update(timeElapsedInMs int64) {
 		renderer.DrawLineToScreenCenter(s.infoTextPlayerTwo, -2.5, common.Yellow)
 	}
 
-	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
+	var uiEventState = s.inputController.ControllerUiEventStateCombined()
 	if nil != uiEventState && uiEventState.PressedButton {
 		s.screenChangeRequired(common.Mission)
 	} else if s.timeElapsed >= 2500 {

@@ -37,6 +37,7 @@ func (s *Screen) SetUp() {
 	if nil != s.mission {
 		s.stereo.PlaySong(s.mission.Music)
 		s.engine = engine.NewGameEngine(s.mission)
+		s.engine.SetInputController(s.inputController)
 		s.renderer = engine.NewRenderer(s.engine, s.window)
 	}
 }

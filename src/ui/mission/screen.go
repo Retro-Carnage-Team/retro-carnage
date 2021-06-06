@@ -185,7 +185,7 @@ func (s *Screen) drawLocationMarker(location pixel.Vec) {
 }
 
 func (s *Screen) processUserInput() {
-	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
+	var uiEventState = s.inputController.ControllerUiEventStateCombined()
 	if nil != uiEventState {
 		if uiEventState.PressedButton {
 			engine.MissionController.SelectMission(s.selectedMission)

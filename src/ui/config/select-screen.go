@@ -106,7 +106,7 @@ func (s *SelectScreen) String() string {
 }
 
 func (s *SelectScreen) processUserInput() {
-	var uiEventState = s.inputController.GetControllerUiEventStateCombined()
+	var uiEventState = s.inputController.ControllerUiEventStateCombined()
 	if nil != uiEventState {
 		if uiEventState.PressedButton {
 			s.inputController.AssignControllersToPlayers()
