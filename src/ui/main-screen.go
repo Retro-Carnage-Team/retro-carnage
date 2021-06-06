@@ -21,10 +21,10 @@ import (
 type MainScreen struct {
 	backend      network.Backend
 	clientScreen common.Screen
-	lastUpdate   time.Time
-	nextScreen   common.Screen
 	inputCtrl    input.Controller
+	lastUpdate   time.Time
 	Monitor      *pixelgl.Monitor
+	nextScreen   common.Screen
 	Window       *pixelgl.Window
 }
 

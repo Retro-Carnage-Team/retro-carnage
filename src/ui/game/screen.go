@@ -10,10 +10,12 @@ import (
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
+	"time"
 )
 
 type Screen struct {
 	engine               *engine.GameEngine
+	fpsInfo              *FpsInfo
 	inputController      input.Controller
 	mission              *assets.Mission
 	playerInfoAreas      []*geometry.Rectangle
@@ -48,8 +50,9 @@ func (s *Screen) SetUp() {
 		Width:  player0InfoArea.Width,
 		Height: player0InfoArea.Height,
 	}
-
 	s.playerInfoAreas = []*geometry.Rectangle{player0InfoArea, player1InfoArea}
+
+	s.fpsInfo = &FpsInfo{second: time.Tick(time.Second)}
 	s.stereo = assets.NewStereo()
 	s.mission = engine.MissionController.CurrentMission()
 	if nil != s.mission {
@@ -72,6 +75,9 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 			s.onMissionWon()
 		}
 	}
+
+	s.fpsInfo.update()
+	s.fpsInfo.drawToScreen(s.window)
 }
 
 func (s *Screen) TearDown() {
@@ -114,6 +120,6 @@ func (s *Screen) drawPlayerInfo(playerIdx int, rect *geometry.Rectangle) {
 	imd.Push(pixel.V(rect.X+rect.Width, rect.Y))
 	imd.Push(pixel.V(rect.X, rect.Y+rect.Height))
 	imd.Push(pixel.V(rect.X+rect.Width, rect.Y+rect.Height))
-	imd.Rectangle(1)
+	imd.Rectangle(0)
 	imd.Draw(s.window)
 }
