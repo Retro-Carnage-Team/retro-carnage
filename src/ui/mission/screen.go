@@ -25,12 +25,12 @@ const (
 )
 
 var (
-	briefingFontSize    = fonts.DefaultFontSize() - 2
 	locationMarkerColor = common.ParseHexColor("#fea400")
 )
 
 type Screen struct {
 	availableMissions         []*assets.Mission
+	briefingFontSize          int
 	crossHairSprite           *pixel.Sprite
 	inputController           input.Controller
 	missionsInitialized       bool
@@ -59,6 +59,7 @@ func (s *Screen) SetUp() {
 	} else {
 		s.initializeMissions()
 	}
+	s.briefingFontSize = fonts.DefaultFontSize() - 2
 	s.crossHairSprite = assets.SpriteRepository.Get(crossHairImagePath)
 	s.worldMapSprite = assets.SpriteRepository.Get(worldMapImagePath)
 }
@@ -153,9 +154,9 @@ func (s *Screen) drawMissionDescription() {
 	var text = s.selectedMission.Briefing
 
 	var renderer = fonts.TextRenderer{Window: s.window}
-	textLayout, err := renderer.CalculateTextLayout(text, briefingFontSize, int(textAreaWidth), int(textAreaHeight))
+	textLayout, err := renderer.CalculateTextLayout(text, s.briefingFontSize, int(textAreaWidth), int(textAreaHeight))
 	if nil == err {
-		renderer.RenderTextLayout(textLayout, briefingFontSize, common.White, &geometry.Point{
+		renderer.RenderTextLayout(textLayout, s.briefingFontSize, common.White, &geometry.Point{
 			X: positionX,
 			Y: positionY,
 		})
@@ -190,6 +191,7 @@ func (s *Screen) processUserInput() {
 		if uiEventState.PressedButton {
 			engine.MissionController.SelectMission(s.selectedMission)
 			s.screenChangeRequired(common.BuyYourWeaponsP1)
+			go assets.NewStereo().BufferSong(s.selectedMission.Music)
 		} else {
 			var nextMission = s.selectedMission
 			var err error = nil

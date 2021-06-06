@@ -35,7 +35,6 @@ func (s *SelectScreen) SetUp() {
 }
 
 func (s *SelectScreen) Update(_ int64) {
-	s.window.Clear(common.Black)
 	s.processUserInput()
 
 	var vertCenter = s.window.Bounds().Max.Y / 2

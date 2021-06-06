@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/faiface/beep"
+	"github.com/faiface/beep/effects"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
 	"os"
@@ -23,9 +24,17 @@ type Stereo struct {
 	noMusic   bool
 }
 
+const (
+	mp3Channels   = 2
+	mp3Precision  = 2
+	mp3SampleRate = 32000
+	volumeChange  = 0.3
+)
+
 var stereo *Stereo
 
 type sound interface {
+	decreaseVolume()
 	play(mixer *beep.Mixer)
 	stop()
 }
@@ -42,7 +51,7 @@ func NewStereo() *Stereo {
 }
 
 func (sb *Stereo) initialize() {
-	var mp3Format = beep.Format{SampleRate: 32000, NumChannels: 2, Precision: 2}
+	var mp3Format = beep.Format{SampleRate: mp3SampleRate, NumChannels: mp3Channels, Precision: mp3Precision}
 	err := speaker.Init(mp3Format.SampleRate, mp3Format.SampleRate.N(time.Second/10))
 	if err != nil {
 		logging.Error.Println(err.Error())
@@ -95,6 +104,16 @@ func (sb *Stereo) PlaySong(song Song) {
 		return
 	}
 
+	sb.BufferSong(song)
+	sb.music[song].play(sb.mixer)
+}
+
+// BufferSong loads the given Song but doesn't play it
+func (sb *Stereo) BufferSong(song Song) {
+	if sb.noMusic {
+		return
+	}
+
 	var aSound = sb.music[song]
 	if nil == aSound {
 		var err error = nil
@@ -104,7 +123,6 @@ func (sb *Stereo) PlaySong(song Song) {
 		}
 		sb.music[song] = aSound
 	}
-	aSound.play(sb.mixer)
 }
 
 // StopSong immediately stops the playback of a given Song
@@ -115,8 +133,16 @@ func (sb *Stereo) StopSong(song Song) {
 	}
 }
 
+// DecreaseVolume decreases the volume of a given Song. Volume will get reset when the Song gets player again.
+func (sb *Stereo) DecreaseVolume(song Song) {
+	var aSound = sb.music[song]
+	if nil != aSound {
+		aSound.decreaseVolume()
+	}
+}
+
 func loadSoundEffect(fx SoundEffect) (sound, error) {
-	stopWatch := util.StopWatch{Name: "Buffering sound effect " + string(fx)}
+	stopWatch := util.StopWatch{Name: "Buffering sound effect: " + string(fx)}
 	stopWatch.Start()
 
 	var filePath = filepath.Join(".", "sounds", "fx", string(fx))
@@ -190,17 +216,26 @@ func (bs *basicSound) play(mixer *beep.Mixer) {
 
 func (bs *basicSound) stop() {}
 
+func (bs *basicSound) decreaseVolume() {}
+
 // loopingSound is a sound that gets played over and over again. You can pause & continue
 type loopingSound struct {
 	buffer  *beep.Buffer
 	control *beep.Ctrl
+	volume  *effects.Volume
 }
 
 func (bs *loopingSound) play(mixer *beep.Mixer) {
 	if nil == bs.control {
 		speaker.Lock()
 		bs.control = &beep.Ctrl{Streamer: beep.Loop(-1, bs.buffer.Streamer(0, bs.buffer.Len()))}
-		mixer.Add(bs.control)
+		bs.volume = &effects.Volume{
+			Streamer: bs.control,
+			Base:     2,
+			Volume:   0,
+			Silent:   false,
+		}
+		mixer.Add(bs.volume)
 		speaker.Unlock()
 	}
 }
@@ -210,6 +245,13 @@ func (bs *loopingSound) stop() {
 		speaker.Lock()
 		bs.control.Streamer = nil
 		bs.control = nil
+		bs.volume = nil
 		speaker.Unlock()
 	}
+}
+
+func (bs *loopingSound) decreaseVolume() {
+	speaker.Lock()
+	bs.volume.Volume -= volumeChange
+	speaker.Unlock()
 }

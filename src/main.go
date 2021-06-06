@@ -27,6 +27,7 @@ func run() {
 		panic(err)
 	}
 
+	win.SetCursorVisible(false)
 	win.SetSmooth(true)
 
 	fonts.Initialize(pixelX)

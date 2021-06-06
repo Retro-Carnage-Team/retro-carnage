@@ -2,20 +2,26 @@ package lets_begin
 
 import (
 	"github.com/faiface/pixel/pixelgl"
+	"retro-carnage/assets"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 )
 
-const displayText = "LET THE MISSION BEGIN"
-const timeAfterLastChar = 500
-const timeBetweenChars = 120
+const (
+	displayText             = "LET THE MISSION BEGIN"
+	timeAfterLastChar       = 500
+	timeBetweenChars        = 120
+	timeBetweenVolumeChange = 150
+)
 
 type Screen struct {
-	millisecondsPassed   int64
+	characterTimer       int64
 	screenChangeRequired common.ScreenChangeCallback
+	stereo               *assets.Stereo
 	text                 string
 	textLength           int
+	volumeTimer          int64
 	window               *pixelgl.Window
 }
 
@@ -29,18 +35,26 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 	s.window = window
 }
 
-func (s *Screen) SetUp() {}
+func (s *Screen) SetUp() {
+	s.stereo = assets.NewStereo()
+}
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
-	s.millisecondsPassed += elapsedTimeInMs
+	s.characterTimer += elapsedTimeInMs
+	s.volumeTimer += elapsedTimeInMs
 	if s.textLength < len(displayText) {
-		if s.millisecondsPassed >= timeBetweenChars {
+		if s.characterTimer >= timeBetweenChars {
 			s.textLength++
 			s.text = displayText[:s.textLength]
-			s.millisecondsPassed = 0
+			s.characterTimer = 0
 		}
-	} else if s.millisecondsPassed >= timeAfterLastChar {
+		if s.volumeTimer >= timeBetweenVolumeChange {
+			s.stereo.DecreaseVolume(assets.ThemeSong)
+			s.volumeTimer = 0
+		}
+	} else if s.characterTimer >= timeAfterLastChar {
 		s.screenChangeRequired(common.Game)
+		s.stereo.StopSong(assets.ThemeSong)
 	}
 	var renderer = fonts.TextRenderer{Window: s.window}
 	renderer.DrawLineToScreenCenter(s.text, 0, common.White)

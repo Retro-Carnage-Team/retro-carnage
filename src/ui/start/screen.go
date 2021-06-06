@@ -12,10 +12,8 @@ import (
 )
 
 const txtFirstLine = "RETRO CARNAGE"
-const txtSecondLine = "(C) 2020 THOMAS WERNER"
+const txtSecondLine = "(C) 2021 THOMAS WERNER"
 const txtThirdLine = "Dedicated to Jonathan Werner"
-const txtFourthLine = "Inspired by 'DOGS OF WAR'"
-const txtFifthLine = "(C) 1989 by Elite Systems Ltd."
 
 type Screen struct {
 	screenChangeRequired common.ScreenChangeCallback
@@ -71,6 +69,4 @@ func (s *Screen) renderScreen() {
 	renderer.DrawLineToScreenCenter(txtFirstLine, 4, common.Red)
 	renderer.DrawLineToScreenCenter(txtSecondLine, 2.8, common.Yellow)
 	renderer.DrawLineToScreenCenter(txtThirdLine, 0, common.Green)
-	renderer.DrawLineToScreenCenter(txtFourthLine, -2.5, common.Green)
-	renderer.DrawLineToScreenCenter(txtFifthLine, -3.7, common.Green)
 }
