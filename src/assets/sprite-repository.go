@@ -17,13 +17,13 @@ import (
 type SpriteRepo struct {
 	initializationMutex sync.Mutex
 	initialized         bool
-	tiles               map[string]*pixel.Sprite
+	spites              map[string]*pixel.Sprite
 }
 
 var (
 	SpriteRepository = &SpriteRepo{
 		initialized: false,
-		tiles:       make(map[string]*pixel.Sprite),
+		spites:      make(map[string]*pixel.Sprite),
 	}
 )
 
@@ -44,7 +44,7 @@ func (sr *SpriteRepo) Initialize() {
 }
 
 func (sr *SpriteRepo) Get(path string) *pixel.Sprite {
-	return sr.tiles[path]
+	return sr.spites[path]
 }
 
 func (sr *SpriteRepo) loadFromDirectory(directory string) {
@@ -63,7 +63,7 @@ func (sr *SpriteRepo) loadFromDirectory(directory string) {
 		} else {
 			var filePath = directory + f.Name()
 			var picture = sr.loadPicture(filePath)
-			sr.tiles[filePath] = pixel.NewSprite(picture, picture.Bounds())
+			sr.spites[filePath] = pixel.NewSprite(picture, picture.Bounds())
 		}
 	}
 }
