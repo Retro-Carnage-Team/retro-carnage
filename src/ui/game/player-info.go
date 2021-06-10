@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/assets"
@@ -14,8 +15,8 @@ import (
 // drawn efficiently when needed.
 type playerInfo struct {
 	canvas         *pixelgl.Canvas
+	componentArea  *geometry.Rectangle
 	playerIdx      int
-	screenRect     *geometry.Rectangle
 	updateRequired bool
 	window         *pixelgl.Window
 }
@@ -24,8 +25,8 @@ type playerInfo struct {
 func newPlayerInfo(playerIdx int, window *pixelgl.Window) *playerInfo {
 	return &playerInfo{
 		canvas:         nil,
+		componentArea:  nil,
 		playerIdx:      playerIdx,
-		screenRect:     nil,
 		updateRequired: true,
 		window:         window,
 	}
@@ -47,7 +48,7 @@ func (pi *playerInfo) drawToScreen() {
 
 // updateCanvas updates the in-memory canvas of this component. Should not be called from outside this class.
 func (pi *playerInfo) updateCanvas() {
-	if nil == pi.screenRect {
+	if nil == pi.componentArea {
 		pi.calculateScreenRect()
 	}
 	if nil == pi.canvas {
@@ -56,6 +57,7 @@ func (pi *playerInfo) updateCanvas() {
 
 	if pi.updateRequired {
 		pi.drawBackground()
+		pi.drawPlayerPortrait()
 		pi.updateRequired = false
 	}
 }
@@ -71,16 +73,16 @@ func (pi *playerInfo) calculateScreenRect() {
 	if 1 == pi.playerIdx {
 		playerInfoArea.X = pi.window.Bounds().W() - playerInfoArea.Width
 	}
-	pi.screenRect = &playerInfoArea
+	pi.componentArea = &playerInfoArea
 }
 
 // initializeCanvas performs the lazy initialization of the canvas. Should not be called from outside this class.
 func (pi *playerInfo) initializeCanvas() {
 	pi.canvas = pixelgl.NewCanvas(pixel.R(
-		pi.screenRect.X,
-		pi.screenRect.Y,
-		pi.screenRect.X+pi.screenRect.Width,
-		pi.screenRect.Y+pi.screenRect.Height,
+		pi.componentArea.X,
+		pi.componentArea.Y,
+		pi.componentArea.X+pi.componentArea.Width,
+		pi.componentArea.Y+pi.componentArea.Height,
 	))
 }
 
@@ -88,7 +90,7 @@ func (pi *playerInfo) initializeCanvas() {
 func (pi *playerInfo) drawBackground() {
 	var backgroundSprite = assets.SpriteRepository.Get(playerInfoBgPath)
 	var spriteBounds = backgroundSprite.Picture().Bounds()
-	var offsetX = pi.screenRect.X + spriteBounds.W()/2
+	var offsetX = pi.componentArea.X + spriteBounds.W()/2
 	for {
 		var offsetY = spriteBounds.Max.Y / 2
 		for offsetY < pi.window.Bounds().H()+spriteBounds.Max.Y/2 {
@@ -96,10 +98,21 @@ func (pi *playerInfo) drawBackground() {
 			backgroundSprite.Draw(pi.canvas, pixel.IM.Moved(movedSpriteBounds))
 			offsetY += spriteBounds.Max.Y
 		}
-		if offsetX >= pi.screenRect.X+pi.screenRect.Width {
+		if offsetX >= pi.componentArea.X+pi.componentArea.Width {
 			break
 		} else {
 			offsetX += spriteBounds.W()
 		}
 	}
+}
+
+func (pi *playerInfo) drawPlayerPortrait() {
+	var playerPortraitPath = fmt.Sprintf("images/player-%d/portrait.png", pi.playerIdx)
+	var playerPortraitSprite = assets.SpriteRepository.Get(playerPortraitPath)
+	var scalingFactor = (pi.window.Bounds().H() / 4) / playerPortraitSprite.Picture().Bounds().H()
+	var location = pixel.V(
+		pi.componentArea.X+(pi.componentArea.Width/2),
+		pi.componentArea.Height-15-playerPortraitSprite.Picture().Bounds().H()*scalingFactor/2,
+	)
+	playerPortraitSprite.Draw(pi.canvas, pixel.IM.Scaled(pixel.V(0, 0), scalingFactor).Moved(location))
 }
