@@ -21,7 +21,8 @@ type playerInfo struct {
 	window         *pixelgl.Window
 }
 
-// newPlayerInfo creates and returns a new instance of playerInfo. Use this to construct this component.
+// newPlayerInfo creates and returns a new instance of playerInfo.
+// Use this to construct this component.
 func newPlayerInfo(playerIdx int, window *pixelgl.Window) *playerInfo {
 	return &playerInfo{
 		canvas:         nil,
@@ -32,7 +33,8 @@ func newPlayerInfo(playerIdx int, window *pixelgl.Window) *playerInfo {
 	}
 }
 
-// drawToScreen draws this component to screen. The content is updated, if necessary.
+// drawToScreen draws this component to screen.
+// The content is updated, if necessary.
 func (pi *playerInfo) drawToScreen() {
 	var sw = &util.StopWatch{Name: "playerInfo:drawToScreen"}
 	sw.Start()
@@ -46,7 +48,8 @@ func (pi *playerInfo) drawToScreen() {
 	logging.Trace.Printf(sw.PrintDebugMessage())
 }
 
-// updateCanvas updates the in-memory canvas of this component. Should not be called from outside this class.
+// updateCanvas updates the in-memory canvas of this component.
+// Should not be called from outside this class.
 func (pi *playerInfo) updateCanvas() {
 	if nil == pi.componentArea {
 		pi.calculateScreenRect()
@@ -62,7 +65,8 @@ func (pi *playerInfo) updateCanvas() {
 	}
 }
 
-// calculateScreenRect gets the area of this player info component. Should not be called from outside this class.
+// calculateScreenRect gets the area of this player info component.
+// Should not be called from outside this class.
 func (pi *playerInfo) calculateScreenRect() {
 	var playerInfoArea = geometry.Rectangle{
 		X:      0,
@@ -76,7 +80,8 @@ func (pi *playerInfo) calculateScreenRect() {
 	pi.componentArea = &playerInfoArea
 }
 
-// initializeCanvas performs the lazy initialization of the canvas. Should not be called from outside this class.
+// initializeCanvas performs the lazy initialization of the canvas.
+// Should not be called from outside this class.
 func (pi *playerInfo) initializeCanvas() {
 	pi.canvas = pixelgl.NewCanvas(pixel.R(
 		pi.componentArea.X,
@@ -86,7 +91,8 @@ func (pi *playerInfo) initializeCanvas() {
 	))
 }
 
-// drawBackground draws the background to the in-memory canvas. Should not be called from outside this class.
+// drawBackground draws the background to the in-memory canvas.
+// Should not be called from outside this class.
 func (pi *playerInfo) drawBackground() {
 	var backgroundSprite = assets.SpriteRepository.Get(playerInfoBgPath)
 	var spriteBounds = backgroundSprite.Picture().Bounds()
@@ -106,13 +112,16 @@ func (pi *playerInfo) drawBackground() {
 	}
 }
 
+// drawBackground draws player portrait to the in-memory canvas.
+// Should not be called from outside this class.
+// The player's portrait will have a top margin of 15 px and a height of <window height> / 4.
 func (pi *playerInfo) drawPlayerPortrait() {
 	var playerPortraitPath = fmt.Sprintf("images/player-%d/portrait.png", pi.playerIdx)
 	var playerPortraitSprite = assets.SpriteRepository.Get(playerPortraitPath)
 	var scalingFactor = (pi.window.Bounds().H() / 4) / playerPortraitSprite.Picture().Bounds().H()
-	var location = pixel.V(
-		pi.componentArea.X+(pi.componentArea.Width/2),
-		pi.componentArea.Height-15-playerPortraitSprite.Picture().Bounds().H()*scalingFactor/2,
-	)
+	var location = pixel.Vec{
+		X: pi.componentArea.X + (pi.componentArea.Width / 2),
+		Y: pi.componentArea.Height - 15 - playerPortraitSprite.Picture().Bounds().H()*scalingFactor/2,
+	}
 	playerPortraitSprite.Draw(pi.canvas, pixel.IM.Scaled(pixel.V(0, 0), scalingFactor).Moved(location))
 }
