@@ -10,10 +10,6 @@ import (
 	"time"
 )
 
-const (
-	playerInfoBgPath = "images/other/player-info-bg.png"
-)
-
 type Screen struct {
 	engine               *engine.GameEngine
 	fpsInfo              *FpsInfo
@@ -82,6 +78,7 @@ func (s *Screen) TearDown() {
 func (s *Screen) onGameLost() {
 	// TODO: show high score screen
 	s.screenChangeRequired(common.Title)
+	s.window.SetTitle("RETRO CARNAGE")
 }
 
 func (s *Screen) onMissionWon() {
@@ -97,6 +94,7 @@ func (s *Screen) onMissionWon() {
 			// TODO: show high score screen
 		} else {
 			s.screenChangeRequired(common.Mission)
+			s.window.SetTitle("RETRO CARNAGE")
 		}
 	}
 }

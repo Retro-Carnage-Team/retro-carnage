@@ -3,11 +3,22 @@ package game
 import (
 	"fmt"
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/logging"
+	"retro-carnage/ui/common"
 	"retro-carnage/util"
+)
+
+const (
+	innerMargin          = 15
+	livesAreaHeight      = 50
+	playerInfoBgPath     = "images/other/player-info-bg.png"
+	playerPortraitPath   = "images/player-%d/portrait.png"
+	scoreAreaHeight      = 50
+	weaponBackgroundPath = "images/other/weapon-bg.jpg"
 )
 
 // PlayerInfo models the areas left and right of the screen that display information about the players.
@@ -61,6 +72,11 @@ func (pi *playerInfo) updateCanvas() {
 	if pi.updateRequired {
 		pi.drawBackground()
 		pi.drawPlayerPortrait()
+		pi.drawScore()
+		pi.drawWeaponBackground()
+		pi.drawWeapon()
+		pi.drawAmmoCounter()
+		pi.drawLives()
 		pi.updateRequired = false
 	}
 }
@@ -116,12 +132,96 @@ func (pi *playerInfo) drawBackground() {
 // Should not be called from outside this class.
 // The player's portrait will have a top margin of 15 px and a height of <window height> / 4.
 func (pi *playerInfo) drawPlayerPortrait() {
-	var playerPortraitPath = fmt.Sprintf("images/player-%d/portrait.png", pi.playerIdx)
+	var playerPortraitPath = fmt.Sprintf(playerPortraitPath, pi.playerIdx)
 	var playerPortraitSprite = assets.SpriteRepository.Get(playerPortraitPath)
 	var scalingFactor = (pi.window.Bounds().H() / 4) / playerPortraitSprite.Picture().Bounds().H()
 	var location = pixel.Vec{
 		X: pi.componentArea.X + (pi.componentArea.Width / 2),
-		Y: pi.componentArea.Height - 15 - playerPortraitSprite.Picture().Bounds().H()*scalingFactor/2,
+		Y: pi.componentArea.Height - innerMargin - playerPortraitSprite.Picture().Bounds().H()*scalingFactor/2,
 	}
 	playerPortraitSprite.Draw(pi.canvas, pixel.IM.Scaled(pixel.V(0, 0), scalingFactor).Moved(location))
+}
+
+func (pi *playerInfo) drawScore() {
+	var draw = imdraw.New(nil)
+	draw.Color = common.Black
+	draw.Push(pi.areaForScore())
+	draw.Rectangle(0)
+	draw.Draw(pi.canvas)
+}
+
+func (pi *playerInfo) drawWeaponBackground() {
+	var bottomLeft, topRight = pi.areaForWeapon()
+	var weaponBackgroundSprite = assets.SpriteRepository.Get(weaponBackgroundPath)
+	var scaleX = (topRight.X - bottomLeft.X) / weaponBackgroundSprite.Picture().Bounds().W()
+	var scaleY = (topRight.Y - bottomLeft.Y) / weaponBackgroundSprite.Picture().Bounds().H()
+	var centerX = (topRight.X + bottomLeft.X) / 2
+	var centerY = (topRight.Y + bottomLeft.Y) / 2
+	weaponBackgroundSprite.Draw(pi.canvas, pixel.IM.
+		ScaledXY(pixel.V(0, 0), pixel.V(scaleX, scaleY)).
+		Moved(pixel.V(centerX, centerY)))
+
+	var draw = imdraw.New(nil)
+	draw.Color = common.Black
+	draw.Push(bottomLeft, topRight)
+	draw.Rectangle(5)
+	draw.Draw(pi.canvas)
+}
+
+func (pi *playerInfo) drawWeapon() {
+}
+
+func (pi *playerInfo) drawAmmoCounter() {
+}
+
+func (pi *playerInfo) drawLives() {
+	var draw = imdraw.New(nil)
+	draw.Color = common.Black
+	draw.Push(pi.areaForLives())
+	draw.Rectangle(0)
+	draw.Draw(pi.canvas)
+}
+
+// areaForLives returns the two points (bottom left, top right) that define the rectangular area in which the extra
+// lives are displayed.
+func (pi *playerInfo) areaForLives() (pixel.Vec, pixel.Vec) {
+	var bottomLeft = pixel.Vec{
+		X: innerMargin,
+		Y: innerMargin,
+	}
+	var topRight = pixel.Vec{
+		X: pi.componentArea.Width - innerMargin,
+		Y: innerMargin + livesAreaHeight,
+	}
+	return bottomLeft, topRight
+}
+
+// areaForScore returns the two points (bottom left, top right) that define the rectangular area in which the score gets
+// displayed.
+func (pi *playerInfo) areaForScore() (pixel.Vec, pixel.Vec) {
+	var bottomLeft = pixel.Vec{
+		X: innerMargin,
+		Y: pi.window.Bounds().H() - innerMargin - (pi.window.Bounds().H() / 4) - innerMargin - scoreAreaHeight,
+	}
+	var topRight = pixel.Vec{
+		X: pi.componentArea.Width - innerMargin,
+		Y: bottomLeft.Y + scoreAreaHeight,
+	}
+	return bottomLeft, topRight
+}
+
+// areaForWeapon returns the two points (bottom left, top right) that define the rectangular area in which the weapon
+// and ammo count are displayed.
+func (pi *playerInfo) areaForWeapon() (pixel.Vec, pixel.Vec) {
+	var _, livesTR = pi.areaForLives()
+	var scoreBL, _ = pi.areaForScore()
+	var bottomLeft = pixel.Vec{
+		X: innerMargin,
+		Y: livesTR.Y + innerMargin,
+	}
+	var topRight = pixel.Vec{
+		X: pi.componentArea.Width - innerMargin,
+		Y: scoreBL.Y - innerMargin,
+	}
+	return bottomLeft, topRight
 }
