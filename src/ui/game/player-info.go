@@ -186,11 +186,11 @@ func (pi *playerInfo) drawLives() {
 // lives are displayed.
 func (pi *playerInfo) areaForLives() (pixel.Vec, pixel.Vec) {
 	var bottomLeft = pixel.Vec{
-		X: innerMargin,
+		X: pi.componentArea.X + innerMargin,
 		Y: innerMargin,
 	}
 	var topRight = pixel.Vec{
-		X: pi.componentArea.Width - innerMargin,
+		X: pi.componentArea.X + pi.componentArea.Width - innerMargin,
 		Y: innerMargin + livesAreaHeight,
 	}
 	return bottomLeft, topRight
@@ -200,11 +200,11 @@ func (pi *playerInfo) areaForLives() (pixel.Vec, pixel.Vec) {
 // displayed.
 func (pi *playerInfo) areaForScore() (pixel.Vec, pixel.Vec) {
 	var bottomLeft = pixel.Vec{
-		X: innerMargin,
+		X: pi.componentArea.X + innerMargin,
 		Y: pi.window.Bounds().H() - innerMargin - (pi.window.Bounds().H() / 4) - innerMargin - scoreAreaHeight,
 	}
 	var topRight = pixel.Vec{
-		X: pi.componentArea.Width - innerMargin,
+		X: pi.componentArea.X + pi.componentArea.Width - innerMargin,
 		Y: bottomLeft.Y + scoreAreaHeight,
 	}
 	return bottomLeft, topRight
@@ -216,11 +216,11 @@ func (pi *playerInfo) areaForWeapon() (pixel.Vec, pixel.Vec) {
 	var _, livesTR = pi.areaForLives()
 	var scoreBL, _ = pi.areaForScore()
 	var bottomLeft = pixel.Vec{
-		X: innerMargin,
+		X: pi.componentArea.X + innerMargin,
 		Y: livesTR.Y + innerMargin,
 	}
 	var topRight = pixel.Vec{
-		X: pi.componentArea.Width - innerMargin,
+		X: pi.componentArea.X + pi.componentArea.Width - innerMargin,
 		Y: scoreBL.Y - innerMargin,
 	}
 	return bottomLeft, topRight
