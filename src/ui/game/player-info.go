@@ -5,14 +5,18 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 	"retro-carnage/assets"
+	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
+	"retro-carnage/ui/common/fonts"
 	"retro-carnage/util"
 )
 
 const (
+	fontSize             = 36
 	innerMargin          = 15
 	livesAreaHeight      = 50
 	playerInfoBgPath     = "images/other/player-info-bg.png"
@@ -25,23 +29,43 @@ const (
 // This class can be used to prepare an in-memory canvas with the current state of the player info area that can be
 // drawn efficiently when needed.
 type playerInfo struct {
-	canvas         *pixelgl.Canvas
-	componentArea  *geometry.Rectangle
-	playerIdx      int
-	updateRequired bool
-	window         *pixelgl.Window
+	ammunitionChanged bool
+	canvas            *pixelgl.Canvas
+	changeListener    *util.ChangeListener
+	componentArea     *geometry.Rectangle
+	livesChanged      bool
+	player            *characters.Player
+	playerIdx         int
+	scoreChanged      bool
+	weaponChanged     bool
+	window            *pixelgl.Window
 }
 
 // newPlayerInfo creates and returns a new instance of playerInfo.
 // Use this to construct this component.
 func newPlayerInfo(playerIdx int, window *pixelgl.Window) *playerInfo {
-	return &playerInfo{
-		canvas:         nil,
-		componentArea:  nil,
-		playerIdx:      playerIdx,
-		updateRequired: true,
-		window:         window,
+	var players = characters.PlayerController.ConfiguredPlayers()
+	var player *characters.Player = nil
+	if len(players) > playerIdx {
+		player = players[playerIdx]
 	}
+	var result = &playerInfo{
+		ammunitionChanged: true,
+		canvas:            nil,
+		componentArea:     nil,
+		livesChanged:      true,
+		player:            player,
+		playerIdx:         playerIdx,
+		scoreChanged:      true,
+		weaponChanged:     true,
+		window:            window,
+	}
+	if nil != player {
+		var changeListener = &util.ChangeListener{Callback: result.playerPropertyChanged, PropertyNames: []string{}}
+		player.AddChangeListener(changeListener)
+		result.changeListener = changeListener
+	}
+	return result
 }
 
 // drawToScreen draws this component to screen.
@@ -50,34 +74,40 @@ func (pi *playerInfo) drawToScreen() {
 	var sw = &util.StopWatch{Name: "playerInfo:drawToScreen"}
 	sw.Start()
 
-	if pi.updateRequired {
-		pi.updateCanvas()
-	}
+	pi.updateCanvas()
 	pi.canvas.Draw(pi.window, pixel.IM.Moved(pi.canvas.Bounds().Center()))
 
-	sw.Stop()
+	var _ = sw.Stop()
 	logging.Trace.Printf(sw.PrintDebugMessage())
 }
 
 // updateCanvas updates the in-memory canvas of this component.
 // Should not be called from outside this class.
 func (pi *playerInfo) updateCanvas() {
-	if nil == pi.componentArea {
+	var initialize = nil == pi.componentArea || nil == pi.canvas
+	if initialize {
 		pi.calculateScreenRect()
-	}
-	if nil == pi.canvas {
 		pi.initializeCanvas()
-	}
-
-	if pi.updateRequired {
 		pi.drawBackground()
 		pi.drawPlayerPortrait()
+	}
+
+	if pi.scoreChanged {
 		pi.drawScore()
+		pi.scoreChanged = false
+	}
+
+	if pi.weaponChanged || pi.ammunitionChanged {
 		pi.drawWeaponBackground()
 		pi.drawWeapon()
 		pi.drawAmmoCounter()
+		pi.ammunitionChanged = false
+		pi.weaponChanged = false
+	}
+
+	if pi.livesChanged {
 		pi.drawLives()
-		pi.updateRequired = false
+		pi.livesChanged = false
 	}
 }
 
@@ -143,11 +173,23 @@ func (pi *playerInfo) drawPlayerPortrait() {
 }
 
 func (pi *playerInfo) drawScore() {
+	var bottomLeft, topRight = pi.areaForScore()
 	var draw = imdraw.New(nil)
 	draw.Color = common.Black
-	draw.Push(pi.areaForScore())
+	draw.Push(bottomLeft, topRight)
 	draw.Rectangle(0)
 	draw.Draw(pi.canvas)
+
+	if nil != pi.player {
+		var score = fmt.Sprintf("%d", pi.player.Score())
+		var textDimensions = fonts.GetTextDimension(fontSize, score)
+		var lineX = pi.componentArea.X + (pi.componentArea.Width-textDimensions.X)/2
+		var lineY = bottomLeft.Y + (scoreAreaHeight-textDimensions.Y)/2
+		var txt = text.New(pixel.V(lineX, lineY), fonts.SizeToFontAtlas[fontSize])
+		txt.Color = common.Yellow
+		_, _ = fmt.Fprint(txt, score)
+		txt.Draw(pi.canvas, pixel.IM)
+	}
 }
 
 func (pi *playerInfo) drawWeaponBackground() {
@@ -224,4 +266,31 @@ func (pi *playerInfo) areaForWeapon() (pixel.Vec, pixel.Vec) {
 		Y: scoreBL.Y - innerMargin,
 	}
 	return bottomLeft, topRight
+}
+
+func (pi *playerInfo) playerPropertyChanged(_ interface{}, n string) {
+	switch n {
+	case characters.PlayerPropertyAmmunition:
+		fallthrough
+	case characters.PlayerPropertyGrenades:
+		pi.ammunitionChanged = true
+	case characters.PlayerPropertyLives:
+		pi.livesChanged = true
+	case characters.PlayerPropertyScore:
+		pi.scoreChanged = true
+	case characters.PlayerPropertySelectedWeapon:
+		pi.weaponChanged = true
+	default:
+		// ignore changes to other properties
+	}
+}
+
+func (pi *playerInfo) dispose() {
+	if nil != pi.changeListener && nil != pi.player {
+		err := pi.player.RemoveChangeListener(pi.changeListener)
+		if err != nil {
+			logging.Error.Fatalf("playerInfo.dispose: Failed to remove unregistered ChangeListener")
+		}
+		pi.changeListener = nil
+	}
 }

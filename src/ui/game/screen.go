@@ -73,12 +73,15 @@ func (s *Screen) TearDown() {
 	if nil != s.mission {
 		s.stereo.StopSong(s.mission.Music)
 	}
+	for _, playerInfo := range s.playerInfos {
+		playerInfo.dispose()
+	}
+	s.window.SetTitle("RETRO CARNAGE")
 }
 
 func (s *Screen) onGameLost() {
 	// TODO: show high score screen
 	s.screenChangeRequired(common.Title)
-	s.window.SetTitle("RETRO CARNAGE")
 }
 
 func (s *Screen) onMissionWon() {
@@ -94,11 +97,11 @@ func (s *Screen) onMissionWon() {
 			// TODO: show high score screen
 		} else {
 			s.screenChangeRequired(common.Mission)
-			s.window.SetTitle("RETRO CARNAGE")
 		}
 	}
 }
 
+// String returns the screen name as string
 func (s *Screen) String() string {
 	return string(common.Game)
 }

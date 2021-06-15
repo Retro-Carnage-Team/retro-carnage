@@ -13,7 +13,10 @@ import (
 	"unicode"
 )
 
-const defaultFontPath = "./fonts/XXII-DIRTY-ARMY.ttf"
+const (
+	defaultFontPath = "./fonts/XXII-DIRTY-ARMY.ttf"
+	maxFontSize     = 52
+)
 
 var (
 	SizeToFontAtlas    map[int]*text.Atlas
@@ -31,8 +34,7 @@ func Initialize(width float64) {
 		logging.Error.Panicf("Failed to load font %s: %v", defaultFontPath, err)
 	}
 
-	var defaultFontSize = DefaultFontSize()
-	for i := 12; i <= defaultFontSize; i += 2 {
+	for i := 12; i <= maxFontSize; i += 2 {
 		var fontFace = truetype.NewFace(defaultFont, &truetype.Options{
 			Size:              float64(i),
 			GlyphCacheEntries: 1,
@@ -60,7 +62,7 @@ func DefaultFontSize() int {
 	if windowWidth <= 3440 {
 		return 48
 	}
-	return 52
+	return maxFontSize
 }
 
 func loadTTF(path string) (*truetype.Font, error) {
