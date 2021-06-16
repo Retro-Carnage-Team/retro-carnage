@@ -12,7 +12,7 @@ import (
 
 type httpBackend struct {
 	gameId string
-	mu     sync.Mutex
+	mutex  sync.Mutex
 }
 
 type usageResponse struct {
@@ -38,35 +38,36 @@ func (hb *httpBackend) StartGameSession() {
 	response, err := http.Post(backendUrl+"/usage/start-game", "application/json", nil)
 	if nil != err {
 		logging.Warning.Printf("Failed to start game session: %v", err)
-	}
-	defer response.Body.Close()
+		hb.gameId = ""
+	} else {
+		if response.StatusCode == http.StatusCreated {
+			bodyBytes, err := ioutil.ReadAll(response.Body)
+			if err != nil {
+				logging.Warning.Printf("Failed to start game session. Failed to read server response: %v", err)
+				return
+			}
 
-	if response.StatusCode == http.StatusCreated {
-		bodyBytes, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			logging.Warning.Printf("Failed to start game session. Failed to read server response: %v", err)
-			return
+			var usage usageResponse
+			err = json.Unmarshal(bodyBytes, &usage)
+			if err != nil {
+				logging.Warning.Printf("Failed to start game session. Failed to parse server response: %v", err)
+				return
+			}
+
+			hb.mutex.Lock()
+			hb.gameId = usage.GameId
+			hb.mutex.Unlock()
+
+			logging.Info.Printf("Created game session with ID '%s'", hb.gameId)
 		}
-
-		var usage usageResponse
-		err = json.Unmarshal(bodyBytes, &usage)
-		if err != nil {
-			logging.Warning.Printf("Failed to start game session. Failed to parse server response: %v", err)
-			return
-		}
-
-		hb.mu.Lock()
-		hb.gameId = usage.GameId
-		hb.mu.Unlock()
-
-		logging.Info.Printf("Created game session with ID '%s'", hb.gameId)
+		var _ = response.Body.Close()
 	}
 }
 
 func (hb *httpBackend) ReportGameState(screenName string) {
-	hb.mu.Lock()
+	hb.mutex.Lock()
 	var gameId = hb.gameId
-	hb.mu.Unlock()
+	hb.mutex.Unlock()
 
 	if "" != gameId {
 		var url = backendUrl + "/usage/" + gameId + "/next-screen/" + screenName
