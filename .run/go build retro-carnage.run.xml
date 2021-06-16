@@ -5,6 +5,7 @@
         <go_parameters value="-i"/>
         <envs>
             <env name="target" value="development"/>
+            <env name="sound" value="no-music"/>
         </envs>
         <kind value="DIRECTORY"/>
         <directory value="$PROJECT_DIR$/src"/>

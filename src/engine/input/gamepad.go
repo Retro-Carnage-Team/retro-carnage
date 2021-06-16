@@ -14,14 +14,16 @@ type gamepad struct {
 // Old controllers might be a bit wobbly and need a higher value.
 const inputThreshold = 0.15
 
-var PiOver8 = math.Pi / 8
-var PiTimes3Over8 = (3 * math.Pi) / 8
-var PiTimes5Over8 = (5 * math.Pi) / 8
-var PiTimes7Over8 = (7 * math.Pi) / 8
-var PiTimes9Over8 = (9 * math.Pi) / 8
-var PiTimes11Over8 = (11 * math.Pi) / 8
-var PiTimes13Over8 = (13 * math.Pi) / 8
-var PiTimes15Over8 = (15 * math.Pi) / 8
+var (
+	PiOver8        = math.Pi / 8
+	PiTimes3Over8  = (3 * math.Pi) / 8
+	PiTimes5Over8  = (5 * math.Pi) / 8
+	PiTimes7Over8  = (7 * math.Pi) / 8
+	PiTimes9Over8  = (9 * math.Pi) / 8
+	PiTimes11Over8 = (11 * math.Pi) / 8
+	PiTimes13Over8 = (13 * math.Pi) / 8
+	PiTimes15Over8 = (15 * math.Pi) / 8
+)
 
 func isStickMovedFully(x float64, y float64) bool {
 	var radius = math.Sqrt(x*x + y*y) // Use Pythagorean theorem

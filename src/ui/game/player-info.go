@@ -72,14 +72,8 @@ func newPlayerInfo(playerIdx int, window *pixelgl.Window) *playerInfo {
 // drawToScreen draws this component to screen.
 // The content is updated, if necessary.
 func (pi *playerInfo) drawToScreen() {
-	var sw = &util.StopWatch{Name: "playerInfo:drawToScreen"}
-	sw.Start()
-
 	pi.updateCanvas()
 	pi.canvas.Draw(pi.window, pixel.IM.Moved(pi.canvas.Bounds().Center()))
-
-	var _ = sw.Stop()
-	logging.Trace.Printf(sw.PrintDebugMessage())
 }
 
 // updateCanvas updates the in-memory canvas of this component.
@@ -217,22 +211,27 @@ func (pi *playerInfo) drawWeaponBackground() {
 }
 
 func (pi *playerInfo) drawWeapon() {
-	if nil != pi.player && nil != pi.player.SelectedWeapon() {
-		var weaponPath = pi.player.SelectedWeapon().ImageRotated
-		var weaponSprite = assets.SpriteRepository.Get(weaponPath)
+	if nil != pi.player && (nil != pi.player.SelectedWeapon() || nil != pi.player.SelectedGrenade()) {
+		var imagePath string
+		if nil != pi.player.SelectedWeapon() {
+			imagePath = pi.player.SelectedWeapon().ImageRotated
+		} else {
+			imagePath = pi.player.SelectedGrenade().ImageRotated
+		}
+		var weaponSprite = assets.SpriteRepository.Get(imagePath)
 		if nil == weaponSprite {
-			logging.Warning.Printf("Unable to find sprite: %s", weaponPath)
+			logging.Warning.Printf("Unable to find sprite: %s", imagePath)
 			return
 		}
 
 		var bottomLeft, topRight = pi.areaForWeapon()
-		var scaleX = (topRight.X - bottomLeft.X - innerMargin - innerMargin) / weaponSprite.Picture().Bounds().W()
-		var scaleY = (topRight.Y - bottomLeft.Y - innerMargin - innerMargin) / weaponSprite.Picture().Bounds().H()
+		var scaleX = (topRight.X - bottomLeft.X - (2 * innerMargin)) / weaponSprite.Picture().Bounds().W()
+		var scaleY = (topRight.Y - bottomLeft.Y - (3 * innerMargin) - scoreAreaHeight) / weaponSprite.Picture().Bounds().H()
 		var minScale = math.Min(scaleX, scaleY)
 		var scale = pixel.V(minScale, minScale)
 		var movement = pixel.Vec{
-			X: (topRight.X + bottomLeft.X) / 2,
-			Y: (topRight.Y + bottomLeft.Y) / 2,
+			X: pi.componentArea.X + innerMargin + (topRight.X-bottomLeft.X)/2,
+			Y: pi.componentArea.Y + (3 * innerMargin) + scoreAreaHeight + (topRight.Y-bottomLeft.Y)/2,
 		}
 		var matrix = pixel.IM.ScaledXY(pixel.V(0, 0), scale).Moved(movement)
 		weaponSprite.Draw(pi.canvas, matrix)
@@ -240,7 +239,7 @@ func (pi *playerInfo) drawWeapon() {
 }
 
 func (pi *playerInfo) drawAmmoCounter() {
-	if nil != pi.player && nil != pi.player.SelectedWeapon() {
+	if nil != pi.player && (nil != pi.player.SelectedWeapon() || nil != pi.player.SelectedGrenade()) {
 		var bottomLeft, _ = pi.areaForWeapon()
 		var ammo = fmt.Sprintf("%d", pi.player.AmmunitionForSelectedWeapon())
 		var textDimensions = fonts.GetTextDimension(fontSize, ammo)
