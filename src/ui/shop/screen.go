@@ -344,6 +344,7 @@ func (s *Screen) processButtonPressedOnModal() {
 
 func (s *Screen) processButtonPressedOnShop() {
 	if -1 == s.selectedItemIdx {
+		characters.PlayerController.ConfiguredPlayers()[s.PlayerIdx].SelectFirstWeapon()
 		if (0 == s.PlayerIdx) && (2 == characters.PlayerController.NumberOfPlayers()) {
 			s.screenChangeRequired(common.BuyYourWeaponsP2)
 		} else {

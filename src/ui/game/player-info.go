@@ -6,6 +6,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
+	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
@@ -183,9 +184,11 @@ func (pi *playerInfo) drawScore() {
 	if nil != pi.player {
 		var score = fmt.Sprintf("%d", pi.player.Score())
 		var textDimensions = fonts.GetTextDimension(fontSize, score)
-		var lineX = pi.componentArea.X + (pi.componentArea.Width-textDimensions.X)/2
-		var lineY = bottomLeft.Y + (scoreAreaHeight-textDimensions.Y)/2
-		var txt = text.New(pixel.V(lineX, lineY), fonts.SizeToFontAtlas[fontSize])
+		var position = pixel.Vec{
+			X: pi.componentArea.X + (pi.componentArea.Width-textDimensions.X)/2,
+			Y: bottomLeft.Y + (scoreAreaHeight-textDimensions.Y)/2,
+		}
+		var txt = text.New(position, fonts.SizeToFontAtlas[fontSize])
 		txt.Color = common.Yellow
 		_, _ = fmt.Fprint(txt, score)
 		txt.Draw(pi.canvas, pixel.IM)
@@ -195,13 +198,16 @@ func (pi *playerInfo) drawScore() {
 func (pi *playerInfo) drawWeaponBackground() {
 	var bottomLeft, topRight = pi.areaForWeapon()
 	var weaponBackgroundSprite = assets.SpriteRepository.Get(weaponBackgroundPath)
-	var scaleX = (topRight.X - bottomLeft.X) / weaponBackgroundSprite.Picture().Bounds().W()
-	var scaleY = (topRight.Y - bottomLeft.Y) / weaponBackgroundSprite.Picture().Bounds().H()
-	var centerX = (topRight.X + bottomLeft.X) / 2
-	var centerY = (topRight.Y + bottomLeft.Y) / 2
-	weaponBackgroundSprite.Draw(pi.canvas, pixel.IM.
-		ScaledXY(pixel.V(0, 0), pixel.V(scaleX, scaleY)).
-		Moved(pixel.V(centerX, centerY)))
+	var scale = pixel.Vec{
+		X: (topRight.X - bottomLeft.X) / weaponBackgroundSprite.Picture().Bounds().W(),
+		Y: (topRight.Y - bottomLeft.Y) / weaponBackgroundSprite.Picture().Bounds().H(),
+	}
+	var movement = pixel.Vec{
+		X: (topRight.X + bottomLeft.X) / 2,
+		Y: (topRight.Y + bottomLeft.Y) / 2,
+	}
+	var matrix = pixel.IM.ScaledXY(pixel.V(0, 0), scale).Moved(movement)
+	weaponBackgroundSprite.Draw(pi.canvas, matrix)
 
 	var draw = imdraw.New(nil)
 	draw.Color = common.Black
@@ -211,9 +217,42 @@ func (pi *playerInfo) drawWeaponBackground() {
 }
 
 func (pi *playerInfo) drawWeapon() {
+	if nil != pi.player && nil != pi.player.SelectedWeapon() {
+		var weaponPath = pi.player.SelectedWeapon().ImageRotated
+		var weaponSprite = assets.SpriteRepository.Get(weaponPath)
+		if nil == weaponSprite {
+			logging.Warning.Printf("Unable to find sprite: %s", weaponPath)
+			return
+		}
+
+		var bottomLeft, topRight = pi.areaForWeapon()
+		var scaleX = (topRight.X - bottomLeft.X - innerMargin - innerMargin) / weaponSprite.Picture().Bounds().W()
+		var scaleY = (topRight.Y - bottomLeft.Y - innerMargin - innerMargin) / weaponSprite.Picture().Bounds().H()
+		var minScale = math.Min(scaleX, scaleY)
+		var scale = pixel.V(minScale, minScale)
+		var movement = pixel.Vec{
+			X: (topRight.X + bottomLeft.X) / 2,
+			Y: (topRight.Y + bottomLeft.Y) / 2,
+		}
+		var matrix = pixel.IM.ScaledXY(pixel.V(0, 0), scale).Moved(movement)
+		weaponSprite.Draw(pi.canvas, matrix)
+	}
 }
 
 func (pi *playerInfo) drawAmmoCounter() {
+	if nil != pi.player && nil != pi.player.SelectedWeapon() {
+		var bottomLeft, _ = pi.areaForWeapon()
+		var ammo = fmt.Sprintf("%d", pi.player.AmmunitionForSelectedWeapon())
+		var textDimensions = fonts.GetTextDimension(fontSize, ammo)
+		var position = pixel.Vec{
+			X: pi.componentArea.X + (pi.componentArea.Width-textDimensions.X)/2,
+			Y: bottomLeft.Y + innerMargin,
+		}
+		var txt = text.New(position, fonts.SizeToFontAtlas[fontSize])
+		txt.Color = common.Black
+		_, _ = fmt.Fprint(txt, ammo)
+		txt.Draw(pi.canvas, pixel.IM)
+	}
 }
 
 func (pi *playerInfo) drawLives() {
@@ -226,6 +265,7 @@ func (pi *playerInfo) drawLives() {
 
 // areaForLives returns the two points (bottom left, top right) that define the rectangular area in which the extra
 // lives are displayed.
+// Should not be called from outside this class.
 func (pi *playerInfo) areaForLives() (pixel.Vec, pixel.Vec) {
 	var bottomLeft = pixel.Vec{
 		X: pi.componentArea.X + innerMargin,
@@ -240,6 +280,7 @@ func (pi *playerInfo) areaForLives() (pixel.Vec, pixel.Vec) {
 
 // areaForScore returns the two points (bottom left, top right) that define the rectangular area in which the score gets
 // displayed.
+// Should not be called from outside this class.
 func (pi *playerInfo) areaForScore() (pixel.Vec, pixel.Vec) {
 	var bottomLeft = pixel.Vec{
 		X: pi.componentArea.X + innerMargin,
@@ -254,6 +295,7 @@ func (pi *playerInfo) areaForScore() (pixel.Vec, pixel.Vec) {
 
 // areaForWeapon returns the two points (bottom left, top right) that define the rectangular area in which the weapon
 // and ammo count are displayed.
+// Should not be called from outside this class.
 func (pi *playerInfo) areaForWeapon() (pixel.Vec, pixel.Vec) {
 	var _, livesTR = pi.areaForLives()
 	var scoreBL, _ = pi.areaForScore()
@@ -268,6 +310,8 @@ func (pi *playerInfo) areaForWeapon() (pixel.Vec, pixel.Vec) {
 	return bottomLeft, topRight
 }
 
+// playerPropertyChanged is a callback function called by a Player when one of it's properties changed.
+// Should not be called from outside this class.
 func (pi *playerInfo) playerPropertyChanged(_ interface{}, n string) {
 	switch n {
 	case characters.PlayerPropertyAmmunition:
@@ -285,6 +329,8 @@ func (pi *playerInfo) playerPropertyChanged(_ interface{}, n string) {
 	}
 }
 
+// dispose frees all the resources blocked by this component.
+// Should be called when you need a component instance no longer.
 func (pi *playerInfo) dispose() {
 	if nil != pi.changeListener && nil != pi.player {
 		err := pi.player.RemoveChangeListener(pi.changeListener)
