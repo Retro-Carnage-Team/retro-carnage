@@ -21,6 +21,7 @@ const (
 	innerMargin          = 15
 	livesAreaHeight      = 50
 	playerInfoBgPath     = "images/other/player-info-bg.png"
+	playerLifePath       = "images/player-%d/life.png"
 	playerPortraitPath   = "images/player-%d/portrait.png"
 	scoreAreaHeight      = 50
 	weaponBackgroundPath = "images/other/weapon-bg.jpg"
@@ -167,6 +168,8 @@ func (pi *playerInfo) drawPlayerPortrait() {
 	playerPortraitSprite.Draw(pi.canvas, pixel.IM.Scaled(pixel.V(0, 0), scalingFactor).Moved(location))
 }
 
+// drawScore draws the current score of the player onto a specific section of the in-memory canvas.
+// Should not be called from outside this class.
 func (pi *playerInfo) drawScore() {
 	var bottomLeft, topRight = pi.areaForScore()
 	var draw = imdraw.New(nil)
@@ -189,6 +192,8 @@ func (pi *playerInfo) drawScore() {
 	}
 }
 
+// drawWeaponBackground draws the background of the weapon area (weapon / ammo counter) onto a specific section of the
+// in-memory canvas. Should not be called from outside this class.
 func (pi *playerInfo) drawWeaponBackground() {
 	var bottomLeft, topRight = pi.areaForWeapon()
 	var weaponBackgroundSprite = assets.SpriteRepository.Get(weaponBackgroundPath)
@@ -210,6 +215,8 @@ func (pi *playerInfo) drawWeaponBackground() {
 	draw.Draw(pi.canvas)
 }
 
+// drawWeapon draws the rotated image of the player's currently selected weapon onto a specific section of the in-memory
+// canvas. Should not be called from outside this class.
 func (pi *playerInfo) drawWeapon() {
 	if nil != pi.player && (nil != pi.player.SelectedWeapon() || nil != pi.player.SelectedGrenade()) {
 		var imagePath string
@@ -238,6 +245,8 @@ func (pi *playerInfo) drawWeapon() {
 	}
 }
 
+// drawAmmoCounter draws the number of bullets for the player's currently selected weapon onto a specific section of the
+// in-memory canvas. Should not be called from outside this class.
 func (pi *playerInfo) drawAmmoCounter() {
 	if nil != pi.player && (nil != pi.player.SelectedWeapon() || nil != pi.player.SelectedGrenade()) {
 		var bottomLeft, _ = pi.areaForWeapon()
@@ -254,12 +263,35 @@ func (pi *playerInfo) drawAmmoCounter() {
 	}
 }
 
+// drawLives draws life sprites for each of the player's lives onto a specific section of the in-memory canvas.
+// Should not be called from outside this class.
 func (pi *playerInfo) drawLives() {
+	var bottomLeft, topRight = pi.areaForLives()
 	var draw = imdraw.New(nil)
 	draw.Color = common.Black
-	draw.Push(pi.areaForLives())
+	draw.Push(bottomLeft, topRight)
 	draw.Rectangle(0)
 	draw.Draw(pi.canvas)
+
+	if nil != pi.player {
+		var lifeSprite = assets.SpriteRepository.Get(fmt.Sprintf(playerLifePath, pi.playerIdx))
+		var scale = (livesAreaHeight - 2) / lifeSprite.Picture().Bounds().H()
+		var scaledSpriteHeight = lifeSprite.Picture().Bounds().H() * scale
+		var scaledSpriteWidth = lifeSprite.Picture().Bounds().W() * scale
+		var width = float64(pi.player.Lives()) * scaledSpriteWidth
+		if 1 < pi.player.Lives() {
+			width += float64((pi.player.Lives() - 1) * 5)
+		}
+
+		var left = pi.componentArea.X + (pi.componentArea.Width-width)/2 + scaledSpriteWidth/2
+		for i := 0; i < pi.player.Lives(); i++ {
+			var matrix = pixel.IM.
+				Scaled(pixel.V(0, 0), scale).
+				Moved(pixel.V(left, bottomLeft.Y+1+scaledSpriteHeight/2))
+			lifeSprite.Draw(pi.canvas, matrix)
+			left += scaledSpriteWidth + 5
+		}
+	}
 }
 
 // areaForLives returns the two points (bottom left, top right) that define the rectangular area in which the extra
