@@ -14,11 +14,11 @@ const (
 	ScrollMovementPerMs    = 0.3 // Screen.width = 1500 / 5.000 milliseconds = 0.2 px / ms
 )
 
-var (
-	ScreenRect = geometry.Rectangle{
+func screenRect() *geometry.Rectangle {
+	return &geometry.Rectangle{
 		X:      0,
 		Y:      0,
 		Width:  ScreenSize,
 		Height: ScreenSize,
 	}
-)
+}

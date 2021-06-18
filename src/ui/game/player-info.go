@@ -137,6 +137,11 @@ func (pi *playerInfo) initializeCanvas() {
 // Should not be called from outside this class.
 func (pi *playerInfo) drawBackground() {
 	var backgroundSprite = assets.SpriteRepository.Get(playerInfoBgPath)
+	if nil == backgroundSprite {
+		logging.Warning.Printf("Unable to find sprite: %s", playerInfoBgPath)
+		return
+	}
+
 	var spriteBounds = backgroundSprite.Picture().Bounds()
 	var offsetX = pi.componentArea.X + spriteBounds.W()/2
 	for {
@@ -160,6 +165,11 @@ func (pi *playerInfo) drawBackground() {
 func (pi *playerInfo) drawPlayerPortrait() {
 	var playerPortraitPath = fmt.Sprintf(playerPortraitPath, pi.playerIdx)
 	var playerPortraitSprite = assets.SpriteRepository.Get(playerPortraitPath)
+	if nil == playerPortraitSprite {
+		logging.Warning.Printf("Unable to find sprite: %s", playerPortraitPath)
+		return
+	}
+
 	var scalingFactor = (pi.window.Bounds().H() / 4) / playerPortraitSprite.Picture().Bounds().H()
 	var location = pixel.Vec{
 		X: pi.componentArea.X + (pi.componentArea.Width / 2),
@@ -197,6 +207,11 @@ func (pi *playerInfo) drawScore() {
 func (pi *playerInfo) drawWeaponBackground() {
 	var bottomLeft, topRight = pi.areaForWeapon()
 	var weaponBackgroundSprite = assets.SpriteRepository.Get(weaponBackgroundPath)
+	if nil == weaponBackgroundSprite {
+		logging.Warning.Printf("Unable to find sprite: %s", weaponBackgroundPath)
+		return
+	}
+
 	var scale = pixel.Vec{
 		X: (topRight.X - bottomLeft.X) / weaponBackgroundSprite.Picture().Bounds().W(),
 		Y: (topRight.Y - bottomLeft.Y) / weaponBackgroundSprite.Picture().Bounds().H(),
@@ -274,7 +289,13 @@ func (pi *playerInfo) drawLives() {
 	draw.Draw(pi.canvas)
 
 	if nil != pi.player {
-		var lifeSprite = assets.SpriteRepository.Get(fmt.Sprintf(playerLifePath, pi.playerIdx))
+		var lifeSpritePath = fmt.Sprintf(playerLifePath, pi.playerIdx)
+		var lifeSprite = assets.SpriteRepository.Get(lifeSpritePath)
+		if nil == lifeSprite {
+			logging.Warning.Printf("Unable to find sprite: %s", lifeSpritePath)
+			return
+		}
+
 		var scale = (livesAreaHeight - 2) / lifeSprite.Picture().Bounds().H()
 		var scaledSpriteHeight = lifeSprite.Picture().Bounds().H() * scale
 		var scaledSpriteWidth = lifeSprite.Picture().Bounds().W() * scale

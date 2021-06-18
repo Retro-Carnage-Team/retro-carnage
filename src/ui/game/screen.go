@@ -42,12 +42,14 @@ func (s *Screen) SetUp() {
 	}
 	s.stereo = assets.NewStereo()
 	s.mission = engine.MissionController.CurrentMission()
-	if nil != s.mission {
-		s.stereo.PlaySong(s.mission.Music)
-		s.engine = engine.NewGameEngine(s.mission)
-		s.engine.SetInputController(s.inputController)
-		s.renderer = engine.NewRenderer(s.engine, s.window)
+	if nil == s.mission {
+		logging.Error.Fatalf("No missing selected on game screen")
 	}
+
+	s.stereo.PlaySong(s.mission.Music)
+	s.engine = engine.NewGameEngine(s.mission)
+	s.engine.SetInputController(s.inputController)
+	s.renderer = engine.NewRenderer(s.engine, s.window)
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
@@ -70,9 +72,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 }
 
 func (s *Screen) TearDown() {
-	if nil != s.mission {
-		s.stereo.StopSong(s.mission.Music)
-	}
+	s.stereo.StopSong(s.mission.Music)
 	for _, playerInfo := range s.playerInfos {
 		playerInfo.dispose()
 	}
@@ -87,17 +87,15 @@ func (s *Screen) onGameLost() {
 func (s *Screen) onMissionWon() {
 	// TODO: Show level end animation / score calculation
 	var mission = engine.MissionController.CurrentMission()
-	if nil != mission {
-		engine.MissionController.MarkMissionFinished(mission)
-		var remainingMissions, err = engine.MissionController.RemainingMissions()
-		if nil != err {
-			logging.Error.Fatalf("Error on game screen: Level has been won when none have been initialized")
-		}
-		if 0 == len(remainingMissions) {
-			// TODO: show high score screen
-		} else {
-			s.screenChangeRequired(common.Mission)
-		}
+	engine.MissionController.MarkMissionFinished(mission)
+	var remainingMissions, err = engine.MissionController.RemainingMissions()
+	if nil != err {
+		logging.Error.Fatalf("Error on game screen: Level has been won when none have been initialized")
+	}
+	if 0 == len(remainingMissions) {
+		// TODO: show high score screen
+	} else {
+		s.screenChangeRequired(common.Mission)
 	}
 }
 

@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
@@ -8,6 +9,8 @@ import (
 	"retro-carnage/engine/graphics"
 	"retro-carnage/logging"
 )
+
+const levelBackgroundFolder = "images/levels/%s"
 
 var (
 	backgroundOffsets map[string]geometry.Point
@@ -52,8 +55,11 @@ func (lc *LevelController) loadSegment(segment *assets.Segment) {
 	lc.goal = segment.Goal
 	lc.Backgrounds = make([]graphics.SpriteWithOffset, len(segment.Backgrounds))
 	for idx, bgPath := range segment.Backgrounds {
-		var sprite = assets.SpriteRepository.Get(bgPath)
 		var offset = backgroundOffsets[segment.Direction]
+		var sprite = assets.SpriteRepository.Get(fmt.Sprintf(levelBackgroundFolder, bgPath))
+		if nil == sprite {
+			logging.Warning.Printf("Failed to load level background sprite: %s", bgPath)
+		}
 		lc.Backgrounds[idx] = graphics.SpriteWithOffset{
 			Offset: *offset.Multiply(float64(idx)),
 			Source: bgPath,
@@ -237,9 +243,10 @@ func (lc *LevelController) ObstaclesOnScreen() []*geometry.Rectangle {
 	}
 
 	var result = make([]*geometry.Rectangle, 0)
+	var screenRect = screenRect()
 	for _, obstacle := range lc.obstacles {
 		var adjustedObstaclePosition = obstacle.Add(&scrollAdjustment)
-		if nil != adjustedObstaclePosition.Intersection(&ScreenRect) {
+		if nil != adjustedObstaclePosition.Intersection(screenRect) {
 			result = append(result, adjustedObstaclePosition)
 		}
 	}
