@@ -15,7 +15,7 @@ type gamepad struct {
 }
 
 // Old analog controllers might be a bit wobbly and need a higher value.
-const inputThreshold = 0.15
+const inputThreshold = 0.05
 
 var (
 	PiOver8        = math.Pi / 8
@@ -78,25 +78,32 @@ func (g *gamepad) convertStickAngleToCardinalDirections(angle float64) (up, down
 
 // State returns the DeviceState of the gamepad.
 func (g *gamepad) State() *DeviceState {
-	var result DeviceState
-	result.Fire = g.window.JoystickPressed(g.joystick, pixelgl.ButtonA)
-	result.Grenade = g.window.JoystickPressed(g.joystick, pixelgl.ButtonB)
+	// TODO: At some point a setup screen for IO and display options would be cool
+	var state DeviceState
 	var horizontal = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftX)
 	var vertical = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftY)
 	if g.isAnalog(horizontal, vertical) {
+		// Checked this with XBox360 and PlayStation controllers
+		state.Fire = g.window.JoystickPressed(g.joystick, pixelgl.ButtonA)
+		state.Grenade = g.window.JoystickPressed(g.joystick, pixelgl.ButtonB)
+		state.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonX)
+		state.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonY)
 		if g.isStickMovedFully(horizontal, vertical) {
 			var angle = g.computeStickAngle(horizontal, vertical*-1)
-			result.MoveUp, result.MoveDown, result.MoveLeft, result.MoveRight = g.convertStickAngleToCardinalDirections(angle)
+			state.MoveUp, state.MoveDown, state.MoveLeft, state.MoveRight = g.convertStickAngleToCardinalDirections(angle)
 		}
 	} else {
-		result.MoveUp = -1 == vertical
-		result.MoveDown = 1 == vertical
-		result.MoveLeft = -1 == horizontal
-		result.MoveRight = 1 == horizontal
+		// Checked this with a SpeedLink Competition Pro USB
+		state.Fire = g.window.JoystickPressed(g.joystick, pixelgl.ButtonTriangle)
+		state.Grenade = g.window.JoystickPressed(g.joystick, pixelgl.ButtonCross)
+		state.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonLeftBumper)
+		state.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonCircle)
+		state.MoveUp = -1 == vertical
+		state.MoveDown = 1 == vertical
+		state.MoveLeft = -1 == horizontal
+		state.MoveRight = 1 == horizontal
 	}
-	result.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonX)
-	result.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonY)
-	return &result
+	return &state
 }
 
 // Name returns the human readable name of the gamepad.
@@ -112,7 +119,7 @@ func (g *gamepad) Name() string {
 
 // isAnalog returns true when the controller axis allows values other than [-1, 0, 1].
 func (g *gamepad) isAnalog(horizontal float64, vertical float64) bool {
-	var digital = (horizontal == -1 || horizontal == 0 || horizontal == 1) &&
-		(vertical == -1 || vertical == 0 || vertical == 1)
+	var digital = (horizontal == -1 || math.Abs(horizontal) < inputThreshold || horizontal == 1) &&
+		(vertical == -1 || math.Abs(vertical) < inputThreshold || vertical == 1)
 	return !digital
 }
