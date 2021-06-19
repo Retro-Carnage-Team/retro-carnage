@@ -10,34 +10,24 @@ import (
 
 const (
 	DurationOfExplosionFrame = 25 // in ms
-	Folder                   = "images/tiles/explosion"
+	Folder                   = "images/explosion"
 	NumberOfExplosionSprites = 48
 )
 
-var (
-	explosionSprites = buildAnimation()
-)
-
+// ExplosionSpriteSupplier provides Sprites for explosions - just as the name suggests.
 type ExplosionSpriteSupplier struct {
 	duration int64
 }
 
+// Sprite returns the correct SpriteWithOffset for the specified elapsedTimeInMs
 func (ess *ExplosionSpriteSupplier) Sprite(elapsedTimeInMs int64) *graphics.SpriteWithOffset {
 	ess.duration += elapsedTimeInMs
-	var idx = int(ess.duration / DurationOfExplosionFrame)
-	return explosionSprites[util.MinInt(len(explosionSprites)-1, idx)]
-}
-
-func buildAnimation() []*graphics.SpriteWithOffset {
-	var result = make([]*graphics.SpriteWithOffset, 0)
-	for i := 0; i < NumberOfExplosionSprites; i++ {
-		var spritePath = fmt.Sprintf("%s/%d.png", Folder, i)
-		var sprite = assets.SpriteRepository.Get(spritePath)
-		result = append(result, &graphics.SpriteWithOffset{
-			Offset: geometry.Point{},
-			Source: spritePath,
-			Sprite: sprite,
-		})
+	var idx = util.MinInt(NumberOfExplosionSprites-1, int(ess.duration/DurationOfExplosionFrame))
+	var spritePath = fmt.Sprintf("%s/%d.png", Folder, idx)
+	var sprite = assets.SpriteRepository.Get(spritePath)
+	return &graphics.SpriteWithOffset{
+		Offset: geometry.Point{},
+		Source: spritePath,
+		Sprite: sprite,
 	}
-	return result
 }

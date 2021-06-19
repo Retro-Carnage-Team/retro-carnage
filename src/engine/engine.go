@@ -195,7 +195,7 @@ func (ge *GameEngine) updateExplosions(elapsedTimeInMs int64) {
 	var explosions = ge.explosions
 	for i := len(explosions) - 1; i >= 0; i-- {
 		explosions[i].duration += elapsedTimeInMs
-		if explosions[i].duration < durationOfExplosion {
+		if explosions[i].duration >= durationOfExplosion {
 			explosions = ge.removeExplosion(explosions, i)
 		}
 	}

@@ -2,7 +2,6 @@
     <configuration default="false" name="start" type="GoApplicationRunConfiguration" factoryName="Go Application">
         <module name="retro-carnage"/>
         <working_directory value="$PROJECT_DIR$"/>
-        <go_parameters value="-i"/>
         <envs>
             <env name="target" value="development"/>
             <env name="sound" value="no-music"/>

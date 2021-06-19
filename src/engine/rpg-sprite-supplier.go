@@ -17,7 +17,7 @@ func NewRpgSpriteSupplier(direction geometry.Direction) *RpgSpriteSupplier {
 	var twoSprites = make([]*graphics.SpriteWithOffset, 0)
 	var offset = rpgOffsetByDirection(direction)
 	for i := 0; i < 2; i++ {
-		var spritePath = fmt.Sprintf("images/tiles/weapons/rpg-%s-%d.png", direction.Name, 0)
+		var spritePath = fmt.Sprintf("images/weapons/rpg-%s-%d.png", direction.Name, 0)
 		var sprite = assets.SpriteRepository.Get(spritePath)
 		twoSprites = append(twoSprites, &graphics.SpriteWithOffset{
 			Offset: offset,

@@ -5,6 +5,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/graphics"
 	"retro-carnage/logging"
 )
 
@@ -76,18 +77,11 @@ func (r *Renderer) drawEnemies(elapsedTimeInMs int64) {
 // drawPlayers draws sprites for each of the players onto the in-memory canvas.
 // Do not call from outside this class.
 func (r *Renderer) drawPlayers(elapsedTimeInMs int64) {
-	var outputAreaInverseRoot = pixel.V(r.outputArea.X, r.outputArea.Y+r.outputArea.Height)
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = r.engine.playerBehaviors[player.Index()]
 		var spriteWithOffset = r.playerSpriteSuppliers[player.Index()].Sprite(elapsedTimeInMs, behavior)
 		if nil != spriteWithOffset {
-			var position = r.engine.playerPositions[player.Index()]
-			var spriteCenter = pixel.Vec{
-				X: spriteWithOffset.Offset.X + position.X + spriteWithOffset.Sprite.Picture().Bounds().W()/2,
-				Y: -1 * (spriteWithOffset.Offset.Y + position.Y + spriteWithOffset.Sprite.Picture().Bounds().H()/2),
-			}.Scaled(r.scalingFactor).Add(outputAreaInverseRoot)
-			var matrix = pixel.IM.Scaled(pixel.V(0, 0), r.scalingFactor).Moved(spriteCenter)
-			spriteWithOffset.Sprite.Draw(r.canvas, matrix)
+			r.drawSpriteToCanvas(spriteWithOffset, r.engine.playerPositions[player.Index()])
 		} else {
 			logging.Warning.Printf("Player spriteWithOffset missing for player %d", player.Index())
 		}
@@ -109,24 +103,27 @@ func (r *Renderer) drawBullets() {
 // drawExplosives draws the flying explosives (grenades, RPGs) onto the in-memory canvas.
 // Do not call from outside this class.
 func (r *Renderer) drawExplosives() {
-	//this.engine.explosives.forEach((explosive) => {
-	//	const canvas = explosive.tileSupplier.getTile().getCanvas();
-	//	if (canvas && this.ctx) {
-	//		this.ctx.drawImage(canvas, explosive.position.x, explosive.position.y);
-	//	}
-	//});
+	for _, explosive := range r.engine.explosives {
+		var spriteWOffset = explosive.SpriteSupplier.Sprite()
+		if nil != spriteWOffset {
+			r.drawSpriteToCanvas(spriteWOffset, explosive.position)
+		} else {
+			logging.Warning.Printf("Explosive sprite missing")
+		}
+	}
 }
 
 // drawExplosions draws sprites for animated explosions onto the in-memory canvas.
 // Do not call from outside this class.
 func (r *Renderer) drawExplosions(elapsedTimeInMs int64) {
-	//this.engine.explosions.forEach((explosion) => {
-	//	const tile = explosion.tileSupplier.getTile(elapsedTimeInMs);
-	//	const canvas = tile.getCanvas();
-	//	if (canvas && this.ctx) {
-	//		this.ctx.drawImage(canvas, explosion.position.x, explosion.position.y);
-	//	}
-	//});
+	for _, explosion := range r.engine.explosions {
+		var spriteWOffset = explosion.SpriteSupplier.Sprite(elapsedTimeInMs)
+		if nil != spriteWOffset {
+			r.drawSpriteToCanvas(spriteWOffset, explosion.Position)
+		} else {
+			logging.Warning.Printf("Explosion sprite missing")
+		}
+	}
 }
 
 // drawDebugRect draws a given geometry.Rectangle onto the in-memory canvas.
@@ -137,6 +134,17 @@ func (r *Renderer) drawDebugRect(rect geometry.Rectangle) {
 	//	this.ctx.strokeStyle = "orange";
 	//	this.ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 	//}
+}
+
+// draws a given sprite to the given position on canvas.
+func (r *Renderer) drawSpriteToCanvas(spriteWithOffset *graphics.SpriteWithOffset, position *geometry.Rectangle) {
+	var outputAreaInverseRoot = pixel.V(r.outputArea.X, r.outputArea.Y+r.outputArea.Height)
+	var spriteCenter = pixel.Vec{
+		X: spriteWithOffset.Offset.X + position.X + spriteWithOffset.Sprite.Picture().Bounds().W()/2,
+		Y: -1 * (spriteWithOffset.Offset.Y + position.Y + spriteWithOffset.Sprite.Picture().Bounds().H()/2),
+	}.Scaled(r.scalingFactor).Add(outputAreaInverseRoot)
+	var matrix = pixel.IM.Scaled(pixel.V(0, 0), r.scalingFactor).Moved(spriteCenter)
+	spriteWithOffset.Sprite.Draw(r.canvas, matrix)
 }
 
 // initializeGeometry computes the location and size of game area and the scaling factor.

@@ -6,7 +6,7 @@ import (
 	"retro-carnage/engine/graphics"
 )
 
-const grenadeImagePath = "images/tiles/weapons/grenade.png"
+const grenadeImagePath = "images/weapons/grenade.png"
 
 var (
 	grenadeSprite *graphics.SpriteWithOffset

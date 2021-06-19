@@ -2,7 +2,6 @@
     <configuration default="false" name="test" type="GoTestRunConfiguration" factoryName="Go Test">
         <module name="retro-carnage"/>
         <working_directory value="$PROJECT_DIR$/src"/>
-        <go_parameters value="-i"/>
         <envs>
             <env name="sound" value="no-fx;no-music"/>
         </envs>
