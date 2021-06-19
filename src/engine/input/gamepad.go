@@ -78,7 +78,6 @@ func (g *gamepad) convertStickAngleToCardinalDirections(angle float64) (up, down
 
 // State returns the DeviceState of the gamepad.
 func (g *gamepad) State() *DeviceState {
-	// TODO: At some point a setup screen for IO and display options would be cool
 	var state DeviceState
 	var horizontal = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftX)
 	var vertical = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftY)

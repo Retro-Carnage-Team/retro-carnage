@@ -300,7 +300,7 @@ func (ge *GameEngine) handleWeaponAction(elapsedTimeInMs int64) {
 						ge.explosives,
 						NewExplosiveRpg(player.Index(), playerPosition, behavior.Direction, weapon).Explosive,
 					)
-				} else if player.PistolSelected() || player.AutomaticWeaponSelected() &&
+				} else if (player.PistolSelected() || player.AutomaticWeaponSelected()) &&
 					ge.inventoryController[player.Index()].RemoveAmmunition() {
 					ge.stereo.PlayFx(player.SelectedWeapon().Sound)
 					ge.fireBullet(player, behavior)
