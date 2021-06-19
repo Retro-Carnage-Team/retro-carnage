@@ -18,7 +18,7 @@ func TestSpriteForIdlePlayer(t *testing.T) {
 	var spriteSupplier = NewPlayerSpriteSupplier(player)
 	var result = spriteSupplier.Sprite(0, behavior)
 
-	assert.Equal(t, "images/tiles/player-1/idle/right.png", result.Source)
+	assert.Equal(t, "images/player-1/idle/right.png", result.Source)
 }
 
 func TestSprite0IsReturnedWhenPlayerStartsToMove(t *testing.T) {
@@ -35,9 +35,9 @@ func TestSprite0IsReturnedWhenPlayerStartsToMove(t *testing.T) {
 	behavior.Moving = true
 	behavior.Direction = geometry.Up
 	var result = spriteSupplier.Sprite(DurationOfPlayerMovementFrame, behavior)
-	assert.Equal(t, "images/tiles/player-1/up/1.png", result.Source)
+	assert.Equal(t, "images/player-1/up/1.png", result.Source)
 	result = spriteSupplier.Sprite(DurationOfPlayerMovementFrame, behavior)
-	assert.Equal(t, "images/tiles/player-1/up/2.png", result.Source)
+	assert.Equal(t, "images/player-1/up/2.png", result.Source)
 }
 
 func TestDoesNotPlayTheAnimationWithoutDelay(t *testing.T) {
@@ -51,11 +51,11 @@ func TestDoesNotPlayTheAnimationWithoutDelay(t *testing.T) {
 	var spriteSupplier = NewPlayerSpriteSupplier(player)
 
 	var first = spriteSupplier.Sprite(0, behavior)
-	assert.Equal(t, "images/tiles/player-1/up/1.png", first.Source)
+	assert.Equal(t, "images/player-1/up/1.png", first.Source)
 	var second = spriteSupplier.Sprite(50, behavior)
-	assert.Equal(t, "images/tiles/player-1/up/1.png", second.Source)
+	assert.Equal(t, "images/player-1/up/1.png", second.Source)
 	var third = spriteSupplier.Sprite(50, behavior)
-	assert.Equal(t, "images/tiles/player-1/up/2.png", third.Source)
+	assert.Equal(t, "images/player-1/up/2.png", third.Source)
 }
 
 func TestPlaysAnimationInLoop(t *testing.T) {
@@ -72,7 +72,7 @@ func TestPlaysAnimationInLoop(t *testing.T) {
 	for j := 0; j < 2; j++ {
 		for i := 0; i < spriteCount; i++ {
 			var sprite = spriteSupplier.Sprite(DurationOfPlayerMovementFrame, behavior)
-			var expectedPath = fmt.Sprintf("images/tiles/player-1/up/%d.png", i+1)
+			var expectedPath = fmt.Sprintf("images/player-1/up/%d.png", i+1)
 			assert.Equal(t, expectedPath, sprite.Source)
 		}
 	}
