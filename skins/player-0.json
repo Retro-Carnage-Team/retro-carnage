@@ -3,56 +3,56 @@
   "movement": {
     "up": [
       {
-        "sprite": "images/tiles/player-0/up/1.png",
+        "sprite": "images/player-0/up/1.png",
         "offset": {
           "x": 2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up/2.png",
+        "sprite": "images/player-0/up/2.png",
         "offset": {
           "x": 2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up/3.png",
+        "sprite": "images/player-0/up/3.png",
         "offset": {
           "x": 2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up/4.png",
+        "sprite": "images/player-0/up/4.png",
         "offset": {
           "x": 2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up/5.png",
+        "sprite": "images/player-0/up/5.png",
         "offset": {
           "x": 2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up/6.png",
+        "sprite": "images/player-0/up/6.png",
         "offset": {
           "x": 2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up/7.png",
+        "sprite": "images/player-0/up/7.png",
         "offset": {
           "x": 2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up/8.png",
+        "sprite": "images/player-0/up/8.png",
         "offset": {
           "x": 2,
           "y": -50
@@ -61,49 +61,49 @@
     ],
     "up_right": [
       {
-        "sprite": "images/tiles/player-0/up_right/1.png",
+        "sprite": "images/player-0/up_right/1.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_right/2.png",
+        "sprite": "images/player-0/up_right/2.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_right/3.png",
+        "sprite": "images/player-0/up_right/3.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_right/4.png",
+        "sprite": "images/player-0/up_right/4.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_right/5.png",
+        "sprite": "images/player-0/up_right/5.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_right/6.png",
+        "sprite": "images/player-0/up_right/6.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_right/7.png",
+        "sprite": "images/player-0/up_right/7.png",
         "offset": {
           "x": 0,
           "y": -50
@@ -112,49 +112,49 @@
     ],
     "right": [
       {
-        "sprite": "images/tiles/player-0/right/1.png",
+        "sprite": "images/player-0/right/1.png",
         "offset": {
           "x": -70,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/right/2.png",
+        "sprite": "images/player-0/right/2.png",
         "offset": {
           "x": -70,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/right/3.png",
+        "sprite": "images/player-0/right/3.png",
         "offset": {
           "x": -70,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/right/4.png",
+        "sprite": "images/player-0/right/4.png",
         "offset": {
           "x": -70,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/right/5.png",
+        "sprite": "images/player-0/right/5.png",
         "offset": {
           "x": -70,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/right/6.png",
+        "sprite": "images/player-0/right/6.png",
         "offset": {
           "x": -70,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/right/7.png",
+        "sprite": "images/player-0/right/7.png",
         "offset": {
           "x": -70,
           "y": -50
@@ -163,49 +163,49 @@
     ],
     "down_right": [
       {
-        "sprite": "images/tiles/player-0/down_right/1.png",
+        "sprite": "images/player-0/down_right/1.png",
         "offset": {
           "x": 1,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_right/2.png",
+        "sprite": "images/player-0/down_right/2.png",
         "offset": {
           "x": 1,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_right/3.png",
+        "sprite": "images/player-0/down_right/3.png",
         "offset": {
           "x": 1,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_right/4.png",
+        "sprite": "images/player-0/down_right/4.png",
         "offset": {
           "x": 1,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_right/5.png",
+        "sprite": "images/player-0/down_right/5.png",
         "offset": {
           "x": 1,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_right/6.png",
+        "sprite": "images/player-0/down_right/6.png",
         "offset": {
           "x": 1,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_right/7.png",
+        "sprite": "images/player-0/down_right/7.png",
         "offset": {
           "x": 1,
           "y": -50
@@ -214,56 +214,56 @@
     ],
     "down": [
       {
-        "sprite": "images/tiles/player-0/down/1.png",
+        "sprite": "images/player-0/down/1.png",
         "offset": {
           "x": -2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down/2.png",
+        "sprite": "images/player-0/down/2.png",
         "offset": {
           "x": -2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down/3.png",
+        "sprite": "images/player-0/down/3.png",
         "offset": {
           "x": -2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down/4.png",
+        "sprite": "images/player-0/down/4.png",
         "offset": {
           "x": -2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down/5.png",
+        "sprite": "images/player-0/down/5.png",
         "offset": {
           "x": -2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down/6.png",
+        "sprite": "images/player-0/down/6.png",
         "offset": {
           "x": -2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down/7.png",
+        "sprite": "images/player-0/down/7.png",
         "offset": {
           "x": -2,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down/8.png",
+        "sprite": "images/player-0/down/8.png",
         "offset": {
           "x": -2,
           "y": -50
@@ -272,56 +272,56 @@
     ],
     "down_left": [
       {
-        "sprite": "images/tiles/player-0/down_left/1.png",
+        "sprite": "images/player-0/down_left/1.png",
         "offset": {
           "x": -48,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_left/2.png",
+        "sprite": "images/player-0/down_left/2.png",
         "offset": {
           "x": -48,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_left/3.png",
+        "sprite": "images/player-0/down_left/3.png",
         "offset": {
           "x": -48,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_left/4.png",
+        "sprite": "images/player-0/down_left/4.png",
         "offset": {
           "x": -48,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_left/5.png",
+        "sprite": "images/player-0/down_left/5.png",
         "offset": {
           "x": -48,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_left/6.png",
+        "sprite": "images/player-0/down_left/6.png",
         "offset": {
           "x": -48,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_left/7.png",
+        "sprite": "images/player-0/down_left/7.png",
         "offset": {
           "x": -48,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/down_left/8.png",
+        "sprite": "images/player-0/down_left/8.png",
         "offset": {
           "x": -48,
           "y": -50
@@ -330,56 +330,56 @@
     ],
     "left": [
       {
-        "sprite": "images/tiles/player-0/left/1.png",
+        "sprite": "images/player-0/left/1.png",
         "offset": {
           "x": -33,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/left/2.png",
+        "sprite": "images/player-0/left/2.png",
         "offset": {
           "x": -33,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/left/3.png",
+        "sprite": "images/player-0/left/3.png",
         "offset": {
           "x": -33,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/left/4.png",
+        "sprite": "images/player-0/left/4.png",
         "offset": {
           "x": -33,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/left/5.png",
+        "sprite": "images/player-0/left/5.png",
         "offset": {
           "x": -33,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/left/6.png",
+        "sprite": "images/player-0/left/6.png",
         "offset": {
           "x": -33,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/left/7.png",
+        "sprite": "images/player-0/left/7.png",
         "offset": {
           "x": -33,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/left/8.png",
+        "sprite": "images/player-0/left/8.png",
         "offset": {
           "x": -33,
           "y": -50
@@ -388,56 +388,56 @@
     ],
     "up_left": [
       {
-        "sprite": "images/tiles/player-0/up_left/1.png",
+        "sprite": "images/player-0/up_left/1.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_left/2.png",
+        "sprite": "images/player-0/up_left/2.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_left/3.png",
+        "sprite": "images/player-0/up_left/3.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_left/4.png",
+        "sprite": "images/player-0/up_left/4.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_left/5.png",
+        "sprite": "images/player-0/up_left/5.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_left/6.png",
+        "sprite": "images/player-0/up_left/6.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_left/7.png",
+        "sprite": "images/player-0/up_left/7.png",
         "offset": {
           "x": 0,
           "y": -50
         }
       },
       {
-        "sprite": "images/tiles/player-0/up_left/8.png",
+        "sprite": "images/player-0/up_left/8.png",
         "offset": {
           "x": 0,
           "y": -50
@@ -447,147 +447,147 @@
   },
   "deathAnimation": [
     {
-      "sprite": "images/tiles/player-0/death/1.png",
+      "sprite": "images/player-0/death/1.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/2.png",
+      "sprite": "images/player-0/death/2.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/3.png",
+      "sprite": "images/player-0/death/3.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/4.png",
+      "sprite": "images/player-0/death/4.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/5.png",
+      "sprite": "images/player-0/death/5.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/6.png",
+      "sprite": "images/player-0/death/6.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/7.png",
+      "sprite": "images/player-0/death/7.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/8.png",
+      "sprite": "images/player-0/death/8.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/9.png",
+      "sprite": "images/player-0/death/9.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/10.png",
+      "sprite": "images/player-0/death/10.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/11.png",
+      "sprite": "images/player-0/death/11.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/12.png",
+      "sprite": "images/player-0/death/12.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/13.png",
+      "sprite": "images/player-0/death/13.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/14.png",
+      "sprite": "images/player-0/death/14.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/15.png",
+      "sprite": "images/player-0/death/15.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/16.png",
+      "sprite": "images/player-0/death/16.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/17.png",
+      "sprite": "images/player-0/death/17.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/18.png",
+      "sprite": "images/player-0/death/18.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/19.png",
+      "sprite": "images/player-0/death/19.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/20.png",
+      "sprite": "images/player-0/death/20.png",
       "offset": {
         "x": -30,
         "y": -50
       }
     },
     {
-      "sprite": "images/tiles/player-0/death/21.png",
+      "sprite": "images/player-0/death/21.png",
       "offset": {
         "x": -30,
         "y": -50
@@ -596,56 +596,56 @@
   ],
   "idle": {
     "down": {
-      "sprite": "images/tiles/player-0/idle/down.png",
+      "sprite": "images/player-0/idle/down.png",
       "offset": {
         "x": -5,
         "y": -50
       }
     },
     "down_left": {
-      "sprite": "images/tiles/player-0/idle/down_left.png",
+      "sprite": "images/player-0/idle/down_left.png",
       "offset": {
         "x": -37,
         "y": -50
       }
     },
     "down_right": {
-      "sprite": "images/tiles/player-0/idle/down_right.png",
+      "sprite": "images/player-0/idle/down_right.png",
       "offset": {
         "x": 6,
         "y": -50
       }
     },
     "left": {
-      "sprite": "images/tiles/player-0/idle/left.png",
+      "sprite": "images/player-0/idle/left.png",
       "offset": {
         "x": -22,
         "y": -50
       }
     },
     "right": {
-      "sprite": "images/tiles/player-0/idle/right.png",
+      "sprite": "images/player-0/idle/right.png",
       "offset": {
         "x": 0,
         "y": -50
       }
     },
     "up": {
-      "sprite": "images/tiles/player-0/idle/up.png",
+      "sprite": "images/player-0/idle/up.png",
       "offset": {
         "x": -2,
         "y": -50
       }
     },
     "up_left": {
-      "sprite": "images/tiles/player-0/idle/up_left.png",
+      "sprite": "images/player-0/idle/up_left.png",
       "offset": {
         "x": 2,
         "y": -50
       }
     },
     "up_right": {
-      "sprite": "images/tiles/player-0/idle/up_right.png",
+      "sprite": "images/player-0/idle/up_right.png",
       "offset": {
         "x": 0,
         "y": -50
