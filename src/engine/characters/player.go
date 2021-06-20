@@ -27,7 +27,7 @@ type Player struct {
 	ammunition         map[string]int
 	cash               int
 	changeListeners    []*util.ChangeListener
-	grenades           map[string]int
+	grenades           map[string]bool
 	index              int
 	lives              int
 	score              int
@@ -44,7 +44,7 @@ func newPlayer(index int) *Player {
 	result.score = 0
 	result.selectedWeaponName = nil
 	result.ammunition = make(map[string]int, 0)
-	result.grenades = make(map[string]int, 0)
+	result.grenades = make(map[string]bool, 0)
 	result.weapons = make(map[string]bool, 0)
 	return result
 }
@@ -109,12 +109,15 @@ func (p *Player) SetCash(cash int) {
 }
 
 func (p *Player) GrenadeCount(grenade string) int {
-	return p.grenades[grenade]
+	return p.ammunition[grenade]
 }
 
 func (p *Player) SetGrenadeCount(grenade string, count int) {
-	p.grenades[grenade] = count
-	p.notifyListeners(count, PlayerPropertyGrenades)
+	if 0 < count {
+		p.grenades[grenade] = true
+	}
+	p.ammunition[grenade] = count
+	p.notifyListeners(count, PlayerPropertyAmmunition)
 }
 
 func (p *Player) GrenadeSelected() bool {
@@ -150,7 +153,7 @@ func (p *Player) Reset() {
 	p.score = 0
 	p.selectedWeaponName = nil
 	p.ammunition = make(map[string]int, 0)
-	p.grenades = make(map[string]int, 0)
+	p.grenades = make(map[string]bool, 0)
 	p.weapons = make(map[string]bool, 0)
 }
 
@@ -264,8 +267,10 @@ func (p *Player) getNamesOfWeaponsAndGrenadesInInventory() []*string {
 		}
 	}
 	for _, grenade := range assets.GrenadeCrate.GetAll() {
-		var temp = grenade.Name
-		result = append(result, &temp)
+		if p.grenades[grenade.GetName()] {
+			var temp = grenade.Name
+			result = append(result, &temp)
+		}
 	}
 	return result
 }
