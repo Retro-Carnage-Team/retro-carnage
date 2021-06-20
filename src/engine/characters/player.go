@@ -207,11 +207,9 @@ func (p *Player) SelectNextWeapon() {
 	for idx, name := range itemNames {
 		if *name == *p.selectedWeaponName {
 			if idx < len(itemNames)-1 {
-				var temp = itemNames[idx+1]
-				p.selectedWeaponName = temp
+				p.selectedWeaponName = itemNames[idx+1]
 			} else {
-				var temp = itemNames[0]
-				p.selectedWeaponName = temp
+				p.selectedWeaponName = itemNames[0]
 			}
 			break
 		}
@@ -266,10 +264,8 @@ func (p *Player) getNamesOfWeaponsAndGrenadesInInventory() []*string {
 		}
 	}
 	for _, grenade := range assets.GrenadeCrate.GetAll() {
-		if 0 < p.grenades[grenade.Name] {
-			var temp = grenade.Name
-			result = append(result, &temp)
-		}
+		var temp = grenade.Name
+		result = append(result, &temp)
 	}
 	return result
 }

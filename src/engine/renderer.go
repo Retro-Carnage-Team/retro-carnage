@@ -140,14 +140,25 @@ func (r *Renderer) drawExplosions(elapsedTimeInMs int64) {
 	}
 }
 
-// drawDebugRect draws a given geometry.Rectangle onto the in-memory canvas.
-// Useful for debugging.
+// drawDebugRect draws a given geometry.Rectangle onto the in-memory canvas. Useful for debugging.
 // Do not call from outside this class.
-func (r *Renderer) drawDebugRect(rect geometry.Rectangle) {
-	//if (this.ctx) {
-	//	this.ctx.strokeStyle = "orange";
-	//	this.ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
-	//}
+func (r *Renderer) drawDebugRect(rect *geometry.Rectangle) {
+	if nil == rect {
+		return
+	}
+
+	var draw = imdraw.New(nil)
+	draw.Color = common.Orange
+	var outputAreaInverseRoot = pixel.V(r.outputArea.X, r.outputArea.Y+r.outputArea.Height)
+	draw.Push(
+		pixel.Vec{X: rect.X, Y: -1 * rect.Y}.Scaled(r.scalingFactor).Add(outputAreaInverseRoot),
+		pixel.Vec{
+			X: rect.X + rect.Width,
+			Y: -1 * (rect.Y + rect.Height),
+		}.Scaled(r.scalingFactor).Add(outputAreaInverseRoot),
+	)
+	draw.Rectangle(3)
+	draw.Draw(r.canvas)
 }
 
 // draws a given sprite to the given position on canvas.
