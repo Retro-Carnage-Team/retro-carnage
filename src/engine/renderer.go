@@ -2,11 +2,13 @@ package engine
 
 import (
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
 	"retro-carnage/logging"
+	"retro-carnage/ui/common"
 )
 
 // Renderer is used to render the current state of an GameEngine to screen
@@ -91,13 +93,25 @@ func (r *Renderer) drawPlayers(elapsedTimeInMs int64) {
 // drawBullets draws the flying bullets onto the in-memory canvas.
 // Do not call from outside this class.
 func (r *Renderer) drawBullets() {
-	//const ctx = this.ctx
-	//if ctx {
-	//	ctx.fillStyle = BULLET_COLOR
-	//	this.engine.bullets.forEach((bullet) => {
-	//		ctx.fillRect(bullet.position.x, bullet.position.y, bullet.position.width, bullet.position.height)
-	//	})
-	//}
+	if 0 < len(r.engine.bullets) {
+		var draw = imdraw.New(nil)
+		draw.Color = common.White
+		var outputAreaInverseRoot = pixel.V(r.outputArea.X, r.outputArea.Y+r.outputArea.Height)
+		for _, bullet := range r.engine.bullets {
+			draw.Push(
+				pixel.Vec{
+					X: bullet.Position.X,
+					Y: -1 * bullet.Position.Y,
+				}.Scaled(r.scalingFactor).Add(outputAreaInverseRoot),
+				pixel.Vec{
+					X: bullet.Position.X + bullet.Position.Width,
+					Y: -1 * (bullet.Position.Y + bullet.Position.Height),
+				}.Scaled(r.scalingFactor).Add(outputAreaInverseRoot),
+			)
+			draw.Rectangle(0)
+		}
+		draw.Draw(r.canvas)
+	}
 }
 
 // drawExplosives draws the flying explosives (grenades, RPGs) onto the in-memory canvas.
