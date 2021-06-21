@@ -9,26 +9,26 @@ import (
 func TestPersonReturnsSpritesOfAnimation(t *testing.T) {
 	InitEnemySkins("testdata/skins")
 	var person = buildEnemyPerson()
-	var spriteSupplier = NewEnemyPersonSpriteSupplier(person.ViewingDirection)
+	var spriteSupplier = NewEnemyPersonSpriteSupplier(*person.ViewingDirection)
 	assert.NotNil(t, spriteSupplier)
 
-	assert.Equal(t, "images/tiles/enemy-0/down/1.png", spriteSupplier.Sprite(1, person).Source)
-	assert.Equal(t, "images/tiles/enemy-0/down/1.png", spriteSupplier.Sprite(2, person).Source)
-	assert.Equal(t, "images/tiles/enemy-0/down/2.png", spriteSupplier.Sprite(DurationOfEnemyMovementFrame, person).Source)
+	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(1, person).Source)
+	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(2, person).Source)
+	assert.Equal(t, "images/enemy-0/down/2.png", spriteSupplier.Sprite(DurationOfEnemyMovementFrame, person).Source)
 }
 
 func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
 	InitEnemySkins("testdata/skins")
 	var person = buildEnemyPerson()
-	var spriteSupplier = NewEnemyPersonSpriteSupplier(person.ViewingDirection)
+	var spriteSupplier = NewEnemyPersonSpriteSupplier(*person.ViewingDirection)
 
 	assert.NotNil(t, spriteSupplier)
-	assert.Equal(t, "images/tiles/enemy-0/down/1.png", spriteSupplier.Sprite(1, person).Source)
+	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(1, person).Source)
 
 	person.Die()
 
-	assert.Equal(t, "images/tiles/enemy-0/death/1.png", spriteSupplier.Sprite(2, person).Source)
-	assert.Equal(t, "images/tiles/enemy-0/death/2.png", spriteSupplier.Sprite(DurationOfEnemyDeathAnimationFrame, person).Source)
+	assert.Equal(t, "images/enemy-0/death/1.png", spriteSupplier.Sprite(2, person).Source)
+	assert.Equal(t, "images/enemy-0/death/2.png", spriteSupplier.Sprite(DurationOfEnemyDeathAnimationFrame, person).Source)
 }
 
 func buildEnemyPerson() ActiveEnemy {
@@ -45,6 +45,6 @@ func buildEnemyPerson() ActiveEnemy {
 		Skin:             WoodlandWithSMG,
 		SpriteSupplier:   nil,
 		Type:             Person,
-		ViewingDirection: geometry.Down,
+		ViewingDirection: &geometry.Down,
 	}
 }

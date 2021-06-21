@@ -9,7 +9,7 @@ import (
 type EnemyLandmineSpriteSupplier struct{}
 
 const (
-	landmineSprite = "images/tiles/environment/Tellermine-43.png"
+	landmineSprite = "images/environment/Tellermine-43.png"
 )
 
 func (supplier *EnemyLandmineSpriteSupplier) Sprite(int64, ActiveEnemy) *graphics.SpriteWithOffset {

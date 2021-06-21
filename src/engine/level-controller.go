@@ -68,7 +68,7 @@ func (lc *LevelController) loadSegment(segment *assets.Segment) {
 	}
 
 	lc.segmentScrollLengthInPixels = 1500 * float64(len(lc.Backgrounds)-1)
-	lc.enemies = make([]assets.Enemy, 0)
+	lc.enemies = segment.Enemies
 	lc.obstacles = segment.Obstacles
 	lc.distanceScrolled = 0
 	lc.distanceToScroll = 0
@@ -255,25 +255,24 @@ func (lc *LevelController) ObstaclesOnScreen() []*geometry.Rectangle {
 
 func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy {
 	var direction = geometry.GetDirectionByName(e.Direction)
-	if nil == direction {
-		logging.Error.Fatalf("no such direction: %s", e.Direction)
-	}
-
-	if !characters.IsEnemySkin(e.Skin) {
-		logging.Error.Fatalf("no such enemy skin: %s", e.Skin)
-	}
-
 	var result = characters.ActiveEnemy{
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               lc.convertEnemyMovements(e.Movements),
 		Skin:                    characters.EnemySkin(e.Skin),
-		ViewingDirection:        *direction,
+		Type:                    characters.EnemyType(e.Type),
+		ViewingDirection:        direction,
 	}
 	result.SetPosition(&e.Position)
 
 	if int(characters.Person) == e.Type {
-		result.SpriteSupplier = characters.NewEnemyPersonSpriteSupplier(result.ViewingDirection)
+		if nil == direction {
+			logging.Error.Fatalf("no such direction: %s", e.Direction)
+		}
+		if !characters.IsEnemySkin(e.Skin) {
+			logging.Error.Fatalf("no such enemy skin: %s", e.Skin)
+		}
+		result.SpriteSupplier = characters.NewEnemyPersonSpriteSupplier(*result.ViewingDirection)
 	}
 
 	if int(characters.Landmine) == e.Type {

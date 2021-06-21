@@ -64,16 +64,14 @@ func (r *Renderer) drawBackground() {
 // drawEnemies draws sprites for each of the currently visible enemies onto the in-memory canvas.
 // Do not call from outside this class.
 func (r *Renderer) drawEnemies(elapsedTimeInMs int64) {
-	//this.engine.enemies.forEach((enemy) => {
-	//	const tile = enemy.tileSupplier.getTile(elapsedTimeInMs, enemy);
-	//	if (tile) {
-	//		const translatedPosition = tile.translate(enemy.position);
-	//		const canvas = tile.getCanvas();
-	//		if (canvas && this.ctx) {
-	//			this.ctx.drawImage(canvas, translatedPosition.x, translatedPosition.y);
-	//		}
-	//	}
-	//});
+	for _, enemy := range r.engine.enemies {
+		var spriteWithOffset = enemy.SpriteSupplier.Sprite(elapsedTimeInMs, *enemy)
+		if nil != spriteWithOffset {
+			r.drawSpriteToCanvas(spriteWithOffset, enemy.Position())
+		} else {
+			logging.Warning.Printf("Enemy spriteWithOffset missing for enemy %s", enemy.Skin)
+		}
+	}
 }
 
 // drawPlayers draws sprites for each of the players onto the in-memory canvas.

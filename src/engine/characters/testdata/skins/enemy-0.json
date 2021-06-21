@@ -3,42 +3,42 @@
   "movement": {
     "up_right": [
       {
-        "sprite": "images/tiles/enemy-0/up_right/1.png",
+        "sprite": "images/enemy-0/up_right/1.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_right/2.png",
+        "sprite": "images/enemy-0/up_right/2.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_right/3.png",
+        "sprite": "images/enemy-0/up_right/3.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_right/4.png",
+        "sprite": "images/enemy-0/up_right/4.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_right/5.png",
+        "sprite": "images/enemy-0/up_right/5.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_right/6.png",
+        "sprite": "images/enemy-0/up_right/6.png",
         "offset": {
           "x": -30,
           "y": -30
@@ -47,42 +47,42 @@
     ],
     "right": [
       {
-        "sprite": "images/tiles/enemy-0/right/1.png",
+        "sprite": "images/enemy-0/right/1.png",
         "offset": {
           "x": -63,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/right/2.png",
+        "sprite": "images/enemy-0/right/2.png",
         "offset": {
           "x": -63,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/right/3.png",
+        "sprite": "images/enemy-0/right/3.png",
         "offset": {
           "x": -63,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/right/4.png",
+        "sprite": "images/enemy-0/right/4.png",
         "offset": {
           "x": -63,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/right/5.png",
+        "sprite": "images/enemy-0/right/5.png",
         "offset": {
           "x": -63,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/right/6.png",
+        "sprite": "images/enemy-0/right/6.png",
         "offset": {
           "x": -63,
           "y": -30
@@ -91,42 +91,42 @@
     ],
     "down_right": [
       {
-        "sprite": "images/tiles/enemy-0/down_right/1.png",
+        "sprite": "images/enemy-0/down_right/1.png",
         "offset": {
           "x": -45,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_right/2.png",
+        "sprite": "images/enemy-0/down_right/2.png",
         "offset": {
           "x": -45,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_right/3.png",
+        "sprite": "images/enemy-0/down_right/3.png",
         "offset": {
           "x": -45,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_right/4.png",
+        "sprite": "images/enemy-0/down_right/4.png",
         "offset": {
           "x": -45,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_right/5.png",
+        "sprite": "images/enemy-0/down_right/5.png",
         "offset": {
           "x": -45,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_right/6.png",
+        "sprite": "images/enemy-0/down_right/6.png",
         "offset": {
           "x": -45,
           "y": -30
@@ -135,42 +135,42 @@
     ],
     "down": [
       {
-        "sprite": "images/tiles/enemy-0/down/1.png",
+        "sprite": "images/enemy-0/down/1.png",
         "offset": {
           "x": -2,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down/2.png",
+        "sprite": "images/enemy-0/down/2.png",
         "offset": {
           "x": -2,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down/3.png",
+        "sprite": "images/enemy-0/down/3.png",
         "offset": {
           "x": -2,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down/4.png",
+        "sprite": "images/enemy-0/down/4.png",
         "offset": {
           "x": -2,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down/5.png",
+        "sprite": "images/enemy-0/down/5.png",
         "offset": {
           "x": -2,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down/6.png",
+        "sprite": "images/enemy-0/down/6.png",
         "offset": {
           "x": -2,
           "y": -30
@@ -179,42 +179,42 @@
     ],
     "down_left": [
       {
-        "sprite": "images/tiles/enemy-0/down_left/1.png",
+        "sprite": "images/enemy-0/down_left/1.png",
         "offset": {
           "x": -40,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_left/2.png",
+        "sprite": "images/enemy-0/down_left/2.png",
         "offset": {
           "x": -40,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_left/3.png",
+        "sprite": "images/enemy-0/down_left/3.png",
         "offset": {
           "x": -40,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_left/4.png",
+        "sprite": "images/enemy-0/down_left/4.png",
         "offset": {
           "x": -40,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_left/5.png",
+        "sprite": "images/enemy-0/down_left/5.png",
         "offset": {
           "x": -40,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/down_left/6.png",
+        "sprite": "images/enemy-0/down_left/6.png",
         "offset": {
           "x": -40,
           "y": -30
@@ -223,42 +223,42 @@
     ],
     "left": [
       {
-        "sprite": "images/tiles/enemy-0/left/1.png",
+        "sprite": "images/enemy-0/left/1.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/left/2.png",
+        "sprite": "images/enemy-0/left/2.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/left/3.png",
+        "sprite": "images/enemy-0/left/3.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/left/4.png",
+        "sprite": "images/enemy-0/left/4.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/left/5.png",
+        "sprite": "images/enemy-0/left/5.png",
         "offset": {
           "x": -30,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/left/6.png",
+        "sprite": "images/enemy-0/left/6.png",
         "offset": {
           "x": -30,
           "y": -30
@@ -267,42 +267,42 @@
     ],
     "up_left": [
       {
-        "sprite": "images/tiles/enemy-0/up_left/1.png",
+        "sprite": "images/enemy-0/up_left/1.png",
         "offset": {
           "x": -10,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_left/2.png",
+        "sprite": "images/enemy-0/up_left/2.png",
         "offset": {
           "x": -10,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_left/3.png",
+        "sprite": "images/enemy-0/up_left/3.png",
         "offset": {
           "x": -10,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_left/4.png",
+        "sprite": "images/enemy-0/up_left/4.png",
         "offset": {
           "x": -10,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_left/5.png",
+        "sprite": "images/enemy-0/up_left/5.png",
         "offset": {
           "x": -10,
           "y": -30
         }
       },
       {
-        "sprite": "images/tiles/enemy-0/up_left/6.png",
+        "sprite": "images/enemy-0/up_left/6.png",
         "offset": {
           "x": -10,
           "y": -30
@@ -312,42 +312,42 @@
   },
   "deathAnimation": [
     {
-      "sprite": "images/tiles/enemy-0/death/1.png",
+      "sprite": "images/enemy-0/death/1.png",
       "offset": {
         "x": -45,
         "y": -30
       }
     },
     {
-      "sprite": "images/tiles/enemy-0/death/2.png",
+      "sprite": "images/enemy-0/death/2.png",
       "offset": {
         "x": -45,
         "y": -30
       }
     },
     {
-      "sprite": "images/tiles/enemy-0/death/3.png",
+      "sprite": "images/enemy-0/death/3.png",
       "offset": {
         "x": -45,
         "y": -30
       }
     },
     {
-      "sprite": "images/tiles/enemy-0/death/4.png",
+      "sprite": "images/enemy-0/death/4.png",
       "offset": {
         "x": -45,
         "y": -30
       }
     },
     {
-      "sprite": "images/tiles/enemy-0/death/5.png",
+      "sprite": "images/enemy-0/death/5.png",
       "offset": {
         "x": -45,
         "y": -30
       }
     },
     {
-      "sprite": "images/tiles/enemy-0/death/6.png",
+      "sprite": "images/enemy-0/death/6.png",
       "offset": {
         "x": -45,
         "y": -30

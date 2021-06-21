@@ -42,7 +42,7 @@ func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy
 		return deathSprites[supplier.lastIndex].ToSpriteWithOffset()
 	} else {
 		supplier.wasDying = false
-		if supplier.lastDirection != enemy.ViewingDirection {
+		if supplier.lastDirection != *enemy.ViewingDirection {
 			supplier.durationSinceLastSprite = 0
 			supplier.lastIndex = 0
 			var skinFrame = enemySkins[enemy.Skin].MovementByDirection[enemy.ViewingDirection.Name][supplier.lastIndex]

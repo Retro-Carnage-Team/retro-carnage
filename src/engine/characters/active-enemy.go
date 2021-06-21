@@ -12,7 +12,7 @@ type ActiveEnemy struct {
 	Skin                    EnemySkin
 	SpriteSupplier          EnemySpriteSupplier
 	Type                    EnemyType
-	ViewingDirection        geometry.Direction
+	ViewingDirection        *geometry.Direction
 }
 
 func (e *ActiveEnemy) Die() {

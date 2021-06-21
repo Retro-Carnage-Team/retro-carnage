@@ -18,6 +18,34 @@
         "bg-dummy-2.jpg"
       ],
       "direction": "up",
+      "enemies": [
+        {
+          "activationDistance": 250,
+          "movements": [],
+          "direction": "down",
+          "position": {
+            "x": 300,
+            "y": -200,
+            "width": 90,
+            "height": 150
+          },
+          "skin": "enemy-1",
+          "type": 0
+        },
+        {
+          "activationDistance": 0,
+          "movements": [],
+          "direction": null,
+          "position": {
+            "x": 600,
+            "y": -1200,
+            "width": 50,
+            "height": 44
+          },
+          "skin": null,
+          "type": 1
+        }
+      ],
       "goal": null,
       "obstacles": [
         {
