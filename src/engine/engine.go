@@ -176,9 +176,9 @@ func (ge *GameEngine) updateEnemiesDeaths(elapsedTimeInMs int64) []*characters.A
 		var enemy = enemies[i]
 		if enemy.Dying {
 			enemy.DyingAnimationCountDown -= elapsedTimeInMs
-		}
-		if enemy.Dying && 0 <= enemy.DyingAnimationCountDown {
-			enemies = ge.removeEnemy(enemies, i)
+			if 0 >= enemy.DyingAnimationCountDown {
+				enemies = ge.removeEnemy(enemies, i)
+			}
 		}
 	}
 	return enemies

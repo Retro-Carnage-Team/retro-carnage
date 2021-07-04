@@ -6,9 +6,10 @@ import (
 )
 
 type SpriteWithOffset struct {
-	Offset geometry.Point
-	Source string
-	Sprite *pixel.Sprite
+	ColorMask *pixel.RGBA
+	Offset    geometry.Point
+	Source    string
+	Sprite    *pixel.Sprite
 }
 
 func (swo *SpriteWithOffset) String() string {

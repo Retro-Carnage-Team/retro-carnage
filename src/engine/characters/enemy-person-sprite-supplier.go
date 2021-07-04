@@ -1,13 +1,14 @@
 package characters
 
 import (
+	"github.com/faiface/pixel"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
 )
 
 const (
 	DurationOfEnemyDeathAnimationFrame = 75 // in ms
-	DurationOfEnemyDeathAnimation      = DurationOfEnemyDeathAnimationFrame * 20
+	DurationOfEnemyDeathAnimation      = DurationOfEnemyDeathAnimationFrame * 10
 	DurationOfEnemyMovementFrame       = 75 // in ms
 )
 
@@ -27,28 +28,30 @@ func NewEnemyPersonSpriteSupplier(direction geometry.Direction) *EnemyPersonSpri
 }
 
 func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy ActiveEnemy) *graphics.SpriteWithOffset {
+	var skinFrames = enemySkins[enemy.Skin].MovementByDirection[enemy.ViewingDirection.Name]
 	if enemy.Dying {
 		if !supplier.wasDying {
 			supplier.durationSinceLastSprite = 0
-			supplier.lastIndex = 0
 			supplier.wasDying = true
+		} else {
+			supplier.durationSinceLastSprite += msSinceLastSprite
 		}
 
-		var deathSprites = enemySkins[enemy.Skin].DeathAnimation
-		supplier.durationSinceLastSprite += msSinceLastSprite
-		if supplier.durationSinceLastSprite > DurationOfEnemyDeathAnimationFrame {
-			supplier.lastIndex = (supplier.lastIndex + 1) % len(deathSprites)
+		var result = skinFrames[supplier.lastIndex].ToSpriteWithOffset()
+		if 0 != supplier.durationSinceLastSprite {
+			var alpha = 1.0 - 1.0/float64(DurationOfEnemyDeathAnimation)*float64(supplier.durationSinceLastSprite)
+			var rgba = pixel.Alpha(alpha)
+			result.ColorMask = &rgba
 		}
-		return deathSprites[supplier.lastIndex].ToSpriteWithOffset()
+		return result
 	} else {
 		supplier.wasDying = false
 		if supplier.lastDirection != *enemy.ViewingDirection {
 			supplier.durationSinceLastSprite = 0
 			supplier.lastIndex = 0
-			var skinFrame = enemySkins[enemy.Skin].MovementByDirection[enemy.ViewingDirection.Name][supplier.lastIndex]
+			var skinFrame = skinFrames[supplier.lastIndex]
 			return skinFrame.ToSpriteWithOffset()
 		} else {
-			var skinFrames = enemySkins[enemy.Skin].MovementByDirection[enemy.ViewingDirection.Name]
 			supplier.durationSinceLastSprite += msSinceLastSprite
 			if supplier.durationSinceLastSprite > DurationOfEnemyMovementFrame {
 				supplier.durationSinceLastSprite = 0

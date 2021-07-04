@@ -21,7 +21,13 @@
       "enemies": [
         {
           "activationDistance": 250,
-          "movements": [],
+          "movements": [
+            {
+              "duration": 4375,
+              "offsetXPerMs": 0,
+              "offsetYPerMs": 0.4
+            }
+          ],
           "direction": "down",
           "position": {
             "x": 300,

@@ -167,7 +167,12 @@ func (r *Renderer) drawSpriteToCanvas(spriteWithOffset *graphics.SpriteWithOffse
 		Y: -1 * (spriteWithOffset.Offset.Y + position.Y + spriteWithOffset.Sprite.Picture().Bounds().H()/2),
 	}.Scaled(r.scalingFactor).Add(outputAreaInverseRoot)
 	var matrix = pixel.IM.Scaled(pixel.V(0, 0), r.scalingFactor).Moved(spriteCenter)
-	spriteWithOffset.Sprite.Draw(r.canvas, matrix)
+
+	if nil != spriteWithOffset.ColorMask {
+		spriteWithOffset.Sprite.DrawColorMask(r.canvas, matrix, *spriteWithOffset.ColorMask)
+	} else {
+		spriteWithOffset.Sprite.Draw(r.canvas, matrix)
+	}
 }
 
 // initializeGeometry computes the location and size of game area and the scaling factor.

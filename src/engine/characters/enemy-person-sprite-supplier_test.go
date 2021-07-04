@@ -27,8 +27,8 @@ func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
 
 	person.Die()
 
-	assert.Equal(t, "images/enemy-0/death/1.png", spriteSupplier.Sprite(2, person).Source)
-	assert.Equal(t, "images/enemy-0/death/2.png", spriteSupplier.Sprite(DurationOfEnemyDeathAnimationFrame, person).Source)
+	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(2, person).Source)
+	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(DurationOfEnemyDeathAnimationFrame, person).Source)
 }
 
 func buildEnemyPerson() ActiveEnemy {

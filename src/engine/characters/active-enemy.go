@@ -18,7 +18,6 @@ type ActiveEnemy struct {
 func (e *ActiveEnemy) Die() {
 	e.Dying = true
 	e.DyingAnimationCountDown = 1
-	// TODO: Play sound effect when enemy is a person
 }
 
 func (e *ActiveEnemy) Position() *geometry.Rectangle {
