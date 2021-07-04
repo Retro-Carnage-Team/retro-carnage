@@ -13,8 +13,8 @@ by [Elite Systems](http://www.elite-systems.co.uk).
 
 This game is currently being developed - but not ready to get played, yet.
 
-[![Watch the video](docs/youtube-2021-06-03.png)](https://youtu.be/7Id8BZXu6S0)
-Development status as of 2021-06-03
+[![Watch the video](docs/youtube-2021-06-03.png)](https://youtu.be/Y3c1ufajY_Y)
+Development status as of 2021-07-04
 
 ## Build & Run
 
