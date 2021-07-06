@@ -12,6 +12,7 @@ import (
 
 type GameEngine struct {
 	bullets             []*Bullet
+	burnMarks           []*BurnMark
 	enemies             []*characters.ActiveEnemy
 	explosives          []*Explosive
 	explosions          []*Explosion
@@ -30,6 +31,7 @@ type GameEngine struct {
 func NewGameEngine(mission *assets.Mission) *GameEngine {
 	var result = &GameEngine{
 		bullets:             make([]*Bullet, 0),
+		burnMarks:           make([]*BurnMark, 0),
 		enemies:             make([]*characters.ActiveEnemy, 0),
 		explosives:          make([]*Explosive, 0),
 		explosions:          make([]*Explosion, 0),
@@ -191,11 +193,15 @@ func (ge *GameEngine) removeEnemy(enemies []*characters.ActiveEnemy, idx int) []
 }
 
 func (ge *GameEngine) updateExplosions(elapsedTimeInMs int64) {
-	const durationOfExplosion = DurationOfExplosionFrame * NumberOfExplosionSprites
 	var explosions = ge.explosions
 	for i := len(explosions) - 1; i >= 0; i-- {
-		explosions[i].duration += elapsedTimeInMs
-		if explosions[i].duration >= durationOfExplosion {
+		var explosion = explosions[i]
+		explosion.duration += elapsedTimeInMs
+		if explosion.CreatesMark() {
+			ge.burnMarks = append(ge.burnMarks, explosion.CreateMark())
+			explosion.hasMark = true
+		}
+		if explosion.duration >= durationOfExplosion {
 			explosions = ge.removeExplosion(explosions, i)
 		}
 	}
@@ -263,21 +269,58 @@ func (ge *GameEngine) removeBullet(bullets []*Bullet, idx int) []*Bullet {
 }
 
 func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.Point) {
+	var visibleArea = screenRect()
 	for _, playerPosition := range ge.playerPositions {
 		playerPosition.Subtract(scrollOffset)
 	}
-	for _, explosive := range ge.explosives {
+
+	for idx := len(ge.explosives) - 1; idx >= 0; idx-- {
+		var explosive = ge.explosives[idx]
 		explosive.Position().Subtract(scrollOffset)
+		if nil == explosive.Position().Intersection(visibleArea) {
+			ge.explosives = ge.removeExplosive(ge.explosives, idx)
+		}
 	}
-	for _, explosion := range ge.explosions {
+
+	for idx := len(ge.explosions) - 1; idx >= 0; idx-- {
+		var explosion = ge.explosions[idx]
 		explosion.Position.Subtract(scrollOffset)
+		if nil == explosion.Position.Intersection(visibleArea) {
+			ge.explosions = ge.removeExplosion(ge.explosions, idx)
+		}
 	}
-	for _, enemy := range ge.enemies {
+
+	for idx := len(ge.enemies) - 1; idx >= 0; idx-- {
+		var enemy = ge.enemies[idx]
+		var hasBeenVisible = nil != enemy.Position().Intersection(visibleArea)
 		enemy.Position().Subtract(scrollOffset)
+		var isVisible = nil != enemy.Position().Intersection(visibleArea)
+		if hasBeenVisible && !isVisible {
+			ge.enemies = ge.removeEnemy(ge.enemies, idx)
+		}
 	}
-	for _, bullet := range ge.bullets {
+
+	for idx := len(ge.bullets) - 1; idx >= 0; idx-- {
+		var bullet = ge.bullets[idx]
 		bullet.Position.Subtract(scrollOffset)
+		if nil == bullet.Position.Intersection(visibleArea) {
+			ge.bullets = ge.removeBullet(ge.bullets, idx)
+		}
 	}
+
+	for idx := len(ge.burnMarks) - 1; idx >= 0; idx-- {
+		var burnMark = ge.burnMarks[idx]
+		burnMark.Position.Subtract(scrollOffset)
+		if nil == burnMark.Position.Intersection(visibleArea) {
+			ge.burnMarks = ge.removeBurnMark(ge.burnMarks, idx)
+		}
+	}
+}
+
+func (ge *GameEngine) removeBurnMark(burnMarks []*BurnMark, idx int) []*BurnMark {
+	burnMarks[idx] = burnMarks[len(burnMarks)-1]
+	burnMarks[len(burnMarks)-1] = nil
+	return burnMarks[:len(burnMarks)-1]
 }
 
 func (ge *GameEngine) handleWeaponAction(elapsedTimeInMs int64) {

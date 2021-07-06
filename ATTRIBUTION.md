@@ -164,6 +164,7 @@ the author of the software.
   , Free for Personal Use)
 * Amiga 500 by Bill Bertram ([Link](https://commons.wikimedia.org/wiki/File:Leander_Amiga500.jpg)
   , [License](https://creativecommons.org/licenses/by-sa/2.5/deed.en))
+* Burn Mark ([Link](https://pngio.com/images/png-a654622.html), Personal Use)
 
 ## Music
 

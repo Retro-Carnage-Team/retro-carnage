@@ -38,6 +38,7 @@ func NewRenderer(engine *GameEngine, window *pixelgl.Window) *Renderer {
 // for animated objects, like the player character or enemies.
 func (r *Renderer) Render(elapsedTimeInMs int64) {
 	r.drawBackground()
+	r.drawBurnMarks()
 	r.drawEnemies(elapsedTimeInMs)
 	r.drawPlayers(elapsedTimeInMs)
 	r.drawBullets()
@@ -134,6 +135,19 @@ func (r *Renderer) drawExplosions(elapsedTimeInMs int64) {
 			r.drawSpriteToCanvas(spriteWOffset, explosion.Position)
 		} else {
 			logging.Warning.Printf("Explosion sprite missing")
+		}
+	}
+}
+
+// drawBurnMarks draws sprites for burn marks onto the in-memory canvas.
+// Do not call from outside this class.
+func (r *Renderer) drawBurnMarks() {
+	for _, burnMark := range r.engine.burnMarks {
+		var spriteWOffset = burnMark.SpriteSupplier.Sprite()
+		if nil != spriteWOffset {
+			r.drawSpriteToCanvas(spriteWOffset, burnMark.Position)
+		} else {
+			logging.Warning.Printf("Burn mark sprite missing")
 		}
 	}
 }
