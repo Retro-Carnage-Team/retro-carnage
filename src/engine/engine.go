@@ -10,6 +10,9 @@ import (
 	"retro-carnage/util"
 )
 
+// GameEngine is the heart and soul of the game screen - the class that contains the actual game logic.
+// The idea is that you create an instance of GameEngine everytime you start a new mission. Once the mission is
+// finished, you discard the engine and select a new one.
 type GameEngine struct {
 	bullets             []*Bullet
 	burnMarks           []*BurnMark
@@ -28,6 +31,7 @@ type GameEngine struct {
 	Won                 bool
 }
 
+// NewGameEngine creates and initializes a new instance of GameEngine.
 func NewGameEngine(mission *assets.Mission) *GameEngine {
 	var result = &GameEngine{
 		bullets:             make([]*Bullet, 0),
@@ -61,17 +65,18 @@ func NewGameEngine(mission *assets.Mission) *GameEngine {
 	return result
 }
 
-func (ge *GameEngine) InitializeGameState() {
-}
-
+// SetInputController connects this GameEngine with the input.Controller to be used.
 func (ge *GameEngine) SetInputController(controller input.Controller) {
 	ge.inputController = controller
 }
 
+// Backgrounds is a slice of background sprites that are currently visible.
 func (ge *GameEngine) Backgrounds() []graphics.SpriteWithOffset {
 	return ge.levelController.VisibleBackgrounds()
 }
 
+// UpdateGameState updates the state of the game based on the milliseconds passed since the last updates.
+// Once this update has been performed, you can re-render the state of the game to screen.
 func (ge *GameEngine) UpdateGameState(elapsedTimeInMs int64) {
 	ge.updatePlayerBehavior(elapsedTimeInMs)
 	var obstacles = ge.levelController.ObstaclesOnScreen()
