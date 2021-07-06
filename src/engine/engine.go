@@ -383,6 +383,10 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 				var deadlyExplosion = nil != enemy.Position().Intersection(explosion.Position)
 				if deadlyExplosion {
 					killer = explosion.playerIdx
+					if characters.Landmine == enemy.Type {
+						var newExplosion = NewExplosion(explosion.causedByPlayer, explosion.playerIdx, enemy)
+						ge.explosions = append(ge.explosions, newExplosion)
+					}
 				}
 				death = death || deadlyExplosion
 			}
