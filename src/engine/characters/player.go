@@ -203,7 +203,7 @@ func (p *Player) SelectFirstWeapon() {
 
 func (p *Player) SelectNextWeapon() {
 	if p.AutomaticWeaponSelected() {
-		// TODO: Stop weapon sound
+		assets.NewStereo().StopFx(p.SelectedWeapon().Sound)
 	}
 
 	var itemNames = p.getNamesOfWeaponsAndGrenadesInInventory()
@@ -222,7 +222,7 @@ func (p *Player) SelectNextWeapon() {
 
 func (p *Player) SelectPreviousWeapon() {
 	if p.AutomaticWeaponSelected() {
-		// TODO: Stop weapon sound
+		assets.NewStereo().StopFx(p.SelectedWeapon().Sound)
 	}
 
 	var itemNames = p.getNamesOfWeaponsAndGrenadesInInventory()

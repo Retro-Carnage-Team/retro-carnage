@@ -63,6 +63,11 @@ func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, behavior *PlayerB
 		return skinFrame.ToSpriteWithOffset()
 	} else {
 		pss.durationSinceLastSprite += elapsedTimeInMs
+
+		if behavior.Dying {
+			return pss.spriteForDyingPlayer()
+		}
+
 		if (DurationOfPlayerMovementFrame <= pss.durationSinceLastSprite) || (nil == pss.lastSprite) {
 			pss.durationSinceLastSprite = 0
 			var frames = pss.skin.MovementByDirection[behavior.Direction.Name]
@@ -73,10 +78,6 @@ func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, behavior *PlayerB
 				pss.wasMoving = true
 			}
 			pss.lastSprite = frames[pss.lastIndex].ToSpriteWithOffset()
-		}
-
-		if behavior.Dying {
-			return pss.spriteForDyingPlayer()
 		}
 
 		pss.wasDying = false
@@ -96,13 +97,14 @@ func (pss *PlayerSpriteSupplier) spriteForDyingPlayer() *graphics.SpriteWithOffs
 	var deathFrames = pss.skin.DeathAnimation
 	if pss.wasDying {
 		if DurationOfPlayerDeathAnimationFrame <= pss.durationSinceLastSprite {
-			pss.lastIndex = (pss.lastIndex + 1) % len(deathFrames)
+			pss.lastIndex += 1
 			pss.lastSprite = deathFrames[pss.lastIndex].ToSpriteWithOffset()
+			pss.durationSinceLastSprite = 0
 		}
 	} else {
 		pss.durationSinceLastSprite = 0
 		pss.lastIndex = 0
-		pss.lastSprite = deathFrames[pss.lastIndex].ToSpriteWithOffset()
+		pss.lastSprite = deathFrames[0].ToSpriteWithOffset()
 		pss.wasDying = true
 	}
 	return pss.lastSprite
