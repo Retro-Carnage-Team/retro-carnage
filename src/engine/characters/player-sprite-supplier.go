@@ -10,6 +10,7 @@ const (
 	DurationOfPlayerMovementFrame       = 75 // in ms
 )
 
+// PlayerSpriteSupplier returns sprites for the current state of the Player
 type PlayerSpriteSupplier struct {
 	directionOfLastSprite   geometry.Direction
 	durationSinceLastSprite int64
@@ -21,6 +22,7 @@ type PlayerSpriteSupplier struct {
 	wasMoving               bool
 }
 
+// NewPlayerSpriteSupplier creates and initializes a new PlayerSpriteSupplier for a given Player.
 func NewPlayerSpriteSupplier(player *Player) *PlayerSpriteSupplier {
 	return &PlayerSpriteSupplier{
 		directionOfLastSprite:   geometry.Up,
@@ -34,10 +36,31 @@ func NewPlayerSpriteSupplier(player *Player) *PlayerSpriteSupplier {
 	}
 }
 
+// Sprite returns the graphics.SpriteWithOffset for the current state of the Player.
 func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, behavior *PlayerBehavior) *graphics.SpriteWithOffset {
+	// First we remember which sprite is currently rendered - then get the next sprite.
+	var lastSpriteSource = ""
+	if nil != pss.lastSprite {
+		lastSpriteSource = pss.lastSprite.Source
+	}
+	var nextSprite = pss.sprite(elapsedTimeInMs, behavior)
+
+	// Now we drop every second sprite - when player is invincible
+	if behavior.Invincible && lastSpriteSource != nextSprite.Source {
+		pss.invincibilityToggle = !pss.invincibilityToggle
+		if pss.invincibilityToggle {
+			return nil
+		}
+	}
+
+	return nextSprite
+}
+
+func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, behavior *PlayerBehavior) *graphics.SpriteWithOffset {
 	if behavior.Idle() {
 		pss.wasMoving = false
-		return pss.spriteForIdlePlayer(behavior)
+		var skinFrame = pss.skin.Idle[behavior.Direction.Name]
+		return skinFrame.ToSpriteWithOffset()
 	} else {
 		pss.durationSinceLastSprite += elapsedTimeInMs
 		if (DurationOfPlayerMovementFrame <= pss.durationSinceLastSprite) || (nil == pss.lastSprite) {
@@ -83,17 +106,4 @@ func (pss *PlayerSpriteSupplier) spriteForDyingPlayer() *graphics.SpriteWithOffs
 		pss.wasDying = true
 	}
 	return pss.lastSprite
-}
-
-func (pss *PlayerSpriteSupplier) spriteForIdlePlayer(behavior *PlayerBehavior) *graphics.SpriteWithOffset {
-	// TODO: Improve this: The invincibility toggle makes the player flicker with the frequency of the screen.
-	if behavior.Invincible {
-		pss.invincibilityToggle = !pss.invincibilityToggle
-		if pss.invincibilityToggle {
-			return nil
-		}
-	}
-
-	var skinFrame = pss.skin.Idle[behavior.Direction.Name]
-	return skinFrame.ToSpriteWithOffset()
 }

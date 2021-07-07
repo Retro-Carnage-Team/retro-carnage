@@ -83,9 +83,8 @@ func (r *Renderer) drawPlayers(elapsedTimeInMs int64) {
 		var spriteWithOffset = r.playerSpriteSuppliers[player.Index()].Sprite(elapsedTimeInMs, behavior)
 		if nil != spriteWithOffset {
 			r.drawSpriteToCanvas(spriteWithOffset, r.engine.playerPositions[player.Index()])
-		} else {
-			logging.Warning.Printf("Player spriteWithOffset missing for player %d", player.Index())
 		}
+		// spriteWithOffset will be null a couple of times per second when player is invincible. No need to log this.
 	}
 }
 
