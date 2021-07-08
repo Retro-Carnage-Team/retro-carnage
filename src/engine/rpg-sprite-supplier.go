@@ -8,16 +8,18 @@ import (
 	"retro-carnage/logging"
 )
 
+// RpgSpriteSupplier provides sprites for the state of a RPG projectile.
 type RpgSpriteSupplier struct {
 	lastIdx int
 	sprites []*graphics.SpriteWithOffset
 }
 
+// NewRpgSpriteSupplier creates and initializes a RpgSpriteSupplier.
 func NewRpgSpriteSupplier(direction geometry.Direction) *RpgSpriteSupplier {
 	var twoSprites = make([]*graphics.SpriteWithOffset, 0)
 	var offset = rpgOffsetByDirection(direction)
 	for i := 0; i < 2; i++ {
-		var spritePath = fmt.Sprintf("images/weapons/rpg-%s-%d.png", direction.Name, 0)
+		var spritePath = fmt.Sprintf("images/weapons/rpg-%s-%d.png", direction.Name, i+1)
 		var sprite = assets.SpriteRepository.Get(spritePath)
 		twoSprites = append(twoSprites, &graphics.SpriteWithOffset{
 			Offset: offset,
@@ -52,6 +54,7 @@ func rpgOffsetByDirection(direction geometry.Direction) geometry.Point {
 	}
 }
 
+// Sprite returns the graphics.SpriteWithOffset for the current state of a specific RPG projectile.
 func (rss *RpgSpriteSupplier) Sprite() *graphics.SpriteWithOffset {
 	rss.lastIdx = (rss.lastIdx + 1) % 2
 	return rss.sprites[rss.lastIdx]

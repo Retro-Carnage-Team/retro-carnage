@@ -129,7 +129,7 @@ func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
 	ge.Lost = 0 == len(characters.PlayerController.RemainingPlayers())
 }
 
-func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, obstacles []*geometry.Rectangle) {
+func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, obstacles []assets.Obstacle) {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = ge.playerBehaviors[player.Index()]
 		if !behavior.Dying && behavior.Moving {
@@ -219,14 +219,14 @@ func (ge *GameEngine) removeExplosion(explosions []*Explosion, idx int) []*Explo
 	return explosions[:len(explosions)-1]
 }
 
-func (ge *GameEngine) updateExplosives(elapsedTimeInMs int64, obstacles []*geometry.Rectangle) {
+func (ge *GameEngine) updateExplosives(elapsedTimeInMs int64, obstacles []assets.Obstacle) {
 	var explosives = ge.explosives
 	for i := len(explosives) - 1; i >= 0; i-- {
 		var explosive = explosives[i]
 		var done = explosive.Move(elapsedTimeInMs)
-		if !done && explosive.ExplodesOnContact {
+		if !done {
 			for _, obstacle := range obstacles {
-				if !done && (nil != obstacle.Intersection(explosive.position)) {
+				if !done && obstacle.StopsExplosives && (nil != obstacle.Intersection(explosive.position)) {
 					done = true
 				}
 			}
@@ -250,13 +250,13 @@ func (ge *GameEngine) detonateExplosive(explosive *Explosive) {
 	ge.stereo.PlayFx(assets.FxGrenade1)
 }
 
-func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []*geometry.Rectangle) {
+func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []assets.Obstacle) {
 	var bullets = ge.bullets
 	for i := len(bullets) - 1; i >= 0; i-- {
 		var reachedRange = bullets[i].Move(elapsedTimeInMs)
 		var hitObstacle = false
 		for _, obstacle := range obstacles {
-			if !hitObstacle && (nil != obstacle.Intersection(bullets[i].Position)) {
+			if !hitObstacle && obstacle.StopsBullets && (nil != obstacle.Intersection(bullets[i].Position)) {
 				hitObstacle = true
 			}
 		}

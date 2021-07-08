@@ -1,37 +1,5 @@
 package assets
 
-import (
-	"retro-carnage/engine/geometry"
-)
-
-type Location struct {
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
-}
-
-type EnemyMovement struct {
-	Duration     int64   `json:"duration"`
-	OffsetXPerMs float64 `json:"offsetXPerMs"`
-	OffsetYPerMs float64 `json:"offsetYPerMs"`
-}
-
-type Enemy struct {
-	ActivationDistance float64            `json:"activationDistance"`
-	Movements          []EnemyMovement    `json:"movements"`
-	Direction          string             `json:"direction"`
-	Position           geometry.Rectangle `json:"position"`
-	Skin               string             `json:"skin"`
-	Type               int                `json:"type"`
-}
-
-type Segment struct {
-	Backgrounds []string             `json:"backgrounds"`
-	Direction   string               `json:"direction"`
-	Enemies     []Enemy              `json:"enemies"`
-	Goal        *geometry.Rectangle  `json:"goal"`
-	Obstacles   []geometry.Rectangle `json:"obstacles"`
-}
-
 type Mission struct {
 	Briefing   string    `json:"briefing"`
 	Client     string    `json:"client"`

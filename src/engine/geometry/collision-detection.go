@@ -34,7 +34,6 @@ func (a byLength) Less(i, j int) bool { return a[i].length < a[j].length }
 // moved into direction by the specified distance. Returns in case of a collision this method will return the movingRect
 // moved for the max distance that will not cause a collision. It will return null of there is no collision of the two
 // given Rectangles.
-
 // movingRect: the rectangle that gets moved
 // stillRect: another rectangle that doesn't move
 // direction: direction of movement of movingRect

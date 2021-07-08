@@ -29,7 +29,7 @@ type LevelController struct {
 	distanceScrolled            float64
 	enemies                     []assets.Enemy
 	goal                        *geometry.Rectangle
-	obstacles                   []geometry.Rectangle
+	obstacles                   []assets.Obstacle
 	segments                    []assets.Segment
 	segmentScrollLengthInPixels float64
 	Backgrounds                 []graphics.SpriteWithOffset
@@ -42,7 +42,7 @@ func NewLevelController(segments []assets.Segment) *LevelController {
 		distanceScrolled:            0,
 		enemies:                     make([]assets.Enemy, 0),
 		goal:                        nil,
-		obstacles:                   make([]geometry.Rectangle, 0),
+		obstacles:                   make([]assets.Obstacle, 0),
 		segments:                    segments,
 		segmentScrollLengthInPixels: 0,
 		Backgrounds:                 make([]graphics.SpriteWithOffset, 0),
@@ -230,7 +230,7 @@ func (lc *LevelController) GoalReached(playerPositions []*geometry.Rectangle) bo
 	return false
 }
 
-func (lc *LevelController) ObstaclesOnScreen() []*geometry.Rectangle {
+func (lc *LevelController) ObstaclesOnScreen() []assets.Obstacle {
 	var direction = lc.segments[lc.currentSegmentIdx].Direction
 	var scrollAdjustment = geometry.Point{X: 0, Y: 0}
 	switch direction {
@@ -242,12 +242,12 @@ func (lc *LevelController) ObstaclesOnScreen() []*geometry.Rectangle {
 		scrollAdjustment = geometry.Point{X: -1 * lc.distanceScrolled, Y: 0}
 	}
 
-	var result = make([]*geometry.Rectangle, 0)
+	var result = make([]assets.Obstacle, 0)
 	var screenRect = screenRect()
 	for _, obstacle := range lc.obstacles {
-		var adjustedObstaclePosition = obstacle.Add(&scrollAdjustment)
-		if nil != adjustedObstaclePosition.Intersection(screenRect) {
-			result = append(result, adjustedObstaclePosition)
+		obstacle.Rectangle.Add(&scrollAdjustment)
+		if nil != obstacle.Rectangle.Intersection(screenRect) {
+			result = append(result, obstacle)
 		}
 	}
 	return result

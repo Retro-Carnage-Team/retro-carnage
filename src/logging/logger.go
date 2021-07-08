@@ -7,10 +7,19 @@ import (
 )
 
 var (
-	Trace   *log.Logger
-	Info    *log.Logger
+	// Trace is the logger for the most detailed messages. Should be used for debugging info only.
+	// Trace messages will only be visible on dev machines.
+	Trace *log.Logger
+
+	// Info is the logger used for non-critical output.
+	Info *log.Logger
+
+	// Warning is the logger used for warnings / important messages to the user.
 	Warning *log.Logger
-	Error   *log.Logger
+
+	// Error is the logger used for serious / very important messages to the user. Usually you would write a message to
+	// the Error logger before you stop the program due to a critical condition.
+	Error *log.Logger
 )
 
 func init() {

@@ -1,6 +1,9 @@
 package engine
 
-import "retro-carnage/engine/geometry"
+import (
+	"retro-carnage/assets"
+	"retro-carnage/engine/geometry"
+)
 
 const (
 	MinPlayerDistanceToBorder = 25
@@ -13,13 +16,13 @@ func UpdatePlayerMovement(
 	elapsedTimeInMs int64,
 	direction geometry.Direction,
 	oldPosition *geometry.Rectangle,
-	obstacles []*geometry.Rectangle,
+	obstacles []assets.Obstacle,
 ) *geometry.Rectangle {
 	var movement = getMovementVector(elapsedTimeInMs, direction)
 	var updated = false
 	var updatedPosition = oldPosition
 	for _, obstacle := range obstacles {
-		var restrictedMovement = geometry.StopMovementOnCollision(updatedPosition, obstacle, direction, &movement)
+		var restrictedMovement = geometry.StopMovementOnCollision(updatedPosition, &obstacle.Rectangle, direction, &movement)
 		if nil != restrictedMovement {
 			updated = true
 			updatedPosition = restrictedMovement

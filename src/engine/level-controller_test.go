@@ -221,7 +221,7 @@ func buildTestSegments() []assets.Segment {
 			    ],
 		*/
 		Goal:      nil,
-		Obstacles: []geometry.Rectangle{{X: 400, Y: -300, Width: 200, Height: 200}},
+		Obstacles: []assets.Obstacle{{Rectangle: geometry.Rectangle{X: 400, Y: -300, Width: 200, Height: 200}, StopsBullets: true, StopsExplosives: true}},
 	}
 	result = append(result, segment)
 
@@ -230,7 +230,7 @@ func buildTestSegments() []assets.Segment {
 		Direction:   geometry.Left.Name,
 		// Enemies: [],
 		Goal:      nil,
-		Obstacles: []geometry.Rectangle{},
+		Obstacles: []assets.Obstacle{},
 	}
 	result = append(result, segment)
 
@@ -239,7 +239,7 @@ func buildTestSegments() []assets.Segment {
 		Direction:   geometry.Right.Name,
 		// Enemies: [],
 		Goal:      &geometry.Rectangle{X: 42, Y: 42, Width: 200, Height: 200},
-		Obstacles: []geometry.Rectangle{},
+		Obstacles: []assets.Obstacle{},
 	}
 	result = append(result, segment)
 
