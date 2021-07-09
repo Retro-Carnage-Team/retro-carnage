@@ -42,7 +42,7 @@ func (r *Renderer) Render(elapsedTimeInMs int64) {
 	r.drawEnemies(elapsedTimeInMs)
 	r.drawPlayers(elapsedTimeInMs)
 	r.drawBullets()
-	r.drawExplosives()
+	r.drawExplosives(elapsedTimeInMs)
 	r.drawExplosions(elapsedTimeInMs)
 
 	r.canvas.Draw(r.window, pixel.IM.Moved(r.canvas.Bounds().Center()))
@@ -114,9 +114,9 @@ func (r *Renderer) drawBullets() {
 
 // drawExplosives draws the flying explosives (grenades, RPGs) onto the in-memory canvas.
 // Do not call from outside this class.
-func (r *Renderer) drawExplosives() {
+func (r *Renderer) drawExplosives(elapsedTimeInMs int64) {
 	for _, explosive := range r.engine.explosives {
-		var spriteWOffset = explosive.SpriteSupplier.Sprite()
+		var spriteWOffset = explosive.SpriteSupplier.Sprite(elapsedTimeInMs)
 		if nil != spriteWOffset {
 			r.drawSpriteToCanvas(spriteWOffset, explosive.position)
 		} else {

@@ -1,7 +1,6 @@
 package assets
 
 import (
-	"errors"
 	"fmt"
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/effects"
@@ -179,12 +178,12 @@ func loadMusic(song Song) (sound, error) {
 func readMp3IntoBuffer(filePath string) (*beep.Buffer, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Failed to load music from %s: %v", filePath, err))
+		return nil, fmt.Errorf("failed to load music from %s: %v", filePath, err)
 	}
 
 	streamer, format, err := mp3.Decode(file)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Failed to decode music from %s: %v", filePath, err))
+		return nil, fmt.Errorf("failed to decode music from %s: %v", filePath, err)
 	}
 
 	buffer := beep.NewBuffer(format)

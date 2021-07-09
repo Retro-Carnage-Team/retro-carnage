@@ -8,10 +8,16 @@ import (
 	"retro-carnage/logging"
 )
 
+const (
+	durationOfRpgFrame = 75
+	rpgSpritePath      = "images/weapons/rpg-%s-%d.png"
+)
+
 // RpgSpriteSupplier provides sprites for the state of a RPG projectile.
 type RpgSpriteSupplier struct {
-	lastIdx int
-	sprites []*graphics.SpriteWithOffset
+	lastIdx          int
+	msSinceLastFrame int64
+	sprites          []*graphics.SpriteWithOffset
 }
 
 // NewRpgSpriteSupplier creates and initializes a RpgSpriteSupplier.
@@ -19,7 +25,7 @@ func NewRpgSpriteSupplier(direction geometry.Direction) *RpgSpriteSupplier {
 	var twoSprites = make([]*graphics.SpriteWithOffset, 0)
 	var offset = rpgOffsetByDirection(direction)
 	for i := 0; i < 2; i++ {
-		var spritePath = fmt.Sprintf("images/weapons/rpg-%s-%d.png", direction.Name, i+1)
+		var spritePath = fmt.Sprintf(rpgSpritePath, direction.Name, i+1)
 		var sprite = assets.SpriteRepository.Get(spritePath)
 		twoSprites = append(twoSprites, &graphics.SpriteWithOffset{
 			Offset: offset,
@@ -27,7 +33,7 @@ func NewRpgSpriteSupplier(direction geometry.Direction) *RpgSpriteSupplier {
 			Sprite: sprite,
 		})
 	}
-	return &RpgSpriteSupplier{lastIdx: 0, sprites: twoSprites}
+	return &RpgSpriteSupplier{lastIdx: 0, msSinceLastFrame: 0, sprites: twoSprites}
 }
 
 func rpgOffsetByDirection(direction geometry.Direction) geometry.Point {
@@ -55,7 +61,12 @@ func rpgOffsetByDirection(direction geometry.Direction) geometry.Point {
 }
 
 // Sprite returns the graphics.SpriteWithOffset for the current state of a specific RPG projectile.
-func (rss *RpgSpriteSupplier) Sprite() *graphics.SpriteWithOffset {
-	rss.lastIdx = (rss.lastIdx + 1) % 2
+func (rss *RpgSpriteSupplier) Sprite(elapsedTimeInMs int64) *graphics.SpriteWithOffset {
+	rss.msSinceLastFrame += elapsedTimeInMs
+	if durationOfRpgFrame < rss.msSinceLastFrame {
+		rss.lastIdx = (rss.lastIdx + 1) % 2
+		rss.msSinceLastFrame = 0
+	}
+
 	return rss.sprites[rss.lastIdx]
 }

@@ -15,7 +15,7 @@ var (
 // GrenadeSpriteSupplier is used to provide sprites for grenades.
 type GrenadeSpriteSupplier struct{}
 
-func (gss *GrenadeSpriteSupplier) Sprite() *graphics.SpriteWithOffset {
+func (gss *GrenadeSpriteSupplier) Sprite(int64) *graphics.SpriteWithOffset {
 	if nil == grenadeSprite {
 		var sprite = assets.SpriteRepository.Get(grenadeImagePath)
 		grenadeSprite = &graphics.SpriteWithOffset{
