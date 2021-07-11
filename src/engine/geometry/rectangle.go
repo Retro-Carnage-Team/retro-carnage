@@ -58,6 +58,15 @@ func (r *Rectangle) Center() *Point {
 	}
 }
 
+func (r *Rectangle) Clone() *Rectangle {
+	return &Rectangle{
+		Y:      r.Y,
+		X:      r.X,
+		Height: r.Height,
+		Width:  r.Width,
+	}
+}
+
 func (r *Rectangle) String() string {
 	return fmt.Sprintf("Rectangle[x: %.5f, y: %.5f, width: %.5f, height: %.5f]", r.X, r.Y, r.Width, r.Height)
 }

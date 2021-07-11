@@ -50,7 +50,7 @@ func (e *Explosion) CreatesMark() bool {
 // CreateMark creates a BurnMark caused by this explosion - and makes sure this can happen only once.
 func (e *Explosion) CreateMark() *BurnMark {
 	var result = BurnMark{
-		Position:       e.Position,
+		Position:       e.Position.Clone(),
 		SpriteSupplier: &BurnMarkSpriteSupplier{},
 	}
 	e.hasMark = true
