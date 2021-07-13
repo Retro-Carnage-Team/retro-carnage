@@ -3,14 +3,18 @@ package characters
 import (
 	"encoding/json"
 	"io/ioutil"
+	"retro-carnage/engine/geometry"
 	"retro-carnage/logging"
 )
 
+// Skin is the configuration of the visual appearance of a Player or an Enemy.
 type Skin struct {
-	DeathAnimation      []SkinFrame            `json:"deathAnimation"`
-	Idle                map[string]SkinFrame   `json:"idle"`
-	MovementByDirection map[string][]SkinFrame `json:"movement"`
-	Name                string                 `json:"name"`
+	BulletOffsets       map[string]geometry.Point `json:"bulletOffsets"`
+	DeathAnimation      []SkinFrame               `json:"deathAnimation"`
+	Idle                map[string]SkinFrame      `json:"idle"`
+	MovementByDirection map[string][]SkinFrame    `json:"movement"`
+	Name                string                    `json:"name"`
+	RpgOffsets          map[string]geometry.Point `json:"rpgOffsets"`
 }
 
 // DurationOfDeathAnimation returns the duration of a death animation in milliseconds
