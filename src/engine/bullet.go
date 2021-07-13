@@ -21,12 +21,12 @@ var (
 // their values from the skin.
 func buildBulletOffsetForPlayer0() (result map[geometry.Direction]*geometry.Point) {
 	result = make(map[geometry.Direction]*geometry.Point)
-	result[geometry.Up] = &geometry.Point{X: 80, Y: -BulletHeight}
-	result[geometry.UpRight] = &geometry.Point{X: 105, Y: 0}
-	result[geometry.Right] = &geometry.Point{X: 126, Y: 43}
-	result[geometry.DownRight] = &geometry.Point{X: 103, Y: 100}
-	result[geometry.Down] = &geometry.Point{X: 14, Y: 185}
-	result[geometry.DownLeft] = &geometry.Point{X: -20, Y: 70}
+	result[geometry.Up] = &geometry.Point{X: 40, Y: -BulletHeight}
+	result[geometry.UpRight] = &geometry.Point{X: 60, Y: -10}
+	result[geometry.Right] = &geometry.Point{X: 75, Y: 20}
+	result[geometry.DownRight] = &geometry.Point{X: 70, Y: 60}
+	result[geometry.Down] = &geometry.Point{X: 5, Y: 90}
+	result[geometry.DownLeft] = &geometry.Point{X: -45, Y: 55}
 	result[geometry.Left] = &geometry.Point{X: -15, Y: 3}
 	result[geometry.UpLeft] = &geometry.Point{X: -BulletWidth, Y: -20}
 	return
