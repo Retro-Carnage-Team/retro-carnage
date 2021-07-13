@@ -16,6 +16,7 @@ func InitPlayerSkins(skinsDirectory string) {
 	}
 }
 
+// SkinForPlayer returns the skin configuration used for the specified Player.
 func SkinForPlayer(playerIdx int) *Skin {
 	return playerSkins[playerIdx]
 }

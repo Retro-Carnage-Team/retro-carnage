@@ -2,12 +2,20 @@ package characters
 
 import "fmt"
 
+// EnemySkin typed string representing an enemy skin.
 type EnemySkin string
 
 const (
-	WoodlandWithSMG             EnemySkin = "enemy-0"
-	GreyJumperWithRifle         EnemySkin = "enemy-1"
-	DigitalWithPistols          EnemySkin = "enemy-2"
+	// WoodlandWithSMG skin of an enemy wearing woodland camouflage and a sub machine gun
+	WoodlandWithSMG EnemySkin = "enemy-0"
+
+	// GreyJumperWithRifle skin if an enemy wearing a grey jumpsuit and a rifle
+	GreyJumperWithRifle EnemySkin = "enemy-1"
+
+	// DigitalWithPistols skin of an enemy wearing digital camouflage and two pistols
+	DigitalWithPistols EnemySkin = "enemy-2"
+
+	// WoodlandWithBulletproofVest skin of an enemy wearing woodland camouflage and a bullet proof vest and a pistol
 	WoodlandWithBulletproofVest EnemySkin = "enemy-3"
 )
 
@@ -27,6 +35,7 @@ func InitEnemySkins(skinsDirectory string) {
 	}
 }
 
+// IsEnemySkin returns whether or no the given name represents an installed enemy skin.
 func IsEnemySkin(name string) bool {
 	for _, skin := range enemySkinNames {
 		if string(skin) == name {
