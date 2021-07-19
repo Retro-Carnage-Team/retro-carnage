@@ -20,17 +20,55 @@
       "direction": "up",
       "enemies": [
         {
-          "activationDistance": 250,
-          "movements": [
+          "actions": [
             {
-              "duration": 4375,
-              "offsetXPerMs": 0,
-              "offsetYPerMs": 0.4
+              "delay": 250,
+              "action": "bullet"
             }
           ],
-          "direction": "down",
+          "activationDistance": 250,
+          "movements": [],
+          "direction": "left",
           "position": {
             "x": 300,
+            "y": -200,
+            "width": 90,
+            "height": 150
+          },
+          "skin": "enemy-1",
+          "type": 0
+        },
+        {
+          "actions": [
+            {
+              "delay": 250,
+              "action": "bullet"
+            }
+          ],
+          "activationDistance": 250,
+          "movements": [],
+          "direction": "down",
+          "position": {
+            "x": 600,
+            "y": -200,
+            "width": 90,
+            "height": 150
+          },
+          "skin": "enemy-1",
+          "type": 0
+        },
+        {
+          "actions": [
+            {
+              "delay": 250,
+              "action": "bullet"
+            }
+          ],
+          "activationDistance": 250,
+          "movements": [],
+          "direction": "right",
+          "position": {
+            "x": 900,
             "y": -200,
             "width": 90,
             "height": 150

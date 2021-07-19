@@ -4,12 +4,13 @@ import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/logging"
 )
 
 const (
-	BulletHeight = 5
-	BulletWidth  = 5
+	BulletHeight     = 5
+	BulletWidth      = 5
+	EnemyBulletSpeed = 1.4
+	EnemyBulletRange = 500
 )
 
 // Bullet is a projectile that has been fired by a player or enemy.
@@ -44,17 +45,32 @@ func NewBulletFiredByPlayer(
 		},
 		speed: selectedWeapon.BulletSpeed,
 	}
-	result.applyPlayerOffset()
-	return
+
+	var offsetValue = characters.SkinForPlayer(playerIdx).BulletOffsets[direction.Name]
+	result.Position.Add(&offsetValue)
+	return result
 }
 
-func (b *Bullet) applyPlayerOffset() {
-	if !b.firedByPlayer || b.playerIdx < 0 || b.playerIdx > 1 {
-		logging.Error.Fatal("Failed to apply player offset due to invalid parameters")
+// NewBulletFiredByEnemy creates and returns a new instance of Bullet.
+func NewBulletFiredByEnemy(enemy *characters.ActiveEnemy) (result *Bullet) {
+	result = &Bullet{
+		distanceMoved:    0,
+		distanceToTarget: float64(EnemyBulletRange),
+		direction:        *enemy.ViewingDirection,
+		firedByPlayer:    false,
+		Position: &geometry.Rectangle{
+			X:      enemy.Position().X,
+			Y:      enemy.Position().Y,
+			Width:  BulletWidth,
+			Height: BulletHeight,
+		},
+		speed: EnemyBulletSpeed,
 	}
 
-	var offsetValue = characters.SkinForPlayer(b.playerIdx).BulletOffsets[b.direction.Name]
-	b.Position.Add(&offsetValue)
+	var skin = characters.GetEnemySkin(enemy.Skin)
+	var offsetValue = skin.BulletOffsets[enemy.ViewingDirection.Name]
+	result.Position.Add(&offsetValue)
+	return result
 }
 
 // Move moves the Bullet. Returns true if the Bullet reached it's destination

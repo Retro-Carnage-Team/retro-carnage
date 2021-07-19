@@ -10,4 +10,5 @@ type Enemy struct {
 	Position           geometry.Rectangle `json:"position"`
 	Skin               string             `json:"skin"`
 	Type               int                `json:"type"`
+	Actions            []EnemyAction      `json:"actions"`
 }

@@ -35,6 +35,7 @@ type LevelController struct {
 	Backgrounds                 []graphics.SpriteWithOffset
 }
 
+// NewLevelController creates a new LevelController.
 func NewLevelController(segments []assets.Segment) *LevelController {
 	var result = &LevelController{
 		currentSegmentIdx:           0,
@@ -74,6 +75,7 @@ func (lc *LevelController) loadSegment(segment *assets.Segment) {
 	lc.distanceToScroll = 0
 }
 
+// ProgressToNextSegment proceeds to the next level segment when the Player(s) finished the current segment.
 func (lc *LevelController) ProgressToNextSegment() {
 	if lc.currentSegmentIdx+1 < len(lc.segments) {
 		lc.currentSegmentIdx++
@@ -177,6 +179,7 @@ func (lc *LevelController) scrollRight(pixels float64) geometry.Point {
 	return geometry.Point{X: pixels, Y: 0}
 }
 
+// VisibleBackgrounds returns the graphics.SpriteWithOffset for all backgrounds in the visible screen rect.
 func (lc *LevelController) VisibleBackgrounds() []graphics.SpriteWithOffset {
 	var result = make([]graphics.SpriteWithOffset, 0)
 	var negativeScreenSize = float64(ScreenSize * -1)
@@ -219,6 +222,7 @@ func (lc *LevelController) distanceBehindScrollBarrier(playerPositions []*geomet
 	return 0
 }
 
+// GoalReached returns true when a Player reached the goal rect of the current mission.
 func (lc *LevelController) GoalReached(playerPositions []*geometry.Rectangle) bool {
 	if nil != lc.goal {
 		for _, playerPosition := range playerPositions {
@@ -230,6 +234,7 @@ func (lc *LevelController) GoalReached(playerPositions []*geometry.Rectangle) bo
 	return false
 }
 
+// ObstaclesOnScreen returns all assets.Obstacle that within the visible screen rect.
 func (lc *LevelController) ObstaclesOnScreen() []assets.Obstacle {
 	var direction = lc.segments[lc.currentSegmentIdx].Direction
 	var scrollAdjustment = geometry.Point{X: 0, Y: 0}
@@ -256,6 +261,7 @@ func (lc *LevelController) ObstaclesOnScreen() []assets.Obstacle {
 func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy {
 	var direction = geometry.GetDirectionByName(e.Direction)
 	var result = characters.ActiveEnemy{
+		Actions:                 e.Actions,
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               lc.convertEnemyMovements(e.Movements),
@@ -263,7 +269,7 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy
 		Type:                    characters.EnemyType(e.Type),
 		ViewingDirection:        direction,
 	}
-	result.SetPosition(&e.Position)
+	result.SetPosition(e.Position.Clone())
 
 	if int(characters.Person) == e.Type {
 		if nil == direction {

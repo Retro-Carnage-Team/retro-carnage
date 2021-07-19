@@ -9,6 +9,7 @@ type EnemyMovement struct {
 	TimeElapsed int64
 }
 
+// NewEnemyMovement creates a new EnemyMovement based on its JSON representation
 func NewEnemyMovement(e *assets.EnemyMovement) EnemyMovement {
 	return EnemyMovement{
 		EnemyMovement: e,

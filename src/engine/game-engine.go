@@ -95,8 +95,9 @@ func (ge *GameEngine) UpdateGameState(elapsedTimeInMs int64) {
 	ge.updateAllPositionsWithScrollOffset(&scrollOffsets)
 
 	var activatedEnemies = ge.levelController.ActivatedEnemies()
-	for _, activatedEnemy := range activatedEnemies {
-		ge.enemies = append(ge.enemies, &activatedEnemy)
+	for i := range activatedEnemies {
+		var enemy = &activatedEnemies[i]
+		ge.enemies = append(ge.enemies, enemy)
 	}
 }
 
@@ -147,19 +148,32 @@ func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, ob
 func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
 	var enemies = ge.updateEnemiesDeaths(elapsedTimeInMs)
 	for _, enemy := range enemies {
-		if !enemy.Dying && (characters.Person == enemy.Type) && (0 < len(enemy.Movements)) {
-			var remaining = elapsedTimeInMs
-			for (0 < remaining) && (0 < len(enemy.Movements)) {
-				var currentMovement = enemy.Movements[0]
-				var duration = util.MinInt64(remaining, currentMovement.Duration-currentMovement.TimeElapsed)
-				enemy.Position().Add(&geometry.Point{
-					X: float64(duration) * currentMovement.OffsetXPerMs,
-					Y: float64(duration) * currentMovement.OffsetYPerMs,
-				})
-				remaining -= duration
-				currentMovement.TimeElapsed += duration
-				if currentMovement.TimeElapsed >= currentMovement.Duration {
-					enemy.Movements = ge.removeFirstEnemyMovement(enemy.Movements)
+		if !enemy.Dying && (characters.Person == enemy.Type) {
+			if 0 < len(enemy.Movements) {
+				var remaining = elapsedTimeInMs
+				for (0 < remaining) && (0 < len(enemy.Movements)) {
+					var currentMovement = enemy.Movements[0]
+					var duration = util.MinInt64(remaining, currentMovement.Duration-currentMovement.TimeElapsed)
+					enemy.Position().Add(&geometry.Point{
+						X: float64(duration) * currentMovement.OffsetXPerMs,
+						Y: float64(duration) * currentMovement.OffsetYPerMs,
+					})
+					remaining -= duration
+					currentMovement.TimeElapsed += duration
+					if currentMovement.TimeElapsed >= currentMovement.Duration {
+						enemy.Movements = ge.removeFirstEnemyMovement(enemy.Movements)
+					}
+				}
+			}
+
+			var enemyAction = enemy.Action(elapsedTimeInMs)
+			if nil != enemyAction {
+				if assets.EnemyActionBullet == *enemyAction {
+					ge.bullets = append(ge.bullets, NewBulletFiredByEnemy(enemy))
+				} else if assets.EnemyActionGrenade == *enemyAction {
+					// TODO: Throw a grenade
+				} else {
+					logging.Warning.Printf("Invalid enemy configuration. Unknown action %s", *enemyAction)
 				}
 			}
 		}
@@ -298,6 +312,11 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 	for idx := len(ge.enemies) - 1; idx >= 0; idx-- {
 		var enemy = ge.enemies[idx]
 		var hasBeenVisible = nil != enemy.Position().Intersection(visibleArea)
+
+		if !scrollOffset.Zero() {
+			logging.Info.Printf("Moving enemy from %s by %s", enemy.Position().String(), scrollOffset.String())
+		}
+
 		enemy.Position().Subtract(scrollOffset)
 		var isVisible = nil != enemy.Position().Intersection(visibleArea)
 		if hasBeenVisible && !isVisible {
@@ -373,7 +392,6 @@ func (ge *GameEngine) fireBullet(player *characters.Player, behavior *characters
 	var weapon = player.SelectedWeapon()
 	var position = ge.playerPositions[player.Index()]
 	var bullet = NewBulletFiredByPlayer(player.Index(), position, behavior.Direction, weapon)
-	bullet.applyPlayerOffset()
 	ge.bullets = append(ge.bullets, bullet)
 	behavior.TimeSinceLastBullet = 0
 }

@@ -1,6 +1,9 @@
 package characters
 
-import "fmt"
+import (
+	"fmt"
+	"retro-carnage/logging"
+)
 
 // EnemySkin typed string representing an enemy skin.
 type EnemySkin string
@@ -33,6 +36,13 @@ func InitEnemySkins(skinsDirectory string) {
 			enemySkins[skin] = loadSkin(fmt.Sprintf("%s/%s.json", skinsDirectory, skin))
 		}
 	}
+}
+
+func GetEnemySkin(name EnemySkin) *Skin {
+	if !IsEnemySkin(string(name)) {
+		logging.Error.Fatalf("No such enemy skin found: %s", name)
+	}
+	return enemySkins[name]
 }
 
 // IsEnemySkin returns whether or no the given name represents an installed enemy skin.
