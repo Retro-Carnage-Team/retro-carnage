@@ -12,7 +12,7 @@ func TestLandmineReturnsStaticSprite(t *testing.T) {
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               []*EnemyMovement{},
-		position: &geometry.Rectangle{
+		position: geometry.Rectangle{
 			X:      100,
 			Y:      100,
 			Width:  50,
