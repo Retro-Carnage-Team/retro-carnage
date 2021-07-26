@@ -314,7 +314,7 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 		var hasBeenVisible = nil != enemy.Position().Intersection(visibleArea)
 
 		if !scrollOffset.Zero() {
-			logging.Info.Printf("Moving enemy from %s by %s", enemy.Position().String(), scrollOffset.String())
+			logging.Trace.Printf("Moving enemy from %s by %s", enemy.Position().String(), scrollOffset.String())
 		}
 
 		enemy.Position().Subtract(scrollOffset)

@@ -18,10 +18,25 @@ Development status as of 2021-07-04
 
 ## Build & Run
 
-Retro-Carnage is being developed on Ubuntu Linux (latest). Follow these steps to get the code up & running (manually).
+Make sure you have Golang (>= 1.16) and git installed
 
-- Make sure you have go (>= 1.16) and git installed
-- Then install the required development libraries: `sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev`
+### Install dependencies
+
+#### On Ubuntu
+
+Install the required libraries: `sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev`
+
+#### On Fedora
+
+Install the required
+libraries: `sudo dnf install libXcursor-devel libXrandr-devel libXinerama-devel libXi-devel mesa-libGL-devel xorg-x11-server-devel alsa-lib-devel libXxf86vm-devel`
+
+#### On Windows
+
+Install [tdm-gcc](https://jmeubank.github.io/tdm-gcc/) (so that various go-bindings can be compiled).
+
+### Build and run the game
+
 - Get the code: `git clone https://github.com/huddeldaddel/retro-carnage.git`
 - Change into the src directory: `cd retro-carnage/src`
 - Install required modules: `go get -d`
