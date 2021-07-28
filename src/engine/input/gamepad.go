@@ -3,21 +3,27 @@ package input
 import (
 	"github.com/faiface/pixel/pixelgl"
 	"math"
+	"strings"
 )
 
 // gamepad can be used to access the device state of a gamepad or joystick.
 // Both digital and analog sticks are supported. The class uses the pixel framework / OpenGL to get required hardware
 // information.
 type gamepad struct {
+	analog   *bool
 	joystick pixelgl.Joystick
 	name     string
 	window   *pixelgl.Window
 }
 
-// Old analog controllers might be a bit wobbly and need a higher value.
-const inputThreshold = 0.05
+const (
+	// Old analog controllers might be a bit wobbly and need a higher value.
+	inputThreshold = 0.05
+)
 
 var (
+	digitalControllers = []string{"Competition Pro"}
+
 	PiOver8        = math.Pi / 8
 	PiTimes3Over8  = (3 * math.Pi) / 8
 	PiTimes5Over8  = (5 * math.Pi) / 8
@@ -81,7 +87,7 @@ func (g *gamepad) State() *DeviceState {
 	var state DeviceState
 	var horizontal = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftX)
 	var vertical = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftY)
-	if g.isAnalog(horizontal, vertical) {
+	if g.isAnalog() {
 		// Checked this with XBox360 and PlayStation controllers
 		state.Fire = g.window.JoystickPressed(g.joystick, pixelgl.ButtonA)
 		state.Grenade = g.window.JoystickPressed(g.joystick, pixelgl.ButtonB)
@@ -117,8 +123,18 @@ func (g *gamepad) Name() string {
 }
 
 // isAnalog returns true when the controller axis allows values other than [-1, 0, 1].
-func (g *gamepad) isAnalog(horizontal float64, vertical float64) bool {
-	var digital = (horizontal == -1 || math.Abs(horizontal) < inputThreshold || horizontal == 1) &&
-		(vertical == -1 || math.Abs(vertical) < inputThreshold || vertical == 1)
-	return !digital
+func (g *gamepad) isAnalog() bool {
+	if nil != g.analog {
+		return *g.analog
+	}
+
+	var analogController = true
+	for _, controllerName := range digitalControllers {
+		if strings.Contains(strings.ToLower(g.Name()), strings.ToLower(controllerName)) {
+			analogController = false
+			break
+		}
+	}
+	g.analog = &analogController
+	return analogController
 }
