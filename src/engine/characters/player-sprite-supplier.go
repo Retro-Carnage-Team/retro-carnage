@@ -57,17 +57,18 @@ func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, behavior *PlayerB
 }
 
 func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, behavior *PlayerBehavior) *graphics.SpriteWithOffset {
+	pss.durationSinceLastSprite += elapsedTimeInMs
+
+	if behavior.Dying {
+		return pss.spriteForDyingPlayer()
+	}
+	pss.wasDying = false
+
 	if behavior.Idle() {
 		pss.wasMoving = false
 		var skinFrame = pss.skin.Idle[behavior.Direction.Name]
 		return skinFrame.ToSpriteWithOffset()
 	} else {
-		pss.durationSinceLastSprite += elapsedTimeInMs
-
-		if behavior.Dying {
-			return pss.spriteForDyingPlayer()
-		}
-
 		if (DurationOfPlayerMovementFrame <= pss.durationSinceLastSprite) || (nil == pss.lastSprite) {
 			pss.durationSinceLastSprite = 0
 			var frames = pss.skin.MovementByDirection[behavior.Direction.Name]
@@ -80,7 +81,6 @@ func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, behavior *PlayerB
 			pss.lastSprite = frames[pss.lastIndex].ToSpriteWithOffset()
 		}
 
-		pss.wasDying = false
 		if pss.directionOfLastSprite != behavior.Direction {
 			pss.directionOfLastSprite = behavior.Direction
 			pss.durationSinceLastSprite = 0

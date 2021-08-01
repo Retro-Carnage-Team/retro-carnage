@@ -43,20 +43,6 @@
           "x": 2,
           "y": -50
         }
-      },
-      {
-        "sprite": "images/player-1/up/7.png",
-        "offset": {
-          "x": 2,
-          "y": -50
-        }
-      },
-      {
-        "sprite": "images/player-1/up/8.png",
-        "offset": {
-          "x": 2,
-          "y": -50
-        }
       }
     ],
     "up_right": [
@@ -97,13 +83,6 @@
       },
       {
         "sprite": "images/player-1/up_right/6.png",
-        "offset": {
-          "x": 0,
-          "y": -50
-        }
-      },
-      {
-        "sprite": "images/player-1/up_right/7.png",
         "offset": {
           "x": 0,
           "y": -50
@@ -152,13 +131,6 @@
           "x": -0,
           "y": -50
         }
-      },
-      {
-        "sprite": "images/player-1/right/7.png",
-        "offset": {
-          "x": -0,
-          "y": -50
-        }
       }
     ],
     "down_right": [
@@ -199,13 +171,6 @@
       },
       {
         "sprite": "images/player-1/down_right/6.png",
-        "offset": {
-          "x": 1,
-          "y": -50
-        }
-      },
-      {
-        "sprite": "images/player-1/down_right/7.png",
         "offset": {
           "x": 1,
           "y": -50
@@ -254,20 +219,6 @@
           "x": -2,
           "y": -50
         }
-      },
-      {
-        "sprite": "images/player-1/down/7.png",
-        "offset": {
-          "x": -2,
-          "y": -50
-        }
-      },
-      {
-        "sprite": "images/player-1/down/8.png",
-        "offset": {
-          "x": -2,
-          "y": -50
-        }
       }
     ],
     "down_left": [
@@ -308,20 +259,6 @@
       },
       {
         "sprite": "images/player-1/down_left/6.png",
-        "offset": {
-          "x": -48,
-          "y": -50
-        }
-      },
-      {
-        "sprite": "images/player-1/down_left/7.png",
-        "offset": {
-          "x": -48,
-          "y": -50
-        }
-      },
-      {
-        "sprite": "images/player-1/down_left/8.png",
         "offset": {
           "x": -48,
           "y": -50
@@ -370,20 +307,6 @@
           "x": -33,
           "y": -50
         }
-      },
-      {
-        "sprite": "images/player-1/left/7.png",
-        "offset": {
-          "x": -33,
-          "y": -50
-        }
-      },
-      {
-        "sprite": "images/player-1/left/8.png",
-        "offset": {
-          "x": -33,
-          "y": -50
-        }
       }
     ],
     "up_left": [
@@ -424,20 +347,6 @@
       },
       {
         "sprite": "images/player-1/up_left/6.png",
-        "offset": {
-          "x": 0,
-          "y": -50
-        }
-      },
-      {
-        "sprite": "images/player-1/up_left/7.png",
-        "offset": {
-          "x": 0,
-          "y": -50
-        }
-      },
-      {
-        "sprite": "images/player-1/up_left/8.png",
         "offset": {
           "x": 0,
           "y": -50
@@ -592,6 +501,41 @@
         "x": -30,
         "y": -50
       }
+    },
+    {
+      "sprite": "images/player-1/death/22.png",
+      "offset": {
+        "x": -30,
+        "y": -50
+      }
+    },
+    {
+      "sprite": "images/player-1/death/23.png",
+      "offset": {
+        "x": -30,
+        "y": -50
+      }
+    },
+    {
+      "sprite": "images/player-1/death/24.png",
+      "offset": {
+        "x": -30,
+        "y": -50
+      }
+    },
+    {
+      "sprite": "images/player-1/death/25.png",
+      "offset": {
+        "x": -30,
+        "y": -50
+      }
+    },
+    {
+      "sprite": "images/player-1/death/26.png",
+      "offset": {
+        "x": -30,
+        "y": -50
+      }
     }
   ],
   "idle": {
@@ -658,28 +602,28 @@
       "y": -45
     },
     "up_right": {
-      "x": 116,
-      "y": 9
+      "x": 125,
+      "y": -5
     },
     "right": {
-      "x": 135,
-      "y": 52
+      "x": 145,
+      "y": 40
     },
     "down_right": {
       "x": 98,
       "y": 100
     },
     "down": {
-      "x": 16,
-      "y": 160
+      "x": 10,
+      "y": 170
     },
     "down_left": {
-      "x": -25,
+      "x": -40,
       "y": 57
     },
     "left": {
-      "x": -5,
-      "y": 12
+      "x": -20,
+      "y": -3
     },
     "up_left": {
       "x": -5,
