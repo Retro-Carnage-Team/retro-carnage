@@ -100,9 +100,6 @@ func (lc *LevelController) ActivatedEnemies() []characters.ActiveEnemy {
 }
 
 func (lc *LevelController) UpdatePosition(elapsedTimeInMs int64, playerPositions []*geometry.Rectangle) geometry.Point {
-	// TODO: This currently ignores the position of the second player.
-	// We should only scroll if we don't kick the other player out of the visible area
-
 	// How far is the player behind the scroll barrier?
 	var scrollDistanceByPlayerPosition = lc.distanceBehindScrollBarrier(playerPositions)
 
@@ -113,6 +110,7 @@ func (lc *LevelController) UpdatePosition(elapsedTimeInMs int64, playerPositions
 	var availablePixelsToScroll = math.Min(lc.distanceToScroll, numberOfPixelsToScrollLeftForThisSegment)
 	var scrollDistanceForTheElapsedTime = math.Floor(float64(elapsedTimeInMs) * ScrollMovementPerMs)
 	availablePixelsToScroll = math.Min(availablePixelsToScroll, scrollDistanceForTheElapsedTime)
+	availablePixelsToScroll = math.Min(availablePixelsToScroll, lc.distanceFromScreenExit(playerPositions))
 
 	return lc.scroll(availablePixelsToScroll)
 }
@@ -215,6 +213,37 @@ func (lc *LevelController) distanceBehindScrollBarrier(playerPositions []*geomet
 			rightMostPosition = math.Max(rightMostPosition, pos.X+pos.Width)
 		}
 		return rightMostPosition - ScrollBarrierRight
+	}
+
+	// should not happen
+	logging.Error.Fatalf("Level segment has unknown direction: %s", direction)
+	return 0
+}
+
+// distanceFromScreenExit returns the minimum distance of a player from the screen side opposite the scrolling
+// direction. This is used to limit the scrolling so that no player gets pushed off screen.
+func (lc *LevelController) distanceFromScreenExit(playerPositions []*geometry.Rectangle) float64 {
+	var direction = lc.segments[lc.currentSegmentIdx].Direction
+	if geometry.Up.Name == direction {
+		var result = float64(ScreenSize)
+		for _, pos := range playerPositions {
+			result = math.Min(ScreenSize-MinPlayerDistanceToBorder-PlayerHitRectHeight-pos.Y, result)
+		}
+		return result
+	}
+	if geometry.Left.Name == direction {
+		var result = float64(ScreenSize)
+		for _, pos := range playerPositions {
+			result = math.Min(ScreenSize-MinPlayerDistanceToBorder-PlayerHitRectWidth-pos.X, result)
+		}
+		return result
+	}
+	if geometry.Right.Name == direction {
+		var result = float64(ScreenSize)
+		for _, pos := range playerPositions {
+			result = math.Min(pos.X-MinPlayerDistanceToBorder, result)
+		}
+		return result
 	}
 
 	// should not happen

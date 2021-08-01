@@ -17,7 +17,7 @@ func run() {
 	cfg := pixelgl.WindowConfig{
 		Bounds: pixel.R(0, 0, pixelX, pixelY),
 		// commenting out this line will make the app run in a window instead of full screen
-		// Monitor: monitor,
+		//Monitor: monitor,
 		Title: "RETRO CARNAGE",
 		VSync: true,
 	}
