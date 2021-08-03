@@ -70,11 +70,11 @@ func newPlayerInfo(playerIdx int, window *pixelgl.Window) *playerInfo {
 	return result
 }
 
-// drawToScreen draws this component to screen.
+// draw draws this component to the given pixel.Target.
 // The content is updated, if necessary.
-func (pi *playerInfo) drawToScreen() {
+func (pi *playerInfo) draw(target pixel.Target) {
 	pi.updateCanvas()
-	pi.canvas.Draw(pi.window, pixel.IM.Moved(pi.canvas.Bounds().Center()))
+	pi.canvas.Draw(target, pixel.IM.Moved(pi.canvas.Bounds().Center()))
 }
 
 // updateCanvas updates the in-memory canvas of this component.
@@ -82,7 +82,7 @@ func (pi *playerInfo) drawToScreen() {
 func (pi *playerInfo) updateCanvas() {
 	var initialize = nil == pi.componentArea || nil == pi.canvas
 	if initialize {
-		pi.calculateScreenRect()
+		pi.calculateComponentArea(pi.window)
 		pi.initializeCanvas()
 		pi.drawBackground()
 		pi.drawPlayerPortrait()
@@ -107,17 +107,17 @@ func (pi *playerInfo) updateCanvas() {
 	}
 }
 
-// calculateScreenRect gets the area of this player info component.
+// calculateComponentArea gets the area of this player info component.
 // Should not be called from outside this class.
-func (pi *playerInfo) calculateScreenRect() {
+func (pi *playerInfo) calculateComponentArea(window *pixelgl.Window) {
 	var playerInfoArea = geometry.Rectangle{
 		X:      0,
 		Y:      0,
-		Width:  (pi.window.Bounds().W() - pi.window.Bounds().H()) / 2,
-		Height: pi.window.Bounds().H(),
+		Width:  (window.Bounds().W() - window.Bounds().H()) / 2,
+		Height: window.Bounds().H(),
 	}
 	if 1 == pi.playerIdx {
-		playerInfoArea.X = pi.window.Bounds().W() - playerInfoArea.Width
+		playerInfoArea.X = window.Bounds().W() - playerInfoArea.Width
 	}
 	pi.componentArea = &playerInfoArea
 }
@@ -146,7 +146,7 @@ func (pi *playerInfo) drawBackground() {
 	var offsetX = pi.componentArea.X + spriteBounds.W()/2
 	for {
 		var offsetY = spriteBounds.Max.Y / 2
-		for offsetY < pi.window.Bounds().H()+spriteBounds.Max.Y/2 {
+		for offsetY < pi.componentArea.Height+spriteBounds.Max.Y/2 {
 			var movedSpriteBounds = pixel.V(offsetX, offsetY)
 			backgroundSprite.Draw(pi.canvas, pixel.IM.Moved(movedSpriteBounds))
 			offsetY += spriteBounds.Max.Y
@@ -170,7 +170,7 @@ func (pi *playerInfo) drawPlayerPortrait() {
 		return
 	}
 
-	var scalingFactor = (pi.window.Bounds().H() / 4) / playerPortraitSprite.Picture().Bounds().H()
+	var scalingFactor = (pi.componentArea.Height / 4) / playerPortraitSprite.Picture().Bounds().H()
 	var location = pixel.Vec{
 		X: pi.componentArea.X + (pi.componentArea.Width / 2),
 		Y: pi.componentArea.Height - innerMargin - playerPortraitSprite.Picture().Bounds().H()*scalingFactor/2,
@@ -336,7 +336,7 @@ func (pi *playerInfo) areaForLives() (pixel.Vec, pixel.Vec) {
 func (pi *playerInfo) areaForScore() (pixel.Vec, pixel.Vec) {
 	var bottomLeft = pixel.Vec{
 		X: pi.componentArea.X + innerMargin,
-		Y: pi.window.Bounds().H() - innerMargin - (pi.window.Bounds().H() / 4) - innerMargin - scoreAreaHeight,
+		Y: pi.componentArea.Height - innerMargin - (pi.componentArea.Height / 4) - innerMargin - scoreAreaHeight,
 	}
 	var topRight = pixel.Vec{
 		X: pi.componentArea.X + pi.componentArea.Width - innerMargin,
