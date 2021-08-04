@@ -21,7 +21,7 @@ type GameEngine struct {
 	explosions          []*Explosion
 	inputController     input.Controller
 	inventoryController []*InventoryController
-	kills               []int
+	Kills               []int
 	levelController     *LevelController
 	Lost                bool
 	mission             *assets.Mission
@@ -40,7 +40,7 @@ func NewGameEngine(mission *assets.Mission) *GameEngine {
 		explosives:          make([]*Explosive, 0),
 		explosions:          make([]*Explosion, 0),
 		inventoryController: make([]*InventoryController, 0),
-		kills:               []int{0, 0},
+		Kills:               []int{0, 0},
 		levelController:     NewLevelController(mission.Segments),
 		Lost:                false,
 		mission:             mission,
@@ -484,7 +484,7 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 				enemy.Dying = true
 				enemy.DyingAnimationCountDown = 1
 				if -1 != killer {
-					ge.kills[killer] += 1
+					ge.Kills[killer] += 1
 				}
 				if characters.Person == enemy.Type {
 					ge.stereo.PlayFx(assets.RandomEnemyDeathSoundEffect())

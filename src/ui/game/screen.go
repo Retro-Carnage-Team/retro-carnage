@@ -79,7 +79,13 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 			if s.engine.Lost {
 				s.onGameLost()
 			} else if s.engine.Won {
-				s.missionWonAnimation = createMissionWonAnimation(s.playerInfos, gameCanvas, s.mission, s.window)
+				s.missionWonAnimation = createMissionWonAnimation(
+					s.playerInfos,
+					gameCanvas,
+					s.engine.Kills,
+					s.mission,
+					s.window,
+				)
 			}
 		}
 	}

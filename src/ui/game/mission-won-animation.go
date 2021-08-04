@@ -11,12 +11,14 @@ import (
 )
 
 const (
-	backgroundFadeDelay    int64 = 1000
-	backgroundFadeDuration int64 = 250
-	bonusIncrementDuration int64 = 165
-	bonusIncrement         int64 = 500
-	missionBonusDelay      int64 = 1500
-	// victorySongDelay    int64 = 500
+	backgroundFadeDelay      int64 = 1000
+	backgroundFadeDuration   int64 = 250
+	bonusIncrementDuration   int64 = 165
+	bonusIncrement           int64 = 500
+	missionBonusDelay        int64 = 1500
+	postRevengeDelay         int64 = 5000
+	revengeBonusPerKill      int64 = 10
+	revengeIncrementDuration int64 = 100
 )
 
 var (
@@ -29,6 +31,10 @@ type missionWonAnimation struct {
 	completedTextVisible bool
 	duration             int64
 	finished             bool
+	foregroundColor      pixel.RGBA
+	kills                []int
+	killCounter          []int
+	killCounterDuration  int64
 	mission              *assets.Mission
 	missionBonus         int64
 	missionBonusDuration int64
@@ -41,6 +47,7 @@ type missionWonAnimation struct {
 func createMissionWonAnimation(
 	playerInfos []*playerInfo,
 	gameCanvas *pixelgl.Canvas,
+	kills []int,
 	mission *assets.Mission,
 	window *pixelgl.Window,
 ) *missionWonAnimation {
@@ -56,6 +63,9 @@ func createMissionWonAnimation(
 		completedTextVisible: false,
 		duration:             0,
 		finished:             false,
+		kills:                kills,
+		killCounter:          []int{0, 0},
+		killCounterDuration:  0,
 		mission:              mission,
 		missionBonus:         0,
 		missionBonusDuration: 0,
@@ -100,14 +110,35 @@ func (mwa *missionWonAnimation) update(elapsedTimeInMs int64) {
 
 	if (mwa.duration >= missionBonusDelay) && (mwa.missionBonus == int64(mwa.mission.Reward)) &&
 		(mwa.missionBonusDuration > 2*bonusIncrementDuration) {
-		mwa.playerResultLines[0] = "Done"
-		mwa.playerResultLines[1] = "Done"
+		mwa.killCounterDuration += elapsedTimeInMs
+		if mwa.isKillCounterDone() {
+			mwa.stereo.StopFx(assets.FxAr10)
+			var bgAlpha = 0.3 + 0.7*float64(mwa.killCounterDuration)/float64(postRevengeDelay)
+			mwa.backgroundColorMask = pixel.RGBA{A: bgAlpha}
+			if mwa.killCounterDuration > postRevengeDelay/2 {
+				mwa.playerResultLines[0] = ""
+				mwa.playerResultLines[1] = ""
+			}
+			mwa.finished = mwa.killCounterDuration >= postRevengeDelay
+		} else if mwa.killCounterDuration > revengeIncrementDuration {
+			if (mwa.killCounter[0] == 0) && (mwa.killCounter[1] == 0) {
+				mwa.stereo.PlayFx(assets.FxAr10)
+			}
+			mwa.killCounterDuration = 0
+			for _, player := range characters.PlayerController.RemainingPlayers() {
+				if mwa.killCounter[player.Index()] < mwa.kills[player.Index()] {
+					mwa.killCounter[player.Index()] += 1
+					mwa.playerBonus[player.Index()] = mwa.playerBonus[player.Index()] + revengeBonusPerKill
+				}
+				mwa.playerResultLines[player.Index()] = fmt.Sprintf(
+					"PLAYER %d - REVENGE BONUS x %d: $%7d",
+					1+player.Index(),
+					mwa.kills[player.Index()]-mwa.killCounter[player.Index()],
+					mwa.playerBonus[player.Index()],
+				)
+			}
+		}
 	}
-
-	// TODO: Set the finished flag only when the score calculation has been shown (or user cancelled the animation)
-	// if mwa.duration > 7500 {
-	//  	mwa.finished = true
-	// }
 
 	mwa.duration += elapsedTimeInMs
 }
@@ -127,16 +158,27 @@ func (mwa *missionWonAnimation) initialActions() {
 }
 
 func (mwa *missionWonAnimation) showTexts() {
-	var offset = 6.0
-	var renderer = fonts.TextRenderer{Window: mwa.window}
-	for _, line := range completedTextLines {
-		renderer.DrawLineToScreenCenter(line, offset, common.White)
-		offset -= 1.5
-	}
+	if mwa.killCounterDuration < postRevengeDelay/2 {
+		var offset = 6.0
+		var renderer = fonts.TextRenderer{Window: mwa.window}
+		for _, line := range completedTextLines {
+			renderer.DrawLineToScreenCenter(line, offset, common.White)
+			offset -= 1.5
+		}
 
-	offset -= 2
-	for _, line := range mwa.playerResultLines {
-		renderer.DrawLineToScreenCenter(line, offset, common.White)
-		offset -= 1.5
+		offset -= 2
+		for _, line := range mwa.playerResultLines {
+			renderer.DrawLineToScreenCenter(line, offset, common.White)
+			offset -= 1.5
+		}
 	}
+}
+
+func (mwa *missionWonAnimation) isKillCounterDone() bool {
+	var done = true
+	for _, player := range characters.PlayerController.RemainingPlayers() {
+		var playerIndex = player.Index()
+		done = done && (mwa.kills[playerIndex] == mwa.killCounter[playerIndex])
+	}
+	return done
 }
