@@ -104,8 +104,7 @@ func (s *Screen) onGameLost() {
 }
 
 func (s *Screen) onMissionWon() {
-	var mission = engine.MissionController.CurrentMission()
-	engine.MissionController.MarkMissionFinished(mission)
+	engine.MissionController.MarkMissionFinished(s.mission)
 	var remainingMissions, err = engine.MissionController.RemainingMissions()
 	if nil != err {
 		logging.Error.Fatalf("Error on game screen: Level has been won when none have been initialized")
