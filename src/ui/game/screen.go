@@ -10,11 +10,13 @@ import (
 	"time"
 )
 
+// Screen in this package is the one that show the actual gameplay.
 type Screen struct {
 	engine               *engine.GameEngine
-	fpsInfo              *FpsInfo
+	fpsInfo              *fpsInfo
 	inputController      input.Controller
 	mission              *assets.Mission
+	missionWonAnimation  *missionWonAnimation
 	playerInfos          []*playerInfo
 	renderer             *engine.Renderer
 	screenChangeRequired common.ScreenChangeCallback
@@ -22,20 +24,24 @@ type Screen struct {
 	window               *pixelgl.Window
 }
 
+// SetInputController is used to connect Screen with the global input.Controller instance.
 func (s *Screen) SetInputController(ctrl input.Controller) {
 	s.inputController = ctrl
 }
 
+// SetScreenChangeCallback is used to connect Screen with the callback method of ui.MainScreen.
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
 }
 
+// SetWindow is used to connect Screen with the pixelgl.Window instance.
 func (s *Screen) SetWindow(window *pixelgl.Window) {
 	s.window = window
 }
 
+// SetUp is called when the screen got initialized by ui.MainScreen and is about to appear shortly.
 func (s *Screen) SetUp() {
-	s.fpsInfo = &FpsInfo{second: time.Tick(time.Second)}
+	s.fpsInfo = &fpsInfo{second: time.Tick(time.Second)}
 	s.playerInfos = []*playerInfo{
 		newPlayerInfo(0, s.window),
 		newPlayerInfo(1, s.window),
@@ -52,18 +58,35 @@ func (s *Screen) SetUp() {
 	s.renderer = engine.NewRenderer(s.engine, s.window)
 }
 
+// Update gets called for every frame that gets displayed.
+// Here we update the state of the gameplay based on the time that has elapsed since the last frame.
+// Then we render the new game state to the pixelgl.Window.
 func (s *Screen) Update(elapsedTimeInMs int64) {
 	for _, playerInfo := range s.playerInfos {
-		playerInfo.drawToScreen()
+		playerInfo.draw(s.window)
 	}
 
 	if nil != s.engine && nil != s.renderer {
-		s.engine.UpdateGameState(elapsedTimeInMs)
-		s.renderer.Render(elapsedTimeInMs)
-		if s.engine.Lost {
-			s.onGameLost()
-		} else if s.engine.Won {
-			s.onMissionWon()
+		if s.engine.Won && nil != s.missionWonAnimation {
+			s.missionWonAnimation.update(elapsedTimeInMs)
+			s.missionWonAnimation.drawToScreen()
+			if s.missionWonAnimation.finished {
+				s.onMissionWon()
+			}
+		} else {
+			s.engine.UpdateGameState(elapsedTimeInMs)
+			var gameCanvas = s.renderer.Render(elapsedTimeInMs)
+			if s.engine.Lost {
+				s.onGameLost()
+			} else if s.engine.Won {
+				s.missionWonAnimation = createMissionWonAnimation(
+					s.playerInfos,
+					gameCanvas,
+					s.engine.Kills,
+					s.mission,
+					s.window,
+				)
+			}
 		}
 	}
 
@@ -71,6 +94,8 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.fpsInfo.drawToScreen(s.window)
 }
 
+// TearDown is called by ui.MainWindow when the Screen has been displayed for the last time.
+// Here we clean up and free used resources.
 func (s *Screen) TearDown() {
 	s.stereo.StopSong(s.mission.Music)
 	for _, playerInfo := range s.playerInfos {
@@ -85,9 +110,7 @@ func (s *Screen) onGameLost() {
 }
 
 func (s *Screen) onMissionWon() {
-	// TODO: Show level end animation / score calculation
-	var mission = engine.MissionController.CurrentMission()
-	engine.MissionController.MarkMissionFinished(mission)
+	engine.MissionController.MarkMissionFinished(s.mission)
 	var remainingMissions, err = engine.MissionController.RemainingMissions()
 	if nil != err {
 		logging.Error.Fatalf("Error on game screen: Level has been won when none have been initialized")

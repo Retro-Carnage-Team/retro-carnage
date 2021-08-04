@@ -34,9 +34,10 @@ func NewRenderer(engine *GameEngine, window *pixelgl.Window) *Renderer {
 	return result
 }
 
-// Render draws the state of the GameEngine to screen. The parameter elapsedTimeInMs is used to pick the right sprites
-// for animated objects, like the player character or enemies.
-func (r *Renderer) Render(elapsedTimeInMs int64) {
+// Render draws the state of the GameEngine to screen.
+// The parameter elapsedTimeInMs is used to pick the right sprites for animated objects, like the player character or
+// enemies. Returns a canvas that displays the current game state. Do not modify this canvas outside of this object.
+func (r *Renderer) Render(elapsedTimeInMs int64) *pixelgl.Canvas {
 	r.drawBackground()
 	r.drawBurnMarks()
 	r.drawEnemies(elapsedTimeInMs)
@@ -46,6 +47,7 @@ func (r *Renderer) Render(elapsedTimeInMs int64) {
 	r.drawExplosions(elapsedTimeInMs)
 
 	r.canvas.Draw(r.window, pixel.IM.Moved(r.canvas.Bounds().Center()))
+	return r.canvas
 }
 
 // drawBackground draws the background image of the current mission section onto the in-memory canvas.
