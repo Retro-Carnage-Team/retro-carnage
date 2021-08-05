@@ -10,15 +10,20 @@ import (
 	"retro-carnage/ui/common/fonts"
 )
 
+type animationSection int
+
 const (
-	backgroundFadeDelay      int64 = 1000
-	backgroundFadeDuration   int64 = 250
-	bonusIncrementDuration   int64 = 165
-	bonusIncrement           int64 = 500
-	missionBonusDelay        int64 = 1500
-	postRevengeDelay         int64 = 5000
-	revengeBonusPerKill      int64 = 10
-	revengeIncrementDuration int64 = 100
+	animationSectionOne      animationSection = 0
+	animationSectionTwo      animationSection = 1
+	animationSectionThree    animationSection = 2
+	backgroundFadeDelay      int64            = 1000
+	backgroundFadeDuration   int64            = 250
+	bonusIncrementDuration   int64            = 165
+	bonusIncrement           int64            = 500
+	missionBonusDelay        int64            = 1500
+	postRevengeDelay         int64            = 5000
+	revengeBonusPerKill      int64            = 10
+	revengeIncrementDuration int64            = 100
 )
 
 var (
@@ -26,6 +31,7 @@ var (
 )
 
 type missionWonAnimation struct {
+	animationSection     animationSection
 	backgroundCanvas     *pixelgl.Canvas
 	backgroundColorMask  pixel.RGBA
 	completedTextVisible bool
@@ -58,6 +64,7 @@ func createMissionWonAnimation(
 	gameCanvas.Draw(bgCanvas, pixel.IM.Moved(gameCanvas.Bounds().Center()))
 
 	return &missionWonAnimation{
+		animationSection:     animationSectionOne,
 		backgroundCanvas:     bgCanvas,
 		backgroundColorMask:  pixel.RGBA{A: 0.0},
 		completedTextVisible: false,
@@ -81,63 +88,16 @@ func (mwa *missionWonAnimation) update(elapsedTimeInMs int64) {
 		mwa.initialActions()
 	}
 
-	if (mwa.duration > backgroundFadeDelay) && (mwa.duration <= backgroundFadeDelay+backgroundFadeDuration) {
-		var elapsed = float64(mwa.duration - backgroundFadeDelay)
-		var total = float64(backgroundFadeDuration)
-		var alpha = 0.3 * (elapsed / total)
-		mwa.backgroundColorMask = pixel.RGBA{A: alpha}
-	}
-
-	mwa.completedTextVisible = mwa.duration > backgroundFadeDelay+backgroundFadeDuration/2
-	if (mwa.duration >= missionBonusDelay) &&
-		(mwa.missionBonus <= int64(mwa.mission.Reward)) &&
-		(mwa.missionBonusDuration < 2*bonusIncrementDuration) {
-
-		mwa.missionBonusDuration += elapsedTimeInMs
-		if (mwa.missionBonus < int64(mwa.mission.Reward)) && (mwa.missionBonusDuration > bonusIncrementDuration) {
-			mwa.missionBonusDuration = 0
-			mwa.missionBonus += bonusIncrement
-			mwa.playerBonus[0] = mwa.missionBonus
-			mwa.playerBonus[1] = mwa.missionBonus
-			mwa.stereo.PlayFx(assets.FxPistol1)
-		}
-
-		for _, player := range characters.PlayerController.RemainingPlayers() {
-			mwa.playerResultLines[player.Index()] = fmt.Sprintf(
-				"PLAYER %d - MISSION BONUS: $%7d", 1+player.Index(), mwa.playerBonus[player.Index()])
-		}
-	}
-
-	if (mwa.duration >= missionBonusDelay) && (mwa.missionBonus == int64(mwa.mission.Reward)) &&
-		(mwa.missionBonusDuration > 2*bonusIncrementDuration) {
-		mwa.killCounterDuration += elapsedTimeInMs
-		if mwa.isKillCounterDone() {
-			mwa.stereo.StopFx(assets.FxAr10)
-			var bgAlpha = 0.3 + 0.7*float64(mwa.killCounterDuration)/float64(postRevengeDelay)
-			mwa.backgroundColorMask = pixel.RGBA{A: bgAlpha}
-			if mwa.killCounterDuration > postRevengeDelay/2 {
-				mwa.playerResultLines[0] = ""
-				mwa.playerResultLines[1] = ""
-			}
-			mwa.finished = mwa.killCounterDuration >= postRevengeDelay
-		} else if mwa.killCounterDuration > revengeIncrementDuration {
-			if (mwa.killCounter[0] == 0) && (mwa.killCounter[1] == 0) {
-				mwa.stereo.PlayFx(assets.FxAr10)
-			}
-			mwa.killCounterDuration = 0
-			for _, player := range characters.PlayerController.RemainingPlayers() {
-				if mwa.killCounter[player.Index()] < mwa.kills[player.Index()] {
-					mwa.killCounter[player.Index()] += 1
-					mwa.playerBonus[player.Index()] = mwa.playerBonus[player.Index()] + revengeBonusPerKill
-				}
-				mwa.playerResultLines[player.Index()] = fmt.Sprintf(
-					"PLAYER %d - REVENGE BONUS x %d: $%7d",
-					1+player.Index(),
-					mwa.kills[player.Index()]-mwa.killCounter[player.Index()],
-					mwa.playerBonus[player.Index()],
-				)
-			}
-		}
+	switch mwa.animationSection {
+	case animationSectionOne:
+		mwa.runAnimationSectionOne()
+		break
+	case animationSectionTwo:
+		mwa.runAnimationSectionTwo(elapsedTimeInMs)
+		break
+	case animationSectionThree:
+		mwa.runAnimationSectionThree(elapsedTimeInMs)
+		break
 	}
 
 	mwa.duration += elapsedTimeInMs
@@ -181,4 +141,75 @@ func (mwa *missionWonAnimation) isKillCounterDone() bool {
 		done = done && (mwa.kills[playerIndex] == mwa.killCounter[playerIndex])
 	}
 	return done
+}
+
+func (mwa *missionWonAnimation) runAnimationSectionOne() {
+	if (mwa.duration > backgroundFadeDelay) && (mwa.duration <= backgroundFadeDelay+backgroundFadeDuration) {
+		var elapsed = float64(mwa.duration - backgroundFadeDelay)
+		var total = float64(backgroundFadeDuration)
+		var alpha = 0.3 * (elapsed / total)
+		mwa.backgroundColorMask = pixel.RGBA{A: alpha}
+	}
+	mwa.completedTextVisible = mwa.duration > backgroundFadeDelay+backgroundFadeDuration/2
+
+	if mwa.duration >= missionBonusDelay {
+		mwa.animationSection = animationSectionTwo
+	}
+}
+
+func (mwa *missionWonAnimation) runAnimationSectionTwo(elapsedTimeInMs int64) {
+	if (mwa.duration >= missionBonusDelay) &&
+		(mwa.missionBonus <= int64(mwa.mission.Reward)) &&
+		(mwa.missionBonusDuration < 2*bonusIncrementDuration) {
+
+		mwa.missionBonusDuration += elapsedTimeInMs
+		if (mwa.missionBonus < int64(mwa.mission.Reward)) && (mwa.missionBonusDuration > bonusIncrementDuration) {
+			mwa.missionBonusDuration = 0
+			mwa.missionBonus += bonusIncrement
+			mwa.playerBonus[0] = mwa.missionBonus
+			mwa.playerBonus[1] = mwa.missionBonus
+			mwa.stereo.PlayFx(assets.FxPistol1)
+		}
+
+		for _, player := range characters.PlayerController.RemainingPlayers() {
+			mwa.playerResultLines[player.Index()] = fmt.Sprintf(
+				"PLAYER %d - MISSION BONUS: $%7d", 1+player.Index(), mwa.playerBonus[player.Index()])
+		}
+	}
+
+	if (mwa.duration >= missionBonusDelay) && (mwa.missionBonus == int64(mwa.mission.Reward)) &&
+		(mwa.missionBonusDuration > 2*bonusIncrementDuration) {
+		mwa.animationSection = animationSectionThree
+	}
+}
+
+func (mwa *missionWonAnimation) runAnimationSectionThree(elapsedTimeInMs int64) {
+	mwa.killCounterDuration += elapsedTimeInMs
+	if mwa.isKillCounterDone() {
+		mwa.stereo.StopFx(assets.FxAr10)
+		var bgAlpha = 0.3 + 0.7*float64(mwa.killCounterDuration)/float64(postRevengeDelay)
+		mwa.backgroundColorMask = pixel.RGBA{A: bgAlpha}
+		if mwa.killCounterDuration > postRevengeDelay/2 {
+			mwa.playerResultLines[0] = ""
+			mwa.playerResultLines[1] = ""
+		}
+		mwa.finished = mwa.killCounterDuration >= postRevengeDelay
+	} else if mwa.killCounterDuration > revengeIncrementDuration {
+		if (mwa.killCounter[0] == 0) && (mwa.killCounter[1] == 0) {
+			mwa.stereo.PlayFx(assets.FxAr10)
+		}
+		mwa.killCounterDuration = 0
+		for _, player := range characters.PlayerController.RemainingPlayers() {
+			if mwa.killCounter[player.Index()] < mwa.kills[player.Index()] {
+				mwa.killCounter[player.Index()] += 1
+				mwa.playerBonus[player.Index()] = mwa.playerBonus[player.Index()] + revengeBonusPerKill
+			}
+			mwa.playerResultLines[player.Index()] = fmt.Sprintf(
+				"PLAYER %d - REVENGE BONUS x %d: $%7d",
+				1+player.Index(),
+				mwa.kills[player.Index()]-mwa.killCounter[player.Index()],
+				mwa.playerBonus[player.Index()],
+			)
+		}
+	}
 }
