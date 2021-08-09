@@ -195,6 +195,8 @@ the author of the software.
   , [License](http://creativecommons.org/licenses/by-sa/3.0/))
 * Beatdown City by Three Chain Links ([Link](https://soundcloud.com/beardmont/beatdown-city)
   , [License](http://creativecommons.org/licenses/by/3.0/))
+* The Contra Chop by Jim Hall ([Link](https://freemusicarchive.org/music/jim-hall)
+  , [License](https://creativecommons.org/licenses/by/4.0))
 
 ## Sounds
 

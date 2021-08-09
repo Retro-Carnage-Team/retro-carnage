@@ -16,12 +16,12 @@ const (
 	animationSectionOne      animationSection = 0
 	animationSectionTwo      animationSection = 1
 	animationSectionThree    animationSection = 2
-	backgroundFadeDelay      int64            = 1000
+	backgroundFadeDelay      int64            = 1_000
 	backgroundFadeDuration   int64            = 250
 	bonusIncrementDuration   int64            = 165
-	bonusIncrement           int64            = 500
-	missionBonusDelay        int64            = 1500
-	postRevengeDelay         int64            = 5000
+	bonusIncrement           int64            = 1_000
+	missionBonusDelay        int64            = 1_500
+	postRevengeDelay         int64            = 5_000
 	revengeBonusPerKill      int64            = 10
 	revengeIncrementDuration int64            = 100
 )

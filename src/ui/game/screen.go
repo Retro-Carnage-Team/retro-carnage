@@ -118,6 +118,7 @@ func (s *Screen) onMissionWon() {
 	if 0 == len(remainingMissions) {
 		// TODO: show high score screen
 	} else {
+		s.stereo.PlaySong(assets.ThemeSong)
 		s.screenChangeRequired(common.Mission)
 	}
 }
