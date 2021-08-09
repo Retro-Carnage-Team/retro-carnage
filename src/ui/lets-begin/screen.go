@@ -60,7 +60,9 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	renderer.DrawLineToScreenCenter(s.text, 0, common.White)
 }
 
-func (s *Screen) TearDown() {}
+func (s *Screen) TearDown() {
+	s.stereo.BufferSong(assets.GameOverSong)
+}
 
 func (s *Screen) String() string {
 	return string(common.LetTheMissionBegin)

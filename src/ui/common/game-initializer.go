@@ -30,5 +30,4 @@ func StartScreenInit() {
 
 // TitleScreenInit is called when the title screen is shown.
 func TitleScreenInit() {
-
 }

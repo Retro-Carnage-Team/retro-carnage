@@ -48,11 +48,6 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 	s.renderScreen()
 	if !s.themeLoaded && (s.screenChangeTimeout > 100) {
-		// TODO: Buffer theme song asynchronously
-		// This next call will buffer the song if it's not buffered already. That blocks the main thread for a couple of
-		// seconds. It would be much cooler to start the buffer process asynchronously. Access to the map used to store
-		// the songs could be protected by a Mutex. Then the buffering would be triggered once. Then we'd check if the
-		// buffering has finished by accessing the map to see if the song it there.
 		s.stereo.PlaySong(assets.ThemeSong)
 		s.themeLoaded = true
 	}

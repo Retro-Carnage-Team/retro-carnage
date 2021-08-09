@@ -197,6 +197,8 @@ the author of the software.
   , [License](http://creativecommons.org/licenses/by/3.0/))
 * The Contra Chop by Jim Hall ([Link](https://freemusicarchive.org/music/jim-hall)
   , [License](https://creativecommons.org/licenses/by/4.0))
+* Aether by Three Chain Links ([Link](https://freemusicarchive.org/music/Three_Chain_Links)
+  , [License](https://creativecommons.org/licenses/by/4.0))
 
 ## Sounds
 
@@ -206,8 +208,8 @@ the author of the software.
   , [License](http://creativecommons.org/publicdomain/zero/1.0/))
 * Auto Assault Rifle/Gun Burst by EFlexMusic ([Link](https://freesound.org/people/EFlexMusic/sounds/393671/)
   , [License](http://creativecommons.org/licenses/by-nc/3.0/))
-* Warrior Death Cry - British Male by
-  theuncertainman ([Link](https://freesound.org/people/theuncertainman/sounds/417539/)
+* Warrior Death Cry - British Male by theuncertainman (
+  [Link](https://freesound.org/people/theuncertainman/sounds/417539/)
   , [License](http://creativecommons.org/licenses/by/3.0/))
 * Male Being Impaled/Beaten AC by oldedgar ([Link](https://freesound.org/people/oldedgar/sounds/131710/)
   , [License](http://creativecommons.org/publicdomain/zero/1.0/))
@@ -215,9 +217,9 @@ the author of the software.
   , [License](http://creativecommons.org/licenses/by-nc/3.0/))
 * Q009's weapon sounds by Q009 ([Link](https://opengameart.org/content/q009s-weapon-sounds)
   , [License](https://creativecommons.org/licenses/by-sa/3.0/))
-*
-gun_submachine_auto_shot_00_automatic_preview_01.wav ([Link](https://gamesounds.xyz/?dir=Sonniss.com%20-%20GDC%202017%20-%20Game%20Audio%20Bundle/Gamemaster%20Audio%20-%20%20Gun%20Sound%20Pack)
-, [License](https://gamesounds.xyz/Sonniss.com%20-%20GDC%202017%20-%20Game%20Audio%20Bundle/README.txt))
+* gun_submachine_auto_shot_00_automatic_preview_01.wav (
+  [Link](https://gamesounds.xyz/?dir=Sonniss.com%20-%20GDC%202017%20-%20Game%20Audio%20Bundle/Gamemaster%20Audio%20-%20%20Gun%20Sound%20Pack)
+  , [License](https://gamesounds.xyz/Sonniss.com%20-%20GDC%202017%20-%20Game%20Audio%20Bundle/README.txt))
 * LightMachineGun1.wav by SuperPhat ([Link](https://freesound.org/people/SuperPhat/sounds/417688/)
   , [License](http://creativecommons.org/publicdomain/zero/1.0/))
 * Gunfire: Machine Gun burst. copyright

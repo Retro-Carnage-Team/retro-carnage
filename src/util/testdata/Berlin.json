@@ -37,7 +37,12 @@
         "bg-dummy-3.jpg"
       ],
       "direction": "left",
-      "goal": {"x": -5800, "y":200, "width": 200, "height": 200},
+      "goal": {
+        "x": -5800,
+        "y": 200,
+        "width": 200,
+        "height": 200
+      },
       "obstacles": []
     }
   ],

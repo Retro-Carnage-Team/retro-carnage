@@ -14,6 +14,7 @@ import (
 type Screen struct {
 	engine               *engine.GameEngine
 	fpsInfo              *fpsInfo
+	gameLostAnimation    *gameLostAnimation
 	inputController      input.Controller
 	mission              *assets.Mission
 	missionWonAnimation  *missionWonAnimation
@@ -67,17 +68,12 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 
 	if nil != s.engine && nil != s.renderer {
-		if s.engine.Won && nil != s.missionWonAnimation {
-			s.missionWonAnimation.update(elapsedTimeInMs)
-			s.missionWonAnimation.drawToScreen()
-			if s.missionWonAnimation.finished {
-				s.onMissionWon()
-			}
-		} else {
+		var gameCanvas *pixelgl.Canvas
+		if !(s.engine.Won || s.engine.Lost) {
 			s.engine.UpdateGameState(elapsedTimeInMs)
-			var gameCanvas = s.renderer.Render(elapsedTimeInMs)
+			gameCanvas = s.renderer.Render(elapsedTimeInMs)
 			if s.engine.Lost {
-				s.onGameLost()
+				s.gameLostAnimation = createGameLostAnimation(s.playerInfos, gameCanvas, s.mission, s.window)
 			} else if s.engine.Won {
 				s.missionWonAnimation = createMissionWonAnimation(
 					s.playerInfos,
@@ -86,6 +82,24 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 					s.mission,
 					s.window,
 				)
+			}
+		} else {
+			gameCanvas = s.renderer.Render(elapsedTimeInMs)
+		}
+
+		if s.engine.Won {
+			s.missionWonAnimation.update(elapsedTimeInMs)
+			s.missionWonAnimation.drawToScreen()
+			if s.missionWonAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
+				s.onMissionWon()
+			}
+		}
+
+		if s.engine.Lost {
+			s.gameLostAnimation.update(elapsedTimeInMs)
+			s.gameLostAnimation.drawToScreen()
+			if s.gameLostAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
+				s.onGameLost()
 			}
 		}
 	}
@@ -106,6 +120,8 @@ func (s *Screen) TearDown() {
 
 func (s *Screen) onGameLost() {
 	// TODO: show high score screen
+	s.stereo.StopSong(assets.GameOverSong)
+	s.stereo.PlaySong(assets.ThemeSong)
 	s.screenChangeRequired(common.Title)
 }
 
@@ -115,6 +131,7 @@ func (s *Screen) onMissionWon() {
 	if nil != err {
 		logging.Error.Fatalf("Error on game screen: Level has been won when none have been initialized")
 	}
+	// TODO: s.stereo.StopSong(assets.MissionWonSong)
 	if 0 == len(remainingMissions) {
 		// TODO: show high score screen
 	} else {

@@ -20,8 +20,10 @@ const (
 	backgroundFadeDuration   int64            = 250
 	bonusIncrementDuration   int64            = 165
 	bonusIncrement           int64            = 1_000
-	missionBonusDelay        int64            = 1_500
-	postRevengeDelay         int64            = 5_000
+	missionBonusDelay        int64            = 2_500
+	missionWonOpacity        float64          = 0.3
+	postAnimationDelay       int64            = 5_000
+	postMissionDelay         int64            = 2_500
 	revengeBonusPerKill      int64            = 10
 	revengeIncrementDuration int64            = 100
 )
@@ -118,7 +120,7 @@ func (mwa *missionWonAnimation) initialActions() {
 }
 
 func (mwa *missionWonAnimation) showTexts() {
-	if mwa.killCounterDuration < postRevengeDelay/2 {
+	if mwa.killCounterDuration < postAnimationDelay/2 {
 		var offset = 6.0
 		var renderer = fonts.TextRenderer{Window: mwa.window}
 		for _, line := range completedTextLines {
@@ -147,7 +149,7 @@ func (mwa *missionWonAnimation) runAnimationSectionOne() {
 	if (mwa.duration > backgroundFadeDelay) && (mwa.duration <= backgroundFadeDelay+backgroundFadeDuration) {
 		var elapsed = float64(mwa.duration - backgroundFadeDelay)
 		var total = float64(backgroundFadeDuration)
-		var alpha = 0.3 * (elapsed / total)
+		var alpha = missionWonOpacity * (elapsed / total)
 		mwa.backgroundColorMask = pixel.RGBA{A: alpha}
 	}
 	mwa.completedTextVisible = mwa.duration > backgroundFadeDelay+backgroundFadeDuration/2
@@ -158,11 +160,12 @@ func (mwa *missionWonAnimation) runAnimationSectionOne() {
 }
 
 func (mwa *missionWonAnimation) runAnimationSectionTwo(elapsedTimeInMs int64) {
+	mwa.missionBonusDuration += elapsedTimeInMs
+
 	if (mwa.duration >= missionBonusDelay) &&
 		(mwa.missionBonus <= int64(mwa.mission.Reward)) &&
 		(mwa.missionBonusDuration < 2*bonusIncrementDuration) {
 
-		mwa.missionBonusDuration += elapsedTimeInMs
 		if (mwa.missionBonus < int64(mwa.mission.Reward)) && (mwa.missionBonusDuration > bonusIncrementDuration) {
 			mwa.missionBonusDuration = 0
 			mwa.missionBonus += bonusIncrement
@@ -178,7 +181,7 @@ func (mwa *missionWonAnimation) runAnimationSectionTwo(elapsedTimeInMs int64) {
 	}
 
 	if (mwa.duration >= missionBonusDelay) && (mwa.missionBonus == int64(mwa.mission.Reward)) &&
-		(mwa.missionBonusDuration > 2*bonusIncrementDuration) {
+		(mwa.missionBonusDuration > postMissionDelay) {
 		mwa.animationSection = animationSectionThree
 	}
 }
@@ -187,13 +190,14 @@ func (mwa *missionWonAnimation) runAnimationSectionThree(elapsedTimeInMs int64) 
 	mwa.killCounterDuration += elapsedTimeInMs
 	if mwa.isKillCounterDone() {
 		mwa.stereo.StopFx(assets.FxAr10)
-		var bgAlpha = 0.3 + 0.7*float64(mwa.killCounterDuration)/float64(postRevengeDelay)
+		var progress = float64(mwa.killCounterDuration) / float64(postAnimationDelay)
+		var bgAlpha = missionWonOpacity + (1-missionWonOpacity)*progress
 		mwa.backgroundColorMask = pixel.RGBA{A: bgAlpha}
-		if mwa.killCounterDuration > postRevengeDelay/2 {
+		if mwa.killCounterDuration > postAnimationDelay/2 {
 			mwa.playerResultLines[0] = ""
 			mwa.playerResultLines[1] = ""
 		}
-		mwa.finished = mwa.killCounterDuration >= postRevengeDelay
+		mwa.finished = mwa.killCounterDuration >= postAnimationDelay
 	} else if mwa.killCounterDuration > revengeIncrementDuration {
 		if (mwa.killCounter[0] == 0) && (mwa.killCounter[1] == 0) {
 			mwa.stereo.PlayFx(assets.FxAr10)
