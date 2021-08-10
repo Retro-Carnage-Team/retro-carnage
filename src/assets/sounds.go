@@ -57,6 +57,7 @@ const (
 	BackgroundSong12 Song = "Raging-Streets.mp3"
 	BackgroundSong13 Song = "The-Only-Me-is-Me.mp3"
 	GameOverSong     Song = "Aether.mp3"
+	GameWonSong      Song = "Explosions-In-The-Sky.mp3"
 	ThemeSong        Song = "The-Contra-Chop.mp3"
 )
 
@@ -73,7 +74,7 @@ var EnemyDeathsSoundEffects = []SoundEffect{FxDeathEnemy0, FxDeathEnemy1, FxDeat
 
 var Music = []Song{BackgroundSong1, BackgroundSong2, BackgroundSong3, BackgroundSong4, BackgroundSong5, BackgroundSong6,
 	BackgroundSong7, BackgroundSong8, BackgroundSong9, BackgroundSong10, BackgroundSong11, BackgroundSong12,
-	BackgroundSong13, GameOverSong, ThemeSong}
+	BackgroundSong13, GameOverSong, GameWonSong, ThemeSong}
 
 func RandomEnemyDeathSoundEffect() SoundEffect {
 	rand.Seed(time.Now().Unix())

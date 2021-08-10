@@ -61,7 +61,6 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 }
 
 func (s *Screen) TearDown() {
-	s.stereo.BufferSong(assets.GameOverSong)
 }
 
 func (s *Screen) String() string {

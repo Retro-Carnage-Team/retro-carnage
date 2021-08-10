@@ -119,52 +119,62 @@ the author of the software.
 
 ### Other
 
-* A Winkel Tripel projection of a Visible Earth
-  by [NASA](https://www.nasa.gov/) ([Link](https://commons.wikimedia.org/wiki/File:Winkel-tripel-projection.jpg)
+* A Winkel Tripel projection of a Visible Earth by [NASA](https://www.nasa.gov/) (
+  [Link](https://commons.wikimedia.org/wiki/File:Winkel-tripel-projection.jpg)
   , [License](https://en.wikipedia.org/wiki/public_domain))
-* Black scratched metal plate by
-  wildtextures.com ([Link](https://www.wildtextures.com/free-textures/black-scratched-metal-plate/), no license
-  specified)
-* check_circle_outline-24px by
-  Google ([Link](https://material.io/resources/icons/?icon=check_circle_outline&style=baseline)
+* Black scratched metal plate by wildtextures.com (
+  [Link](https://www.wildtextures.com/free-textures/black-scratched-metal-plate/), no license specified)
+* check_circle_outline-24px by Google (
+  [Link](https://material.io/resources/icons/?icon=check_circle_outline&style=baseline)
   , [License](https://www.apache.org/licenses/LICENSE-2.0.html))
-* explosion-7 by BenHickling ([Link](https://opengameart.org/content/explosion-7)
+* explosion-7 by BenHickling (
+  [Link](https://opengameart.org/content/explosion-7)
   , [License](https://creativecommons.org/publicdomain/zero/1.0/))
-* gamepad-24px by Google ([Link](https://material.io/resources/icons/?icon=gamepad&style=baseline)
+* gamepad-24px by Google (
+  [Link](https://material.io/resources/icons/?icon=gamepad&style=baseline)
   , [License](https://www.apache.org/licenses/LICENSE-2.0.html))
-* keyboard-24px by Google ([Link](https://material.io/resources/icons/?icon=keyboard&style=baseline)
+* keyboard-24px by Google (
+  [Link](https://material.io/resources/icons/?icon=keyboard&style=baseline)
   , [License](https://www.apache.org/licenses/LICENSE-2.0.html))
-* [Mann photo created by kjpargeter - de.freepik.com](https://de.freepik.com/fotos/mann) ([Link](https://de.freepik.com/fotos-kostenlos/soldat-zu-fuss-silhouette_879706.htm)
+* [Mann photo created by kjpargeter - de.freepik.com](https://de.freepik.com/fotos/mann) (
+  [Link](https://de.freepik.com/fotos-kostenlos/soldat-zu-fuss-silhouette_879706.htm)
   , [License](https://de.freepik.com/profile/license/pdf/879706?lang=en))
-* [Stadt vector created by upklyak - de.freepik.com](https://de.freepik.com/vektoren/stadt) ([Link](https://de.freepik.com/vektoren-kostenlos/stadt-im-feuer-krieg-zerstoeren-brennende-kaputte-gebaeude_9750004.htm)
+* [Stadt vector created by upklyak - de.freepik.com](https://de.freepik.com/vektoren/stadt) (
+  [Link](https://de.freepik.com/vektoren-kostenlos/stadt-im-feuer-krieg-zerstoeren-brennende-kaputte-gebaeude_9750004.htm)
   , [License](https://de.freepik.com/profile/license/pdf/879706?lang=en))
-* The Flash Logo by
-  Claybrooks ([Link](https://www.cleanpng.com/png-muzzle-flash-desktop-wallpaper-portable-network-gr-7014651/), Free for
-  Personal Use)
-* Red Background by Ratani ([Link](https://www.cleanpng.com/png-encapsulated-postscript-2080422/), Free for Personal
+* The Flash Logo by Claybrooks (
+  [Link](https://www.cleanpng.com/png-muzzle-flash-desktop-wallpaper-portable-network-gr-7014651/), Free for Personal
   Use)
-* Camera Cartoon by Dewole ([Link](https://www.cleanpng.com/png-muzzle-flash-clip-art-the-flash-2406834/), Free for
-  Personal Use)
-* Background Orange by Adoffice ([Link](https://www.cleanpng.com/png-muzzle-flash-gunshot-clip-art-arvores-3379867/),
-  Free for Personal Use)
-* Graphic Background by Inorka ([Link](https://www.cleanpng.com/png-muzzle-flash-clip-art-4336582/), Free for Personal
-  Use)
-* Brown Camouflage Pattern 11
-  by http://background-tiles.com ([Link](https://background-tiles.com/overview/yellow/1011.php)
+* Red Background by Ratani (
+  [Link](https://www.cleanpng.com/png-encapsulated-postscript-2080422/), Free for Personal Use)
+* Camera Cartoon by Dewole (
+  [Link](https://www.cleanpng.com/png-muzzle-flash-clip-art-the-flash-2406834/), Free for Personal Use)
+* Background Orange by Adoffice (
+  [Link](https://www.cleanpng.com/png-muzzle-flash-gunshot-clip-art-arvores-3379867/), Free for Personal Use)
+* Graphic Background by Inorka (
+  [Link](https://www.cleanpng.com/png-muzzle-flash-clip-art-4336582/), Free for Personal Use)
+* Brown Camouflage Pattern 11 by http://background-tiles.com (
+  [Link](https://background-tiles.com/overview/yellow/1011.php)
   , [License](https://background-tiles.com/terms.pdf))
-* Camouflage Pattern 21
-  by http://background-tiles.com ([Link](https://background-tiles.com/overview/mixed-colors/1021.php)
+* Camouflage Pattern 21 by http://background-tiles.com (
+  [Link](https://background-tiles.com/overview/mixed-colors/1021.php)
   , [License](https://background-tiles.com/terms.pdf))
-* Crosshair-9-svg by iconmonstr.com ([Link](https://iconmonstr.com/crosshair-9-svg/)
+* Crosshair-9-svg by iconmonstr.com (
+  [Link](https://iconmonstr.com/crosshair-9-svg/)
   , [License](https://iconmonstr.com/license/))
-* Location marker by Loading.IO ([Link](https://loading.io/spinner/dual-ring/-disqus-ring-donut-rotate)
+* Location marker by Loading.IO (
+  [Link](https://loading.io/spinner/dual-ring/-disqus-ring-donut-rotate)
   , [License](https://loading.io/license/#free-license))
-* Blood
-  Puddle ([Link](https://www.nicepng.com/ourpic/u2q8t4i1q8i1o0y3_blood-pool-transparent-png-clip-art-freeuse-download/#)
+* Blood Puddle (
+  [Link](https://www.nicepng.com/ourpic/u2q8t4i1q8i1o0y3_blood-pool-transparent-png-clip-art-freeuse-download/#)
   , Free for Personal Use)
-* Amiga 500 by Bill Bertram ([Link](https://commons.wikimedia.org/wiki/File:Leander_Amiga500.jpg)
+* Amiga 500 by Bill Bertram (
+  [Link](https://commons.wikimedia.org/wiki/File:Leander_Amiga500.jpg)
   , [License](https://creativecommons.org/licenses/by-sa/2.5/deed.en))
 * Burn Mark ([Link](https://pngio.com/images/png-a654622.html), Personal Use)
+* Sunset Soldiers by Jean Beaufort (
+  [Link](https://www.publicdomainpictures.net/en/view-image.php?image=224388&picture=sunset-soldiers)
+  , [License](http://creativecommons.org/publicdomain/zero/1.0/))
 
 ## Music
 
@@ -196,6 +206,8 @@ the author of the software.
 * Beatdown City by Three Chain Links ([Link](https://soundcloud.com/beardmont/beatdown-city)
   , [License](http://creativecommons.org/licenses/by/3.0/))
 * The Contra Chop by Jim Hall ([Link](https://freemusicarchive.org/music/jim-hall)
+  , [License](https://creativecommons.org/licenses/by/4.0))
+* Explosions in the sky by Jim Hall ([Link](https://freemusicarchive.org/music/jim-hall)
   , [License](https://creativecommons.org/licenses/by/4.0))
 * Aether by Three Chain Links ([Link](https://freemusicarchive.org/music/Three_Chain_Links)
   , [License](https://creativecommons.org/licenses/by/4.0))

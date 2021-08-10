@@ -15,6 +15,7 @@ type Screen struct {
 	engine               *engine.GameEngine
 	fpsInfo              *fpsInfo
 	gameLostAnimation    *gameLostAnimation
+	gameWonAnimation     *gameWonAnimation
 	inputController      input.Controller
 	mission              *assets.Mission
 	missionWonAnimation  *missionWonAnimation
@@ -63,15 +64,14 @@ func (s *Screen) SetUp() {
 // Here we update the state of the gameplay based on the time that has elapsed since the last frame.
 // Then we render the new game state to the pixelgl.Window.
 func (s *Screen) Update(elapsedTimeInMs int64) {
-	for _, playerInfo := range s.playerInfos {
-		playerInfo.draw(s.window)
-	}
-
 	if nil != s.engine && nil != s.renderer {
 		if !(s.engine.Won || s.engine.Lost) {
+			for _, playerInfo := range s.playerInfos {
+				playerInfo.draw(s.window)
+			}
 			s.updateGameInProgress(elapsedTimeInMs)
+			s.renderer.Render(elapsedTimeInMs)
 		}
-		s.renderer.Render(elapsedTimeInMs)
 
 		if s.engine.Won {
 			s.updateGameWon(elapsedTimeInMs)
@@ -103,14 +103,35 @@ func (s *Screen) updateGameInProgress(elapsedTimeInMs int64) {
 }
 
 func (s *Screen) updateGameWon(elapsedTimeInMs int64) {
-	s.missionWonAnimation.update(elapsedTimeInMs)
-	s.missionWonAnimation.drawToScreen()
-	if s.missionWonAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
-		s.onMissionWon()
+	if nil != s.gameWonAnimation {
+		s.gameWonAnimation.update(elapsedTimeInMs)
+		s.gameWonAnimation.drawToScreen()
+		if s.gameWonAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
+			s.onMissionWon()
+		}
+	} else if nil != s.missionWonAnimation {
+		for _, playerInfo := range s.playerInfos {
+			playerInfo.draw(s.window)
+		}
+		s.renderer.Render(0)
+		s.missionWonAnimation.update(elapsedTimeInMs)
+		s.missionWonAnimation.drawToScreen()
+		if s.missionWonAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
+			var remainingMissions, _ = engine.MissionController.RemainingMissions()
+			if 0 == len(remainingMissions) {
+				s.gameWonAnimation = createGameWonAnimation(s.mission, s.window)
+			} else {
+				s.onMissionWon()
+			}
+		}
 	}
 }
 
 func (s *Screen) updateGameLost(elapsedTimeInMs int64) {
+	for _, playerInfo := range s.playerInfos {
+		playerInfo.draw(s.window)
+	}
+	s.renderer.Render(0)
 	s.gameLostAnimation.update(elapsedTimeInMs)
 	s.gameLostAnimation.drawToScreen()
 	if s.gameLostAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
@@ -137,13 +158,13 @@ func (s *Screen) onGameLost() {
 
 func (s *Screen) onMissionWon() {
 	engine.MissionController.MarkMissionFinished(s.mission)
-	var remainingMissions, err = engine.MissionController.RemainingMissions()
-	if nil != err {
-		logging.Error.Fatalf("Error on game screen: Level has been won when none have been initialized")
-	}
-	// TODO: s.stereo.StopSong(assets.MissionWonSong)
+	var remainingMissions, _ = engine.MissionController.RemainingMissions()
+
 	if 0 == len(remainingMissions) {
 		// TODO: show high score screen
+		s.stereo.StopSong(assets.GameWonSong)
+		s.stereo.PlaySong(assets.ThemeSong)
+		s.screenChangeRequired(common.Title)
 	} else {
 		s.stereo.PlaySong(assets.ThemeSong)
 		s.screenChangeRequired(common.Mission)

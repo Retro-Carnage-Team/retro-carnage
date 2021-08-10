@@ -10,22 +10,22 @@ import (
 	"retro-carnage/ui/common/fonts"
 )
 
-type animationSection int
+type missionWonAnimationSection int
 
 const (
-	animationSectionOne      animationSection = 0
-	animationSectionTwo      animationSection = 1
-	animationSectionThree    animationSection = 2
-	backgroundFadeDelay      int64            = 1_000
-	backgroundFadeDuration   int64            = 250
-	bonusIncrementDuration   int64            = 165
-	bonusIncrement           int64            = 1_000
-	missionBonusDelay        int64            = 2_500
-	missionWonOpacity        float64          = 0.3
-	postAnimationDelay       int64            = 5_000
-	postMissionDelay         int64            = 2_500
-	revengeBonusPerKill      int64            = 10
-	revengeIncrementDuration int64            = 100
+	animationSectionOne      missionWonAnimationSection = 0
+	animationSectionTwo      missionWonAnimationSection = 1
+	animationSectionThree    missionWonAnimationSection = 2
+	backgroundFadeDelay      int64                      = 1_000
+	backgroundFadeDuration   int64                      = 250
+	bonusIncrementDuration   int64                      = 165
+	bonusIncrement           int64                      = 1_000
+	missionBonusDelay        int64                      = 2_500
+	missionWonOpacity        float64                    = 0.5
+	postAnimationDelay       int64                      = 5_000
+	postMissionDelay         int64                      = 2_500
+	revengeBonusPerKill      int64                      = 10
+	revengeIncrementDuration int64                      = 100
 )
 
 var (
@@ -33,7 +33,7 @@ var (
 )
 
 type missionWonAnimation struct {
-	animationSection     animationSection
+	animationSection     missionWonAnimationSection
 	backgroundCanvas     *pixelgl.Canvas
 	backgroundColorMask  pixel.RGBA
 	completedTextVisible bool
@@ -93,13 +93,10 @@ func (mwa *missionWonAnimation) update(elapsedTimeInMs int64) {
 	switch mwa.animationSection {
 	case animationSectionOne:
 		mwa.runAnimationSectionOne()
-		break
 	case animationSectionTwo:
 		mwa.runAnimationSectionTwo(elapsedTimeInMs)
-		break
 	case animationSectionThree:
 		mwa.runAnimationSectionThree(elapsedTimeInMs)
-		break
 	}
 
 	mwa.duration += elapsedTimeInMs
@@ -116,7 +113,6 @@ func (mwa *missionWonAnimation) drawToScreen() {
 
 func (mwa *missionWonAnimation) initialActions() {
 	mwa.stereo.StopSong(mwa.mission.Music)
-	// TODO: start victory music
 }
 
 func (mwa *missionWonAnimation) showTexts() {

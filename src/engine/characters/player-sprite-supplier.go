@@ -3,6 +3,7 @@ package characters
 import (
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
+	"retro-carnage/util"
 )
 
 const (
@@ -97,7 +98,7 @@ func (pss *PlayerSpriteSupplier) spriteForDyingPlayer() *graphics.SpriteWithOffs
 	var deathFrames = pss.skin.DeathAnimation
 	if pss.wasDying {
 		if DurationOfPlayerDeathAnimationFrame <= pss.durationSinceLastSprite {
-			pss.lastIndex += 1
+			pss.lastIndex = util.MinInt(pss.lastIndex+1, len(deathFrames)-1)
 			pss.lastSprite = deathFrames[pss.lastIndex].ToSpriteWithOffset()
 			pss.durationSinceLastSprite = 0
 		}
