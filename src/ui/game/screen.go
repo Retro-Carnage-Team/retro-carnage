@@ -68,44 +68,54 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 
 	if nil != s.engine && nil != s.renderer {
-		var gameCanvas *pixelgl.Canvas
 		if !(s.engine.Won || s.engine.Lost) {
-			s.engine.UpdateGameState(elapsedTimeInMs)
-			gameCanvas = s.renderer.Render(elapsedTimeInMs)
-			if s.engine.Lost {
-				s.gameLostAnimation = createGameLostAnimation(s.playerInfos, gameCanvas, s.mission, s.window)
-			} else if s.engine.Won {
-				s.missionWonAnimation = createMissionWonAnimation(
-					s.playerInfos,
-					gameCanvas,
-					s.engine.Kills,
-					s.mission,
-					s.window,
-				)
-			}
-		} else {
-			gameCanvas = s.renderer.Render(elapsedTimeInMs)
+			s.updateGameInProgress(elapsedTimeInMs)
 		}
+		s.renderer.Render(elapsedTimeInMs)
 
 		if s.engine.Won {
-			s.missionWonAnimation.update(elapsedTimeInMs)
-			s.missionWonAnimation.drawToScreen()
-			if s.missionWonAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
-				s.onMissionWon()
-			}
+			s.updateGameWon(elapsedTimeInMs)
 		}
 
 		if s.engine.Lost {
-			s.gameLostAnimation.update(elapsedTimeInMs)
-			s.gameLostAnimation.drawToScreen()
-			if s.gameLostAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
-				s.onGameLost()
-			}
+			s.updateGameLost(elapsedTimeInMs)
 		}
 	}
 
 	s.fpsInfo.update()
 	s.fpsInfo.drawToScreen(s.window)
+}
+
+func (s *Screen) updateGameInProgress(elapsedTimeInMs int64) {
+	s.engine.UpdateGameState(elapsedTimeInMs)
+	var gameCanvas = s.renderer.Render(elapsedTimeInMs)
+	if s.engine.Lost {
+		s.gameLostAnimation = createGameLostAnimation(s.playerInfos, gameCanvas, s.mission, s.window)
+	} else if s.engine.Won {
+		s.missionWonAnimation = createMissionWonAnimation(
+			s.playerInfos,
+			gameCanvas,
+			s.engine.Kills,
+			s.mission,
+			s.window,
+		)
+	}
+}
+
+func (s *Screen) updateGameWon(elapsedTimeInMs int64) {
+	s.missionWonAnimation.update(elapsedTimeInMs)
+	s.missionWonAnimation.drawToScreen()
+	if s.missionWonAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
+		s.onMissionWon()
+	}
+}
+
+func (s *Screen) updateGameLost(elapsedTimeInMs int64) {
+	s.gameLostAnimation.update(elapsedTimeInMs)
+	s.gameLostAnimation.drawToScreen()
+	if s.gameLostAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
+		s.onGameLost()
+	}
 }
 
 // TearDown is called by ui.MainWindow when the Screen has been displayed for the last time.
