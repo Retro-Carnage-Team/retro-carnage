@@ -20,6 +20,7 @@ const (
 	fontSize             = 36
 	innerMargin          = 15
 	livesAreaHeight      = 50
+	missingInAction      = "M.I.A."
 	playerInfoBgPath     = "images/other/player-info-bg.png"
 	playerLifePath       = "images/player-%d/life.png"
 	playerPortraitPath   = "images/player-%d/portrait.png"
@@ -289,30 +290,48 @@ func (pi *playerInfo) drawLives() {
 	draw.Draw(pi.canvas)
 
 	if nil != pi.player {
-		var lifeSpritePath = fmt.Sprintf(playerLifePath, pi.playerIdx)
-		var lifeSprite = assets.SpriteRepository.Get(lifeSpritePath)
-		if nil == lifeSprite {
-			logging.Warning.Printf("Unable to find sprite: %s", lifeSpritePath)
-			return
-		}
-
-		var scale = (livesAreaHeight - 2) / lifeSprite.Picture().Bounds().H()
-		var scaledSpriteHeight = lifeSprite.Picture().Bounds().H() * scale
-		var scaledSpriteWidth = lifeSprite.Picture().Bounds().W() * scale
-		var width = float64(pi.player.Lives()) * scaledSpriteWidth
-		if 1 < pi.player.Lives() {
-			width += float64((pi.player.Lives() - 1) * 5)
-		}
-
-		var left = pi.componentArea.X + (pi.componentArea.Width-width)/2 + scaledSpriteWidth/2
-		for i := 0; i < pi.player.Lives(); i++ {
-			var matrix = pixel.IM.
-				Scaled(pixel.V(0, 0), scale).
-				Moved(pixel.V(left, bottomLeft.Y+1+scaledSpriteHeight/2))
-			lifeSprite.Draw(pi.canvas, matrix)
-			left += scaledSpriteWidth + 5
-		}
+		pi.drawLivesForPlayer(bottomLeft)
+	} else {
+		pi.drawLivesForMissingInAction(bottomLeft)
 	}
+}
+
+func (pi *playerInfo) drawLivesForPlayer(bottomLeft pixel.Vec) {
+	var lifeSpritePath = fmt.Sprintf(playerLifePath, pi.playerIdx)
+	var lifeSprite = assets.SpriteRepository.Get(lifeSpritePath)
+	if nil == lifeSprite {
+		logging.Warning.Printf("Unable to find sprite: %s", lifeSpritePath)
+		return
+	}
+
+	var scale = (livesAreaHeight - 2) / lifeSprite.Picture().Bounds().H()
+	var scaledSpriteHeight = lifeSprite.Picture().Bounds().H() * scale
+	var scaledSpriteWidth = lifeSprite.Picture().Bounds().W() * scale
+	var width = float64(pi.player.Lives()) * scaledSpriteWidth
+	if 1 < pi.player.Lives() {
+		width += float64((pi.player.Lives() - 1) * 5)
+	}
+
+	var left = pi.componentArea.X + (pi.componentArea.Width-width)/2 + scaledSpriteWidth/2
+	for i := 0; i < pi.player.Lives(); i++ {
+		var matrix = pixel.IM.
+			Scaled(pixel.V(0, 0), scale).
+			Moved(pixel.V(left, bottomLeft.Y+1+scaledSpriteHeight/2))
+		lifeSprite.Draw(pi.canvas, matrix)
+		left += scaledSpriteWidth + 5
+	}
+}
+
+func (pi *playerInfo) drawLivesForMissingInAction(bottomLeft pixel.Vec) {
+	var textDimensions = fonts.GetTextDimension(fontSize, missingInAction)
+	var position = pixel.Vec{
+		X: pi.componentArea.X + (pi.componentArea.Width-textDimensions.X)/2,
+		Y: bottomLeft.Y + (livesAreaHeight-textDimensions.Y)/2,
+	}
+	var txt = text.New(position, fonts.SizeToFontAtlas[fontSize])
+	txt.Color = common.Yellow
+	_, _ = fmt.Fprint(txt, missingInAction)
+	txt.Draw(pi.canvas, pixel.IM)
 }
 
 // areaForLives returns the two points (bottom left, top right) that define the rectangular area in which the extra
