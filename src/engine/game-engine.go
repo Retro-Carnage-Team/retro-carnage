@@ -372,11 +372,11 @@ func (ge *GameEngine) handleWeaponAction(elapsedTimeInMs int64) {
 					ge.stereo.PlayFx(player.SelectedWeapon().Sound)
 					ge.fireBullet(player, behavior)
 				}
-			} else if behavior.Firing && player.AutomaticWeaponSelected() &&
-				ge.inventoryController[player.Index()].RemoveAmmunition() {
+			} else if behavior.Firing && player.AutomaticWeaponSelected() {
 				behavior.TimeSinceLastBullet += elapsedTimeInMs
 				var weapon = player.SelectedWeapon()
-				if int64(weapon.BulletInterval) <= behavior.TimeSinceLastBullet {
+				if (int64(weapon.BulletInterval) <= behavior.TimeSinceLastBullet) &&
+					ge.inventoryController[player.Index()].RemoveAmmunition() {
 					ge.fireBullet(player, behavior)
 				}
 			}
