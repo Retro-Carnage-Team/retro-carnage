@@ -31,6 +31,14 @@ type GameEngine struct {
 	Won                 bool
 }
 
+var pointsByEnemyType map[characters.EnemyType]int
+
+func init() {
+	pointsByEnemyType = make(map[characters.EnemyType]int)
+	pointsByEnemyType[characters.Person] = 10
+	pointsByEnemyType[characters.Landmine] = 5
+}
+
 // NewGameEngine creates and initializes a new instance of GameEngine.
 func NewGameEngine(mission *assets.Mission) *GameEngine {
 	var result = &GameEngine{
@@ -481,17 +489,23 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 			}
 
 			if death {
-				enemy.Dying = true
-				enemy.DyingAnimationCountDown = 1
-				if -1 != killer {
-					ge.Kills[killer] += 1
-				}
-				if characters.Person == enemy.Type {
-					ge.stereo.PlayFx(assets.RandomEnemyDeathSoundEffect())
-					enemy.DyingAnimationCountDown = characters.DurationOfEnemyDeathAnimation
-				}
+				ge.killEnemy(enemy, killer)
 			}
 		}
+	}
+}
+
+func (ge *GameEngine) killEnemy(enemy *characters.ActiveEnemy, killer int) {
+	enemy.Dying = true
+	enemy.DyingAnimationCountDown = 1
+	if -1 != killer {
+		ge.Kills[killer] += 1
+		var player = ge.playerBehaviors[killer].Player
+		player.SetScore(player.Score() + pointsByEnemyType[enemy.Type])
+	}
+	if characters.Person == enemy.Type {
+		ge.stereo.PlayFx(assets.RandomEnemyDeathSoundEffect())
+		enemy.DyingAnimationCountDown = characters.DurationOfEnemyDeathAnimation
 	}
 }
 
