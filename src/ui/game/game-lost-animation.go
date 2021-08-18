@@ -4,6 +4,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/assets"
+	"retro-carnage/engine/characters"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 )
@@ -76,6 +77,11 @@ func (gla *gameLostAnimation) drawToScreen() {
 }
 
 func (gla *gameLostAnimation) initialActions() {
+	for _, player := range characters.PlayerController.RemainingPlayers() {
+		if player.AutomaticWeaponSelected() {
+			gla.stereo.StopFx(player.SelectedWeapon().Sound)
+		}
+	}
 	gla.stereo.StopSong(gla.mission.Music)
 	gla.stereo.PlaySong(assets.GameOverSong)
 }

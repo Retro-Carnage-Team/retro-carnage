@@ -9,6 +9,7 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/config"
 	"retro-carnage/ui/game"
+	"retro-carnage/ui/highscore"
 	lb "retro-carnage/ui/lets-begin"
 	"retro-carnage/ui/loading"
 	"retro-carnage/ui/mission"
@@ -69,6 +70,8 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 		ms.nextScreen = &lb.Screen{}
 	case common.Game:
 		ms.nextScreen = &game.Screen{}
+	case common.HighScore:
+		ms.nextScreen = &highscore.Screen{}
 	}
 }
 

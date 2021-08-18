@@ -22,11 +22,11 @@ type Screen interface {
 
 	/*--- Initializers for shared properties -------------------------------------------------------------------------*/
 
-	// SetInputController passes the input controller to the screen
+	// SetInputController passes the input controller to the screen.
 	SetInputController(controller input.Controller)
-	// SetScreenChangeCallback passes a callback function that cann be called to switch to another screen
+	// SetScreenChangeCallback passes a callback function that cann be called to switch to another screen.
 	SetScreenChangeCallback(callback ScreenChangeCallback)
-	// SetWindow that displays the game
+	// SetWindow passes the application window to the Screen.
 	SetWindow(window *pixelgl.Window)
 
 	/*--- Other ------------------------------------------------------------------------------------------------------*/
@@ -50,4 +50,5 @@ const (
 	ShopP2              ScreenName = "Shop (Player 2)"
 	LetTheMissionBegin  ScreenName = "Let the mission begin screen"
 	Game                ScreenName = "Game screen"
+	HighScore           ScreenName = "High score table"
 )

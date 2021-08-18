@@ -112,6 +112,11 @@ func (mwa *missionWonAnimation) drawToScreen() {
 }
 
 func (mwa *missionWonAnimation) initialActions() {
+	for _, player := range characters.PlayerController.RemainingPlayers() {
+		if player.AutomaticWeaponSelected() {
+			mwa.stereo.StopFx(player.SelectedWeapon().Sound)
+		}
+	}
 	mwa.stereo.StopSong(mwa.mission.Music)
 }
 

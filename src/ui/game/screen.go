@@ -150,10 +150,8 @@ func (s *Screen) TearDown() {
 }
 
 func (s *Screen) onGameLost() {
-	// TODO: show high score screen
 	s.stereo.StopSong(assets.GameOverSong)
-	s.stereo.PlaySong(assets.ThemeSong)
-	s.screenChangeRequired(common.Title)
+	s.screenChangeRequired(common.HighScore)
 }
 
 func (s *Screen) onMissionWon() {
@@ -161,10 +159,8 @@ func (s *Screen) onMissionWon() {
 	var remainingMissions, _ = engine.MissionController.RemainingMissions()
 
 	if 0 == len(remainingMissions) {
-		// TODO: show high score screen
 		s.stereo.StopSong(assets.GameWonSong)
-		s.stereo.PlaySong(assets.ThemeSong)
-		s.screenChangeRequired(common.Title)
+		s.screenChangeRequired(common.HighScore)
 	} else {
 		s.stereo.PlaySong(assets.ThemeSong)
 		s.screenChangeRequired(common.Mission)
