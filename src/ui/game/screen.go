@@ -119,7 +119,8 @@ func (s *Screen) updateGameWon(elapsedTimeInMs int64) {
 		s.missionWonAnimation.drawToScreen()
 		if s.missionWonAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
 			var remainingMissions, _ = engine.MissionController.RemainingMissions()
-			if 0 == len(remainingMissions) {
+			// The current mission has not been marked as won, yet. Thus there is one remaining mission.
+			if (1 == len(remainingMissions)) && (remainingMissions[0].Name == s.mission.Name) {
 				s.gameWonAnimation = createGameWonAnimation(s.mission, s.window)
 			} else {
 				s.onMissionWon()

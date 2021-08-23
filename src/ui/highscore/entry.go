@@ -2,11 +2,11 @@ package highscore
 
 import "fmt"
 
-type entry struct {
-	name  string `json:"name"`
-	score int    `json:"score"`
+type Entry struct {
+	Name  string `json:"Name"`
+	Score int    `json:"Score"`
 }
 
-func (e entry) ToString(index int) string {
-	return fmt.Sprintf("%2d     %7d     %s", index, e.score, e.name)
+func (e Entry) ToString(index int) string {
+	return fmt.Sprintf("%2d     %7d     %s", index, e.Score, e.Name)
 }

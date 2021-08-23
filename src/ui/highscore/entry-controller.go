@@ -7,7 +7,7 @@ import (
 )
 
 type EntryController struct {
-	entries     []entry
+	entries     []Entry
 	playerNames []string
 }
 
@@ -23,39 +23,33 @@ const (
 // newEntryController creates a new instance of entryController
 func newEntryController() *EntryController {
 	return &EntryController{
-		entries: []entry{
-			{name: "Jonny", score: 25_000},
-			{name: "Barney", score: 22_000},
-			{name: "Christmas", score: 18_500},
-			{name: "Trench", score: 16_000},
-			{name: "Toll Road", score: 14_500},
-			{name: "Caesar", score: 10_000},
-			{name: "Gunner", score: 8_000},
-			{name: "Doc", score: 5_000},
-			{name: "Galgo", score: 3_000},
-			{name: "Drummer", score: 2_500},
+		entries: []Entry{
+			{Name: "Jonny", Score: 25_000},
+			{Name: "Barney", Score: 22_000},
+			{Name: "Christmas", Score: 18_500},
+			{Name: "Trench", Score: 16_000},
+			{Name: "Toll Road", Score: 14_500},
+			{Name: "Caesar", Score: 10_000},
+			{Name: "Gunner", Score: 8_000},
+			{Name: "Doc", Score: 5_000},
+			{Name: "Galgo", Score: 3_000},
+			{Name: "Drummer", Score: 2_500},
 		},
 		playerNames: []string{"", ""},
 	}
 }
 
-// isHighScore returns true if the given score is high enough for a new entry in the high score table.
-func (ec *EntryController) isHighScore(score int) bool {
-	var lastPlace = ec.entries[len(ec.entries)-1]
-	return score > lastPlace.score
-}
-
-// addEntry adds a new high score entry to the high score table.
-// Adding an entry with a score that is too low will have no effect.
-func (ec *EntryController) addEntry(newEntry entry) {
+// AddEntry adds a new high Score Entry to the high Score table.
+// Adding an Entry with a Score that is too low will have no effect.
+func (ec *EntryController) AddEntry(newEntry Entry) {
 	var newScoreTable = append(ec.entries, newEntry)
 	sort.SliceStable(newScoreTable, func(i, j int) bool {
-		return newScoreTable[i].score > newScoreTable[j].score
+		return newScoreTable[i].Score > newScoreTable[j].Score
 	})
 	ec.entries = newScoreTable[:len(newScoreTable)-1]
 }
 
-// PlayerName returns the name of the player as he has entered it for the last high score entry.
+// PlayerName returns the Name of the player as he has entered it for the last high Score Entry.
 // Default is an empty string.
 func (ec *EntryController) PlayerName(playerIndex int) (string, error) {
 	if playerIndex < 0 || playerIndex >= len(ec.playerNames) {
@@ -65,7 +59,7 @@ func (ec *EntryController) PlayerName(playerIndex int) (string, error) {
 	return ec.playerNames[playerIndex], nil
 }
 
-// SetPlayerName updates the name of the player for the next high score entry.
+// SetPlayerName updates the Name of the player for the next high Score Entry.
 func (ec *EntryController) SetPlayerName(playerIndex int, name string) error {
 	if playerIndex < 0 || playerIndex >= len(ec.playerNames) {
 		return fmt.Errorf("there is no player with index %d", playerIndex)
@@ -76,7 +70,7 @@ func (ec *EntryController) SetPlayerName(playerIndex int, name string) error {
 }
 
 // ReachedHighScore returns a boolean value for each player - indicating whether or not the player reached a position in
-// the high score table.
+// the high Score table.
 func (ec *EntryController) ReachedHighScore() (bool, bool) {
 	var p1Score = characters.PlayerController.ConfiguredPlayers()[0].Score()
 	var p2Score = 0
@@ -88,20 +82,20 @@ func (ec *EntryController) ReachedHighScore() (bool, bool) {
 }
 
 // reachedHighScore returns a boolean value for each player - indicating whether or not the player reached a position in
-// the high score table.
+// the high Score table.
 func (ec *EntryController) reachedHighScore(scorePlayer1, scorePlayer2 int) (bool, bool) {
-	newScoreTable := append(ec.entries, entry{name: player1Placeholder, score: scorePlayer1})
-	newScoreTable = append(newScoreTable, entry{name: player2Placeholder, score: scorePlayer2})
+	newScoreTable := append(ec.entries, Entry{Name: player1Placeholder, Score: scorePlayer1})
+	newScoreTable = append(newScoreTable, Entry{Name: player2Placeholder, Score: scorePlayer2})
 	sort.SliceStable(newScoreTable, func(i, j int) bool {
-		return newScoreTable[i].score > newScoreTable[j].score
+		return newScoreTable[i].Score > newScoreTable[j].Score
 	})
 	newScoreTable = newScoreTable[:len(newScoreTable)-2]
 
 	var resultP1 = false
 	var resultP2 = false
 	for _, e := range newScoreTable {
-		resultP1 = resultP1 || (e.name == player1Placeholder)
-		resultP2 = resultP2 || (e.name == player2Placeholder)
+		resultP1 = resultP1 || (e.Name == player1Placeholder)
+		resultP2 = resultP2 || (e.Name == player2Placeholder)
 	}
 
 	return resultP1, resultP2

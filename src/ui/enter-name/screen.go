@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/assets"
+	"retro-carnage/engine/characters"
 	"retro-carnage/engine/input"
+	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/ui/highscore"
@@ -45,6 +47,13 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 // This method gets called once before the Screen gets shown.
 func (s *Screen) SetUp() {
 	s.stereo = assets.NewStereo()
+
+	var name, error = highscore.EntryControllerInstance.PlayerName(s.PlayerIdx)
+	if nil != error {
+		logging.Error.Printf("Failed to get player name: %v", error)
+	} else {
+		s.playerName = name
+	}
 }
 
 // Update gets called once during each rendering cycle.
@@ -58,7 +67,12 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 
 	s.playerName = s.playerName + s.window.Typed()
 	var playerName = s.playerName
-	if s.window.JustPressed(pixelgl.KeyEnter) {
+	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.ControllerUiEventStateCombined().PressedButton {
+		highscore.EntryControllerInstance.SetPlayerName(s.PlayerIdx, s.playerName)
+		highscore.EntryControllerInstance.AddEntry(highscore.Entry{
+			Name:  s.playerName,
+			Score: characters.PlayerController.ConfiguredPlayers()[s.PlayerIdx].Score(),
+		})
 		s.exit()
 	} else if s.window.JustPressed(pixelgl.KeyBackspace) {
 		s.playerName = s.playerName[:len(s.playerName)-1]
@@ -66,6 +80,8 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	} else {
 		if s.cursorVisible {
 			playerName = playerName + "|"
+		} else {
+			playerName = playerName + " "
 		}
 		var renderer = fonts.TextRenderer{Window: s.window}
 		renderer.DrawLineToScreenCenter(fmt.Sprintf(headlineTemplate, s.PlayerIdx+1), 2.0, common.Green)

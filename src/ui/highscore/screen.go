@@ -16,15 +16,18 @@ const (
 	title = "HIGH SCORES"
 )
 
-// Screen is the High score table screen.
+// Screen is the High Score table screen.
 type Screen struct {
+	inputController      input.Controller
 	screenChangeRequired common.ScreenChangeCallback
 	stereo               *assets.Stereo
 	window               *pixelgl.Window
 }
 
 // SetInputController passes the input controller to the screen.
-func (s *Screen) SetInputController(_ input.Controller) {}
+func (s *Screen) SetInputController(inputCtrl input.Controller) {
+	s.inputController = inputCtrl
+}
 
 // SetScreenChangeCallback passes a callback function that cann be called to switch to another screen.
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
@@ -45,8 +48,12 @@ func (s *Screen) SetUp() {
 // Update gets called once during each rendering cycle.
 // It can be used to draw the content of the Screen.
 func (s *Screen) Update(_ int64) {
-	s.drawTitle()
-	s.drawTable()
+	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.ControllerUiEventStateCombined().PressedButton {
+		s.screenChangeRequired(common.Title)
+	} else {
+		s.drawTitle()
+		s.drawTable()
+	}
 }
 
 func (s *Screen) drawTitle() {
