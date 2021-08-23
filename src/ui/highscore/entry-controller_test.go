@@ -33,3 +33,27 @@ func TestAddEntryBelowTop10(t *testing.T) {
 		assert.NotEqual(t, "TEST", entryController.entries[i].name)
 	}
 }
+
+func TestReachedHighScoreJustBelowScore(t *testing.T) {
+	var entryController = newEntryController()
+	var p1, p2 = entryController.reachedHighScore(2_500, 2_499)
+	assert.Equal(t, false, p1)
+	assert.Equal(t, false, p2)
+	assert.Equal(t, "Drummer", entryController.entries[len(entryController.entries)-1].name)
+}
+
+func TestReachedHighScoreOnlyP1ReachedIt(t *testing.T) {
+	var entryController = newEntryController()
+	var p1, p2 = entryController.reachedHighScore(2_750, 2_200)
+	assert.Equal(t, true, p1)
+	assert.Equal(t, false, p2)
+	assert.Equal(t, "Drummer", entryController.entries[len(entryController.entries)-1].name)
+}
+
+func TestReachedHighScoreOnlyP2ReachedIt(t *testing.T) {
+	var entryController = newEntryController()
+	var p1, p2 = entryController.reachedHighScore(2_000, 2_750)
+	assert.Equal(t, false, p1)
+	assert.Equal(t, true, p2)
+	assert.Equal(t, "Drummer", entryController.entries[len(entryController.entries)-1].name)
+}

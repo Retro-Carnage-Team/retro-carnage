@@ -7,6 +7,7 @@ import (
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
+	"retro-carnage/ui/highscore"
 	"time"
 )
 
@@ -135,7 +136,7 @@ func (s *Screen) updateGameLost(elapsedTimeInMs int64) {
 	s.gameLostAnimation.update(elapsedTimeInMs)
 	s.gameLostAnimation.drawToScreen()
 	if s.gameLostAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
-		s.onGameLost()
+		s.moveToHighScoreScreen()
 	}
 }
 
@@ -149,21 +150,25 @@ func (s *Screen) TearDown() {
 	s.window.SetTitle("RETRO CARNAGE")
 }
 
-func (s *Screen) onGameLost() {
-	s.stereo.StopSong(assets.GameOverSong)
-	s.screenChangeRequired(common.HighScore)
-}
-
 func (s *Screen) onMissionWon() {
 	engine.MissionController.MarkMissionFinished(s.mission)
 	var remainingMissions, _ = engine.MissionController.RemainingMissions()
-
 	if 0 == len(remainingMissions) {
-		s.stereo.StopSong(assets.GameWonSong)
-		s.screenChangeRequired(common.HighScore)
+		s.moveToHighScoreScreen()
 	} else {
 		s.stereo.PlaySong(assets.ThemeSong)
 		s.screenChangeRequired(common.Mission)
+	}
+}
+
+func (s *Screen) moveToHighScoreScreen() {
+	var p1, p2 = highscore.EntryControllerInstance.ReachedHighScore()
+	if p1 {
+		s.screenChangeRequired(common.EnterNameP1)
+	} else if p2 {
+		s.screenChangeRequired(common.EnterNameP2)
+	} else {
+		s.screenChangeRequired(common.HighScore)
 	}
 }
 

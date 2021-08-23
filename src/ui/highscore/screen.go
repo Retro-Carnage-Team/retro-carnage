@@ -16,6 +16,7 @@ const (
 	title = "HIGH SCORES"
 )
 
+// Screen is the High score table screen.
 type Screen struct {
 	screenChangeRequired common.ScreenChangeCallback
 	stereo               *assets.Stereo
@@ -39,8 +40,6 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 // This method gets called once before the Screen gets shown.
 func (s *Screen) SetUp() {
 	s.stereo = assets.NewStereo()
-	// TODO: Add another song for the high score screen
-	s.stereo.PlaySong(assets.ThemeSong)
 }
 
 // Update gets called once during each rendering cycle.
@@ -64,7 +63,7 @@ func (s *Screen) drawTable() {
 	var defaultFontSize = fonts.DefaultFontSize()
 	var maxLineWidth = 0.0
 	var maxLineHeight = 0.0
-	for i, entry := range entryControllerInstance.entries {
+	for i, entry := range EntryControllerInstance.entries {
 		var lineDimensions = fonts.GetTextDimension(defaultFontSize, entry.ToString(i+1))
 		maxLineHeight = math.Max(maxLineHeight, lineDimensions.Y)
 		maxLineWidth = math.Max(maxLineWidth, lineDimensions.X)
@@ -72,7 +71,7 @@ func (s *Screen) drawTable() {
 
 	var offset = s.window.Bounds().H() - (maxLineHeight * 6.5)
 	var posLeft = (s.window.Bounds().W() - maxLineWidth) / 2
-	for i, entry := range entryControllerInstance.entries {
+	for i, entry := range EntryControllerInstance.entries {
 		var txt = text.New(pixel.V(posLeft, offset), fonts.SizeToFontAtlas[defaultFontSize])
 		txt.Color = common.White
 		_, _ = fmt.Fprint(txt, entry.ToString(i+1))
@@ -84,6 +83,8 @@ func (s *Screen) drawTable() {
 // TearDown can be used as a life-cycle hook to release resources that a Screen blocked.
 // It will be called once after the last Update.
 func (s *Screen) TearDown() {
+	s.stereo.StopSong(assets.GameOverSong)
+	s.stereo.StopSong(assets.GameWonSong)
 	s.stereo.PlaySong(assets.ThemeSong)
 }
 
