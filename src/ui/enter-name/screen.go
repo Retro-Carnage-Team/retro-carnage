@@ -26,6 +26,7 @@ type Screen struct {
 
 const (
 	headlineTemplate = "ENTER YOUR NAME (PLAYER %d)"
+	maxLengthOfName  = 10
 )
 
 // SetInputController passes the input controller to the screen.
@@ -66,6 +67,10 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 
 	s.playerName = s.playerName + s.window.Typed()
+	if maxLengthOfName < len(s.playerName) {
+		s.playerName = s.playerName[:maxLengthOfName]
+	}
+
 	var playerName = s.playerName
 	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.ControllerUiEventStateCombined().PressedButton {
 		highscore.EntryControllerInstance.SetPlayerName(s.PlayerIdx, s.playerName)
