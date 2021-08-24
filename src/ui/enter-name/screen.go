@@ -74,10 +74,12 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 			Score: characters.PlayerController.ConfiguredPlayers()[s.PlayerIdx].Score(),
 		})
 		s.exit()
-	} else if s.window.JustPressed(pixelgl.KeyBackspace) {
-		s.playerName = s.playerName[:len(s.playerName)-1]
-		playerName = s.playerName
 	} else {
+		if s.window.JustPressed(pixelgl.KeyBackspace) && (0 < len(s.playerName)) {
+			s.playerName = s.playerName[:len(s.playerName)-1]
+			playerName = s.playerName
+		}
+
 		if s.cursorVisible {
 			playerName = playerName + "|"
 		} else {

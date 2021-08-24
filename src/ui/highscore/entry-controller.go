@@ -84,7 +84,10 @@ func (ec *EntryController) ReachedHighScore() (bool, bool) {
 // reachedHighScore returns a boolean value for each player - indicating whether or not the player reached a position in
 // the high Score table.
 func (ec *EntryController) reachedHighScore(scorePlayer1, scorePlayer2 int) (bool, bool) {
-	newScoreTable := append(ec.entries, Entry{Name: player1Placeholder, Score: scorePlayer1})
+	var newScoreTable = make([]Entry, len(ec.entries))
+	copy(newScoreTable, ec.entries)
+
+	newScoreTable = append(newScoreTable, Entry{Name: player1Placeholder, Score: scorePlayer1})
 	newScoreTable = append(newScoreTable, Entry{Name: player2Placeholder, Score: scorePlayer2})
 	sort.SliceStable(newScoreTable, func(i, j int) bool {
 		return newScoreTable[i].Score > newScoreTable[j].Score
