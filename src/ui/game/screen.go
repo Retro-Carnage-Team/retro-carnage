@@ -7,6 +7,7 @@ import (
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
+	"retro-carnage/ui/highscore"
 	"time"
 )
 
@@ -118,7 +119,8 @@ func (s *Screen) updateGameWon(elapsedTimeInMs int64) {
 		s.missionWonAnimation.drawToScreen()
 		if s.missionWonAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
 			var remainingMissions, _ = engine.MissionController.RemainingMissions()
-			if 0 == len(remainingMissions) {
+			// The current mission has not been marked as won, yet. Thus there is one remaining mission.
+			if (1 == len(remainingMissions)) && (remainingMissions[0].Name == s.mission.Name) {
 				s.gameWonAnimation = createGameWonAnimation(s.mission, s.window)
 			} else {
 				s.onMissionWon()
@@ -135,7 +137,7 @@ func (s *Screen) updateGameLost(elapsedTimeInMs int64) {
 	s.gameLostAnimation.update(elapsedTimeInMs)
 	s.gameLostAnimation.drawToScreen()
 	if s.gameLostAnimation.finished || s.inputController.ControllerUiEventStateCombined().PressedButton {
-		s.onGameLost()
+		s.moveToHighScoreScreen()
 	}
 }
 
@@ -149,25 +151,25 @@ func (s *Screen) TearDown() {
 	s.window.SetTitle("RETRO CARNAGE")
 }
 
-func (s *Screen) onGameLost() {
-	// TODO: show high score screen
-	s.stereo.StopSong(assets.GameOverSong)
-	s.stereo.PlaySong(assets.ThemeSong)
-	s.screenChangeRequired(common.Title)
-}
-
 func (s *Screen) onMissionWon() {
 	engine.MissionController.MarkMissionFinished(s.mission)
 	var remainingMissions, _ = engine.MissionController.RemainingMissions()
-
 	if 0 == len(remainingMissions) {
-		// TODO: show high score screen
-		s.stereo.StopSong(assets.GameWonSong)
-		s.stereo.PlaySong(assets.ThemeSong)
-		s.screenChangeRequired(common.Title)
+		s.moveToHighScoreScreen()
 	} else {
 		s.stereo.PlaySong(assets.ThemeSong)
 		s.screenChangeRequired(common.Mission)
+	}
+}
+
+func (s *Screen) moveToHighScoreScreen() {
+	var p1, p2 = highscore.EntryControllerInstance.ReachedHighScore()
+	if p1 {
+		s.screenChangeRequired(common.EnterNameP1)
+	} else if p2 {
+		s.screenChangeRequired(common.EnterNameP2)
+	} else {
+		s.screenChangeRequired(common.HighScore)
 	}
 }
 

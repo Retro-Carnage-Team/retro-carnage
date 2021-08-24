@@ -5,6 +5,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"math"
 	"retro-carnage/assets"
+	"retro-carnage/engine/characters"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 )
@@ -76,6 +77,11 @@ func (gwa *gameWonAnimation) drawToScreen() {
 }
 
 func (gwa *gameWonAnimation) initialActions() {
+	for _, player := range characters.PlayerController.RemainingPlayers() {
+		if player.AutomaticWeaponSelected() {
+			gwa.stereo.StopFx(player.SelectedWeapon().Sound)
+		}
+	}
 	gwa.stereo.StopSong(gwa.mission.Music)
 	gwa.stereo.PlaySong(assets.GameWonSong)
 }
