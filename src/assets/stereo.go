@@ -3,7 +3,6 @@ package assets
 import (
 	"fmt"
 	"github.com/faiface/beep"
-	"github.com/faiface/beep/effects"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
 	"os"
@@ -11,16 +10,18 @@ import (
 	"retro-carnage/logging"
 	"retro-carnage/util"
 	"strings"
+	"sync"
 	"time"
 )
 
 // Stereo is the class we use to play music and sound effects throughout the application.
 type Stereo struct {
-	effects   map[SoundEffect]sound
-	mixer     *beep.Mixer
-	music     map[Song]sound
-	noEffects bool
-	noMusic   bool
+	effects    map[SoundEffect]sound
+	mixer      *beep.Mixer
+	music      map[Song]sound
+	musicMutex sync.Mutex
+	noEffects  bool
+	noMusic    bool
 }
 
 const (
@@ -31,14 +32,6 @@ const (
 )
 
 var stereo *Stereo
-
-type sound interface {
-	decreaseVolume()
-	play(mixer *beep.Mixer)
-	stop()
-}
-
-//--- Stereo ---------------------------------------------------------------------------------------------------------//
 
 // NewStereo initializes and returns the Singleton instance of Stereo
 func NewStereo() *Stereo {
@@ -104,7 +97,9 @@ func (sb *Stereo) PlaySong(song Song) {
 	}
 
 	sb.BufferSong(song)
+	sb.musicMutex.Lock()
 	sb.music[song].play(sb.mixer)
+	sb.musicMutex.Unlock()
 }
 
 // BufferSong loads the given Song but doesn't play it
@@ -113,31 +108,42 @@ func (sb *Stereo) BufferSong(song Song) {
 		return
 	}
 
-	var aSound = sb.music[song]
-	if nil == aSound {
+	sb.musicMutex.Lock()
+	var aSoundIsNil = nil == sb.music[song]
+	sb.musicMutex.Unlock()
+
+	if aSoundIsNil {
 		var err error = nil
+		var aSound sound
 		aSound, err = loadMusic(song)
 		if err != nil {
 			logging.Error.Panicln(err.Error())
 		}
+
+		sb.musicMutex.Lock()
 		sb.music[song] = aSound
+		sb.musicMutex.Unlock()
 	}
 }
 
 // StopSong immediately stops the playback of a given Song
 func (sb *Stereo) StopSong(song Song) {
+	sb.musicMutex.Lock()
 	var aSound = sb.music[song]
 	if nil != aSound {
 		aSound.stop()
 	}
+	sb.musicMutex.Unlock()
 }
 
 // DecreaseVolume decreases the volume of a given Song. Volume will get reset when the Song gets player again.
 func (sb *Stereo) DecreaseVolume(song Song) {
+	sb.musicMutex.Lock()
 	var aSound = sb.music[song]
 	if nil != aSound {
 		aSound.decreaseVolume()
 	}
+	sb.musicMutex.Unlock()
 }
 
 func loadSoundEffect(fx SoundEffect) (sound, error) {
@@ -200,57 +206,4 @@ func isLoopingEffect(fx SoundEffect) bool {
 		}
 	}
 	return false
-}
-
-//--- Helpers --------------------------------------------------------------------------------------------------------//
-
-// basicSound is a sound that gets played exactly one time. No further interaction is possible
-type basicSound struct {
-	buffer *beep.Buffer
-}
-
-func (bs *basicSound) play(mixer *beep.Mixer) {
-	mixer.Add(bs.buffer.Streamer(0, bs.buffer.Len()))
-}
-
-func (bs *basicSound) stop() {}
-
-func (bs *basicSound) decreaseVolume() {}
-
-// loopingSound is a sound that gets played over and over again. You can pause & continue
-type loopingSound struct {
-	buffer  *beep.Buffer
-	control *beep.Ctrl
-	volume  *effects.Volume
-}
-
-func (bs *loopingSound) play(mixer *beep.Mixer) {
-	if nil == bs.control {
-		speaker.Lock()
-		bs.control = &beep.Ctrl{Streamer: beep.Loop(-1, bs.buffer.Streamer(0, bs.buffer.Len()))}
-		bs.volume = &effects.Volume{
-			Streamer: bs.control,
-			Base:     2,
-			Volume:   0,
-			Silent:   false,
-		}
-		mixer.Add(bs.volume)
-		speaker.Unlock()
-	}
-}
-
-func (bs *loopingSound) stop() {
-	if nil != bs.control {
-		speaker.Lock()
-		bs.control.Streamer = nil
-		bs.control = nil
-		bs.volume = nil
-		speaker.Unlock()
-	}
-}
-
-func (bs *loopingSound) decreaseVolume() {
-	speaker.Lock()
-	bs.volume.Volume -= volumeChange
-	speaker.Unlock()
 }
