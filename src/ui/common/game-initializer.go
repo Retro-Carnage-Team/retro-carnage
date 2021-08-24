@@ -26,6 +26,10 @@ func LoadingScreenInitDone() bool {
 func StartScreenInit() {
 	go characters.InitEnemySkins("skins")
 	go characters.InitPlayerSkins("skins")
+
+	var stereo = assets.NewStereo()
+	go stereo.BufferSong(assets.GameOverSong)
+	go stereo.BufferSong(assets.GameWonSong)
 }
 
 // TitleScreenInit is called when the title screen is shown.
