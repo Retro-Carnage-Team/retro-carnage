@@ -32,7 +32,7 @@ func (mc *MissionCtrl) RemainingMissions() ([]*assets.Mission, error) {
 		for _, name := range mc.finishedMissionNames {
 			finished = finished || name == mission.Name
 		}
-		if !mission.Unfinished && !finished {
+		if !finished {
 			result = append(result, mission)
 		}
 	}

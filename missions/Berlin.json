@@ -130,6 +130,5 @@
       "goal": {"x": -5800, "y":200, "width": 200, "height": 200},
       "obstacles": []
     }
-  ],
-  "unfinished": false
+  ]
 }
