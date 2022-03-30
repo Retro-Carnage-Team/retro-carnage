@@ -111,7 +111,7 @@ func (c *controllerImplementation) getControllerDeviceStateCombined() *DeviceSta
 	return result
 }
 
-// ControllerUiEventState returns a UiEventState struct holding UI events. Especially the first call can returns nil
+// ControllerUiEventState returns a UiEventState struct holding UI events. Especially the first call can return nil
 // without being in error state. Callers thus should check the result pointer before accessing it.
 func (c *controllerImplementation) ControllerUiEventState(playerIdx int) (*UiEventState, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
@@ -145,7 +145,7 @@ func (c *controllerImplementation) ControllerUiEventState(playerIdx int) (*UiEve
 }
 
 // ControllerUiEventStateCombined returns a UiEventState struct holding UI events. Especially the first call can
-// returns nil without being in error state. Callers thus should check the result pointer before accessing it.
+// return nil without being in error state. Callers thus should check the result pointer before accessing it.
 // The difference between GetControllerUiEventState and GetControllerUiEventStateCombined is that this method returns a
 // struct that contains the values for all input devices. So you can use this method before the input devices are
 // assigned to players.

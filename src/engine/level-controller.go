@@ -83,7 +83,7 @@ func (lc *LevelController) ProgressToNextSegment() {
 	}
 }
 
-// ActivatedEnemies returns a those character.Enemy instances that have been activated since the last scroll movement
+// ActivatedEnemies returns Enemy instances that have been activated since the last scroll movement
 func (lc *LevelController) ActivatedEnemies() []characters.ActiveEnemy {
 	var result = make([]characters.ActiveEnemy, 0)
 	var newEnemySlice = make([]assets.Enemy, 0)

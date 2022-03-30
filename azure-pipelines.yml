@@ -11,7 +11,7 @@ steps:
     displayName: Install dev libraries
   - task: GoTool@0
     inputs:
-      version: "1.16"
+      version: "1.18"
     displayName: Install go
   - task: Go@0
     inputs:
