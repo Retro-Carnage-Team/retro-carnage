@@ -18,9 +18,9 @@ var (
 
 func init() {
 	backgroundOffsets = make(map[string]geometry.Point)
-	backgroundOffsets[geometry.Up.Name] = geometry.Point{X: 0, Y: -1500}
-	backgroundOffsets[geometry.Left.Name] = geometry.Point{X: -1500, Y: 0}
-	backgroundOffsets[geometry.Right.Name] = geometry.Point{X: 1500, Y: 0}
+	backgroundOffsets[geometry.Up.Name] = geometry.Point{X: 0, Y: -ScreenSize}
+	backgroundOffsets[geometry.Left.Name] = geometry.Point{X: -ScreenSize, Y: 0}
+	backgroundOffsets[geometry.Right.Name] = geometry.Point{X: ScreenSize, Y: 0}
 }
 
 type LevelController struct {
@@ -88,7 +88,7 @@ func (lc *LevelController) ActivatedEnemies() []characters.ActiveEnemy {
 	var result = make([]characters.ActiveEnemy, 0)
 	var newEnemySlice = make([]assets.Enemy, 0)
 	for _, enemy := range lc.enemies {
-		if lc.distanceScrolled >= enemy.ActivationDistance {
+		if lc.distanceScrolled >= enemy.Position.BottomBorder().Start.Y-ScreenSize {
 			var activatedEnemy = lc.activateEnemy(&enemy)
 			result = append(result, activatedEnemy)
 		} else {

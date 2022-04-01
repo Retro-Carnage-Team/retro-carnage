@@ -15,6 +15,9 @@ const (
 	PlayerPropertyScore          = "score"
 	PlayerPropertySelectedWeapon = "selected-weapon"
 	PlayerPropertyWeapons        = "items"
+	initialCash                  = 5000
+	initialLives                 = 3
+	initialScore                 = 0
 )
 
 var (
@@ -39,9 +42,9 @@ func newPlayer(index int) *Player {
 	var result = &Player{}
 	result.changeListeners = make([]*util.ChangeListener, 0)
 	result.index = index
-	result.cash = 5000
-	result.lives = 3
-	result.score = 0
+	result.cash = initialCash
+	result.lives = initialLives
+	result.score = initialScore
 	result.selectedWeaponName = nil
 	result.ammunition = make(map[string]int, 0)
 	result.grenades = make(map[string]bool, 0)
@@ -148,9 +151,9 @@ func (p *Player) PistolSelected() bool {
 }
 
 func (p *Player) Reset() {
-	p.cash = 5000
-	p.lives = 3
-	p.score = 0
+	p.cash = initialCash
+	p.lives = initialLives
+	p.score = initialScore
 	p.selectedWeaponName = nil
 	p.ammunition = make(map[string]int, 0)
 	p.grenades = make(map[string]bool, 0)
