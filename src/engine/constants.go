@@ -7,7 +7,7 @@ const (
 	ExplosionHitRectWidth  = 200
 	PlayerHitRectHeight    = 150
 	PlayerHitRectWidth     = 90
-	ScreenSize             = 1500
+	ScreenSize             = 1_500
 	ScrollBarrierUp        = 1_000
 	ScrollBarrierLeft      = 1_000
 	ScrollBarrierRight     = 500

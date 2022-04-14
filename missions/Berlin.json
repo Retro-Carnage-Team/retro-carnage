@@ -11,11 +11,11 @@
   "segments": [
     {
       "backgrounds": [
-        "bg-dummy-1.jpg",
-        "bg-dummy-2.jpg",
-        "bg-dummy-3.jpg",
-        "bg-dummy-1.jpg",
-        "bg-dummy-2.jpg"
+        "images/levels/bg-dummy-1.jpg",
+        "images/levels/bg-dummy-2.jpg",
+        "images/levels/bg-dummy-3.jpg",
+        "images/levels/bg-dummy-1.jpg",
+        "images/levels/bg-dummy-2.jpg"
       ],
       "direction": "up",
       "enemies": [
@@ -116,11 +116,11 @@
     },
     {
       "backgrounds": [
-        "bg-dummy-2.jpg",
-        "bg-dummy-3.jpg",
-        "bg-dummy-1.jpg",
-        "bg-dummy-2.jpg",
-        "bg-dummy-3.jpg"
+        "images/levels/bg-dummy-2.jpg",
+        "images/levels/bg-dummy-3.jpg",
+        "images/levels/bg-dummy-1.jpg",
+        "images/levels/bg-dummy-2.jpg",
+        "images/levels/bg-dummy-3.jpg"
       ],
       "direction": "left",
       "goal": {"x": -5800, "y":200, "width": 200, "height": 200},

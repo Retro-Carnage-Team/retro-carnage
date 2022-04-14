@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
@@ -9,8 +8,6 @@ import (
 	"retro-carnage/engine/graphics"
 	"retro-carnage/logging"
 )
-
-const levelBackgroundFolder = "images/levels/%s"
 
 var (
 	backgroundOffsets map[string]geometry.Point
@@ -57,7 +54,7 @@ func (lc *LevelController) loadSegment(segment *assets.Segment) {
 	lc.Backgrounds = make([]graphics.SpriteWithOffset, len(segment.Backgrounds))
 	for idx, bgPath := range segment.Backgrounds {
 		var offset = backgroundOffsets[segment.Direction]
-		var sprite = assets.SpriteRepository.Get(fmt.Sprintf(levelBackgroundFolder, bgPath))
+		var sprite = assets.SpriteRepository.Get(bgPath)
 		if nil == sprite {
 			logging.Warning.Printf("Failed to load level background sprite: %s", bgPath)
 		}
