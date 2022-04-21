@@ -65,7 +65,7 @@ func (lc *LevelController) loadSegment(segment *assets.Segment) {
 		}
 	}
 
-	lc.segmentScrollLengthInPixels = 1500 * float64(len(lc.Backgrounds)-1)
+	lc.segmentScrollLengthInPixels = ScreenSize * float64(len(lc.Backgrounds)-1)
 	lc.enemies = segment.Enemies
 	lc.obstacles = segment.Obstacles
 	lc.distanceScrolled = 0
