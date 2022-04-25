@@ -1,5 +1,5 @@
 [![Build Status](https://dev.azure.com/huddeldaddel/Personal%20Projects/_apis/build/status/huddeldaddel.retro-carnage?branchName=main)](https://dev.azure.com/huddeldaddel/Personal%20Projects/_build/latest?definitionId=12&branchName=main)
-[![Codiga](https://api.codiga.io/project/15536/score/svg)](https://app.codiga.io/project/15536/dashboard)
+[![Codiga](https://api.codiga.io/project/33163/score/svg)](https://app.codiga.io/project/33163/dashboard)
 [![Go Report Card](https://goreportcard.com/badge/github.com/huddeldaddel/retro-carnage)](https://goreportcard.com/report/github.com/huddeldaddel/retro-carnage)
 
 # RETRO CARNAGE
