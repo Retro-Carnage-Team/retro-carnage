@@ -18,7 +18,7 @@ Development status as of 2021-08-09
 
 ## Build & Run
 
-Make sure you have Golang (>= 1.16) and git installed
+Make sure you have Golang (>= 1.17) and git installed
 
 ### Install dependencies
 
