@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/Retro-Carnage/Retro-Carnage/_apis/build/status/Retro-Carnage-Team.retro-carnage?branchName=main)](https://dev.azure.com/Retro-Carnage/Retro-Carnage/_build/latest?definitionId=1&branchName=main)
+[![Build Status](https://dev.azure.com/Retro-Carnage/Retro-Carnage/_apis/build/status/Retro-Carnage-Team.retro-carnage-backend?branchName=master)](https://dev.azure.com/Retro-Carnage/Retro-Carnage/_build/latest?definitionId=4&branchName=master)
 [![Codiga](https://api.codiga.io/project/33163/score/svg)](https://app.codiga.io/project/33163/dashboard)
 [![Go Report Card](https://goreportcard.com/badge/github.com/huddeldaddel/retro-carnage)](https://goreportcard.com/report/github.com/huddeldaddel/retro-carnage)
 
