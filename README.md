@@ -37,7 +37,7 @@ Install [tdm-gcc](https://jmeubank.github.io/tdm-gcc/) (so that various go-bindi
 
 ### Build and run the game
 
-- Get the code: `git clone https://github.com/huddeldaddel/retro-carnage.git`
+- Get the code: `git clone https://github.com/Retro-Carnage-Team/retro-carnage.git`
 - Get the assets: `git clone https://github.com/Retro-Carnage-Team/retro-carnage-assets`
 - Change into the src directory: `cd retro-carnage`
 - Install required modules: `go get -d`
