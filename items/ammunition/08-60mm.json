@@ -1,8 +1,0 @@
-{
-  "description": "This 60mm projectile for the Panzerfaust 44 is effective against holding tanks up to 200 meters and against moving tanks up to 150 meters distance. The penetrating power is up to 375 mm of rolled armour steel.",
-  "image": "images/weapons/DM12A1.png",
-  "maxCount": 100,
-  "name": "60 mm",
-  "packageSize": 1,
-  "price": 2800
-}

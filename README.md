@@ -13,7 +13,7 @@ by [Elite Systems](http://www.elite-systems.co.uk).
 
 This game is currently being developed - but not ready to get played, yet.
 
-[![Watch the video](docs/youtube-2021-06-03.png)](https://youtu.be/PqWghPZvIy4)
+[![Watch the video](youtube-2021-06-03.png)](https://youtu.be/PqWghPZvIy4)
 Development status as of 2021-08-09
 
 ## Build & Run
@@ -38,11 +38,10 @@ Install [tdm-gcc](https://jmeubank.github.io/tdm-gcc/) (so that various go-bindi
 ### Build and run the game
 
 - Get the code: `git clone https://github.com/huddeldaddel/retro-carnage.git`
-- Change into the src directory: `cd retro-carnage/src`
+- Get the assets: `git clone https://github.com/Retro-Carnage-Team/retro-carnage-assets`
+- Change into the src directory: `cd retro-carnage`
 - Install required modules: `go get -d`
 - Build the application: `go build`
-- Move the binary one level up: `mv retro-carnage ./..`
-- Change into the main directory: `cd ..`
-- Finally: start the game! `./retro-carnage`
+- Start the game: `./retro-carnage ../retro-carnage-assets`
 
-The repository contains IDE configurations for JetBrains Goland to test and run the game.
+The repository contains IDE settings for Visual Studio Code to debug, run, and test the game.

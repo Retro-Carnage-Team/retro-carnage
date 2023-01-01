@@ -1,8 +1,0 @@
-{
-  "description": "The 3.5-inch ammunition was in principle an enlarged 2.36-inch ammunition; at 60 cm it was only slightly longer, but at 4 kg it weighed almost three times as much. The rocket motor accelerated to 100 m/s muzzle velocity, resulting in a maximum range of 820 m. The warhead was tapered, but rounded at the tip. The M28 shaped-charge ammunition (in further versions M28A1 and M28A2) was loaded with 0.9 kg of composition B, resulting in a penetration of 30 cm of armour and 60 cm of concrete. The M29 was the corresponding practice ammunition without explosives in the warhead. The M30 was a smoke or incendiary grenade, loaded with 1 kg of white phosphorus. The 3.5-inch ammunition was produced by the Picatinny Arsenal.",
-  "image": "images/weapons/m28a2.png",
-  "maxCount": 100,
-  "name": "89 mm",
-  "packageSize": 1,
-  "price": 2600
-}

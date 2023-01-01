@@ -1,8 +1,0 @@
-{
-  "description": "The 5.56×45mm NATO is a rimless bottlenecked intermediate cartridge family developed in the late 1970s in Belgium by FN Herstal. It consists of the SS109, SS110, and SS111 cartridges. On 28 October 1980 under STANAG 4172 it was standardized as the second standard service rifle cartridge for NATO forces as well as many non-NATO countries. The 5.56×45mm NATO cartridge family was derived from, but is not identical to, the .223 Remington cartridge designed by Remington Arms in the early 1960s.",
-  "image": "images/weapons/5.56x45.png",
-  "maxCount": 10000,
-  "name": "5.56 x 45 mm",
-  "packageSize": 100,
-  "price": 120
-}
