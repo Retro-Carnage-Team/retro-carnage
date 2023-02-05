@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	"os"
 	"retro-carnage/assets"
+	"retro-carnage/logging"
 	"retro-carnage/ui"
 	"retro-carnage/ui/common/fonts"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 func run() {
@@ -48,6 +50,15 @@ func main() {
 		err := os.Chdir(os.Args[1])
 		if err != nil {
 			panic(err)
+		}
+
+		if len(os.Args) > 2 {
+			for i := 2; i < len(os.Args); i++ {
+				if os.Args[i] == "debug" {
+					logging.ActivateTraceLogger()
+					logging.Trace.Println("Activated trace logger")
+				}
+			}
 		}
 	}
 

@@ -85,6 +85,7 @@ func (lc *LevelController) ActivatedEnemies() []characters.ActiveEnemy {
 	var result = make([]characters.ActiveEnemy, 0)
 	var newEnemySlice = make([]assets.Enemy, 0)
 	for _, enemy := range lc.enemies {
+		// TODO: This is a bug. Enemies are activated too early.
 		if lc.distanceScrolled >= enemy.Position.BottomBorder().Start.Y-ScreenSize {
 			var activatedEnemy = lc.activateEnemy(&enemy)
 			result = append(result, activatedEnemy)

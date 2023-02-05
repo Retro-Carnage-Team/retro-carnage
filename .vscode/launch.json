@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceRoot}",
-            "args": ["${workspaceRoot}/../retro-carnage-assets"]
+            "args": ["${workspaceRoot}/../retro-carnage-assets", "debug"]
         }
     ]
 }

@@ -41,6 +41,9 @@ func (mc *MissionCtrl) RemainingMissions() ([]*assets.Mission, error) {
 
 func (mc *MissionCtrl) MarkMissionFinished(mission *assets.Mission) {
 	mc.finishedMissionNames = append(mc.finishedMissionNames, mission.Name)
+	for _, player := range characters.PlayerController.RemainingPlayers() {
+		player.SetCash(player.Cash() + mission.Reward)
+	}
 }
 
 func (mc *MissionCtrl) CurrentMission() *assets.Mission {
@@ -50,9 +53,6 @@ func (mc *MissionCtrl) CurrentMission() *assets.Mission {
 func (mc *MissionCtrl) SelectMission(mission *assets.Mission) {
 	if nil != mission {
 		mc.currentMission = mission
-		for _, player := range characters.PlayerController.RemainingPlayers() {
-			player.SetCash(player.Cash() + mission.Reward)
-		}
 	} else {
 		mc.currentMission = nil
 	}
@@ -131,7 +131,7 @@ func (mc *MissionCtrl) filterAndSortRemainingMissions(test func(*assets.Mission)
 		}
 	}
 
-	if 0 == len(filteredMissions) {
+	if len(filteredMissions) == 0 {
 		return nil, nil
 	}
 

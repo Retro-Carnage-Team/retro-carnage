@@ -135,7 +135,7 @@ func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
 			}
 		}
 	}
-	ge.Lost = 0 == len(characters.PlayerController.RemainingPlayers())
+	ge.Lost = len(characters.PlayerController.RemainingPlayers()) == 0
 }
 
 func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, obstacles []assets.Obstacle) {
@@ -190,7 +190,7 @@ func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
 }
 
 func (ge *GameEngine) removeFirstEnemyMovement(movements []*characters.EnemyMovement) []*characters.EnemyMovement {
-	if 1 == len(movements) {
+	if len(movements) == 1 {
 		return []*characters.EnemyMovement{}
 	}
 	movements[0] = nil
@@ -498,7 +498,7 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 func (ge *GameEngine) killEnemy(enemy *characters.ActiveEnemy, killer int) {
 	enemy.Dying = true
 	enemy.DyingAnimationCountDown = 1
-	if -1 != killer {
+	if killer != -1 {
 		ge.Kills[killer] += 1
 		var player = ge.playerBehaviors[killer].Player
 		player.SetScore(player.Score() + pointsByEnemyType[enemy.Type])

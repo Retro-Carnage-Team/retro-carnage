@@ -1,14 +1,15 @@
 package engine
 
 import (
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 // Renderer is used to render the current state of an GameEngine to screen
@@ -155,6 +156,7 @@ func (r *Renderer) drawBurnMarks() {
 
 // drawDebugRect draws a given geometry.Rectangle onto the in-memory canvas. Useful for debugging.
 // Do not call from outside this class.
+/*
 func (r *Renderer) drawDebugRect(rect *geometry.Rectangle) {
 	if nil == rect {
 		return
@@ -173,6 +175,7 @@ func (r *Renderer) drawDebugRect(rect *geometry.Rectangle) {
 	draw.Rectangle(3)
 	draw.Draw(r.canvas)
 }
+*/
 
 // draws a given sprite to the given position on canvas.
 func (r *Renderer) drawSpriteToCanvas(spriteWithOffset *graphics.SpriteWithOffset, position *geometry.Rectangle) {
