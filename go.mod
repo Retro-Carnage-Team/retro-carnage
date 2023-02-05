@@ -1,6 +1,6 @@
 module retro-carnage
 
-go 1.17
+go 1.20
 
 require (
 	github.com/faiface/beep v1.0.2
