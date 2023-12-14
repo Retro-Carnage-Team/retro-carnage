@@ -17,18 +17,18 @@ steps:
     displayName: 'go get'
     inputs:
       command: 'get'
-      arguments: '-v all'
-      workingDirectory: "$(System.DefaultWorkingDirectory)/src"    
+      arguments: '-d'
+      workingDirectory: "$(System.DefaultWorkingDirectory)"    
   - task: Go@0
     displayName: Build application
     inputs:
       command: 'build'
-      workingDirectory: "$(System.DefaultWorkingDirectory)/src"   
+      workingDirectory: "$(System.DefaultWorkingDirectory)"   
   - task: Go@0
     displayName: Test application
     inputs:
       command: 'test'
       arguments: '-v ./...'
-      workingDirectory: "$(System.DefaultWorkingDirectory)/src"
+      workingDirectory: "$(System.DefaultWorkingDirectory)"
     env:
       sound: "no-fx;no-music"
