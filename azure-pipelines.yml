@@ -12,7 +12,7 @@ steps:
   - task: GoTool@0
     displayName: Install go
     inputs:
-      version: "1.20"    
+      version: "1.21.5"    
   - task: Go@0
     displayName: 'go get'
     inputs:
