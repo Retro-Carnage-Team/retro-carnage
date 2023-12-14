@@ -24,6 +24,9 @@ steps:
     inputs:
       command: 'build'
       workingDirectory: "$(System.DefaultWorkingDirectory)"   
+  - bash: |
+      git clone https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/retro-carnage-assets
+    displayName: Download test assets
   - task: Go@0
     displayName: Test application
     inputs:
@@ -32,3 +35,4 @@ steps:
       workingDirectory: "$(System.DefaultWorkingDirectory)"
     env:
       sound: "no-fx;no-music"
+      RC-ASSETS: "/tmp/retro-carnage-assets"
