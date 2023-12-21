@@ -26,5 +26,5 @@ require (
 	golang.org/x/exp v0.0.0-20180710024300-14dda7b62fcd // indirect
 	golang.org/x/mobile v0.0.0-20180806140643-507816974b79 // indirect
 	golang.org/x/sys v0.1.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.0 // indirect
 )
