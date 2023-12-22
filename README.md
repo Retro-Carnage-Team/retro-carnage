@@ -1,5 +1,4 @@
-[![Build Status](https://dev.azure.com/Retro-Carnage/Retro-Carnage/_apis/build/status%2FRetro-Carnage-Team.retro-carnage?branchName=main)](https://dev.azure.com/Retro-Carnage/Retro-Carnage/_build/latest?definitionId=3&branchName=main)
-[![Go Report Card](https://goreportcard.com/badge/github.com/huddeldaddel/retro-carnage)](https://goreportcard.com/report/github.com/huddeldaddel/retro-carnage)
+[![Go](https://github.com/Retro-Carnage-Team/retro-carnage/actions/workflows/build.yml/badge.svg)](https://github.com/Retro-Carnage-Team/retro-carnage/actions/workflows/build.yml)
 
 # RETRO CARNAGE
 
