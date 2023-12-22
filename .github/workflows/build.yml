@@ -19,6 +19,11 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.21.x'
+    - name: Install dev libraries
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev
     - name: Install dependencies
       run: go get -d .
     - name: Build
