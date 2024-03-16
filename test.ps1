@@ -4,5 +4,5 @@
 $assetFolder = Resolve-Path -Path "..\retro-carnage-assets"
 Set-Item -Path Env:\RC-ASSETS -Value $assetFolder
 Set-Item -Path Env:\sound -Value "no-fx;no-music"
-go build
+go build -v
 go test -v ./...

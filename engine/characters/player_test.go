@@ -10,6 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const AR10 = "AR-10"
+const HAND_GRENADE = "Stielhandgranate 24"
+const PANZERFAUST = "Panzerfaust 3"
+
 func init() {
 	assets.GrenadeCrate.InitializeInTest(filepath.Join(os.Getenv("RC-ASSETS"), "items/grenades/"))
 	assets.WeaponCrate.InitializeInTest(filepath.Join(os.Getenv("RC-ASSETS"), "items/weapons/"))
@@ -47,67 +51,67 @@ func TestChangeListenersShouldGetInformedEveryTimeAChangeHappened(t *testing.T) 
 func TestSelectFirstWeaponShouldSelectFirstWeaponInInventory(t *testing.T) {
 	var player = Players[0]
 	player.Reset()
-	player.SetWeaponInInventory("AR-10", true)
-	player.SetWeaponInInventory("Panzerfaust 3", true)
+	player.SetWeaponInInventory(AR10, true)
+	player.SetWeaponInInventory(PANZERFAUST, true)
 	player.SelectFirstWeapon()
-	assert.Equal(t, "AR-10", player.SelectedWeapon().GetName())
+	assert.Equal(t, AR10, player.SelectedWeapon().GetName())
 }
 
 func TestSelectFirstWeaponShouldSelectFirstGrenadeIfNoWeaponInInventory(t *testing.T) {
 	var player = Players[0]
 	player.Reset()
-	player.SetGrenadeCount("Stielhandgranate 24", 42)
+	player.SetGrenadeCount(HAND_GRENADE, 42)
 	player.SelectFirstWeapon()
 
 	assert.Nil(t, player.SelectedWeapon())
-	assert.Equal(t, "Stielhandgranate 24", player.SelectedGrenade().Name)
+	assert.Equal(t, HAND_GRENADE, player.SelectedGrenade().Name)
 }
 
 func TestSelectNextWeaponShouldIterateAllWeaponsAndGrenadesInInventory(t *testing.T) {
 	var player = Players[0]
 	player.Reset()
-	player.SetGrenadeCount("Stielhandgranate 24", 1)
-	player.SetWeaponInInventory("AR-10", true)
-	player.SetWeaponInInventory("Panzerfaust 3", true)
+	player.SetGrenadeCount(HAND_GRENADE, 1)
+	player.SetWeaponInInventory(AR10, true)
+	player.SetWeaponInInventory(PANZERFAUST, true)
 
 	player.SelectFirstWeapon()
-	assert.Equal(t, "AR-10", player.SelectedWeapon().GetName())
+	assert.Equal(t, AR10, player.SelectedWeapon().GetName())
 	assert.Nil(t, player.SelectedGrenade())
 
 	player.SelectNextWeapon()
-	assert.Equal(t, "Panzerfaust 3", player.SelectedWeapon().GetName())
+	assert.Equal(t, PANZERFAUST, player.SelectedWeapon().GetName())
 	assert.Nil(t, player.SelectedGrenade())
 
 	player.SelectNextWeapon()
 	assert.Nil(t, player.SelectedWeapon())
-	assert.Equal(t, "Stielhandgranate 24", player.SelectedGrenade().Name)
+	assert.Equal(t, HAND_GRENADE, player.SelectedGrenade().Name)
 
 	player.SelectNextWeapon()
-	assert.Equal(t, "AR-10", player.SelectedWeapon().GetName())
+	assert.Equal(t, AR10, player.SelectedWeapon().GetName())
 	assert.Nil(t, player.SelectedGrenade())
 }
 
 func TestSelectPreviousWeaponShouldIterateAllWeaponsAndGrenadesInInventory(t *testing.T) {
 	var player = Players[0]
 	player.Reset()
-	player.SetGrenadeCount("Stielhandgranate 24", 1)
-	player.SetWeaponInInventory("AR-10", true)
-	player.SetWeaponInInventory("Panzerfaust 3", true)
+	player.SetGrenadeCount(HAND_GRENADE, 1)
+	player.SetWeaponInInventory(AR10, true)
+	player.SetWeaponInInventory(PANZERFAUST, true)
 
 	player.SelectFirstWeapon()
-	assert.Equal(t, "AR-10", player.SelectedWeapon().GetName())
+	assert.Equal(t, AR10, player.SelectedWeapon().GetName())
 	assert.Nil(t, player.SelectedGrenade())
 
 	player.SelectPreviousWeapon()
 	assert.Nil(t, player.SelectedWeapon())
-	assert.Equal(t, "Stielhandgranate 24", player.SelectedGrenade().Name)
+	assert.Equal(t, HAND_GRENADE, player.SelectedGrenade().Name)
 
 	player.SelectPreviousWeapon()
-	assert.Equal(t, "Panzerfaust 3", player.SelectedWeapon().GetName())
+	assert.Equal(t, PANZERFAUST, player.SelectedWeapon().GetName())
 	assert.Nil(t, player.SelectedGrenade())
 
 	player.SelectPreviousWeapon()
-	assert.Equal(t, "AR-10", player.SelectedWeapon().GetName())
+	assert.Equal(t, AR10, player.SelectedWeapon().GetName())
 	assert.Nil(t, player.SelectedGrenade())
 }
 
@@ -116,9 +120,9 @@ func TestWeaponTypeInfoShouldWork(t *testing.T) {
 	player.Reset()
 
 	player.SetWeaponInInventory("P210", true)
-	player.SetWeaponInInventory("AR-10", true)
+	player.SetWeaponInInventory(AR10, true)
 	player.SetWeaponInInventory("Panzerfaust 44", true)
-	player.SetGrenadeCount("Stielhandgranate 24", 1)
+	player.SetGrenadeCount(HAND_GRENADE, 1)
 
 	player.SelectFirstWeapon()
 	assert.Equal(t, "P210", player.SelectedWeapon().GetName())
@@ -128,7 +132,7 @@ func TestWeaponTypeInfoShouldWork(t *testing.T) {
 	assert.False(t, player.RpgSelected())
 
 	player.SelectNextWeapon()
-	assert.Equal(t, "AR-10", player.SelectedWeapon().GetName())
+	assert.Equal(t, AR10, player.SelectedWeapon().GetName())
 	assert.True(t, player.AutomaticWeaponSelected())
 	assert.False(t, player.GrenadeSelected())
 	assert.False(t, player.PistolSelected())
@@ -142,7 +146,7 @@ func TestWeaponTypeInfoShouldWork(t *testing.T) {
 	assert.True(t, player.RpgSelected())
 
 	player.SelectNextWeapon()
-	assert.Equal(t, "Stielhandgranate 24", player.SelectedGrenade().Name)
+	assert.Equal(t, HAND_GRENADE, player.SelectedGrenade().Name)
 	assert.False(t, player.AutomaticWeaponSelected())
 	assert.True(t, player.GrenadeSelected())
 	assert.False(t, player.PistolSelected())

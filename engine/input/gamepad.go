@@ -1,9 +1,10 @@
 package input
 
 import (
-	"github.com/faiface/pixel/pixelgl"
 	"math"
 	"strings"
+
+	"github.com/faiface/pixel/pixelgl"
 )
 
 // gamepad can be used to access the device state of a gamepad or joystick.
@@ -103,17 +104,17 @@ func (g *gamepad) State() *DeviceState {
 		state.Grenade = g.window.JoystickPressed(g.joystick, pixelgl.ButtonCross)
 		state.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonLeftBumper)
 		state.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonCircle)
-		state.MoveUp = -1 == vertical
-		state.MoveDown = 1 == vertical
-		state.MoveLeft = -1 == horizontal
-		state.MoveRight = 1 == horizontal
+		state.MoveUp = vertical == -1
+		state.MoveDown = vertical == 1
+		state.MoveLeft = horizontal == -1
+		state.MoveRight = horizontal == 1
 	}
 	return &state
 }
 
 // Name returns the human readable name of the gamepad.
 func (g *gamepad) Name() string {
-	if "" != g.name {
+	if g.name != "" {
 		return g.name
 	}
 
