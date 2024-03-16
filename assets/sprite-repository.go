@@ -2,16 +2,16 @@ package assets
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
-	"io/ioutil"
 	"os"
 	"retro-carnage/logging"
 	"retro-carnage/util"
 	"strings"
 	"sync"
+
+	"github.com/faiface/pixel"
 )
 
 type SpriteRepo struct {
@@ -52,7 +52,7 @@ func (sr *SpriteRepo) loadFromDirectory(directory string) {
 		directory += "/"
 	}
 
-	files, err := ioutil.ReadDir(directory)
+	files, err := os.ReadDir(directory)
 	if err != nil {
 		logging.Warning.Fatalf("failed to read directory %s: %v", directory, err)
 	}

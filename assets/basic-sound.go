@@ -11,6 +11,10 @@ func (bs *basicSound) play(mixer *beep.Mixer) {
 	mixer.Add(bs.buffer.Streamer(0, bs.buffer.Len()))
 }
 
-func (bs *basicSound) stop() {}
+func (bs *basicSound) stop() {
+	// basic sounds should not be stopped
+}
 
-func (bs *basicSound) decreaseVolume() {}
+func (bs *basicSound) decreaseVolume() {
+	// unlike music a basic sound will not have effects applied on it
+}

@@ -1,10 +1,14 @@
 package characters
 
 import (
-	"github.com/stretchr/testify/assert"
 	"retro-carnage/engine/geometry"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
+
+const ENEMY0_DOWN1 = "images/enemy-0/down/1.png"
+const ENEMY0_DOWN2 = "images/enemy-0/down/2.png"
 
 func TestPersonReturnsSpritesOfAnimation(t *testing.T) {
 	InitEnemySkins("testdata/skins")
@@ -12,9 +16,9 @@ func TestPersonReturnsSpritesOfAnimation(t *testing.T) {
 	var spriteSupplier = NewEnemyPersonSpriteSupplier(*person.ViewingDirection)
 	assert.NotNil(t, spriteSupplier)
 
-	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(1, person).Source)
-	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(2, person).Source)
-	assert.Equal(t, "images/enemy-0/down/2.png", spriteSupplier.Sprite(DurationOfEnemyMovementFrame, person).Source)
+	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(1, person).Source)
+	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(2, person).Source)
+	assert.Equal(t, ENEMY0_DOWN2, spriteSupplier.Sprite(DurationOfEnemyMovementFrame, person).Source)
 }
 
 func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
@@ -23,12 +27,12 @@ func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
 	var spriteSupplier = NewEnemyPersonSpriteSupplier(*person.ViewingDirection)
 
 	assert.NotNil(t, spriteSupplier)
-	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(1, person).Source)
+	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(1, person).Source)
 
 	person.Die()
 
-	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(2, person).Source)
-	assert.Equal(t, "images/enemy-0/down/1.png", spriteSupplier.Sprite(DurationOfEnemyDeathAnimationFrame, person).Source)
+	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(2, person).Source)
+	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(DurationOfEnemyDeathAnimationFrame, person).Source)
 }
 
 func buildEnemyPerson() ActiveEnemy {

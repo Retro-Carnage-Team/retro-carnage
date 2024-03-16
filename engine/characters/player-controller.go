@@ -16,7 +16,7 @@ func (pc *PlayerCtrl) NumberOfPlayers() int {
 
 // ConfiguredPlayers returns a slice containing the configured players. The slide might contain dead players.
 func (pc *PlayerCtrl) ConfiguredPlayers() []*Player {
-	if 1 == pc.numberOfPlayers {
+	if pc.numberOfPlayers == 1 {
 		return []*Player{playerOne}
 	}
 	return []*Player{playerOne, playerTwo}

@@ -10,8 +10,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const RC_ASSETS = "RC-ASSETS"
+const PLAYER1_UP1 = "images/player-1/up/1.png"
+const PLAYER1_UP2 = "images/player-1/up/2.png"
+
 func TestSpriteForIdlePlayer(t *testing.T) {
-	InitPlayerSkins(filepath.Join(os.Getenv("RC-ASSETS"), "skins"))
+	InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
 
 	var player = Players[1]
 	player.Reset()
@@ -25,7 +29,7 @@ func TestSpriteForIdlePlayer(t *testing.T) {
 }
 
 func TestSprite0IsReturnedWhenPlayerStartsToMove(t *testing.T) {
-	InitPlayerSkins(filepath.Join(os.Getenv("RC-ASSETS"), "skins"))
+	InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
 
 	var player = Players[1]
 	player.Reset()
@@ -38,13 +42,13 @@ func TestSprite0IsReturnedWhenPlayerStartsToMove(t *testing.T) {
 	behavior.Moving = true
 	behavior.Direction = geometry.Up
 	var result = spriteSupplier.Sprite(DurationOfPlayerMovementFrame, behavior)
-	assert.Equal(t, "images/player-1/up/1.png", result.Source)
+	assert.Equal(t, PLAYER1_UP1, result.Source)
 	result = spriteSupplier.Sprite(DurationOfPlayerMovementFrame, behavior)
-	assert.Equal(t, "images/player-1/up/2.png", result.Source)
+	assert.Equal(t, PLAYER1_UP2, result.Source)
 }
 
 func TestDoesNotPlayTheAnimationWithoutDelay(t *testing.T) {
-	InitPlayerSkins(filepath.Join(os.Getenv("RC-ASSETS"), "skins"))
+	InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
 
 	var player = Players[1]
 	player.Reset()
@@ -54,11 +58,11 @@ func TestDoesNotPlayTheAnimationWithoutDelay(t *testing.T) {
 	var spriteSupplier = NewPlayerSpriteSupplier(player)
 
 	var first = spriteSupplier.Sprite(0, behavior)
-	assert.Equal(t, "images/player-1/up/1.png", first.Source)
+	assert.Equal(t, PLAYER1_UP1, first.Source)
 	var second = spriteSupplier.Sprite(50, behavior)
-	assert.Equal(t, "images/player-1/up/1.png", second.Source)
+	assert.Equal(t, PLAYER1_UP1, second.Source)
 	var third = spriteSupplier.Sprite(50, behavior)
-	assert.Equal(t, "images/player-1/up/2.png", third.Source)
+	assert.Equal(t, PLAYER1_UP2, third.Source)
 }
 
 func TestPlaysAnimationInLoop(t *testing.T) {

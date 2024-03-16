@@ -2,8 +2,9 @@ package input
 
 import (
 	"errors"
-	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/logging"
+
+	"github.com/faiface/pixel/pixelgl"
 )
 
 type Controller interface {
@@ -30,6 +31,8 @@ var joysticks = []pixelgl.Joystick{pixelgl.Joystick1, pixelgl.Joystick2, pixelgl
 
 const rapidFireOffset = 300
 const rapidFireThreshold = 750
+const log_msg_invalid_player = "Invalid player index: %d"
+const error_invalid_player = "invalid argument: no such player"
 
 type source interface {
 	State() *DeviceState
@@ -47,6 +50,7 @@ type controllerImplementation struct {
 func (c *controllerImplementation) HasTwoOrMoreDevices() bool {
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) {
+			// Keyboard is device 0. That means the first available joystick is the second device.
 			return true
 		}
 	}
@@ -71,16 +75,16 @@ func (c *controllerImplementation) AssignControllersToPlayers() {
 
 func (c *controllerImplementation) ControllerName(playerIdx int) (string, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
-		logging.Error.Printf("Invalid player index: %d", playerIdx)
-		return "", errors.New("invalid argument: no such player")
+		logging.Error.Printf(log_msg_invalid_player, playerIdx)
+		return "", errors.New(error_invalid_player)
 	}
 	return c.inputSources[playerIdx].Name(), nil
 }
 
 func (c *controllerImplementation) ControllerDeviceState(playerIdx int) (*DeviceState, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
-		logging.Error.Printf("Invalid player index: %d", playerIdx)
-		return nil, errors.New("invalid argument: no such player")
+		logging.Error.Printf(log_msg_invalid_player, playerIdx)
+		return nil, errors.New(error_invalid_player)
 	}
 	return c.inputSources[playerIdx].State(), nil
 }
@@ -115,8 +119,8 @@ func (c *controllerImplementation) getControllerDeviceStateCombined() *DeviceSta
 // without being in error state. Callers thus should check the result pointer before accessing it.
 func (c *controllerImplementation) ControllerUiEventState(playerIdx int) (*UiEventState, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
-		logging.Error.Printf("Invalid player index: %d", playerIdx)
-		return nil, errors.New("invalid argument: no such player")
+		logging.Error.Printf(log_msg_invalid_player, playerIdx)
+		return nil, errors.New(error_invalid_player)
 	}
 
 	var newState, err = c.ControllerDeviceState(playerIdx)

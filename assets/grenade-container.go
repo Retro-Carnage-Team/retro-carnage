@@ -2,7 +2,7 @@ package assets
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"retro-carnage/logging"
 	"retro-carnage/util"
 	"sync"
@@ -78,7 +78,7 @@ func (gc *GrenadeContainer) loadFromDisk(directory string) {
 
 func (gc *GrenadeContainer) loadGrenadeFile(filePath string) (*Grenade, error) {
 	logging.Trace.Printf("loading grenade: %s", filePath)
-	data, err := ioutil.ReadFile(filePath)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}

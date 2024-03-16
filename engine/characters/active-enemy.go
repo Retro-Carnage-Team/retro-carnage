@@ -25,7 +25,7 @@ type ActiveEnemy struct {
 // perform some kind of action, the corresponding action name will be returned. If the ActiveEnemy shouldn't perform any
 // action, nil will be returned.
 func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
-	if 0 == len(e.Actions) {
+	if len(e.Actions) == 0 {
 		return nil
 	}
 

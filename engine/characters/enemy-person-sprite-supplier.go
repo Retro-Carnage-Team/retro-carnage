@@ -1,9 +1,10 @@
 package characters
 
 import (
-	"github.com/faiface/pixel"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
+
+	"github.com/faiface/pixel"
 )
 
 const (
@@ -38,7 +39,7 @@ func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy
 		}
 
 		var result = skinFrames[supplier.lastIndex].ToSpriteWithOffset()
-		if 0 != supplier.durationSinceLastSprite {
+		if supplier.durationSinceLastSprite != 0 {
 			var alpha = 1.0 - 1.0/float64(DurationOfEnemyDeathAnimation)*float64(supplier.durationSinceLastSprite)
 			var rgba = pixel.Alpha(alpha)
 			result.ColorMask = &rgba
