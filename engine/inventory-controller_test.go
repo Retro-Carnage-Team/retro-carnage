@@ -10,10 +10,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const rc_assets = "RC-ASSETS"
+
 func init() {
-	assets.AmmunitionCrate.InitializeInTest(filepath.Join(os.Getenv("RC-ASSETS"), "items/ammunition/"))
-	assets.GrenadeCrate.InitializeInTest(filepath.Join(os.Getenv("RC-ASSETS"), "items/grenades/"))
-	assets.WeaponCrate.InitializeInTest(filepath.Join(os.Getenv("RC-ASSETS"), "items/weapons/"))
+	assets.AmmunitionCrate.InitializeInTest(filepath.Join(os.Getenv(rc_assets), "items/ammunition/"))
+	assets.GrenadeCrate.InitializeInTest(filepath.Join(os.Getenv(rc_assets), "items/grenades/"))
+	assets.WeaponCrate.InitializeInTest(filepath.Join(os.Getenv(rc_assets), "items/weapons/"))
 }
 
 func TestInitialAmmoCountIsZeroAndIncreasesByPackageSize(t *testing.T) {
