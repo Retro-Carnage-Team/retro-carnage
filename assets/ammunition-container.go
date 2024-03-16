@@ -2,7 +2,7 @@ package assets
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"retro-carnage/logging"
 	"retro-carnage/util"
 	"sync"
@@ -77,7 +77,7 @@ func (ac *AmmunitionContainer) loadFromDisk(directory string) {
 
 func (ac *AmmunitionContainer) loadAmmunitionFile(filePath string) (*Ammunition, error) {
 	logging.Trace.Printf("loading ammunition: %s", filePath)
-	data, err := ioutil.ReadFile(filePath)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}

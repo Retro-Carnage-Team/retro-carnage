@@ -2,7 +2,6 @@ package assets
 
 import (
 	"math/rand"
-	"time"
 )
 
 type SoundEffect string
@@ -77,12 +76,11 @@ var Music = []Song{BackgroundSong1, BackgroundSong2, BackgroundSong3, Background
 	BackgroundSong13, GameOverSong, GameWonSong, ThemeSong}
 
 func RandomEnemyDeathSoundEffect() SoundEffect {
-	rand.Seed(time.Now().Unix())
 	return EnemyDeathsSoundEffects[rand.Intn(len(EnemyDeathsSoundEffects))]
 }
 
 func DeathFxForPlayer(playerIdx int) SoundEffect {
-	if 0 == playerIdx {
+	if playerIdx == 0 {
 		return FxDeathPlayer1
 	} else {
 		return FxDeathPlayer2

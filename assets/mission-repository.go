@@ -3,7 +3,7 @@ package assets
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"os"
 	"retro-carnage/logging"
 	"retro-carnage/util"
 	"sync"
@@ -77,7 +77,7 @@ func (mr *MissionRepo) loadFromDisk(directory string) {
 
 func (mr *MissionRepo) loadMissionFile(filePath string) (*Mission, error) {
 	logging.Trace.Printf("loading mission: %s", filePath)
-	data, err := ioutil.ReadFile(filePath)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}
