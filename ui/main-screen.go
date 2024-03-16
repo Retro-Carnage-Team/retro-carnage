@@ -1,10 +1,8 @@
 package ui
 
 import (
-	"github.com/faiface/pixel/pixelgl"
-	"golang.org/x/image/colornames"
 	"retro-carnage/engine/input"
-	"retro-carnage/network"
+	"retro-carnage/logging"
 	byw "retro-carnage/ui/buy-your-weapons"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/config"
@@ -18,10 +16,12 @@ import (
 	"retro-carnage/ui/start"
 	"retro-carnage/ui/title"
 	"time"
+
+	"github.com/faiface/pixel/pixelgl"
+	"golang.org/x/image/colornames"
 )
 
 type MainScreen struct {
-	backend      network.Backend
 	clientScreen common.Screen
 	inputCtrl    input.Controller
 	lastUpdate   time.Time
@@ -38,14 +38,12 @@ func (ms *MainScreen) Initialize() {
 	ms.clientScreen = &loading.Screen{}
 	ms.setUpScreen(ms.clientScreen)
 
-	ms.backend = network.NewBackend()
-	go ms.backend.StartGameSession()
-
 	ms.lastUpdate = time.Now()
 }
 
 func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
-	go ms.backend.ReportGameState(string(screenName))
+	logging.Info.Printf("Changing screen to %s", screenName)
+
 	switch screenName {
 	case common.Loading:
 		ms.nextScreen = &loading.Screen{}

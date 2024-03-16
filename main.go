@@ -43,9 +43,7 @@ func run() {
 }
 
 func main() {
-	if len(os.Args) == 1 {
-
-	} else {
+	if len(os.Args) != 1 {
 		fmt.Println(os.Args[1])
 		err := os.Chdir(os.Args[1])
 		if err != nil {
