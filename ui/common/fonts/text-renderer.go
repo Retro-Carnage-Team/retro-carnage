@@ -3,13 +3,16 @@ package fonts
 import (
 	"errors"
 	"fmt"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"image/color"
 	"retro-carnage/engine/geometry"
 	"strings"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 )
+
+const err_msg_text_doesnt_fit = "text doesn't fit in output region"
 
 // TextRenderer can be used to render text to the screen
 type TextRenderer struct {
@@ -47,19 +50,19 @@ func (tr *TextRenderer) CalculateTextLayout(text string, fontSize int, width int
 	var lineNumber = 0
 	for _, word := range words {
 		var newLineText = lineText
-		if "" != newLineText {
+		if newLineText != "" {
 			newLineText += " "
 		}
 		newLineText += word
 
 		var lineDimensions = GetTextDimension(fontSize, newLineText)
 		if lineDimensions.X > float64(width) {
-			if "" == lineText {
-				return nil, errors.New("text doesn't fit in output region")
+			if lineText == "" {
+				return nil, errors.New(err_msg_text_doesnt_fit)
 			}
 			var positionY = float64(height) - lineDimensions.Y - (float64(lineNumber) * lineDimensions.Y * 1.2)
 			if float64(height) < positionY {
-				return nil, errors.New("text doesn't fit in output region")
+				return nil, errors.New(err_msg_text_doesnt_fit)
 			}
 			result.lines = append(result.lines, TextLine{
 				dimension: lineDimensions,
@@ -73,11 +76,11 @@ func (tr *TextRenderer) CalculateTextLayout(text string, fontSize int, width int
 		}
 	}
 
-	if "" != lineText {
+	if lineText != "" {
 		var lineDimensions = GetTextDimension(fontSize, lineText)
 		var positionY = float64(height) - lineDimensions.Y - (float64(lineNumber) * lineDimensions.Y * 1.2)
 		if float64(height) < positionY {
-			return nil, errors.New("text doesn't fit in output region")
+			return nil, errors.New(err_msg_text_doesnt_fit)
 		}
 		result.lines = append(result.lines, TextLine{
 			dimension: lineDimensions,

@@ -3,14 +3,17 @@ package buy_your_weapons
 
 import (
 	"fmt"
-	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
+
+	"github.com/faiface/pixel/pixelgl"
 )
 
-const timeAfterLastChar = 500
-const timeBetweenChars = 120
+const (
+	timeAfterLastChar = 500
+	timeBetweenChars  = 120
+)
 
 type Screen struct {
 	millisecondsPassed   int64
@@ -21,7 +24,9 @@ type Screen struct {
 	window               *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(_ input.Controller) {}
+func (s *Screen) SetInputController(_ input.Controller) {
+	// This screen doesn't process user input.
+}
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
@@ -31,7 +36,9 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 	s.window = window
 }
 
-func (s *Screen) SetUp() {}
+func (s *Screen) SetUp() {
+	// no setup action required
+}
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.millisecondsPassed += elapsedTimeInMs
@@ -42,7 +49,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 			s.millisecondsPassed = 0
 		}
 	} else if s.millisecondsPassed >= timeAfterLastChar {
-		if 0 == s.PlayerIdx {
+		if s.PlayerIdx == 0 {
 			s.screenChangeRequired(common.ShopP1)
 		} else {
 			s.screenChangeRequired(common.ShopP2)
@@ -52,10 +59,12 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	renderer.DrawLineToScreenCenter(s.text, 0, common.White)
 }
 
-func (s *Screen) TearDown() {}
+func (s *Screen) TearDown() {
+	// no tear down action required
+}
 
 func (s *Screen) String() string {
-	if 0 == s.PlayerIdx {
+	if s.PlayerIdx == 0 {
 		return string(common.BuyYourWeaponsP1)
 	}
 	return string(common.BuyYourWeaponsP2)

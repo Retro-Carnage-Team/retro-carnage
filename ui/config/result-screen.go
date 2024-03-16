@@ -1,12 +1,13 @@
 package config
 
 import (
-	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
+
+	"github.com/faiface/pixel/pixelgl"
 )
 
 type ResultScreen struct {
@@ -32,7 +33,7 @@ func (s *ResultScreen) SetUp() {
 		logging.Warning.Printf("Failed to get controller name for player 0: %v", err)
 	}
 
-	if 2 == characters.PlayerController.NumberOfPlayers() {
+	if characters.PlayerController.NumberOfPlayers() == 2 {
 		name, err = s.inputController.ControllerName(1)
 		if nil == err {
 			s.infoTextPlayerTwo += name
@@ -47,7 +48,7 @@ func (s *ResultScreen) Update(timeElapsedInMs int64) {
 	s.window.Clear(common.Black)
 
 	renderer := fonts.TextRenderer{Window: s.window}
-	if 1 == characters.PlayerController.NumberOfPlayers() {
+	if characters.PlayerController.NumberOfPlayers() == 1 {
 		renderer.DrawLineToScreenCenter(txtOnePlayerGame, 2, common.Green)
 		renderer.DrawLineToScreenCenter(s.infoTextPlayerOne, -1, common.Yellow)
 	} else {
@@ -64,7 +65,9 @@ func (s *ResultScreen) Update(timeElapsedInMs int64) {
 	}
 }
 
-func (s *ResultScreen) TearDown() {}
+func (s *ResultScreen) TearDown() {
+	// no tear down action required
+}
 
 func (s *ResultScreen) SetInputController(controller input.Controller) {
 	s.inputController = controller
