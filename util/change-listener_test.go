@@ -1,13 +1,16 @@
 package util
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestChangeHandlerShouldHandleMatchingProperty(t *testing.T) {
 	const propertyName = "name"
-	var listener = ChangeListener{Callback: func(value interface{}, property string) {}, PropertyNames: []string{propertyName}}
+	var listener = ChangeListener{Callback: func(value interface{}, property string) {
+		// nothing happens here
+	}, PropertyNames: []string{propertyName}}
 	var result = listener.handlesProperty(propertyName)
 
 	assert.Equal(t, true, result)
@@ -15,7 +18,9 @@ func TestChangeHandlerShouldHandleMatchingProperty(t *testing.T) {
 
 func TestChangeHandlerShouldHandleMatchingPropertyFromList(t *testing.T) {
 	const propertyName = "name"
-	var listener = ChangeListener{Callback: func(value interface{}, property string) {}, PropertyNames: []string{propertyName, "name2"}}
+	var listener = ChangeListener{Callback: func(value interface{}, property string) {
+		// nothing happens here
+	}, PropertyNames: []string{propertyName, "name2"}}
 	var result = listener.handlesProperty(propertyName)
 
 	assert.Equal(t, true, result)
@@ -23,14 +28,18 @@ func TestChangeHandlerShouldHandleMatchingPropertyFromList(t *testing.T) {
 
 func TestChangeHandlerShouldNotHandleOtherProperties(t *testing.T) {
 	const propertyName = "name"
-	var listener = ChangeListener{Callback: func(value interface{}, property string) {}, PropertyNames: []string{propertyName}}
+	var listener = ChangeListener{Callback: func(value interface{}, property string) {
+		// nothing happens here
+	}, PropertyNames: []string{propertyName}}
 	var result = listener.handlesProperty("not-name")
 
 	assert.Equal(t, false, result)
 }
 
 func TestChangeHandlerShouldHandleAllPropertiesWhenNoneIsSpecified(t *testing.T) {
-	var listener = ChangeListener{Callback: func(value interface{}, property string) {}, PropertyNames: []string{}}
+	var listener = ChangeListener{Callback: func(value interface{}, property string) {
+		// nothing happens here
+	}, PropertyNames: []string{}}
 	var result = listener.handlesProperty("name")
 
 	assert.Equal(t, true, result)

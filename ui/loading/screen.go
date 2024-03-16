@@ -4,15 +4,16 @@ package loading
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
-	"golang.org/x/image/colornames"
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
+	"golang.org/x/image/colornames"
 )
 
 const screenTimeout = 8500
@@ -26,7 +27,9 @@ type Screen struct {
 	window               *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(_ input.Controller) {}
+func (s *Screen) SetInputController(_ input.Controller) {
+	// The screen doesn't require user input. Therefor no implementation of this method.
+}
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
@@ -72,7 +75,9 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 }
 
-func (s *Screen) TearDown() {}
+func (s *Screen) TearDown() {
+	// No tear down action required
+}
 
 func (s *Screen) String() string {
 	return string(common.Loading)

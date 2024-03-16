@@ -1,11 +1,12 @@
 package lets_begin
 
 import (
-	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/assets"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
+
+	"github.com/faiface/pixel/pixelgl"
 )
 
 const (
@@ -25,7 +26,9 @@ type Screen struct {
 	window               *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(_ input.Controller) {}
+func (s *Screen) SetInputController(_ input.Controller) {
+	// Screen doesn't process user input. So no implementation required.
+}
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
@@ -61,6 +64,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 }
 
 func (s *Screen) TearDown() {
+	// No tear down action required
 }
 
 func (s *Screen) String() string {

@@ -2,10 +2,6 @@ package game
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
@@ -14,18 +10,24 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/util"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 )
 
 const (
-	fontSize             = 36
-	innerMargin          = 15
-	livesAreaHeight      = 50
-	missingInAction      = "M.I.A."
-	playerInfoBgPath     = "images/other/player-info-bg.png"
-	playerLifePath       = "images/player-%d/life.png"
-	playerPortraitPath   = "images/player-%d/portrait.png"
-	scoreAreaHeight      = 50
-	weaponBackgroundPath = "images/other/weapon-bg.jpg"
+	err_msg_sprint_missing = "Unable to find sprite: %s"
+	fontSize               = 36
+	innerMargin            = 15
+	livesAreaHeight        = 50
+	missingInAction        = "M.I.A."
+	playerInfoBgPath       = "images/other/player-info-bg.png"
+	playerLifePath         = "images/player-%d/life.png"
+	playerPortraitPath     = "images/player-%d/portrait.png"
+	scoreAreaHeight        = 50
+	weaponBackgroundPath   = "images/other/weapon-bg.jpg"
 )
 
 // PlayerInfo models the areas left and right of the screen that display information about the players.
@@ -117,7 +119,7 @@ func (pi *playerInfo) calculateComponentArea(window *pixelgl.Window) {
 		Width:  (window.Bounds().W() - window.Bounds().H()) / 2,
 		Height: window.Bounds().H(),
 	}
-	if 1 == pi.playerIdx {
+	if pi.playerIdx == 1 {
 		playerInfoArea.X = window.Bounds().W() - playerInfoArea.Width
 	}
 	pi.componentArea = &playerInfoArea
@@ -139,7 +141,7 @@ func (pi *playerInfo) initializeCanvas() {
 func (pi *playerInfo) drawBackground() {
 	var backgroundSprite = assets.SpriteRepository.Get(playerInfoBgPath)
 	if nil == backgroundSprite {
-		logging.Warning.Printf("Unable to find sprite: %s", playerInfoBgPath)
+		logging.Warning.Printf(err_msg_sprint_missing, playerInfoBgPath)
 		return
 	}
 
@@ -167,7 +169,7 @@ func (pi *playerInfo) drawPlayerPortrait() {
 	var playerPortraitPath = fmt.Sprintf(playerPortraitPath, pi.playerIdx)
 	var playerPortraitSprite = assets.SpriteRepository.Get(playerPortraitPath)
 	if nil == playerPortraitSprite {
-		logging.Warning.Printf("Unable to find sprite: %s", playerPortraitPath)
+		logging.Warning.Printf(err_msg_sprint_missing, playerPortraitPath)
 		return
 	}
 
@@ -209,7 +211,7 @@ func (pi *playerInfo) drawWeaponBackground() {
 	var bottomLeft, topRight = pi.areaForWeapon()
 	var weaponBackgroundSprite = assets.SpriteRepository.Get(weaponBackgroundPath)
 	if nil == weaponBackgroundSprite {
-		logging.Warning.Printf("Unable to find sprite: %s", weaponBackgroundPath)
+		logging.Warning.Printf(err_msg_sprint_missing, weaponBackgroundPath)
 		return
 	}
 
@@ -243,7 +245,7 @@ func (pi *playerInfo) drawWeapon() {
 		}
 		var weaponSprite = assets.SpriteRepository.Get(imagePath)
 		if nil == weaponSprite {
-			logging.Warning.Printf("Unable to find sprite: %s", imagePath)
+			logging.Warning.Printf(err_msg_sprint_missing, imagePath)
 			return
 		}
 
@@ -300,7 +302,7 @@ func (pi *playerInfo) drawLivesForPlayer(bottomLeft pixel.Vec) {
 	var lifeSpritePath = fmt.Sprintf(playerLifePath, pi.playerIdx)
 	var lifeSprite = assets.SpriteRepository.Get(lifeSpritePath)
 	if nil == lifeSprite {
-		logging.Warning.Printf("Unable to find sprite: %s", lifeSpritePath)
+		logging.Warning.Printf(err_msg_sprint_missing, lifeSpritePath)
 		return
 	}
 

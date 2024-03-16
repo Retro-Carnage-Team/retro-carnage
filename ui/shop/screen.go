@@ -127,7 +127,9 @@ func (s *Screen) Update(_ int64) {
 	}
 }
 
-func (s *Screen) TearDown() {}
+func (s *Screen) TearDown() {
+	// No tear down action required
+}
 
 func (s *Screen) String() string {
 	if s.PlayerIdx == 0 {
