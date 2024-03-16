@@ -2,21 +2,24 @@ package config
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"math"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 )
 
-const buttonPadding = 15
-const txtSelectOnePlayerGame = "START 1 PLAYER GAME"
-const txtSelectTwoPlayerGame = "START 2 PLAYER GAME"
+const (
+	buttonPadding          = 15
+	txtSelectOnePlayerGame = "START 1 PLAYER GAME"
+	txtSelectTwoPlayerGame = "START 2 PLAYER GAME"
+)
 
 type SelectScreen struct {
 	defaultFontSize      int
@@ -30,8 +33,7 @@ type SelectScreen struct {
 func (s *SelectScreen) SetUp() {
 	s.defaultFontSize = fonts.DefaultFontSize()
 	s.selectedOption = 1
-	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize,
-		txtSelectOnePlayerGame, txtSelectTwoPlayerGame)
+	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtSelectOnePlayerGame, txtSelectTwoPlayerGame)
 }
 
 func (s *SelectScreen) Update(_ int64) {
@@ -63,7 +65,7 @@ func (s *SelectScreen) Update(_ int64) {
 		math.Min(s.textDimensions[txtSelectOnePlayerGame].X, s.textDimensions[txtSelectTwoPlayerGame].X) +
 		buttonPadding
 
-	if 1 == s.selectedOption {
+	if s.selectedOption == 1 {
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
 		imd.EndShape = imdraw.RoundEndShape
@@ -73,7 +75,7 @@ func (s *SelectScreen) Update(_ int64) {
 		imd.Push(pixel.V(right, bottomFirst), pixel.V(right, topFirst))
 		imd.Line(4)
 		imd.Draw(s.window)
-	} else if 2 == s.selectedOption {
+	} else if s.selectedOption == 2 {
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
 		imd.EndShape = imdraw.RoundEndShape
@@ -86,7 +88,9 @@ func (s *SelectScreen) Update(_ int64) {
 	}
 }
 
-func (s *SelectScreen) TearDown() {}
+func (s *SelectScreen) TearDown() {
+	// no tear down action required
+}
 
 func (s *SelectScreen) SetInputController(controller input.Controller) {
 	s.inputController = controller
@@ -111,9 +115,9 @@ func (s *SelectScreen) processUserInput() {
 			s.inputController.AssignControllersToPlayers()
 			characters.PlayerController.StartNewGame(s.selectedOption)
 			s.screenChangeRequired(common.ConfigurationResult)
-		} else if uiEventState.MovedUp && 2 == s.selectedOption {
+		} else if uiEventState.MovedUp && s.selectedOption == 2 {
 			s.selectedOption = 1
-		} else if uiEventState.MovedDown && 1 == s.selectedOption && s.inputController.HasTwoOrMoreDevices() {
+		} else if uiEventState.MovedDown && s.selectedOption == 1 && s.inputController.HasTwoOrMoreDevices() {
 			s.selectedOption = 2
 		}
 	}

@@ -2,10 +2,6 @@ package shop
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine"
@@ -16,6 +12,11 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/util"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 )
 
 const (
@@ -100,7 +101,7 @@ func (s *Screen) SetUp() {
 
 func calcModalFontSize(defaultFontSize int) int {
 	var result = int(float64(defaultFontSize) * 0.7)
-	if 0 != result%2 {
+	if result%2 != 0 {
 		result++
 	}
 	return result
@@ -129,7 +130,7 @@ func (s *Screen) Update(_ int64) {
 func (s *Screen) TearDown() {}
 
 func (s *Screen) String() string {
-	if 0 == s.PlayerIdx {
+	if s.PlayerIdx == 0 {
 		return string(common.ShopP1)
 	}
 	return string(common.ShopP2)
@@ -244,7 +245,7 @@ func (s *Screen) processUserInput() {
 }
 
 func (s *Screen) processSelectionMovedDown() {
-	if -1 != s.selectedItemIdx {
+	if s.selectedItemIdx != -1 {
 		if 5 <= s.selectedItemIdx/5 {
 			s.selectedItemIdx = -1
 		} else {
@@ -256,7 +257,7 @@ func (s *Screen) processSelectionMovedDown() {
 }
 
 func (s *Screen) processSelectionMovedUp() {
-	if -1 != s.selectedItemIdx {
+	if s.selectedItemIdx != -1 {
 		if 5 > s.selectedItemIdx {
 			s.selectedItemIdx = -1
 		} else {
@@ -278,8 +279,8 @@ func (s *Screen) processSelectionMovedRight() {
 		} else if s.modalButtonSelection == buttonBuyAmmo {
 			s.modalButtonSelection = buttonCloseModal
 		}
-	} else if -1 != s.selectedItemIdx {
-		if 4 == s.selectedItemIdx%5 {
+	} else if s.selectedItemIdx != -1 {
+		if s.selectedItemIdx%5 == 4 {
 			s.selectedItemIdx -= 4
 		} else {
 			s.selectedItemIdx += 1
@@ -298,8 +299,8 @@ func (s *Screen) processSelectionMovedLeft() {
 				s.modalButtonSelection = buttonBuyWeapon
 			}
 		}
-	} else if -1 != s.selectedItemIdx {
-		if 0 == s.selectedItemIdx%5 {
+	} else if s.selectedItemIdx != -1 {
+		if s.selectedItemIdx%5 == 0 {
 			s.selectedItemIdx += 4
 		} else {
 			s.selectedItemIdx -= 1
@@ -343,9 +344,9 @@ func (s *Screen) processButtonPressedOnModal() {
 }
 
 func (s *Screen) processButtonPressedOnShop() {
-	if -1 == s.selectedItemIdx {
+	if s.selectedItemIdx == -1 {
 		characters.PlayerController.ConfiguredPlayers()[s.PlayerIdx].SelectFirstWeapon()
-		if (0 == s.PlayerIdx) && (2 == characters.PlayerController.NumberOfPlayers()) {
+		if (s.PlayerIdx == 0) && (characters.PlayerController.NumberOfPlayers() == 2) {
 			s.screenChangeRequired(common.BuyYourWeaponsP2)
 		} else {
 			s.screenChangeRequired(common.LetTheMissionBegin)
@@ -368,7 +369,7 @@ func (s *Screen) showModal() {
 
 func (s *Screen) drawCostLabel() {
 	var content = "COST: -"
-	if -1 != s.selectedItemIdx {
+	if s.selectedItemIdx != -1 {
 		content = fmt.Sprintf("COST: %d", s.items[s.selectedItemIdx].Price())
 	}
 
@@ -391,7 +392,7 @@ func (s *Screen) drawExitButton() {
 	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
 	fonts.BuildText(pixel.V(lineX, lineY), s.defaultFontSize, common.White, "EXIT SHOP").Draw(s.window, pixel.IM)
 
-	if -1 == s.selectedItemIdx {
+	if s.selectedItemIdx == -1 {
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
 		imd.Push(
@@ -548,7 +549,7 @@ func (s *Screen) drawModalFooter(upperBorder float64) {
 
 	if footerHintMinWidth <= s.window.Bounds().W() {
 		var hint = s.getModalFooterStatusHint()
-		if "" != hint {
+		if hint != "" {
 			var lineDimensions = fonts.GetTextDimension(s.modalFontSize, hint)
 			var lineX = s.getModalLeftBorder() + 30
 			var lineY = upperBorder - lineDimensions.Y - (bottomBarHeight-lineDimensions.Y)/2
@@ -592,7 +593,7 @@ func (s *Screen) drawModalBuyWeaponButton(top float64, bottom float64, buyAmmoBu
 	s.drawModalButton(top, bottom, rightBorder, leftBorder, lineDimensions, labelText, buttonBuyWeapon)
 }
 
-func (s *Screen) drawModalButton(top float64, bottom float64, rightBorder float64, leftBorder float64, lineDimensions *geometry.Point, labelText string, _type modalButton) {
+func (s *Screen) drawModalButton(top float64, bottom float64, rightBorder float64, leftBorder float64, lineDimensions *geometry.Point, labelText string, buttonType modalButton) {
 	var upperRight = pixel.V(rightBorder, top-buttonPadding)
 	var lowerLeft = pixel.V(leftBorder, bottom+buttonPadding)
 
@@ -609,7 +610,7 @@ func (s *Screen) drawModalButton(top float64, bottom float64, rightBorder float6
 		BuildText(pixel.V(buttonTextX, buttonTextY), s.modalFontSize, common.White, labelText).
 		Draw(s.window, pixel.IM)
 
-	if s.modalButtonSelection == _type {
+	if s.modalButtonSelection == buttonType {
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
 		imd.Push(upperRight, lowerLeft)
@@ -619,17 +620,18 @@ func (s *Screen) drawModalButton(top float64, bottom float64, rightBorder float6
 }
 
 func (s *Screen) getModalBuyAmmoButtonLabel() string {
+	const template = "BUY %d BULLET(S) FOR $ %d"
 	var item = s.items[s.selectedItemIdx]
 	if item.IsWeapon() {
 		var weapon = assets.WeaponCrate.GetByName(item.Name())
 		var ammo = assets.AmmunitionCrate.GetByName(weapon.Ammo)
-		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", ammo.PackageSize, ammo.Price)
+		return fmt.Sprintf(template, ammo.PackageSize, ammo.Price)
 	} else if item.IsAmmunition() {
 		var ammo = assets.AmmunitionCrate.GetByName(item.Name())
-		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", ammo.PackageSize, ammo.Price)
+		return fmt.Sprintf(template, ammo.PackageSize, ammo.Price)
 	} else {
 		var grenade = assets.GrenadeCrate.GetByName(item.Name())
-		return fmt.Sprintf("BUY %d BULLET(S) FOR $ %d", grenade.PackageSize, grenade.Price)
+		return fmt.Sprintf(template, grenade.PackageSize, grenade.Price)
 	}
 }
 
@@ -650,12 +652,12 @@ func (s *Screen) getModalFooterStatusHint() string {
 		}
 	}
 
-	var _type = "bullets"
+	var buttonType = "bullets"
 	if item.IsGrenade() {
-		_type = "grenades"
+		buttonType = "grenades"
 	}
 	var owned, max = item.OwnedFromMax(s.PlayerIdx)
-	return fmt.Sprintf("You own %d of %d of these %s", owned, max, _type)
+	return fmt.Sprintf("You own %d of %d of these %s", owned, max, buttonType)
 }
 
 func (s *Screen) isModalButtonBuyWeaponAvailable() bool {

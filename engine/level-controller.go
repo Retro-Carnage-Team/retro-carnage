@@ -13,6 +13,8 @@ var (
 	backgroundOffsets map[string]geometry.Point
 )
 
+const log_msg_unkown_direction = "Level segment has unknown direction: %s"
+
 func init() {
 	backgroundOffsets = make(map[string]geometry.Point)
 	backgroundOffsets[geometry.Up.Name] = geometry.Point{X: 0, Y: -ScreenSize}
@@ -129,7 +131,7 @@ func (lc *LevelController) scroll(pixels float64) geometry.Point {
 	}
 
 	// should not happen
-	logging.Error.Fatalf("Level segment has unknown direction: %s", direction)
+	logging.Error.Fatalf(log_msg_unkown_direction, direction)
 	return geometry.Point{X: 0, Y: 0}
 }
 
@@ -214,7 +216,7 @@ func (lc *LevelController) distanceBehindScrollBarrier(playerPositions []*geomet
 	}
 
 	// should not happen
-	logging.Error.Fatalf("Level segment has unknown direction: %s", direction)
+	logging.Error.Fatalf(log_msg_unkown_direction, direction)
 	return 0
 }
 
@@ -245,7 +247,7 @@ func (lc *LevelController) distanceFromScreenExit(playerPositions []*geometry.Re
 	}
 
 	// should not happen
-	logging.Error.Fatalf("Level segment has unknown direction: %s", direction)
+	logging.Error.Fatalf(log_msg_unkown_direction, direction)
 	return 0
 }
 

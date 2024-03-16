@@ -1,16 +1,23 @@
 package engine
 
 import (
-	"github.com/stretchr/testify/assert"
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var (
 	posPlayerOne = geometry.Rectangle{X: 500, Y: 1200, Width: 90, Height: 20}
 	posPlayerTwo = geometry.Rectangle{X: 1000, Y: 900, Width: 90, Height: 20}
 	posPlayerTop = geometry.Rectangle{X: 50, Y: 200, Width: 90, Height: 200}
+)
+
+const (
+	bg_dummy_1 = "bg-dummy-1.jpg"
+	bg_dummy_2 = "bg-dummy-2.jpg"
+	bg_dummy_3 = "bg-dummy-3.jpg"
 )
 
 func TestShouldCalculateOffsetsForBackgroundsForDirectionUp(t *testing.T) {
@@ -199,7 +206,7 @@ test("Should return obstacles when they scroll into the visible area", () => {
 func buildTestSegments() []assets.Segment {
 	var result = make([]assets.Segment, 0)
 	var segment = assets.Segment{
-		Backgrounds: []string{"bg-dummy-1.jpg", "bg-dummy-2.jpg", "bg-dummy-3.jpg", "bg-dummy-1.jpg", "bg-dummy-2.jpg"},
+		Backgrounds: []string{bg_dummy_1, bg_dummy_2, bg_dummy_3, bg_dummy_1, bg_dummy_2},
 		Direction:   geometry.Up.Name,
 		/*
 			enemies: [
@@ -226,7 +233,7 @@ func buildTestSegments() []assets.Segment {
 	result = append(result, segment)
 
 	segment = assets.Segment{
-		Backgrounds: []string{"bg-dummy-2.jpg", "bg-dummy-3.jpg", "bg-dummy-1.jpg", "bg-dummy-2.jpg"},
+		Backgrounds: []string{bg_dummy_2, bg_dummy_3, bg_dummy_1, bg_dummy_2},
 		Direction:   geometry.Left.Name,
 		// Enemies: [],
 		Goal:      nil,
@@ -235,7 +242,7 @@ func buildTestSegments() []assets.Segment {
 	result = append(result, segment)
 
 	segment = assets.Segment{
-		Backgrounds: []string{"bg-dummy-2.jpg", "bg-dummy-3.jpg", "bg-dummy-1.jpg"},
+		Backgrounds: []string{bg_dummy_2, bg_dummy_3, bg_dummy_1},
 		Direction:   geometry.Right.Name,
 		// Enemies: [],
 		Goal:      &geometry.Rectangle{X: 42, Y: 42, Width: 200, Height: 200},
