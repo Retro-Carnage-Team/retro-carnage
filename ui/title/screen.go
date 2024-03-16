@@ -3,14 +3,14 @@
 package title
 
 import (
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	_ "image/jpeg"
 	"math"
 	"retro-carnage/assets"
-	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/input"
 	"retro-carnage/ui/common"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 const backgroundImagePath = "images/other/title.jpg"
@@ -21,7 +21,6 @@ type Screen struct {
 	inputController       input.Controller
 	screenChangeRequired  common.ScreenChangeCallback
 	screenChangeTimeout   int64
-	textDimensions        map[string]*geometry.Point
 	window                *pixelgl.Window
 }
 
@@ -58,7 +57,9 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 }
 
-func (s *Screen) TearDown() {}
+func (s *Screen) TearDown() {
+	// No tear down action required
+}
 
 func (s *Screen) String() string {
 	return string(common.Title)

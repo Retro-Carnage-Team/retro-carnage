@@ -3,9 +3,6 @@
 package mission
 
 import (
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
 	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine"
@@ -14,6 +11,10 @@ import (
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 const (
@@ -69,7 +70,7 @@ func (s *Screen) initializeMissions() {
 	if nil != err {
 		logging.Error.Fatalf("Failed to retrieve list of remaining missions: %v", err)
 	}
-	if 0 == len(remainingMissions) {
+	if len(remainingMissions) == 0 {
 		logging.Error.Fatalf("List of remaining missions is empty. Game should have ended!")
 	}
 
@@ -98,7 +99,9 @@ func (s *Screen) Update(_ int64) {
 	}
 }
 
-func (s *Screen) TearDown() {}
+func (s *Screen) TearDown() {
+	// No tear down action required
+}
 
 func (s *Screen) String() string {
 	return string(common.Mission)

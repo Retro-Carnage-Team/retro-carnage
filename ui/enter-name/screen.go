@@ -2,7 +2,6 @@ package enter_name
 
 import (
 	"fmt"
-	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/input"
@@ -10,6 +9,8 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/ui/highscore"
+
+	"github.com/faiface/pixel/pixelgl"
 )
 
 // Screen is where the players can enter their names when they reached a new high score.
@@ -98,18 +99,20 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 
 // TearDown can be used as a life-cycle hook to release resources that a Screen blocked.
 // It will be called once after the last Update.
-func (s *Screen) TearDown() {}
+func (s *Screen) TearDown() {
+	// No tear down action required
+}
 
 // String should return the ScreenName of the Screen
 func (s *Screen) String() string {
-	if 1 == s.PlayerIdx {
+	if s.PlayerIdx == 1 {
 		return string(common.EnterNameP1)
 	}
 	return string(common.EnterNameP2)
 }
 
 func (s *Screen) exit() {
-	if 0 == s.PlayerIdx {
+	if s.PlayerIdx == 0 {
 		var _, p2 = highscore.EntryControllerInstance.ReachedHighScore()
 		if p2 {
 			s.screenChangeRequired(common.EnterNameP2)
