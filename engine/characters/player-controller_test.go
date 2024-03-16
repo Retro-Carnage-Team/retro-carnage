@@ -1,11 +1,12 @@
 package characters
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestPlayerCtrl_StartNewGame(t *testing.T) {
+func TestPlayerCtrlStartNewGame(t *testing.T) {
 	var playerController = &PlayerCtrl{}
 	playerController.StartNewGame(1)
 	assert.Equal(t, 1, len(playerController.ConfiguredPlayers()))
@@ -16,13 +17,13 @@ func TestPlayerCtrl_StartNewGame(t *testing.T) {
 	assert.Equal(t, 2, len(playerController.RemainingPlayers()))
 }
 
-func TestPlayerCtrl_KillPlayer(t *testing.T) {
+func TestPlayerCtrlKillPlayer(t *testing.T) {
 	var playerController = &PlayerCtrl{}
 	playerController.StartNewGame(2)
 
 	for {
 		playerController.KillPlayer(Players[0])
-		if 0 == Players[0].lives {
+		if Players[0].lives == 0 {
 			break
 		}
 	}
