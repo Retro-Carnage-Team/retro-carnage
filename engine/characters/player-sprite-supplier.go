@@ -7,14 +7,16 @@ import (
 )
 
 const (
-	DurationOfPlayerDeathAnimationFrame = 75 // in ms
-	DurationOfPlayerMovementFrame       = 75 // in ms
+	DurationOfPlayerDeathAnimationFrame = 75  // in ms
+	DurationOfPlayerMovementFrame       = 75  // in ms
+	durationOfInvincibilityState        = 200 // in ms
 )
 
 // PlayerSpriteSupplier returns sprites for the current state of the Player
 type PlayerSpriteSupplier struct {
 	directionOfLastSprite   geometry.Direction
 	durationSinceLastSprite int64
+	durationSinceLastToggle int64
 	invincibilityToggle     bool
 	lastIndex               int
 	lastSprite              *graphics.SpriteWithOffset
@@ -28,6 +30,7 @@ func NewPlayerSpriteSupplier(player *Player) *PlayerSpriteSupplier {
 	return &PlayerSpriteSupplier{
 		directionOfLastSprite:   geometry.Up,
 		durationSinceLastSprite: 0,
+		durationSinceLastToggle: 0,
 		invincibilityToggle:     true,
 		lastIndex:               0,
 		lastSprite:              nil,
@@ -39,16 +42,14 @@ func NewPlayerSpriteSupplier(player *Player) *PlayerSpriteSupplier {
 
 // Sprite returns the graphics.SpriteWithOffset for the current state of the Player.
 func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, behavior *PlayerBehavior) *graphics.SpriteWithOffset {
-	// First we remember which sprite is currently rendered - then get the next sprite.
-	var lastSpriteSource = ""
-	if nil != pss.lastSprite {
-		lastSpriteSource = pss.lastSprite.Source
-	}
 	var nextSprite = pss.sprite(elapsedTimeInMs, behavior)
+	if behavior.Invincible {
+		pss.durationSinceLastToggle += elapsedTimeInMs
+		if pss.durationSinceLastSprite > durationOfInvincibilityState {
+			pss.durationSinceLastSprite = 0
+			pss.invincibilityToggle = !pss.invincibilityToggle
+		}
 
-	// Now we drop every second sprite - when player is invincible
-	if behavior.Invincible && lastSpriteSource != nextSprite.Source {
-		pss.invincibilityToggle = !pss.invincibilityToggle
 		if pss.invincibilityToggle {
 			return nil
 		}
