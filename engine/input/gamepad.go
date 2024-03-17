@@ -20,11 +20,6 @@ type gamepad struct {
 const (
 	// Old analog controllers might be a bit wobbly and need a higher value.
 	inputThreshold = 0.05
-)
-
-var (
-	digitalControllers = []string{"Competition Pro"}
-
 	PiOver8        = math.Pi / 8
 	PiTimes3Over8  = (3 * math.Pi) / 8
 	PiTimes5Over8  = (5 * math.Pi) / 8
@@ -34,6 +29,8 @@ var (
 	PiTimes13Over8 = (13 * math.Pi) / 8
 	PiTimes15Over8 = (15 * math.Pi) / 8
 )
+
+var digitalControllers = []string{"Competition Pro"}
 
 // isStickMovedFully checks the values of the X & Y axis of an analog stick on whether the stick has been moved fully
 // to (any given) direction. This check has to be performed because the math used to determine the angle of the stick
@@ -90,8 +87,8 @@ func (g *gamepad) State() *DeviceState {
 	var vertical = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftY)
 	if g.isAnalog() {
 		// Checked this with XBox360 and PlayStation controllers
-		state.Fire = g.window.JoystickPressed(g.joystick, pixelgl.ButtonA)
-		state.Grenade = g.window.JoystickPressed(g.joystick, pixelgl.ButtonB)
+		state.PrimaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonA)
+		state.SecondaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonB)
 		state.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonX)
 		state.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonY)
 		if g.isStickMovedFully(horizontal, vertical) {
@@ -100,8 +97,8 @@ func (g *gamepad) State() *DeviceState {
 		}
 	} else {
 		// Checked this with a SpeedLink Competition Pro USB
-		state.Fire = g.window.JoystickPressed(g.joystick, pixelgl.ButtonTriangle)
-		state.Grenade = g.window.JoystickPressed(g.joystick, pixelgl.ButtonCross)
+		state.PrimaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonX)
+		state.SecondaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonY)
 		state.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonLeftBumper)
 		state.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonCircle)
 		state.MoveUp = vertical == -1

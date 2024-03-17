@@ -29,10 +29,12 @@ var joysticks = []pixelgl.Joystick{pixelgl.Joystick1, pixelgl.Joystick2, pixelgl
 	pixelgl.Joystick11, pixelgl.Joystick12, pixelgl.Joystick13, pixelgl.Joystick14, pixelgl.Joystick15,
 	pixelgl.Joystick16}
 
-const rapidFireOffset = 300
-const rapidFireThreshold = 750
-const log_msg_invalid_player = "Invalid player index: %d"
-const error_invalid_player = "invalid argument: no such player"
+const (
+	error_invalid_player   = "invalid argument: no such player"
+	log_msg_invalid_player = "Invalid player index: %d"
+	rapidFireOffset        = 300
+	rapidFireThreshold     = 750
+)
 
 type source interface {
 	State() *DeviceState

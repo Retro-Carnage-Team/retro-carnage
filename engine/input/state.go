@@ -6,35 +6,35 @@ import (
 )
 
 type DeviceState struct {
-	MoveUp     bool
-	MoveDown   bool
-	MoveLeft   bool
-	MoveRight  bool
-	Fire       bool
-	Grenade    bool
-	ToggleUp   bool
-	ToggleDown bool
+	MoveUp          bool
+	MoveDown        bool
+	MoveLeft        bool
+	MoveRight       bool
+	PrimaryAction   bool
+	SecondaryAction bool
+	ToggleUp        bool
+	ToggleDown      bool
 }
 
 func (ds *DeviceState) String() string {
-	return fmt.Sprintf("DeviceState[Fire: %t, Grenade: %t, Toggle ↑: %t, Toggle ↓: %t, ↑: %t, →: %t, ↓: %t, ←: %t]",
-		ds.Fire, ds.Grenade, ds.ToggleUp, ds.ToggleDown, ds.MoveUp, ds.MoveRight, ds.MoveDown, ds.MoveLeft)
+	return fmt.Sprintf("DeviceState[Primary: %t, Secondary: %t, Toggle ↑: %t, Toggle ↓: %t, ↑: %t, →: %t, ↓: %t, ←: %t]",
+		ds.PrimaryAction, ds.SecondaryAction, ds.ToggleUp, ds.ToggleDown, ds.MoveUp, ds.MoveRight, ds.MoveDown, ds.MoveLeft)
 }
 
 func (ds *DeviceState) IsButtonPressed() bool {
-	return ds.Fire || ds.Grenade || ds.ToggleUp || ds.ToggleDown
+	return ds.PrimaryAction || ds.SecondaryAction || ds.ToggleUp || ds.ToggleDown
 }
 
 func (ds *DeviceState) Combine(other *DeviceState) *DeviceState {
 	return &DeviceState{
-		MoveUp:     ds.MoveUp || other.MoveUp,
-		MoveDown:   ds.MoveDown || other.MoveDown,
-		MoveLeft:   ds.MoveLeft || other.MoveLeft,
-		MoveRight:  ds.MoveRight || other.MoveRight,
-		Fire:       ds.Fire || other.Fire,
-		Grenade:    ds.Grenade || other.Grenade,
-		ToggleUp:   ds.ToggleUp || other.ToggleUp,
-		ToggleDown: ds.ToggleDown || other.ToggleDown,
+		MoveUp:          ds.MoveUp || other.MoveUp,
+		MoveDown:        ds.MoveDown || other.MoveDown,
+		MoveLeft:        ds.MoveLeft || other.MoveLeft,
+		MoveRight:       ds.MoveRight || other.MoveRight,
+		PrimaryAction:   ds.PrimaryAction || other.PrimaryAction,
+		SecondaryAction: ds.SecondaryAction || other.SecondaryAction,
+		ToggleUp:        ds.ToggleUp || other.ToggleUp,
+		ToggleDown:      ds.ToggleDown || other.ToggleDown,
 	}
 }
 

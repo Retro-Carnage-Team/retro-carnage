@@ -55,9 +55,9 @@ func (pb *PlayerBehavior) Update(userInput *input.DeviceState) {
 
 	var playerWantsToMove = userInput.MoveUp || userInput.MoveDown || userInput.MoveLeft || userInput.MoveRight
 	pb.Moving = playerWantsToMove && !(!pb.Moving && pb.Firing)
-	pb.TriggerPressed = !pb.Firing && userInput.Fire
-	pb.TriggerReleased = pb.Firing && !userInput.Fire
-	pb.Firing = userInput.Fire
+	pb.TriggerPressed = !pb.Firing && userInput.PrimaryAction
+	pb.TriggerReleased = pb.Firing && !userInput.PrimaryAction
+	pb.Firing = userInput.PrimaryAction
 	if playerWantsToMove {
 		pb.Direction = pb.direction(userInput.MoveUp, userInput.MoveDown, userInput.MoveLeft, userInput.MoveRight)
 	}
