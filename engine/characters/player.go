@@ -15,7 +15,7 @@ const (
 	PlayerPropertyScore          = "score"
 	PlayerPropertySelectedWeapon = "selected-weapon"
 	PlayerPropertyWeapons        = "items"
-	initialCash                  = 5000
+	initialCash                  = 50000
 	initialLives                 = 3
 	initialScore                 = 0
 )
