@@ -49,8 +49,8 @@ func TestPlayerShouldKeepDirectionWhenStoppingMovementAndKeepingFiring(t *testin
 	var player = Players[0]
 	player.Reset()
 	var playerBehavior = NewPlayerBehavior(player)
-	playerBehavior.Update(&input.DeviceState{MoveUp: true, Fire: true})
-	playerBehavior.Update(&input.DeviceState{Fire: true})
+	playerBehavior.Update(&input.DeviceState{MoveUp: true, PrimaryAction: true})
+	playerBehavior.Update(&input.DeviceState{PrimaryAction: true})
 
 	assert.False(t, playerBehavior.Moving)
 	assert.Equal(t, geometry.Up, playerBehavior.Direction)
@@ -61,8 +61,8 @@ func TestPlayerShouldAbleToChangeDirectionButNotStartMovingWhenFiring(t *testing
 	var player = Players[0]
 	player.Reset()
 	var playerBehavior = NewPlayerBehavior(player)
-	playerBehavior.Update(&input.DeviceState{Fire: true})
-	playerBehavior.Update(&input.DeviceState{MoveLeft: true, Fire: true})
+	playerBehavior.Update(&input.DeviceState{PrimaryAction: true})
+	playerBehavior.Update(&input.DeviceState{MoveLeft: true, PrimaryAction: true})
 
 	assert.False(t, playerBehavior.Moving)
 	assert.Equal(t, geometry.Left, playerBehavior.Direction)
@@ -120,9 +120,9 @@ func TestTriggeredFireGetsSetWhenFiringAndUnsetWhenHeldDown(t *testing.T) {
 	player.Reset()
 	var playerBehavior = NewPlayerBehavior(player)
 
-	playerBehavior.Update(&input.DeviceState{Fire: true})
+	playerBehavior.Update(&input.DeviceState{PrimaryAction: true})
 	assert.True(t, playerBehavior.TriggerPressed)
 
-	playerBehavior.Update(&input.DeviceState{Fire: true})
+	playerBehavior.Update(&input.DeviceState{PrimaryAction: true})
 	assert.False(t, playerBehavior.TriggerPressed)
 }

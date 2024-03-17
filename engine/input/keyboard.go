@@ -8,8 +8,8 @@ type keyboard struct {
 
 func (k *keyboard) State() *DeviceState {
 	var result DeviceState
-	result.Fire = k.Window.Pressed(pixelgl.KeyLeftControl)
-	result.Grenade = k.Window.Pressed(pixelgl.KeyLeftAlt)
+	result.PrimaryAction = k.Window.Pressed(pixelgl.KeyLeftControl)
+	result.SecondaryAction = k.Window.Pressed(pixelgl.KeyLeftAlt)
 	result.MoveLeft = k.Window.Pressed(pixelgl.KeyLeft)
 	result.MoveUp = k.Window.Pressed(pixelgl.KeyUp)
 	result.MoveRight = k.Window.Pressed(pixelgl.KeyRight)
