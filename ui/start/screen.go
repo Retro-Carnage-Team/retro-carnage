@@ -12,9 +12,11 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 )
 
-const txtFirstLine = "RETRO CARNAGE"
-const txtSecondLine = "(C) 2021 THOMAS WERNER"
-const txtThirdLine = "Dedicated to Jonathan Werner"
+const (
+	txtFirstLine  = "RETRO CARNAGE"
+	txtSecondLine = "(C) 2020 THOMAS WERNER"
+	txtThirdLine  = "Dedicated to Emma & Jonathan Werner"
+)
 
 type Screen struct {
 	screenChangeRequired common.ScreenChangeCallback
