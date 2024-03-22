@@ -18,15 +18,12 @@ type PlayerBehavior struct {
 	Invincible              bool
 	InvincibilityCountDown  int64
 	TimeSinceLastBullet     int64
-	// will be true as long as the player keeps the trigger pressed
-	Firing bool
-	// will be true only when switching from "not firing" to "firing"
-	TriggerPressed bool
-	// will be true only when switching from "firing" to "not firing"
-	TriggerReleased bool
-	Moving          bool
-	NextWeapon      bool
-	PreviousWeapon  bool
+	Firing                  bool // will be true as long as the player keeps the trigger pressed
+	TriggerPressed          bool // will be true only when switching from "not firing" to "firing"
+	TriggerReleased         bool // will be true only when switching from "firing" to "not firing"
+	Moving                  bool
+	NextWeapon              bool
+	PreviousWeapon          bool
 }
 
 // NewPlayerBehavior creates and initializes a new PlayerBehavior instance.

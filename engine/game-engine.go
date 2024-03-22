@@ -37,6 +37,7 @@ func init() {
 	pointsByEnemyType = make(map[characters.EnemyType]int)
 	pointsByEnemyType[characters.Person] = 10
 	pointsByEnemyType[characters.Landmine] = 5
+	pointsByEnemyType[characters.GunTurret] = 10
 }
 
 // NewGameEngine creates and initializes a new instance of GameEngine.

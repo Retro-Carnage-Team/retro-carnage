@@ -8,9 +8,7 @@ import (
 
 type EnemyLandmineSpriteSupplier struct{}
 
-const (
-	landmineSprite = "images/environment/Tellermine-43.png"
-)
+const landmineSprite = "images/environment/Tellermine-43.png"
 
 func (supplier *EnemyLandmineSpriteSupplier) Sprite(int64, ActiveEnemy) *graphics.SpriteWithOffset {
 	var sprite = assets.SpriteRepository.Get(landmineSprite)
