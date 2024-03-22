@@ -124,6 +124,10 @@ func (p *Player) SetGrenadeCount(grenade string, count int) {
 }
 
 func (p *Player) GrenadeSelected() bool {
+	if nil == p.selectedWeaponName {
+		return false
+	}
+
 	for _, grenade := range assets.GrenadeCrate.GetAll() {
 		if grenade.Name == *p.selectedWeaponName {
 			return true
@@ -200,8 +204,13 @@ func (p *Player) SelectedWeapon() *assets.Weapon {
 
 func (p *Player) SelectFirstWeapon() {
 	var itemNames = p.getNamesOfWeaponsAndGrenadesInInventory()
-	p.selectedWeaponName = itemNames[0]
-	p.notifyListeners(*p.selectedWeaponName, PlayerPropertySelectedWeapon)
+	if len(itemNames) > 0 {
+		p.selectedWeaponName = itemNames[0]
+		p.notifyListeners(*p.selectedWeaponName, PlayerPropertySelectedWeapon)
+	} else {
+		p.selectedWeaponName = nil
+		p.notifyListeners(nil, PlayerPropertySelectedWeapon)
+	}
 }
 
 func (p *Player) SelectNextWeapon() {
@@ -220,7 +229,12 @@ func (p *Player) SelectNextWeapon() {
 			break
 		}
 	}
-	p.notifyListeners(*p.selectedWeaponName, PlayerPropertySelectedWeapon)
+
+	if nil == p.selectedWeaponName {
+		p.notifyListeners(nil, PlayerPropertySelectedWeapon)
+	} else {
+		p.notifyListeners(*p.selectedWeaponName, PlayerPropertySelectedWeapon)
+	}
 }
 
 func (p *Player) SelectPreviousWeapon() {
@@ -239,7 +253,12 @@ func (p *Player) SelectPreviousWeapon() {
 			break
 		}
 	}
-	p.notifyListeners(*p.selectedWeaponName, PlayerPropertySelectedWeapon)
+
+	if nil == p.selectedWeaponName {
+		p.notifyListeners(nil, PlayerPropertySelectedWeapon)
+	} else {
+		p.notifyListeners(*p.selectedWeaponName, PlayerPropertySelectedWeapon)
+	}
 }
 
 func (p *Player) String() string {
