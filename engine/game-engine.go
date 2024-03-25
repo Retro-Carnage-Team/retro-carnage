@@ -413,13 +413,15 @@ func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
 			var death = false
 
 			for _, enemy := range ge.enemies {
-				var collisionWithEnemy = rect.Intersection(enemy.Position())
-				if nil != collisionWithEnemy {
-					if characters.Landmine == enemy.Type {
-						ge.explosions = append(ge.explosions, NewExplosion(false, -1, enemy))
-						ge.stereo.PlayFx(assets.FxGrenade2)
+				if enemy.Type.IsCollisionDeadly() {
+					var collisionWithEnemy = rect.Intersection(enemy.Position())
+					if nil != collisionWithEnemy {
+						if characters.Landmine == enemy.Type {
+							ge.explosions = append(ge.explosions, NewExplosion(false, -1, enemy))
+							ge.stereo.PlayFx(assets.FxGrenade2)
+						}
+						death = true
 					}
-					death = true
 				}
 			}
 
@@ -455,38 +457,43 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 
 			// Check for hits by explosion
 			for _, explosion := range ge.explosions {
-				var deadlyExplosion = nil != enemy.Position().Intersection(explosion.Position)
-				if deadlyExplosion {
+				if nil != enemy.Position().Intersection(explosion.Position) {
 					killer = explosion.playerIdx
 					if characters.Landmine == enemy.Type {
 						var newExplosion = NewExplosion(explosion.causedByPlayer, explosion.playerIdx, enemy)
 						ge.explosions = append(ge.explosions, newExplosion)
 					}
+					death = true
+					break
 				}
-				death = death || deadlyExplosion
 			}
 
-			// Check for hits by bullets, flamethrowers and RPGs (useful only against persons)
+			// Check for hits by bullets and explosives
 			if characters.Person == enemy.Type {
-				for _, bullet := range ge.bullets {
-					var deadlyShot = nil != enemy.Position().Intersection(bullet.Position)
-					if deadlyShot {
-						killer = bullet.playerIdx
+				if !death {
+					for _, bullet := range ge.bullets {
+						if nil != enemy.Position().Intersection(bullet.Position) {
+							killer = bullet.playerIdx
+							death = true
+							break
+						}
 					}
-					death = death || deadlyShot
 				}
 
-				var explosives = ge.explosives
-				for i := len(explosives) - 1; i >= 0; i-- {
-					var explosive = explosives[i]
-					var explode = explosive.ExplodesOnContact && nil != explosive.Position().Intersection(enemy.Position())
-					if explode {
-						ge.detonateExplosive(explosive)
-						death = true
-						explosives = ge.removeExplosive(explosives, i)
+				if !death {
+					var explosives = ge.explosives
+					for i := len(explosives) - 1; i >= 0; i-- {
+						var explosive = explosives[i]
+						if explosive.ExplodesOnContact && nil != explosive.Position().Intersection(enemy.Position()) {
+							ge.detonateExplosive(explosive)
+							killer = explosive.FiredByPlayerIdx
+							explosives = ge.removeExplosive(explosives, i)
+							death = true
+							break
+						}
 					}
+					ge.explosives = explosives
 				}
-				ge.explosives = explosives
 			}
 
 			if death {

@@ -7,3 +7,7 @@ const (
 	Landmine  EnemyType = 1
 	GunTurret EnemyType = 2
 )
+
+func (et EnemyType) IsCollisionDeadly() bool {
+	return et == Person || et == Landmine
+}
