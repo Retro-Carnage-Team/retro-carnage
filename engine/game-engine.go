@@ -31,15 +31,6 @@ type GameEngine struct {
 	Won                 bool
 }
 
-var pointsByEnemyType map[characters.EnemyType]int
-
-func init() {
-	pointsByEnemyType = make(map[characters.EnemyType]int)
-	pointsByEnemyType[characters.Person] = 10
-	pointsByEnemyType[characters.Landmine] = 5
-	pointsByEnemyType[characters.GunTurret] = 10
-}
-
 // NewGameEngine creates and initializes a new instance of GameEngine.
 func NewGameEngine(mission *assets.Mission) *GameEngine {
 	var result = &GameEngine{
@@ -155,8 +146,8 @@ func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, ob
 }
 
 func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
-	var enemies = ge.updateEnemiesDeaths(elapsedTimeInMs)
-	for _, enemy := range enemies {
+	ge.updateEnemiesDeaths(elapsedTimeInMs)
+	for _, enemy := range ge.enemies {
 		if !enemy.Dying && (characters.Person == enemy.Type) {
 			if 0 < len(enemy.Movements) {
 				var remaining = elapsedTimeInMs
@@ -187,7 +178,6 @@ func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
 			}
 		}
 	}
-	ge.enemies = enemies
 }
 
 func (ge *GameEngine) removeFirstEnemyMovement(movements []*characters.EnemyMovement) []*characters.EnemyMovement {
@@ -199,73 +189,52 @@ func (ge *GameEngine) removeFirstEnemyMovement(movements []*characters.EnemyMove
 }
 
 // updateEnemiesDeaths updates the dying animation countdown of all active enemies.
-// Returns those enemies that have a remaining count down > 0.
-func (ge *GameEngine) updateEnemiesDeaths(elapsedTimeInMs int64) []*characters.ActiveEnemy {
-	var enemies = ge.enemies
-	for i := len(enemies) - 1; i >= 0; i-- {
-		var enemy = enemies[i]
-		if enemy.Dying {
-			enemy.DyingAnimationCountDown -= elapsedTimeInMs
-			if 0 >= enemy.DyingAnimationCountDown {
-				enemies = ge.removeEnemy(enemies, i)
+// Removes those enemies that have a remaining count down <= 0.
+func (ge *GameEngine) updateEnemiesDeaths(elapsedTimeInMs int64) {
+	for i := len(ge.enemies) - 1; i >= 0; i-- {
+		if ge.enemies[i].Dying {
+			ge.enemies[i].DyingAnimationCountDown -= elapsedTimeInMs
+			if 0 >= ge.enemies[i].DyingAnimationCountDown {
+				ge.removeEnemy(i)
 			}
 		}
 	}
-	return enemies
 }
 
-func (ge *GameEngine) removeEnemy(enemies []*characters.ActiveEnemy, idx int) []*characters.ActiveEnemy {
-	enemies[idx] = enemies[len(enemies)-1]
-	enemies[len(enemies)-1] = nil
-	return enemies[:len(enemies)-1]
+func (ge *GameEngine) removeEnemy(idx int) {
+	ge.enemies[idx] = ge.enemies[len(ge.enemies)-1]
+	ge.enemies[len(ge.enemies)-1] = nil
+	ge.enemies = ge.enemies[:len(ge.enemies)-1]
 }
 
 func (ge *GameEngine) updateExplosions(elapsedTimeInMs int64) {
-	var explosions = ge.explosions
-	for i := len(explosions) - 1; i >= 0; i-- {
-		var explosion = explosions[i]
-		explosion.duration += elapsedTimeInMs
-		if explosion.CreatesMark() {
-			ge.burnMarks = append(ge.burnMarks, explosion.CreateMark())
-			explosion.hasMark = true
+	for i := len(ge.explosions) - 1; i >= 0; i-- {
+		ge.explosions[i].duration += elapsedTimeInMs
+		if ge.explosions[i].CreatesMark() {
+			ge.burnMarks = append(ge.burnMarks, ge.explosions[i].CreateMark())
+			ge.explosions[i].hasMark = true
 		}
-		if explosion.duration >= durationOfExplosion {
-			explosions = ge.removeExplosion(explosions, i)
+		if ge.explosions[i].duration >= durationOfExplosion {
+			ge.removeExplosion(i)
 		}
 	}
-	ge.explosions = explosions
-}
-
-func (ge *GameEngine) removeExplosion(explosions []*Explosion, idx int) []*Explosion {
-	explosions[idx] = explosions[len(explosions)-1]
-	explosions[len(explosions)-1] = nil
-	return explosions[:len(explosions)-1]
 }
 
 func (ge *GameEngine) updateExplosives(elapsedTimeInMs int64, obstacles []assets.Obstacle) {
-	var explosives = ge.explosives
-	for i := len(explosives) - 1; i >= 0; i-- {
-		var explosive = explosives[i]
-		var done = explosive.Move(elapsedTimeInMs)
+	for i := len(ge.explosives) - 1; i >= 0; i-- {
+		var done = ge.explosives[i].Move(elapsedTimeInMs)
 		if !done {
 			for _, obstacle := range obstacles {
-				if !done && obstacle.StopsExplosives && (nil != obstacle.Intersection(explosive.position)) {
+				if !done && obstacle.StopsExplosives && (nil != obstacle.Intersection(ge.explosives[i].position)) {
 					done = true
 				}
 			}
 		}
 		if done {
-			ge.detonateExplosive(explosive)
-			explosives = ge.removeExplosive(explosives, i)
+			ge.detonateExplosive(ge.explosives[i])
+			ge.removeExplosive(i)
 		}
 	}
-	ge.explosives = explosives
-}
-
-func (ge *GameEngine) removeExplosive(explosives []*Explosive, idx int) []*Explosive {
-	explosives[idx] = explosives[len(explosives)-1]
-	explosives[len(explosives)-1] = nil
-	return explosives[:len(explosives)-1]
 }
 
 func (ge *GameEngine) detonateExplosive(explosive *Explosive) {
@@ -274,26 +243,19 @@ func (ge *GameEngine) detonateExplosive(explosive *Explosive) {
 }
 
 func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []assets.Obstacle) {
-	var bullets = ge.bullets
-	for i := len(bullets) - 1; i >= 0; i-- {
-		var reachedRange = bullets[i].Move(elapsedTimeInMs)
+
+	for i := len(ge.bullets) - 1; i >= 0; i-- {
+		var reachedRange = ge.bullets[i].Move(elapsedTimeInMs)
 		var hitObstacle = false
 		for _, obstacle := range obstacles {
-			if !hitObstacle && obstacle.StopsBullets && (nil != obstacle.Intersection(bullets[i].Position)) {
+			if !hitObstacle && obstacle.StopsBullets && (nil != obstacle.Intersection(ge.bullets[i].Position)) {
 				hitObstacle = true
 			}
 		}
 		if reachedRange || hitObstacle {
-			bullets = ge.removeBullet(bullets, i)
+			ge.removeBullet(i)
 		}
 	}
-	ge.bullets = bullets
-}
-
-func (ge *GameEngine) removeBullet(bullets []*Bullet, idx int) []*Bullet {
-	bullets[idx] = bullets[len(bullets)-1]
-	bullets[len(bullets)-1] = nil
-	return bullets[:len(bullets)-1]
 }
 
 func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.Point) {
@@ -306,7 +268,7 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 		var explosive = ge.explosives[idx]
 		explosive.Position().Subtract(scrollOffset)
 		if nil == explosive.Position().Intersection(visibleArea) {
-			ge.explosives = ge.removeExplosive(ge.explosives, idx)
+			ge.removeExplosive(idx)
 		}
 	}
 
@@ -314,7 +276,7 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 		var explosion = ge.explosions[idx]
 		explosion.Position.Subtract(scrollOffset)
 		if nil == explosion.Position.Intersection(visibleArea) {
-			ge.explosions = ge.removeExplosion(ge.explosions, idx)
+			ge.removeExplosion(idx)
 		}
 	}
 
@@ -329,7 +291,7 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 		enemy.Position().Subtract(scrollOffset)
 		var isVisible = nil != enemy.Position().Intersection(visibleArea)
 		if hasBeenVisible && !isVisible {
-			ge.enemies = ge.removeEnemy(ge.enemies, idx)
+			ge.removeEnemy(idx)
 		}
 	}
 
@@ -337,7 +299,7 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 		var bullet = ge.bullets[idx]
 		bullet.Position.Subtract(scrollOffset)
 		if nil == bullet.Position.Intersection(visibleArea) {
-			ge.bullets = ge.removeBullet(ge.bullets, idx)
+			ge.removeBullet(idx)
 		}
 	}
 
@@ -345,15 +307,9 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 		var burnMark = ge.burnMarks[idx]
 		burnMark.Position.Subtract(scrollOffset)
 		if nil == burnMark.Position.Intersection(visibleArea) {
-			ge.burnMarks = ge.removeBurnMark(ge.burnMarks, idx)
+			ge.removeBurnMark(idx)
 		}
 	}
-}
-
-func (ge *GameEngine) removeBurnMark(burnMarks []*BurnMark, idx int) []*BurnMark {
-	burnMarks[idx] = burnMarks[len(burnMarks)-1]
-	burnMarks[len(burnMarks)-1] = nil
-	return burnMarks[:len(burnMarks)-1]
 }
 
 func (ge *GameEngine) handleWeaponAction(elapsedTimeInMs int64) {
@@ -481,18 +437,16 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 				}
 
 				if !death {
-					var explosives = ge.explosives
-					for i := len(explosives) - 1; i >= 0; i-- {
-						var explosive = explosives[i]
+					for i := len(ge.explosives) - 1; i >= 0; i-- {
+						var explosive = ge.explosives[i]
 						if explosive.ExplodesOnContact && nil != explosive.Position().Intersection(enemy.Position()) {
 							ge.detonateExplosive(explosive)
 							killer = explosive.FiredByPlayerIdx
-							explosives = ge.removeExplosive(explosives, i)
+							ge.removeExplosive(i)
 							death = true
 							break
 						}
 					}
-					ge.explosives = explosives
 				}
 			}
 
@@ -509,7 +463,7 @@ func (ge *GameEngine) killEnemy(enemy *characters.ActiveEnemy, killer int) {
 	if killer != -1 {
 		ge.Kills[killer] += 1
 		var player = ge.playerBehaviors[killer].Player
-		player.SetScore(player.Score() + pointsByEnemyType[enemy.Type])
+		player.SetScore(player.Score() + enemy.Type.GetPointsForKill())
 	}
 	if characters.Person == enemy.Type {
 		ge.stereo.PlayFx(assets.RandomEnemyDeathSoundEffect())
@@ -521,4 +475,28 @@ func (ge *GameEngine) checkIfPlayerReachedLevelGoal() {
 	if ge.levelController.GoalReached(ge.playerPositions) {
 		ge.Won = true
 	}
+}
+
+func (ge *GameEngine) removeBullet(idx int) {
+	ge.bullets[idx] = ge.bullets[len(ge.bullets)-1]
+	ge.bullets[len(ge.bullets)-1] = nil
+	ge.bullets = ge.bullets[:len(ge.bullets)-1]
+}
+
+func (ge *GameEngine) removeBurnMark(idx int) {
+	ge.burnMarks[idx] = ge.burnMarks[len(ge.burnMarks)-1]
+	ge.burnMarks[len(ge.burnMarks)-1] = nil
+	ge.burnMarks = ge.burnMarks[:len(ge.burnMarks)-1]
+}
+
+func (ge *GameEngine) removeExplosion(idx int) {
+	ge.explosions[idx] = ge.explosions[len(ge.explosions)-1]
+	ge.explosions[len(ge.explosions)-1] = nil
+	ge.explosions = ge.explosions[:len(ge.explosions)-1]
+}
+
+func (ge *GameEngine) removeExplosive(idx int) {
+	ge.explosives[idx] = ge.explosives[len(ge.explosives)-1]
+	ge.explosives[len(ge.explosives)-1] = nil
+	ge.explosives = ge.explosives[:len(ge.explosives)-1]
 }
