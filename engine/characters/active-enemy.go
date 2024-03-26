@@ -3,6 +3,7 @@ package characters
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
+	"retro-carnage/util"
 )
 
 // ActiveEnemy is an Enemy that is (becoming) visible.
@@ -46,6 +47,28 @@ func (e *ActiveEnemy) Die() {
 	e.DyingAnimationCountDown = 1
 }
 
+// Move will update the enemies position according to its configured movement pattern and the elapsed time.
+func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
+	if !e.Type.CanMove() || len(e.Movements) == 0 {
+		return
+	}
+
+	var remaining = elapsedTimeInMs
+	for (0 < remaining) && (0 < len(e.Movements)) {
+		var currentMovement = e.Movements[0]
+		var duration = util.MinInt64(remaining, currentMovement.Duration-currentMovement.TimeElapsed)
+		e.Position().Add(&geometry.Point{
+			X: float64(duration) * currentMovement.OffsetXPerMs,
+			Y: float64(duration) * currentMovement.OffsetYPerMs,
+		})
+		remaining -= duration
+		currentMovement.TimeElapsed += duration
+		if currentMovement.TimeElapsed >= currentMovement.Duration {
+			e.removeFirstMovement()
+		}
+	}
+}
+
 // Position returns the current position of this enemy.
 // Implements SomethingThatExplodes for enemies that are landmines.
 func (e *ActiveEnemy) Position() *geometry.Rectangle {
@@ -55,4 +78,13 @@ func (e *ActiveEnemy) Position() *geometry.Rectangle {
 // SetPosition will update the ActiveEnemy's position on screen.
 func (e *ActiveEnemy) SetPosition(pos *geometry.Rectangle) {
 	e.position = *pos
+}
+
+func (e *ActiveEnemy) removeFirstMovement() {
+	if len(e.Movements) == 1 {
+		e.Movements = []*EnemyMovement{}
+	}
+
+	e.Movements[0] = nil
+	e.Movements = e.Movements[1:]
 }

@@ -7,7 +7,6 @@ import (
 	"retro-carnage/engine/graphics"
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
-	"retro-carnage/util"
 )
 
 // GameEngine is the heart and soul of the game screen - the class that contains the actual game logic.
@@ -148,44 +147,26 @@ func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, ob
 func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
 	ge.updateEnemiesDeaths(elapsedTimeInMs)
 	for _, enemy := range ge.enemies {
-		if !enemy.Dying && (characters.Person == enemy.Type) {
-			if 0 < len(enemy.Movements) {
-				var remaining = elapsedTimeInMs
-				for (0 < remaining) && (0 < len(enemy.Movements)) {
-					var currentMovement = enemy.Movements[0]
-					var duration = util.MinInt64(remaining, currentMovement.Duration-currentMovement.TimeElapsed)
-					enemy.Position().Add(&geometry.Point{
-						X: float64(duration) * currentMovement.OffsetXPerMs,
-						Y: float64(duration) * currentMovement.OffsetYPerMs,
-					})
-					remaining -= duration
-					currentMovement.TimeElapsed += duration
-					if currentMovement.TimeElapsed >= currentMovement.Duration {
-						enemy.Movements = ge.removeFirstEnemyMovement(enemy.Movements)
-					}
-				}
-			}
+		if enemy.Dying {
+			continue
+		}
 
+		enemy.Move(elapsedTimeInMs)
+
+		if enemy.Type.CanFire() {
 			var enemyAction = enemy.Action(elapsedTimeInMs)
 			if nil != enemyAction {
 				if assets.EnemyActionBullet == *enemyAction {
 					ge.bullets = append(ge.bullets, NewBulletFiredByEnemy(enemy))
 				} else if assets.EnemyActionGrenade == *enemyAction {
-					// TODO: Throw a grenade
+					var grenade = NewExplosiveGrenadeByEnemy(enemy.Position(), *enemy.ViewingDirection)
+					ge.explosives = append(ge.explosives, grenade)
 				} else {
 					logging.Warning.Printf("Invalid enemy configuration. Unknown action %s", *enemyAction)
 				}
 			}
 		}
 	}
-}
-
-func (ge *GameEngine) removeFirstEnemyMovement(movements []*characters.EnemyMovement) []*characters.EnemyMovement {
-	if len(movements) == 1 {
-		return []*characters.EnemyMovement{}
-	}
-	movements[0] = nil
-	return movements[1:]
 }
 
 // updateEnemiesDeaths updates the dying animation countdown of all active enemies.
@@ -199,12 +180,6 @@ func (ge *GameEngine) updateEnemiesDeaths(elapsedTimeInMs int64) {
 			}
 		}
 	}
-}
-
-func (ge *GameEngine) removeEnemy(idx int) {
-	ge.enemies[idx] = ge.enemies[len(ge.enemies)-1]
-	ge.enemies[len(ge.enemies)-1] = nil
-	ge.enemies = ge.enemies[:len(ge.enemies)-1]
 }
 
 func (ge *GameEngine) updateExplosions(elapsedTimeInMs int64) {
@@ -243,7 +218,6 @@ func (ge *GameEngine) detonateExplosive(explosive *Explosive) {
 }
 
 func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []assets.Obstacle) {
-
 	for i := len(ge.bullets) - 1; i >= 0; i-- {
 		var reachedRange = ge.bullets[i].Move(elapsedTimeInMs)
 		var hitObstacle = false
@@ -324,7 +298,7 @@ func (ge *GameEngine) handleWeaponAction(elapsedTimeInMs int64) {
 						playerPosition,
 						behavior.Direction,
 						player.SelectedGrenade(),
-					).Explosive)
+					))
 				} else if player.RpgSelected() && ge.inventoryController[player.Index()].RemoveAmmunition() {
 					var weapon = player.SelectedWeapon()
 					ge.stereo.PlayFx(weapon.Sound)
@@ -487,6 +461,12 @@ func (ge *GameEngine) removeBurnMark(idx int) {
 	ge.burnMarks[idx] = ge.burnMarks[len(ge.burnMarks)-1]
 	ge.burnMarks[len(ge.burnMarks)-1] = nil
 	ge.burnMarks = ge.burnMarks[:len(ge.burnMarks)-1]
+}
+
+func (ge *GameEngine) removeEnemy(idx int) {
+	ge.enemies[idx] = ge.enemies[len(ge.enemies)-1]
+	ge.enemies[len(ge.enemies)-1] = nil
+	ge.enemies = ge.enemies[:len(ge.enemies)-1]
 }
 
 func (ge *GameEngine) removeExplosion(idx int) {
