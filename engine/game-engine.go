@@ -343,7 +343,7 @@ func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
 			var death = false
 
 			for _, enemy := range ge.enemies {
-				if enemy.Type.IsCollisionDeadly() {
+				if !enemy.Dying && enemy.Type.IsCollisionDeadly() {
 					var collisionWithEnemy = rect.Intersection(enemy.Position())
 					if nil != collisionWithEnemy {
 						if characters.Landmine == enemy.Type {
