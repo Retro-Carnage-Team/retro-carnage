@@ -190,29 +190,31 @@ func (s *Screen) drawLocationMarker(location pixel.Vec) {
 
 func (s *Screen) processUserInput() {
 	var uiEventState = s.inputController.ControllerUiEventStateCombined()
-	if nil != uiEventState {
-		if uiEventState.PressedButton {
-			engine.MissionController.SelectMission(s.selectedMission)
-			s.screenChangeRequired(common.BuyYourWeaponsP1)
-			go assets.NewStereo().BufferSong(s.selectedMission.Music)
-		} else {
-			var nextMission = s.selectedMission
-			var err error = nil
-			if uiEventState.MovedUp {
-				nextMission, err = engine.MissionController.NextMissionNorth(&s.selectedMission.Location)
-			} else if uiEventState.MovedDown {
-				nextMission, err = engine.MissionController.NextMissionSouth(&s.selectedMission.Location)
-			} else if uiEventState.MovedLeft {
-				nextMission, err = engine.MissionController.NextMissionWest(&s.selectedMission.Location)
-			} else if uiEventState.MovedRight {
-				nextMission, err = engine.MissionController.NextMissionEast(&s.selectedMission.Location)
-			}
-			if nil != err {
-				logging.Error.Fatalf("Failed to get next mission: %v", err)
-			}
-			if nil != nextMission {
-				s.selectedMission = nextMission
-			}
+	if nil == uiEventState {
+		return
+	}
+
+	if uiEventState.PressedButton {
+		engine.MissionController.SelectMission(s.selectedMission)
+		s.screenChangeRequired(common.BuyYourWeaponsP1)
+		go assets.NewStereo().BufferSong(s.selectedMission.Music)
+	} else {
+		var nextMission = s.selectedMission
+		var err error = nil
+		if uiEventState.MovedUp {
+			nextMission, err = engine.MissionController.NextMissionNorth(&s.selectedMission.Location)
+		} else if uiEventState.MovedDown {
+			nextMission, err = engine.MissionController.NextMissionSouth(&s.selectedMission.Location)
+		} else if uiEventState.MovedLeft {
+			nextMission, err = engine.MissionController.NextMissionWest(&s.selectedMission.Location)
+		} else if uiEventState.MovedRight {
+			nextMission, err = engine.MissionController.NextMissionEast(&s.selectedMission.Location)
+		}
+		if nil != err {
+			logging.Error.Fatalf("Failed to get next mission: %v", err)
+		}
+		if nil != nextMission {
+			s.selectedMission = nextMission
 		}
 	}
 }
