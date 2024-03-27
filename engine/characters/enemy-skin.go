@@ -20,11 +20,14 @@ const (
 
 	// WoodlandWithBulletproofVest skin of an enemy wearing woodland camouflage and a bullet proof vest and a pistol
 	WoodlandWithBulletproofVest EnemySkin = "enemy-3"
+
+	// A gun turret
+	GunTurretSkin EnemySkin = "gun-turret"
 )
 
 var (
 	enemySkins     map[EnemySkin]*Skin
-	enemySkinNames = []EnemySkin{WoodlandWithSMG, GreyJumperWithRifle, DigitalWithPistols, WoodlandWithBulletproofVest}
+	enemySkinNames = []EnemySkin{WoodlandWithSMG, GreyJumperWithRifle, DigitalWithPistols, WoodlandWithBulletproofVest, GunTurretSkin}
 )
 
 // InitEnemySkins initializes the enemy skins. The skins get loaded from the given directory where they are expected to

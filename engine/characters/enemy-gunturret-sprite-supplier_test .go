@@ -30,9 +30,9 @@ func TestGunTurretReturnsStaticSprite(t *testing.T) {
 
 	var sprite = spriteSupplier.Sprite(0, gunTurret)
 	assert.NotNil(t, sprite)
-	assert.Equal(t, upRightSprite, sprite.Source)
+	assert.Equal(t, "images/environment/gun-turret-up_right.png", sprite.Source)
 
 	sprite = spriteSupplier.Sprite(DurationOfEnemyMovementFrame*1.4, gunTurret)
 	assert.NotNil(t, sprite)
-	assert.Equal(t, upRightSprite, sprite.Source)
+	assert.Equal(t, "images/environment/gun-turret-up_right.png", sprite.Source)
 }
