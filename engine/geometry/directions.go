@@ -43,3 +43,7 @@ func GetDirectionByName(name string) *Direction {
 	}
 	return nil
 }
+
+func (d Direction) IsDiagonal() bool {
+	return d == UpRight || d == UpLeft || d == DownLeft || d == DownRight
+}

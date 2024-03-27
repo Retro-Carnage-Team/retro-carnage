@@ -2,7 +2,7 @@ package characters
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/logging"
 )
@@ -24,7 +24,7 @@ func (s *Skin) DurationOfDeathAnimation() int64 {
 
 func loadSkin(filePath string) *Skin {
 	logging.Trace.Printf("loading skin: %s", filePath)
-	data, err := ioutil.ReadFile(filePath)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		logging.Error.Fatalf("failed to read skin file %s: %v", filePath, err)
 	}

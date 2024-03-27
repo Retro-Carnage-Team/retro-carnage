@@ -314,6 +314,10 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy
 		result.SpriteSupplier = &characters.EnemyLandmineSpriteSupplier{}
 	}
 
+	if int(characters.GunTurret) == e.Type {
+		result.SpriteSupplier = characters.NewEnemyGunTurretSpriteSupplier(*result.ViewingDirection)
+	}
+
 	return result
 }
 
