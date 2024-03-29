@@ -11,14 +11,14 @@ const (
 	ScrollBarrierUp        = 1_000
 	ScrollBarrierLeft      = 1_000
 	ScrollBarrierRight     = 500
-	ScrollMovementPerMs    = 0.3 // Screen.width = 1500 / 5.000 milliseconds = 0.2 px / ms
+	ScrollMovementPerMs    = 0.3 // Screen.width = 1.500 px / 5.000 milliseconds = 0.2 px / ms
 )
 
-func screenRect() *geometry.Rectangle {
-	return &geometry.Rectangle{
+var (
+	screenRect = &geometry.Rectangle{
 		X:      0,
 		Y:      0,
 		Width:  ScreenSize,
 		Height: ScreenSize,
 	}
-}
+)

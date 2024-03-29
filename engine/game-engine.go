@@ -233,7 +233,6 @@ func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []assets.Ob
 }
 
 func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.Point) {
-	var visibleArea = screenRect()
 	for _, playerPosition := range ge.playerPositions {
 		playerPosition.Subtract(scrollOffset)
 	}
@@ -241,7 +240,7 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 	for idx := len(ge.explosives) - 1; idx >= 0; idx-- {
 		var explosive = ge.explosives[idx]
 		explosive.Position().Subtract(scrollOffset)
-		if nil == explosive.Position().Intersection(visibleArea) {
+		if nil == explosive.Position().Intersection(screenRect) {
 			ge.removeExplosive(idx)
 		}
 	}
@@ -249,21 +248,21 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 	for idx := len(ge.explosions) - 1; idx >= 0; idx-- {
 		var explosion = ge.explosions[idx]
 		explosion.Position.Subtract(scrollOffset)
-		if nil == explosion.Position.Intersection(visibleArea) {
+		if nil == explosion.Position.Intersection(screenRect) {
 			ge.removeExplosion(idx)
 		}
 	}
 
 	for idx := len(ge.enemies) - 1; idx >= 0; idx-- {
 		var enemy = ge.enemies[idx]
-		var hasBeenVisible = nil != enemy.Position().Intersection(visibleArea)
+		var hasBeenVisible = nil != enemy.Position().Intersection(screenRect)
 
 		if !scrollOffset.Zero() {
 			logging.Trace.Printf("Moving enemy from %s by %s", enemy.Position().String(), scrollOffset.String())
 		}
 
 		enemy.Position().Subtract(scrollOffset)
-		var isVisible = nil != enemy.Position().Intersection(visibleArea)
+		var isVisible = nil != enemy.Position().Intersection(screenRect)
 		if hasBeenVisible && !isVisible {
 			ge.removeEnemy(idx)
 		}
@@ -272,7 +271,7 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 	for idx := len(ge.bullets) - 1; idx >= 0; idx-- {
 		var bullet = ge.bullets[idx]
 		bullet.Position.Subtract(scrollOffset)
-		if nil == bullet.Position.Intersection(visibleArea) {
+		if nil == bullet.Position.Intersection(screenRect) {
 			ge.removeBullet(idx)
 		}
 	}
@@ -280,7 +279,7 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 	for idx := len(ge.burnMarks) - 1; idx >= 0; idx-- {
 		var burnMark = ge.burnMarks[idx]
 		burnMark.Position.Subtract(scrollOffset)
-		if nil == burnMark.Position.Intersection(visibleArea) {
+		if nil == burnMark.Position.Intersection(screenRect) {
 			ge.removeBurnMark(idx)
 		}
 	}

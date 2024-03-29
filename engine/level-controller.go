@@ -11,6 +11,20 @@ import (
 
 var (
 	backgroundOffsets map[string]geometry.Point
+
+	enemyActivationRectHorz = &geometry.Rectangle{
+		X:      0,
+		Y:      -200,
+		Width:  ScreenSize,
+		Height: ScreenSize + 400,
+	}
+
+	enemyActivationRectVert = &geometry.Rectangle{
+		X:      -150,
+		Y:      0,
+		Width:  ScreenSize + 300,
+		Height: ScreenSize,
+	}
 )
 
 const log_msg_unkown_direction = "Level segment has unknown direction: %s"
@@ -85,17 +99,21 @@ func (lc *LevelController) ProgressToNextSegment() {
 // ActivatedEnemies returns Enemy instances that have been activated since the last scroll movement
 func (lc *LevelController) ActivatedEnemies() []characters.ActiveEnemy {
 	var result = make([]characters.ActiveEnemy, 0)
-	var newEnemySlice = make([]assets.Enemy, 0)
-	for _, enemy := range lc.enemies {
-		// TODO: This is a bug. Enemies are activated too early.
-		if lc.distanceScrolled >= enemy.Position.BottomBorder().Start.Y-ScreenSize {
-			var activatedEnemy = lc.activateEnemy(&enemy)
-			result = append(result, activatedEnemy)
-		} else {
-			newEnemySlice = append(newEnemySlice, enemy)
+	var scrollAdjustment = lc.getScrollAdjustment()
+
+	var activationArea *geometry.Rectangle = enemyActivationRectHorz
+	if lc.segments[lc.currentSegmentIdx].Direction == geometry.Up.Name {
+		activationArea = enemyActivationRectVert
+	}
+
+	for i := len(lc.enemies) - 1; i >= 0; i-- {
+		var enemy = lc.enemies[i]
+		var enemyPosition = enemy.Position.Clone().Add(&scrollAdjustment)
+		if nil != activationArea.Intersection(enemyPosition) {
+			result = append(result, lc.activateEnemy(&enemy))
+			lc.enemies = append(lc.enemies[:i], lc.enemies[i+1:]...)
 		}
 	}
-	lc.enemies = newEnemySlice
 	return result
 }
 
@@ -265,19 +283,8 @@ func (lc *LevelController) GoalReached(playerPositions []*geometry.Rectangle) bo
 
 // ObstaclesOnScreen returns all assets.Obstacle that within the visible screen rect.
 func (lc *LevelController) ObstaclesOnScreen() []assets.Obstacle {
-	var direction = lc.segments[lc.currentSegmentIdx].Direction
-	var scrollAdjustment = geometry.Point{X: 0, Y: 0}
-	switch direction {
-	case geometry.Up.Name:
-		scrollAdjustment = geometry.Point{X: 0, Y: lc.distanceScrolled}
-	case geometry.Left.Name:
-		scrollAdjustment = geometry.Point{X: lc.distanceScrolled, Y: 0}
-	case geometry.Right.Name:
-		scrollAdjustment = geometry.Point{X: -1 * lc.distanceScrolled, Y: 0}
-	}
-
+	var scrollAdjustment = lc.getScrollAdjustment()
 	var result = make([]assets.Obstacle, 0)
-	var screenRect = screenRect()
 	for _, obstacle := range lc.obstacles {
 		obstacle.Rectangle.Add(&scrollAdjustment)
 		if nil != obstacle.Rectangle.Intersection(screenRect) {
@@ -328,4 +335,18 @@ func (lc *LevelController) convertEnemyMovements(movements []assets.EnemyMovemen
 		result = append(result, &converted)
 	}
 	return result
+}
+
+func (lc *LevelController) getScrollAdjustment() geometry.Point {
+	var direction = lc.segments[lc.currentSegmentIdx].Direction
+	var scrollAdjustment = geometry.Point{X: 0, Y: 0}
+	switch direction {
+	case geometry.Up.Name:
+		scrollAdjustment = geometry.Point{X: 0, Y: lc.distanceScrolled}
+	case geometry.Left.Name:
+		scrollAdjustment = geometry.Point{X: lc.distanceScrolled, Y: 0}
+	case geometry.Right.Name:
+		scrollAdjustment = geometry.Point{X: -1 * lc.distanceScrolled, Y: 0}
+	}
+	return scrollAdjustment
 }
