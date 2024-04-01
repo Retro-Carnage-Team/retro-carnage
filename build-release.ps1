@@ -46,19 +46,8 @@ class ApplicationBuilder {
     [void] BuildRelease() {
         $this.DownloadAssets()
         $this.BuildBinary()
-        $this.BuildArchive($this.outFile)
+        $this.BuildArchive()
         $this.CleanUp()
-    }
-
-    [void] BuildBinary() {
-        Write-Host "Building Retro-Carnage binary"
-        Set-Location $this.workFolder        
-        git clone --depth 1 --branch $this.releaseTag https://github.com/Retro-Carnage-Team/retro-carnage.git
-        Set-Location ./retro-carnage
-        go build -v
-        Move-Item -Path ./retro-carnage* -Destination (Join-Path $this.workFolder $this.releaseTag)
-        Set-Location $this.workFolder
-        Remove-Item -Recurse -Force (Join-Path $this.workFolder "retro-carnage")
     }
 
     [void] DownloadAssets() {
@@ -68,19 +57,28 @@ class ApplicationBuilder {
         Remove-Item -Recurse -Force (Join-Path $this.workFolder (Join-Path $this.releaseTag ".git"))
     }
 
-    [void] CleanUp() {
-        Write-Host "Cleaning up"
+    [void] BuildBinary() {
+        Write-Host "Building Retro-Carnage binary"        
+        git clone --depth 1 --branch $this.releaseTag https://github.com/Retro-Carnage-Team/retro-carnage.git
+        Set-Location (Join-Path $this.workFolder "retro-carnage")
+        go build -v
+        Move-Item -Path ./retro-carnage* -Destination (Join-Path $this.workFolder $this.releaseTag)
         Set-Location $this.location
-        Remove-Item -Recurse -Force $this.workFolder
+        Remove-Item -Recurse -Force (Join-Path $this.workFolder "retro-carnage")
     }
 
-    [void] BuildArchive($path) {                
+    [void] BuildArchive() {                
         $compress = @{
             Path = Join-Path $this.workFolder $this.releaseTag
             CompressionLevel = "Optimal"
-            DestinationPath = $path
+            DestinationPath = $this.outFile
         }
         Compress-Archive @compress        
+    }
+
+    [void] CleanUp() {
+        Write-Host "Cleaning up"
+        Remove-Item -Recurse -Force $this.workFolder
     }
 
     [string] CreateTempFolder() {
