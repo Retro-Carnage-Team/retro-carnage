@@ -4,6 +4,12 @@
 # tricky, as the game depends on OpenGL and getting x-platform builds right is not that easy. So currently my attempt
 # is to create builds on the target platforms. This script is designed to do just that.
 #
+# Usage:
+# Run script and specify a release tag (https://github.com/Retro-Carnage-Team/retro-carnage/tags) as parameter. 
+# Example:
+# 
+# PS> .\build-release.ps1 v2024-03
+#
 # This script has dependencies that have to be installed first:
 #
 # All platforms:
@@ -14,7 +20,9 @@
 # * libgl1-mesa-dev 
 # * xorg-dev
 # * libasound2-dev
-
+#
+# Windows:
+# * tdm-gcc (https://jmeubank.github.io/tdm-gcc/)
 
 param(
     [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 0)]
@@ -23,11 +31,13 @@ param(
 
 class ApplicationBuilder {
 
+    [string] $location
     [string] $outFile
     [string] $releaseTag
     [string] $workFolder    
 
     ApplicationBuilder($tag) {
+        $this.location = Get-Location
         $this.releaseTag = $tag
         $this.outFile = $this.GetOutputFileName()        
         $this.workFolder = $this.CreateTempFolder()
@@ -37,6 +47,7 @@ class ApplicationBuilder {
         $this.DownloadAssets()
         $this.BuildBinary()
         $this.BuildArchive($this.outFile)
+        $this.CleanUp()
     }
 
     [void] BuildBinary() {
@@ -54,7 +65,13 @@ class ApplicationBuilder {
         Write-Host "Loading assets"
         Set-Location $this.workFolder
         git clone --depth 1 --branch $this.releaseTag https://github.com/Retro-Carnage-Team/retro-carnage-assets.git $this.releaseTag
-        Remove-Item -Recurse -Force (Join-Path $this.workFolder $this.releaseTag ".git")
+        Remove-Item -Recurse -Force (Join-Path $this.workFolder (Join-Path $this.releaseTag ".git"))
+    }
+
+    [void] CleanUp() {
+        Write-Host "Cleaning up"
+        Set-Location $this.location
+        Remove-Item -Recurse -Force $this.workFolder
     }
 
     [void] BuildArchive($path) {                
@@ -74,17 +91,14 @@ class ApplicationBuilder {
         return $folder
     }
 
-    [string] GetOutputFileName() {        
-        $location = Get-Location
+    [string] GetOutputFileName() {                
         if([System.Environment]::OSVersion.Platform -eq "Win32NT") {
-            return Join-Path $location "Retro-Carnage-$($this.releaseTag)-Windows.zip"
+            return Join-Path $this.location "Retro-Carnage-$($this.releaseTag)-Windows.zip"
         }
-        return Join-Path $location "Retro-Carnage-$($this.releaseTag)-Linux.zip"
+        return Join-Path $this.location "Retro-Carnage-$($this.releaseTag)-Linux.zip"
     }
 }
 
-$location = Get-Location
 $appBuilder = [ApplicationBuilder]::new($releaseTag)
 $appBuilder.BuildRelease()
 Write-Host "Release created: $($appBuilder.outFile)"
-Set-Location $location
