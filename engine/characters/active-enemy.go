@@ -16,6 +16,7 @@ type ActiveEnemy struct {
 	Movements               []*EnemyMovement
 	position                geometry.Rectangle
 	Skin                    EnemySkin
+	SpawnDelays             []int64
 	SpriteSupplier          EnemySpriteSupplier
 	Type                    EnemyType
 	ViewingDirection        *geometry.Direction
@@ -32,10 +33,9 @@ func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
 
 	e.currentActionElapsed += timeElapsedInMs
 	if e.currentActionElapsed > e.Actions[e.currentActionIdx].Delay {
-		var result = e.Actions[e.currentActionIdx].Action
 		e.currentActionElapsed = 0
 		e.currentActionIdx = (e.currentActionIdx + 1) % len(e.Actions)
-		return &result
+		return &e.Actions[e.currentActionIdx].Action
 	}
 
 	return nil
@@ -47,9 +47,13 @@ func (e *ActiveEnemy) Die() {
 	e.DyingAnimationCountDown = 1
 }
 
+func (e *ActiveEnemy) CanDie() bool {
+	return !(e.Dying || e.Type == SpawnArea)
+}
+
 // Move will update the enemies position according to its configured movement pattern and the elapsed time.
 func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
-	if !e.Type.CanMove() || len(e.Movements) == 0 {
+	if len(e.Movements) == 0 {
 		return
 	}
 
@@ -67,6 +71,25 @@ func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 			e.removeFirstMovement()
 		}
 	}
+}
+
+// Spawn returns a new enemy instance - when it's time to do so.
+// It updates the internal state of this ActiveEnemy based on the timeElapsedInMs. If it's time for this ActiveEnemy to
+// spawn a new enemy, the corresponding enemy will be returned. If the ActiveEnemy shouldn't perform any/ action, nil
+// will be returned.
+func (e *ActiveEnemy) Spawn(timeElapsedInMs int64) *ActiveEnemy {
+	if len(e.SpawnDelays) == 0 {
+		return nil
+	}
+
+	e.currentActionElapsed += timeElapsedInMs
+	if e.currentActionElapsed > e.SpawnDelays[e.currentActionIdx] {
+		e.currentActionElapsed = 0
+		e.currentActionIdx = (e.currentActionIdx + 1) % len(e.SpawnDelays)
+		return e.spawnEnemyInstance()
+	}
+
+	return nil
 }
 
 // Position returns the current position of this enemy.
@@ -88,4 +111,19 @@ func (e *ActiveEnemy) removeFirstMovement() {
 
 	e.Movements[0] = nil
 	e.Movements = e.Movements[1:]
+}
+
+func (e *ActiveEnemy) spawnEnemyInstance() *ActiveEnemy {
+	var result = &ActiveEnemy{
+		Actions:                 e.Actions,
+		Dying:                   false,
+		DyingAnimationCountDown: 0,
+		Movements:               e.Movements,
+		Skin:                    e.Skin,
+		Type:                    e.Type,
+		ViewingDirection:        e.ViewingDirection,
+	}
+	result.SetPosition(e.Position().Clone())
+	result.SpriteSupplier = NewEnemyPersonSpriteSupplier(*result.ViewingDirection)
+	return result
 }

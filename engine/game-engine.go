@@ -145,13 +145,16 @@ func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, ob
 }
 
 func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
+	var spawnedEnemies = make([]*characters.ActiveEnemy, 0)
 	ge.updateEnemiesDeaths(elapsedTimeInMs)
 	for _, enemy := range ge.enemies {
 		if enemy.Dying {
 			continue
 		}
 
-		enemy.Move(elapsedTimeInMs)
+		if enemy.Type.CanMove() {
+			enemy.Move(elapsedTimeInMs)
+		}
 
 		if enemy.Type.CanFire() {
 			var enemyAction = enemy.Action(elapsedTimeInMs)
@@ -166,6 +169,17 @@ func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
 				}
 			}
 		}
+
+		if enemy.Type.CanSpawn() {
+			var spawnedEnemy = enemy.Spawn(elapsedTimeInMs)
+			if nil != spawnedEnemy {
+				spawnedEnemies = append(spawnedEnemies, spawnedEnemy)
+			}
+		}
+	}
+
+	if len(spawnedEnemies) > 0 {
+		ge.enemies = append(ge.enemies, spawnedEnemies...)
 	}
 }
 
@@ -380,7 +394,7 @@ func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
 
 func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 	for _, enemy := range ge.enemies {
-		if !enemy.Dying {
+		if enemy.CanDie() {
 			var death = false
 			var killer = -1
 

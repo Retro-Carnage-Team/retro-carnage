@@ -6,6 +6,7 @@ const (
 	Person    EnemyType = 0
 	Landmine  EnemyType = 1
 	GunTurret EnemyType = 2
+	SpawnArea EnemyType = 3
 )
 
 var pointsByEnemyType map[EnemyType]int
@@ -27,6 +28,11 @@ func (et EnemyType) CanFire() bool {
 // configured movement pattern.
 func (et EnemyType) CanMove() bool {
 	return et == Person
+}
+
+// CanSpawn returns true when this type of enemy can create new instances of other enemies.
+func (et EnemyType) CanSpawn() bool {
+	return et == SpawnArea
 }
 
 // GetPointsForKill returns the number of points to be added to the player score when a player kills an enemy of this
