@@ -83,6 +83,7 @@ func (e *ActiveEnemy) SetPosition(pos *geometry.Rectangle) {
 func (e *ActiveEnemy) removeFirstMovement() {
 	if len(e.Movements) == 1 {
 		e.Movements = []*EnemyMovement{}
+		return
 	}
 
 	e.Movements[0] = nil
