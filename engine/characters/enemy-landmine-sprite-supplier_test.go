@@ -1,9 +1,10 @@
 package characters
 
 import (
-	"github.com/stretchr/testify/assert"
 	"retro-carnage/engine/geometry"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLandmineReturnsStaticSprite(t *testing.T) {
@@ -11,7 +12,7 @@ func TestLandmineReturnsStaticSprite(t *testing.T) {
 	var landmine = ActiveEnemy{
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
-		Movements:               []*EnemyMovement{},
+		Movements:               []EnemyMovement{},
 		position: geometry.Rectangle{
 			X:      100,
 			Y:      100,

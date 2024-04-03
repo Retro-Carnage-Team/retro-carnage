@@ -39,7 +39,7 @@ func buildEnemyPerson() ActiveEnemy {
 	return ActiveEnemy{
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
-		Movements:               []*EnemyMovement{},
+		Movements:               []EnemyMovement{},
 		position: geometry.Rectangle{
 			X:      100,
 			Y:      100,
