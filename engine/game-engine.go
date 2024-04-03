@@ -144,29 +144,23 @@ func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
 			continue
 		}
 
-		if enemy.Type.CanMove() {
-			enemy.Move(elapsedTimeInMs)
-		}
+		enemy.Move(elapsedTimeInMs)
 
-		if enemy.Type.CanFire() {
-			var enemyAction = enemy.Action(elapsedTimeInMs)
-			if nil != enemyAction {
-				if assets.EnemyActionBullet == *enemyAction {
-					ge.bullets = append(ge.bullets, NewBulletFiredByEnemy(enemy))
-				} else if assets.EnemyActionGrenade == *enemyAction {
-					var grenade = NewExplosiveGrenadeByEnemy(enemy.Position(), *enemy.ViewingDirection)
-					ge.explosives = append(ge.explosives, grenade)
-				} else {
-					logging.Warning.Printf("Invalid enemy configuration. Unknown action %s", *enemyAction)
-				}
+		var enemyAction = enemy.Action(elapsedTimeInMs)
+		if nil != enemyAction {
+			if assets.EnemyActionBullet == *enemyAction {
+				ge.bullets = append(ge.bullets, NewBulletFiredByEnemy(enemy))
+			} else if assets.EnemyActionGrenade == *enemyAction {
+				var grenade = NewExplosiveGrenadeByEnemy(enemy.Position(), *enemy.ViewingDirection)
+				ge.explosives = append(ge.explosives, grenade)
+			} else {
+				logging.Warning.Printf("Invalid enemy configuration. Unknown action %s", *enemyAction)
 			}
 		}
 
-		if enemy.Type.CanSpawn() {
-			var spawnedEnemy = enemy.Spawn(elapsedTimeInMs)
-			if nil != spawnedEnemy {
-				spawnedEnemies = append(spawnedEnemies, spawnedEnemy)
-			}
+		var spawnedEnemy = enemy.Spawn(elapsedTimeInMs)
+		if nil != spawnedEnemy {
+			spawnedEnemies = append(spawnedEnemies, spawnedEnemy)
 		}
 	}
 

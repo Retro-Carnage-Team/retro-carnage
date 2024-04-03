@@ -302,6 +302,7 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy
 		DyingAnimationCountDown: 0,
 		Movements:               lc.convertEnemyMovements(e.Movements),
 		Skin:                    characters.EnemySkin(e.Skin),
+		SpawnDelays:             e.SpawnDelays,
 		Type:                    characters.EnemyType(e.Type),
 		ViewingDirection:        direction,
 	}

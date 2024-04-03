@@ -27,7 +27,7 @@ type ActiveEnemy struct {
 // perform some kind of action, the corresponding action name will be returned. If the ActiveEnemy shouldn't perform any
 // action, nil will be returned.
 func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
-	if len(e.Actions) == 0 {
+	if !e.Type.CanFire() || len(e.Actions) == 0 {
 		return nil
 	}
 
@@ -53,7 +53,7 @@ func (e *ActiveEnemy) CanDie() bool {
 
 // Move will update the enemies position according to its configured movement pattern and the elapsed time.
 func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
-	if len(e.Movements) == 0 {
+	if !e.Type.CanMove() || len(e.Movements) == 0 {
 		return
 	}
 
@@ -78,7 +78,7 @@ func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 // spawn a new enemy, the corresponding enemy will be returned. If the ActiveEnemy shouldn't perform any/ action, nil
 // will be returned.
 func (e *ActiveEnemy) Spawn(timeElapsedInMs int64) *ActiveEnemy {
-	if len(e.SpawnDelays) == 0 {
+	if !e.Type.CanSpawn() || len(e.SpawnDelays) == 0 {
 		return nil
 	}
 
