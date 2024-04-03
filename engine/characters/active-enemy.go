@@ -13,7 +13,7 @@ type ActiveEnemy struct {
 	currentActionElapsed    int64
 	Dying                   bool
 	DyingAnimationCountDown int64
-	Movements               []*EnemyMovement
+	Movements               []EnemyMovement
 	position                geometry.Rectangle
 	Skin                    EnemySkin
 	SpawnDelays             []int64
@@ -105,11 +105,9 @@ func (e *ActiveEnemy) SetPosition(pos *geometry.Rectangle) {
 
 func (e *ActiveEnemy) removeFirstMovement() {
 	if len(e.Movements) == 1 {
-		e.Movements = []*EnemyMovement{}
+		e.Movements = []EnemyMovement{}
 		return
 	}
-
-	e.Movements[0] = nil
 	e.Movements = e.Movements[1:]
 }
 
