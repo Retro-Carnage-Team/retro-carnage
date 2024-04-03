@@ -45,3 +45,7 @@ func (et EnemyType) GetPointsForKill() int {
 func (et EnemyType) IsCollisionDeadly() bool {
 	return et == Person || et == Landmine
 }
+
+func (et EnemyType) IsVisible() bool {
+	return et != SpawnArea
+}

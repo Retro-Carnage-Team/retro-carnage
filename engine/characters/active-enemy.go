@@ -120,7 +120,7 @@ func (e *ActiveEnemy) spawnEnemyInstance() *ActiveEnemy {
 		DyingAnimationCountDown: 0,
 		Movements:               e.Movements,
 		Skin:                    e.Skin,
-		Type:                    e.Type,
+		Type:                    Person,
 		ViewingDirection:        e.ViewingDirection,
 	}
 	result.SetPosition(e.Position().Clone())

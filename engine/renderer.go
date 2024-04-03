@@ -69,6 +69,10 @@ func (r *Renderer) drawBackground() {
 // Do not call from outside this class.
 func (r *Renderer) drawEnemies(elapsedTimeInMs int64) {
 	for _, enemy := range r.engine.enemies {
+		if !enemy.Type.IsVisible() {
+			continue
+		}
+
 		var spriteWithOffset = enemy.SpriteSupplier.Sprite(elapsedTimeInMs, *enemy)
 		if nil != spriteWithOffset {
 			r.drawSpriteToCanvas(spriteWithOffset, enemy.Position())
