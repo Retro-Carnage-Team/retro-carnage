@@ -13,9 +13,10 @@ type ActiveEnemy struct {
 	currentActionElapsed    int64
 	Dying                   bool
 	DyingAnimationCountDown int64
-	Movements               []*EnemyMovement
+	Movements               []EnemyMovement
 	position                geometry.Rectangle
 	Skin                    EnemySkin
+	SpawnDelays             []int64
 	SpriteSupplier          EnemySpriteSupplier
 	Type                    EnemyType
 	ViewingDirection        *geometry.Direction
@@ -26,16 +27,15 @@ type ActiveEnemy struct {
 // perform some kind of action, the corresponding action name will be returned. If the ActiveEnemy shouldn't perform any
 // action, nil will be returned.
 func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
-	if len(e.Actions) == 0 {
+	if !e.Type.CanFire() || len(e.Actions) == 0 {
 		return nil
 	}
 
 	e.currentActionElapsed += timeElapsedInMs
 	if e.currentActionElapsed > e.Actions[e.currentActionIdx].Delay {
-		var result = e.Actions[e.currentActionIdx].Action
 		e.currentActionElapsed = 0
 		e.currentActionIdx = (e.currentActionIdx + 1) % len(e.Actions)
-		return &result
+		return &e.Actions[e.currentActionIdx].Action
 	}
 
 	return nil
@@ -45,6 +45,10 @@ func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
 func (e *ActiveEnemy) Die() {
 	e.Dying = true
 	e.DyingAnimationCountDown = 1
+}
+
+func (e *ActiveEnemy) CanDie() bool {
+	return !(e.Dying || e.Type == SpawnArea)
 }
 
 // Move will update the enemies position according to its configured movement pattern and the elapsed time.
@@ -69,6 +73,25 @@ func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 	}
 }
 
+// Spawn returns a new enemy instance - when it's time to do so.
+// It updates the internal state of this ActiveEnemy based on the timeElapsedInMs. If it's time for this ActiveEnemy to
+// spawn a new enemy, the corresponding enemy will be returned. If the ActiveEnemy shouldn't perform any/ action, nil
+// will be returned.
+func (e *ActiveEnemy) Spawn(timeElapsedInMs int64) *ActiveEnemy {
+	if !e.Type.CanSpawn() || len(e.SpawnDelays) == 0 {
+		return nil
+	}
+
+	e.currentActionElapsed += timeElapsedInMs
+	if e.currentActionElapsed > e.SpawnDelays[e.currentActionIdx] {
+		e.currentActionElapsed = 0
+		e.currentActionIdx = (e.currentActionIdx + 1) % len(e.SpawnDelays)
+		return e.spawnEnemyInstance()
+	}
+
+	return nil
+}
+
 // Position returns the current position of this enemy.
 // Implements SomethingThatExplodes for enemies that are landmines.
 func (e *ActiveEnemy) Position() *geometry.Rectangle {
@@ -82,10 +105,23 @@ func (e *ActiveEnemy) SetPosition(pos *geometry.Rectangle) {
 
 func (e *ActiveEnemy) removeFirstMovement() {
 	if len(e.Movements) == 1 {
-		e.Movements = []*EnemyMovement{}
+		e.Movements = []EnemyMovement{}
 		return
 	}
-
-	e.Movements[0] = nil
 	e.Movements = e.Movements[1:]
+}
+
+func (e *ActiveEnemy) spawnEnemyInstance() *ActiveEnemy {
+	var result = &ActiveEnemy{
+		Actions:                 e.Actions,
+		Dying:                   false,
+		DyingAnimationCountDown: 0,
+		Movements:               e.Movements,
+		Skin:                    e.Skin,
+		Type:                    Person,
+		ViewingDirection:        e.ViewingDirection,
+	}
+	result.SetPosition(e.Position().Clone())
+	result.SpriteSupplier = NewEnemyPersonSpriteSupplier(*result.ViewingDirection)
+	return result
 }

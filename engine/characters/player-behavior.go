@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	PlayerInvincibilityTimeout = 1500
+	PlayerInvincibilityTimeout = 1_500
 )
 
 // PlayerBehavior contains all player state that is valid for the duration of a single mission only.
@@ -14,9 +14,9 @@ type PlayerBehavior struct {
 	Player                  *Player
 	Direction               geometry.Direction
 	Dying                   bool
-	DyingAnimationCountDown int64
+	dyingAnimationCountDown int64
 	Invincible              bool
-	InvincibilityCountDown  int64
+	invincibilityCountDown  int64
 	TimeSinceLastBullet     int64
 	Firing                  bool // will be true as long as the player keeps the trigger pressed
 	TriggerPressed          bool // will be true only when switching from "not firing" to "firing"
@@ -32,9 +32,9 @@ func NewPlayerBehavior(player *Player) *PlayerBehavior {
 		Player:                  player,
 		Direction:               geometry.Up,
 		Dying:                   false,
-		DyingAnimationCountDown: 0,
+		dyingAnimationCountDown: 0,
 		Invincible:              false,
-		InvincibilityCountDown:  0,
+		invincibilityCountDown:  0,
 		Moving:                  false,
 		Firing:                  false,
 		TriggerPressed:          false,
@@ -80,19 +80,36 @@ func (pb *PlayerBehavior) direction(up bool, down bool, left bool, right bool) g
 	return *direction
 }
 
+func (pb *PlayerBehavior) Die() {
+	pb.Dying = true
+	pb.dyingAnimationCountDown = SkinForPlayer(pb.Player.index).DurationOfDeathAnimation()
+}
+
+func (pb *PlayerBehavior) UpdateDeath(elapsedTimeInMs int64) {
+	pb.dyingAnimationCountDown -= elapsedTimeInMs
+	if pb.dyingAnimationCountDown <= 0 {
+		pb.Dying = false
+		pb.dyingAnimationCountDown = 0
+		PlayerController.KillPlayer(pb.Player)
+		if pb.Player.Alive() {
+			pb.StartInvincibility()
+		}
+	}
+}
+
 func (pb *PlayerBehavior) Idle() bool {
 	return !pb.Dying && !pb.Moving
 }
 
 func (pb *PlayerBehavior) StartInvincibility() {
 	pb.Invincible = true
-	pb.InvincibilityCountDown = PlayerInvincibilityTimeout
+	pb.invincibilityCountDown = PlayerInvincibilityTimeout
 }
 
 func (pb *PlayerBehavior) UpdateInvincibility(elapsedTimeInMs int64) {
-	pb.InvincibilityCountDown -= elapsedTimeInMs
-	if 0 >= pb.InvincibilityCountDown {
+	pb.invincibilityCountDown -= elapsedTimeInMs
+	if 0 >= pb.invincibilityCountDown {
 		pb.Invincible = false
-		pb.InvincibilityCountDown = 0
+		pb.invincibilityCountDown = 0
 	}
 }

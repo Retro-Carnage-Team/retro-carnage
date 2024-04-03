@@ -104,15 +104,7 @@ func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = ge.playerBehaviors[player.Index()]
 		if behavior.Dying {
-			behavior.DyingAnimationCountDown -= elapsedTimeInMs
-			if 0 >= behavior.DyingAnimationCountDown {
-				behavior.Dying = false
-				behavior.DyingAnimationCountDown = 0
-				characters.PlayerController.KillPlayer(player)
-				if player.Alive() {
-					behavior.StartInvincibility()
-				}
-			}
+			behavior.UpdateDeath(elapsedTimeInMs)
 		} else {
 			if behavior.Invincible {
 				behavior.UpdateInvincibility(elapsedTimeInMs)
@@ -145,6 +137,7 @@ func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, ob
 }
 
 func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
+	var spawnedEnemies = make([]*characters.ActiveEnemy, 0)
 	ge.updateEnemiesDeaths(elapsedTimeInMs)
 	for _, enemy := range ge.enemies {
 		if enemy.Dying {
@@ -153,19 +146,26 @@ func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
 
 		enemy.Move(elapsedTimeInMs)
 
-		if enemy.Type.CanFire() {
-			var enemyAction = enemy.Action(elapsedTimeInMs)
-			if nil != enemyAction {
-				if assets.EnemyActionBullet == *enemyAction {
-					ge.bullets = append(ge.bullets, NewBulletFiredByEnemy(enemy))
-				} else if assets.EnemyActionGrenade == *enemyAction {
-					var grenade = NewExplosiveGrenadeByEnemy(enemy.Position(), *enemy.ViewingDirection)
-					ge.explosives = append(ge.explosives, grenade)
-				} else {
-					logging.Warning.Printf("Invalid enemy configuration. Unknown action %s", *enemyAction)
-				}
+		var enemyAction = enemy.Action(elapsedTimeInMs)
+		if nil != enemyAction {
+			if assets.EnemyActionBullet == *enemyAction {
+				ge.bullets = append(ge.bullets, NewBulletFiredByEnemy(enemy))
+			} else if assets.EnemyActionGrenade == *enemyAction {
+				var grenade = NewExplosiveGrenadeByEnemy(enemy.Position(), *enemy.ViewingDirection)
+				ge.explosives = append(ge.explosives, grenade)
+			} else {
+				logging.Warning.Printf("Invalid enemy configuration. Unknown action %s", *enemyAction)
 			}
 		}
+
+		var spawnedEnemy = enemy.Spawn(elapsedTimeInMs)
+		if nil != spawnedEnemy {
+			spawnedEnemies = append(spawnedEnemies, spawnedEnemy)
+		}
+	}
+
+	if len(spawnedEnemies) > 0 {
+		ge.enemies = append(ge.enemies, spawnedEnemies...)
 	}
 }
 
@@ -371,8 +371,7 @@ func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
 					ge.stereo.StopFx(player.SelectedWeapon().Sound)
 				}
 				ge.stereo.PlayFx(assets.DeathFxForPlayer(player.Index()))
-				behavior.Dying = true
-				behavior.DyingAnimationCountDown = characters.SkinForPlayer(player.Index()).DurationOfDeathAnimation()
+				behavior.Die()
 			}
 		}
 	}
@@ -380,7 +379,7 @@ func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
 
 func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 	for _, enemy := range ge.enemies {
-		if !enemy.Dying {
+		if enemy.CanDie() {
 			var death = false
 			var killer = -1
 

@@ -302,6 +302,7 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy
 		DyingAnimationCountDown: 0,
 		Movements:               lc.convertEnemyMovements(e.Movements),
 		Skin:                    characters.EnemySkin(e.Skin),
+		SpawnDelays:             e.SpawnDelays,
 		Type:                    characters.EnemyType(e.Type),
 		ViewingDirection:        direction,
 	}
@@ -328,11 +329,11 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy
 	return result
 }
 
-func (lc *LevelController) convertEnemyMovements(movements []assets.EnemyMovement) []*characters.EnemyMovement {
-	var result = make([]*characters.EnemyMovement, 0)
+func (lc *LevelController) convertEnemyMovements(movements []assets.EnemyMovement) []characters.EnemyMovement {
+	var result = make([]characters.EnemyMovement, 0)
 	for _, movement := range movements {
 		var converted = characters.NewEnemyMovement(&movement)
-		result = append(result, &converted)
+		result = append(result, converted)
 	}
 	return result
 }
