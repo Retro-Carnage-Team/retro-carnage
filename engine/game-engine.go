@@ -104,15 +104,7 @@ func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = ge.playerBehaviors[player.Index()]
 		if behavior.Dying {
-			behavior.DyingAnimationCountDown -= elapsedTimeInMs
-			if 0 >= behavior.DyingAnimationCountDown {
-				behavior.Dying = false
-				behavior.DyingAnimationCountDown = 0
-				characters.PlayerController.KillPlayer(player)
-				if player.Alive() {
-					behavior.StartInvincibility()
-				}
-			}
+			behavior.UpdateDeath(elapsedTimeInMs)
 		} else {
 			if behavior.Invincible {
 				behavior.UpdateInvincibility(elapsedTimeInMs)
@@ -385,8 +377,7 @@ func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
 					ge.stereo.StopFx(player.SelectedWeapon().Sound)
 				}
 				ge.stereo.PlayFx(assets.DeathFxForPlayer(player.Index()))
-				behavior.Dying = true
-				behavior.DyingAnimationCountDown = characters.SkinForPlayer(player.Index()).DurationOfDeathAnimation()
+				behavior.Die()
 			}
 		}
 	}
