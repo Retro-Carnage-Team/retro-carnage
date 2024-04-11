@@ -408,49 +408,21 @@ func (ge *GameEngine) checkPlayerForCollisionWithBullet(rect *geometry.Rectangle
 	return false
 }
 
+// handleDeadlyCollisionsOfEnemies checks of enemies collide with deadly objects - like bullets and explosions.
+// Enemy will be killed if a deadly collision is detected.
 func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 	for _, enemy := range ge.enemies {
 		if enemy.CanDie() {
-			var death = false
-			var killer = -1
-
 			// Check for hits by explosion
-			for _, explosion := range ge.explosions {
-				if nil != enemy.Position().Intersection(explosion.Position()) {
-					killer = explosion.playerIdx
-					if characters.Landmine == enemy.Type {
-						var newExplosion = NewExplosion(explosion.causedByPlayer, explosion.playerIdx, enemy)
-						ge.explosions = append(ge.explosions, newExplosion)
-					}
-					death = true
-					break
-				}
-			}
+			death, killer := ge.checkEnemyForCollisionWithExplosion(enemy)
 
 			// Check for hits by bullets and explosives
-			if characters.Person == enemy.Type {
-				if !death {
-					for _, bullet := range ge.bullets {
-						if nil != enemy.Position().Intersection(bullet.Position()) {
-							killer = bullet.playerIdx
-							death = true
-							break
-						}
-					}
-				}
+			if !death {
+				death, killer = ge.checkEnemyForCollisionWithBullet(enemy)
+			}
 
-				if !death {
-					for i := len(ge.explosives) - 1; i >= 0; i-- {
-						var explosive = ge.explosives[i]
-						if explosive.ExplodesOnContact && nil != explosive.Position().Intersection(enemy.Position()) {
-							ge.detonateExplosive(explosive)
-							killer = explosive.FiredByPlayerIdx
-							ge.removeExplosive(i)
-							death = true
-							break
-						}
-					}
-				}
+			if !death {
+				death, killer = ge.checkEnemyForCollisionWithExplosive(enemy)
 			}
 
 			if death {
@@ -458,6 +430,48 @@ func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 			}
 		}
 	}
+}
+
+// checkEnemyForCollisionWithExplosion checks this enemy for deadly collisions with explosions.
+// Returns true and index of the player that caused the explosion if such a collision is detected.
+func (ge *GameEngine) checkEnemyForCollisionWithExplosion(enemy *characters.ActiveEnemy) (death bool, killer int) {
+	for _, explosion := range ge.explosions {
+		if nil != enemy.Position().Intersection(explosion.Position()) {
+			if characters.Landmine == enemy.Type {
+				var newExplosion = NewExplosion(explosion.causedByPlayer, explosion.playerIdx, enemy)
+				ge.explosions = append(ge.explosions, newExplosion)
+			}
+			return true, explosion.playerIdx
+		}
+	}
+	return false, -1
+}
+
+// checkEnemyForCollisionWithBullet checks this enemy for deadly collisions with bullets.
+// Returns true and index of the player that fired the bullet if such a collision is detected.
+func (ge *GameEngine) checkEnemyForCollisionWithBullet(enemy *characters.ActiveEnemy) (death bool, killer int) {
+	if characters.Person == enemy.Type && !death {
+		for _, bullet := range ge.bullets {
+			if nil != enemy.Position().Intersection(bullet.Position()) {
+				return true, bullet.playerIdx
+			}
+		}
+	}
+	return false, -1
+}
+
+// checkEnemyForCollisionWithExplosive checks this enemy for deadly collisions with explosives.
+// Returns true and index of the player that fired the explosive if such a collision is detected.
+func (ge *GameEngine) checkEnemyForCollisionWithExplosive(enemy *characters.ActiveEnemy) (death bool, killer int) {
+	for i := len(ge.explosives) - 1; i >= 0; i-- {
+		var explosive = ge.explosives[i]
+		if explosive.ExplodesOnContact && nil != explosive.Position().Intersection(enemy.Position()) {
+			ge.detonateExplosive(explosive)
+			ge.removeExplosive(i)
+			return true, explosive.FiredByPlayerIdx
+		}
+	}
+	return false, -1
 }
 
 func (ge *GameEngine) killEnemy(enemy *characters.ActiveEnemy, killer int) {
