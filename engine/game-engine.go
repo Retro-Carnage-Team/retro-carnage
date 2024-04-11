@@ -84,7 +84,7 @@ func (ge *GameEngine) UpdateGameState(elapsedTimeInMs int64) {
 	ge.updateBullets(elapsedTimeInMs, obstacles)
 	ge.updateExplosions(elapsedTimeInMs)
 	ge.updateExplosives(elapsedTimeInMs, obstacles)
-	ge.handleWeaponAction(elapsedTimeInMs)
+	ge.handlePlayerWeaponAction(elapsedTimeInMs)
 
 	ge.checkPlayersForDeadlyCollisions()
 	ge.checkEnemiesForDeadlyCollisions()
@@ -280,38 +280,16 @@ func (ge *GameEngine) adjustPositionedItemWithScrollOffset(
 	}
 }
 
-func (ge *GameEngine) handleWeaponAction(elapsedTimeInMs int64) {
+// handlePlayerWeaponAction updates the game state based on a weapon action of the player.
+func (ge *GameEngine) handlePlayerWeaponAction(elapsedTimeInMs int64) {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = ge.playerBehaviors[player.Index()]
 		if !behavior.Dying {
 			var playerPosition = ge.playerPositions[player.Index()]
 			if behavior.TriggerPressed {
-				if player.GrenadeSelected() && ge.inventoryController[player.Index()].RemoveAmmunition() {
-					ge.explosives = append(ge.explosives, NewExplosiveGrenadeByPlayer(
-						player.Index(),
-						playerPosition,
-						behavior.Direction,
-						player.SelectedGrenade(),
-					))
-				} else if player.RpgSelected() && ge.inventoryController[player.Index()].RemoveAmmunition() {
-					var weapon = player.SelectedWeapon()
-					ge.stereo.PlayFx(weapon.Sound)
-					ge.explosives = append(
-						ge.explosives,
-						NewExplosiveRpg(player.Index(), playerPosition, behavior.Direction, weapon).Explosive,
-					)
-				} else if (player.PistolSelected() || player.AutomaticWeaponSelected()) &&
-					ge.inventoryController[player.Index()].RemoveAmmunition() {
-					ge.stereo.PlayFx(player.SelectedWeapon().Sound)
-					ge.fireBullet(player, behavior)
-				}
+				ge.handlePlayerWeaponTriggerPressed(player, playerPosition, behavior)
 			} else if behavior.Firing && player.AutomaticWeaponSelected() {
-				behavior.TimeSinceLastBullet += elapsedTimeInMs
-				var weapon = player.SelectedWeapon()
-				if (int64(weapon.BulletInterval) <= behavior.TimeSinceLastBullet) &&
-					ge.inventoryController[player.Index()].RemoveAmmunition() {
-					ge.fireBullet(player, behavior)
-				}
+				ge.handlePlayerWeaponTriggerHeld(behavior, elapsedTimeInMs, player)
 			}
 
 			if behavior.TriggerReleased && player.AutomaticWeaponSelected() {
@@ -321,6 +299,50 @@ func (ge *GameEngine) handleWeaponAction(elapsedTimeInMs int64) {
 	}
 }
 
+// handlePlayerWeaponTriggerPressed updates the game state when a player just triggered his weapon.
+// This handles both guns and explosives.
+func (ge *GameEngine) handlePlayerWeaponTriggerPressed(
+	player *characters.Player,
+	playerPosition *geometry.Rectangle,
+	behavior *characters.PlayerBehavior,
+) {
+	if player.GrenadeSelected() && ge.inventoryController[player.Index()].RemoveAmmunition() {
+		ge.explosives = append(ge.explosives, NewExplosiveGrenadeByPlayer(
+			player.Index(),
+			playerPosition,
+			behavior.Direction,
+			player.SelectedGrenade(),
+		))
+	} else if player.RpgSelected() && ge.inventoryController[player.Index()].RemoveAmmunition() {
+		var weapon = player.SelectedWeapon()
+		ge.stereo.PlayFx(weapon.Sound)
+		ge.explosives = append(
+			ge.explosives,
+			NewExplosiveRpg(player.Index(), playerPosition, behavior.Direction, weapon).Explosive,
+		)
+	} else if (player.PistolSelected() || player.AutomaticWeaponSelected()) &&
+		ge.inventoryController[player.Index()].RemoveAmmunition() {
+		ge.stereo.PlayFx(player.SelectedWeapon().Sound)
+		ge.fireBullet(player, behavior)
+	}
+}
+
+// handlePlayerWeaponTriggerHeld updates the game state when a player keeps the trigger of this weapon held down.
+// This handles both guns and explosives.
+func (ge *GameEngine) handlePlayerWeaponTriggerHeld(
+	behavior *characters.PlayerBehavior,
+	elapsedTimeInMs int64,
+	player *characters.Player,
+) {
+	behavior.TimeSinceLastBullet += elapsedTimeInMs
+	var weapon = player.SelectedWeapon()
+	if (int64(weapon.BulletInterval) <= behavior.TimeSinceLastBullet) &&
+		ge.inventoryController[player.Index()].RemoveAmmunition() {
+		ge.fireBullet(player, behavior)
+	}
+}
+
+// fireBullet creates a new bullet for a player firing his weapon.
 func (ge *GameEngine) fireBullet(player *characters.Player, behavior *characters.PlayerBehavior) {
 	var weapon = player.SelectedWeapon()
 	var position = ge.playerPositions[player.Index()]
