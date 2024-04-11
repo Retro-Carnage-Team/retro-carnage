@@ -105,12 +105,12 @@ func (r *Renderer) drawBullets() {
 		for _, bullet := range r.engine.bullets {
 			draw.Push(
 				pixel.Vec{
-					X: bullet.Position.X,
-					Y: -1 * bullet.Position.Y,
+					X: bullet.Position().X,
+					Y: -1 * bullet.Position().Y,
 				}.Scaled(r.scalingFactor).Add(outputAreaInverseRoot),
 				pixel.Vec{
-					X: bullet.Position.X + bullet.Position.Width,
-					Y: -1 * (bullet.Position.Y + bullet.Position.Height),
+					X: bullet.Position().X + bullet.Position().Width,
+					Y: -1 * (bullet.Position().Y + bullet.Position().Height),
 				}.Scaled(r.scalingFactor).Add(outputAreaInverseRoot),
 			)
 			draw.Rectangle(0)
@@ -138,7 +138,7 @@ func (r *Renderer) drawExplosions(elapsedTimeInMs int64) {
 	for _, explosion := range r.engine.explosions {
 		var spriteWOffset = explosion.SpriteSupplier.Sprite(elapsedTimeInMs)
 		if nil != spriteWOffset {
-			r.drawSpriteToCanvas(spriteWOffset, explosion.Position)
+			r.drawSpriteToCanvas(spriteWOffset, explosion.Position())
 		} else {
 			logging.Warning.Printf("Explosion sprite missing")
 		}
@@ -151,7 +151,7 @@ func (r *Renderer) drawBurnMarks() {
 	for _, burnMark := range r.engine.burnMarks {
 		var spriteWOffset = burnMark.SpriteSupplier.Sprite()
 		if nil != spriteWOffset {
-			r.drawSpriteToCanvas(spriteWOffset, burnMark.Position)
+			r.drawSpriteToCanvas(spriteWOffset, burnMark.Position())
 		} else {
 			logging.Warning.Printf("Burn mark sprite missing")
 		}

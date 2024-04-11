@@ -91,7 +91,7 @@ func (ge *GameEngine) UpdateGameState(elapsedTimeInMs int64) {
 	ge.checkIfPlayerReachedLevelGoal()
 
 	var scrollOffsets = ge.levelController.UpdatePosition(elapsedTimeInMs, ge.playerPositions)
-	ge.updateAllPositionsWithScrollOffset(&scrollOffsets)
+	ge.scrollObjectsOnScreen(&scrollOffsets)
 
 	var activatedEnemies = ge.levelController.ActivatedEnemies()
 	for i := range activatedEnemies {
@@ -222,7 +222,7 @@ func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []assets.Ob
 		var reachedRange = ge.bullets[i].Move(elapsedTimeInMs)
 		var hitObstacle = false
 		for _, obstacle := range obstacles {
-			if !hitObstacle && obstacle.StopsBullets && (nil != obstacle.Intersection(ge.bullets[i].Position)) {
+			if !hitObstacle && obstacle.StopsBullets && (nil != obstacle.Intersection(ge.bullets[i].Position())) {
 				hitObstacle = true
 			}
 		}
@@ -232,35 +232,24 @@ func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []assets.Ob
 	}
 }
 
-func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.Point) {
+// scrollObjectsOnScreen updates the positions of all elements on screen with the given scrollOffset.
+// The objects will be removed if they leave the screen with this adjustment.
+func (ge *GameEngine) scrollObjectsOnScreen(scrollOffset *geometry.Point) {
 	for _, playerPosition := range ge.playerPositions {
 		playerPosition.Subtract(scrollOffset)
 	}
 
 	for idx := len(ge.explosives) - 1; idx >= 0; idx-- {
-		var explosive = ge.explosives[idx]
-		explosive.Position().Subtract(scrollOffset)
-		if nil == explosive.Position().Intersection(screenRect) {
-			ge.removeExplosive(idx)
-		}
+		ge.adjustPositionedItemWithScrollOffset(ge.explosives[idx], ge.removeExplosive, scrollOffset, idx)
 	}
 
 	for idx := len(ge.explosions) - 1; idx >= 0; idx-- {
-		var explosion = ge.explosions[idx]
-		explosion.Position.Subtract(scrollOffset)
-		if nil == explosion.Position.Intersection(screenRect) {
-			ge.removeExplosion(idx)
-		}
+		ge.adjustPositionedItemWithScrollOffset(ge.explosions[idx], ge.removeExplosion, scrollOffset, idx)
 	}
 
 	for idx := len(ge.enemies) - 1; idx >= 0; idx-- {
 		var enemy = ge.enemies[idx]
 		var hasBeenVisible = nil != enemy.Position().Intersection(screenRect)
-
-		if !scrollOffset.Zero() {
-			logging.Trace.Printf("Moving enemy from %s by %s", enemy.Position().String(), scrollOffset.String())
-		}
-
 		enemy.Position().Subtract(scrollOffset)
 		var isVisible = nil != enemy.Position().Intersection(screenRect)
 		if hasBeenVisible && !isVisible {
@@ -269,19 +258,25 @@ func (ge *GameEngine) updateAllPositionsWithScrollOffset(scrollOffset *geometry.
 	}
 
 	for idx := len(ge.bullets) - 1; idx >= 0; idx-- {
-		var bullet = ge.bullets[idx]
-		bullet.Position.Subtract(scrollOffset)
-		if nil == bullet.Position.Intersection(screenRect) {
-			ge.removeBullet(idx)
-		}
+		ge.adjustPositionedItemWithScrollOffset(ge.bullets[idx], ge.removeBullet, scrollOffset, idx)
 	}
 
 	for idx := len(ge.burnMarks) - 1; idx >= 0; idx-- {
-		var burnMark = ge.burnMarks[idx]
-		burnMark.Position.Subtract(scrollOffset)
-		if nil == burnMark.Position.Intersection(screenRect) {
-			ge.removeBurnMark(idx)
-		}
+		ge.adjustPositionedItemWithScrollOffset(ge.burnMarks[idx], ge.removeBurnMark, scrollOffset, idx)
+	}
+}
+
+// adjustPositionedItemWithScrollOffset adjusts the position of the given object with the given scroll offset.
+// The adjusted object will be removed with deleteValueFunc if it is not on screen anymore.
+func (ge *GameEngine) adjustPositionedItemWithScrollOffset(
+	value geometry.Positioned,
+	deleteValueFunc func(idx int),
+	scrollOffset *geometry.Point,
+	idx int,
+) {
+	value.Position().Subtract(scrollOffset)
+	if nil == value.Position().Intersection(screenRect) {
+		deleteValueFunc(idx)
 	}
 }
 
@@ -356,13 +351,13 @@ func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
 
 			if !death {
 				for _, explosion := range ge.explosions {
-					death = death || (nil != rect.Intersection(explosion.Position))
+					death = death || (nil != rect.Intersection(explosion.Position()))
 				}
 			}
 
 			if !death {
 				for _, bullet := range ge.bullets {
-					death = death || (nil != rect.Intersection(bullet.Position))
+					death = death || (nil != rect.Intersection(bullet.Position()))
 				}
 			}
 
@@ -385,7 +380,7 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 
 			// Check for hits by explosion
 			for _, explosion := range ge.explosions {
-				if nil != enemy.Position().Intersection(explosion.Position) {
+				if nil != enemy.Position().Intersection(explosion.Position()) {
 					killer = explosion.playerIdx
 					if characters.Landmine == enemy.Type {
 						var newExplosion = NewExplosion(explosion.causedByPlayer, explosion.playerIdx, enemy)
@@ -400,7 +395,7 @@ func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
 			if characters.Person == enemy.Type {
 				if !death {
 					for _, bullet := range ge.bullets {
-						if nil != enemy.Position().Intersection(bullet.Position) {
+						if nil != enemy.Position().Intersection(bullet.Position()) {
 							killer = bullet.playerIdx
 							death = true
 							break
