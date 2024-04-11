@@ -86,9 +86,9 @@ func (ge *GameEngine) UpdateGameState(elapsedTimeInMs int64) {
 	ge.updateExplosives(elapsedTimeInMs, obstacles)
 	ge.handlePlayerWeaponAction(elapsedTimeInMs)
 
-	ge.checkPlayersForDeadlyCollisions()
-	ge.checkEnemiesForDeadlyCollisions()
-	ge.checkIfPlayerReachedLevelGoal()
+	ge.handleDeadlyCollisionsOfPlayer()
+	ge.handleDeadlyCollisionsOfEnemies()
+	ge.handlePlayerReachedLevelGoal()
 
 	var scrollOffsets = ge.levelController.UpdatePosition(elapsedTimeInMs, ge.playerPositions)
 	ge.scrollObjectsOnScreen(&scrollOffsets)
@@ -351,39 +351,16 @@ func (ge *GameEngine) fireBullet(player *characters.Player, behavior *characters
 	behavior.TimeSinceLastBullet = 0
 }
 
-func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
+// handleDeadlyCollisionsOfPlayer checks the player's position for collisions with various deadly things.
+// Kills the player if any of these collisions has been detected.
+func (ge *GameEngine) handleDeadlyCollisionsOfPlayer() {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = ge.playerBehaviors[player.Index()]
 		if !behavior.Dying && !behavior.Invincible {
 			var rect = ge.playerPositions[player.Index()]
-			var death = false
-
-			for _, enemy := range ge.enemies {
-				if !enemy.Dying && enemy.Type.IsCollisionDeadly() {
-					var collisionWithEnemy = rect.Intersection(enemy.Position())
-					if nil != collisionWithEnemy {
-						if characters.Landmine == enemy.Type {
-							ge.explosions = append(ge.explosions, NewExplosion(false, -1, enemy))
-							ge.stereo.PlayFx(assets.FxGrenade2)
-						}
-						death = true
-					}
-				}
-			}
-
-			if !death {
-				for _, explosion := range ge.explosions {
-					death = death || (nil != rect.Intersection(explosion.Position()))
-				}
-			}
-
-			if !death {
-				for _, bullet := range ge.bullets {
-					death = death || (nil != rect.Intersection(bullet.Position()))
-				}
-			}
-
-			if death {
+			if ge.checkPlayerForDeadlyCollisionWithEnemy(rect) ||
+				ge.checkPlayerForCollisionWithExplosion(rect) ||
+				ge.checkPlayerForCollisionWithBullet(rect) {
 				if player.AutomaticWeaponSelected() && behavior.Firing {
 					ge.stereo.StopFx(player.SelectedWeapon().Sound)
 				}
@@ -394,7 +371,44 @@ func (ge *GameEngine) checkPlayersForDeadlyCollisions() {
 	}
 }
 
-func (ge *GameEngine) checkEnemiesForDeadlyCollisions() {
+// checkPlayerForDeadlyCollisionWithEnemy returns true when the player collided with a deadly enemy.
+func (ge *GameEngine) checkPlayerForDeadlyCollisionWithEnemy(rect *geometry.Rectangle) bool {
+	for _, enemy := range ge.enemies {
+		if !enemy.Dying && enemy.Type.IsCollisionDeadly() {
+			var collisionWithEnemy = rect.Intersection(enemy.Position())
+			if nil != collisionWithEnemy {
+				if characters.Landmine == enemy.Type {
+					ge.explosions = append(ge.explosions, NewExplosion(false, -1, enemy))
+					ge.stereo.PlayFx(assets.FxGrenade2)
+				}
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// checkPlayerForCollisionWithExplosion returns true when the player collided with an explosion.
+func (ge *GameEngine) checkPlayerForCollisionWithExplosion(rect *geometry.Rectangle) bool {
+	for _, explosion := range ge.explosions {
+		if nil != rect.Intersection(explosion.Position()) {
+			return true
+		}
+	}
+	return false
+}
+
+// checkPlayerForCollisionWithBullet returns true when the player collided with a bullet.
+func (ge *GameEngine) checkPlayerForCollisionWithBullet(rect *geometry.Rectangle) bool {
+	for _, bullet := range ge.bullets {
+		if nil != rect.Intersection(bullet.Position()) {
+			return true
+		}
+	}
+	return false
+}
+
+func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 	for _, enemy := range ge.enemies {
 		if enemy.CanDie() {
 			var death = false
@@ -460,7 +474,7 @@ func (ge *GameEngine) killEnemy(enemy *characters.ActiveEnemy, killer int) {
 	}
 }
 
-func (ge *GameEngine) checkIfPlayerReachedLevelGoal() {
+func (ge *GameEngine) handlePlayerReachedLevelGoal() {
 	if ge.levelController.GoalReached(ge.playerPositions) {
 		ge.Won = true
 	}
