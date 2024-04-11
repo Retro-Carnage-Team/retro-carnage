@@ -20,7 +20,7 @@ type Bullet struct {
 	direction        geometry.Direction
 	firedByPlayer    bool
 	playerIdx        int
-	Position         *geometry.Rectangle
+	position         *geometry.Rectangle
 	speed            float64
 }
 
@@ -37,7 +37,7 @@ func NewBulletFiredByPlayer(
 		direction:        direction,
 		firedByPlayer:    true,
 		playerIdx:        playerIdx,
-		Position: &geometry.Rectangle{
+		position: &geometry.Rectangle{
 			X:      playerPosition.X,
 			Y:      playerPosition.Y,
 			Width:  BulletWidth,
@@ -47,7 +47,7 @@ func NewBulletFiredByPlayer(
 	}
 
 	var offsetValue = characters.SkinForPlayer(playerIdx).BulletOffsets[direction.Name]
-	result.Position.Add(&offsetValue)
+	result.position.Add(&offsetValue)
 	return result
 }
 
@@ -58,7 +58,7 @@ func NewBulletFiredByEnemy(enemy *characters.ActiveEnemy) (result *Bullet) {
 		distanceToTarget: float64(EnemyBulletRange),
 		direction:        *enemy.ViewingDirection,
 		firedByPlayer:    false,
-		Position: &geometry.Rectangle{
+		position: &geometry.Rectangle{
 			X:      enemy.Position().X,
 			Y:      enemy.Position().Y,
 			Width:  BulletWidth,
@@ -69,7 +69,7 @@ func NewBulletFiredByEnemy(enemy *characters.ActiveEnemy) (result *Bullet) {
 
 	var skin = characters.GetEnemySkin(enemy.Skin)
 	var offsetValue = skin.BulletOffsets[enemy.ViewingDirection.Name]
-	result.Position.Add(&offsetValue)
+	result.position.Add(&offsetValue)
 	return result
 }
 
@@ -78,8 +78,12 @@ func (b *Bullet) Move(elapsedTimeInMs int64) bool {
 	if b.distanceMoved < b.distanceToTarget {
 		var maxDistance = b.distanceToTarget - b.distanceMoved
 		b.distanceMoved += geometry.CalculateMovementDistance(elapsedTimeInMs, b.speed, &maxDistance)
-		b.Position.X += geometry.CalculateMovementX(elapsedTimeInMs, b.direction, b.speed, &maxDistance)
-		b.Position.Y += geometry.CalculateMovementY(elapsedTimeInMs, b.direction, b.speed, &maxDistance)
+		b.position.X += geometry.CalculateMovementX(elapsedTimeInMs, b.direction, b.speed, &maxDistance)
+		b.position.Y += geometry.CalculateMovementY(elapsedTimeInMs, b.direction, b.speed, &maxDistance)
 	}
 	return b.distanceMoved >= b.distanceToTarget
+}
+
+func (b *Bullet) Position() *geometry.Rectangle {
+	return b.position
 }
