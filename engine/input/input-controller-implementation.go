@@ -7,23 +7,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 )
 
-type Controller interface {
-	AssignControllersToPlayers()
-	ControllerDeviceState(playerIdx int) (*DeviceState, error)
-	ControllerName(playerIdx int) (string, error)
-	ControllerUiEventState(playerIdx int) (*UiEventState, error)
-	ControllerUiEventStateCombined() *UiEventState
-	HasTwoOrMoreDevices() bool
-}
-
-func NewController(window *pixelgl.Window) Controller {
-	var result = &controllerImplementation{window: window}
-	result.inputSources = make([]source, 0)
-	result.lastInputStates = make([]*DeviceState, 0)
-	result.rapidFireStates = make([]*rapidFireState, 0)
-	return result
-}
-
 var joysticks = []pixelgl.Joystick{pixelgl.Joystick1, pixelgl.Joystick2, pixelgl.Joystick3, pixelgl.Joystick4,
 	pixelgl.Joystick5, pixelgl.Joystick6, pixelgl.Joystick7, pixelgl.Joystick8, pixelgl.Joystick9, pixelgl.Joystick10,
 	pixelgl.Joystick11, pixelgl.Joystick12, pixelgl.Joystick13, pixelgl.Joystick14, pixelgl.Joystick15,
@@ -41,7 +24,7 @@ type source interface {
 	Name() string
 }
 
-type controllerImplementation struct {
+type inputControllerImplementation struct {
 	deviceStateCombined *DeviceState
 	inputSources        []source
 	lastInputStates     []*DeviceState
@@ -49,7 +32,7 @@ type controllerImplementation struct {
 	window              *pixelgl.Window
 }
 
-func (c *controllerImplementation) HasTwoOrMoreDevices() bool {
+func (c *inputControllerImplementation) HasTwoOrMoreDevices() bool {
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) {
 			// Keyboard is device 0. That means the first available joystick is the second device.
@@ -59,7 +42,7 @@ func (c *controllerImplementation) HasTwoOrMoreDevices() bool {
 	return false
 }
 
-func (c *controllerImplementation) AssignControllersToPlayers() {
+func (c *inputControllerImplementation) AssignControllersToPlayers() {
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) && (2 > len(c.inputSources)) {
 			c.inputSources = append(c.inputSources, &gamepad{joystick: j, window: c.window})
@@ -75,7 +58,7 @@ func (c *controllerImplementation) AssignControllersToPlayers() {
 	}
 }
 
-func (c *controllerImplementation) ControllerName(playerIdx int) (string, error) {
+func (c *inputControllerImplementation) ControllerName(playerIdx int) (string, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
 		logging.Error.Printf(log_msg_invalid_player, playerIdx)
 		return "", errors.New(error_invalid_player)
@@ -83,7 +66,7 @@ func (c *controllerImplementation) ControllerName(playerIdx int) (string, error)
 	return c.inputSources[playerIdx].Name(), nil
 }
 
-func (c *controllerImplementation) ControllerDeviceState(playerIdx int) (*DeviceState, error) {
+func (c *inputControllerImplementation) ControllerDeviceState(playerIdx int) (*DeviceState, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
 		logging.Error.Printf(log_msg_invalid_player, playerIdx)
 		return nil, errors.New(error_invalid_player)
@@ -91,7 +74,7 @@ func (c *controllerImplementation) ControllerDeviceState(playerIdx int) (*Device
 	return c.inputSources[playerIdx].State(), nil
 }
 
-func (c *controllerImplementation) getControllerDeviceStateCombined() *DeviceState {
+func (c *inputControllerImplementation) getControllerDeviceStateCombined() *DeviceState {
 	var result *DeviceState = nil
 	var padCount = 0
 	for _, j := range joysticks {
@@ -119,7 +102,7 @@ func (c *controllerImplementation) getControllerDeviceStateCombined() *DeviceSta
 
 // ControllerUiEventState returns a UiEventState struct holding UI events. Especially the first call can return nil
 // without being in error state. Callers thus should check the result pointer before accessing it.
-func (c *controllerImplementation) ControllerUiEventState(playerIdx int) (*UiEventState, error) {
+func (c *inputControllerImplementation) ControllerUiEventState(playerIdx int) (*UiEventState, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
 		logging.Error.Printf(log_msg_invalid_player, playerIdx)
 		return nil, errors.New(error_invalid_player)
@@ -155,7 +138,7 @@ func (c *controllerImplementation) ControllerUiEventState(playerIdx int) (*UiEve
 // The difference between GetControllerUiEventState and GetControllerUiEventStateCombined is that this method returns a
 // struct that contains the values for all input devices. So you can use this method before the input devices are
 // assigned to players.
-func (c *controllerImplementation) ControllerUiEventStateCombined() *UiEventState {
+func (c *inputControllerImplementation) ControllerUiEventStateCombined() *UiEventState {
 	var newState = c.getControllerDeviceStateCombined()
 	var result *UiEventState = nil
 	if nil == c.deviceStateCombined {

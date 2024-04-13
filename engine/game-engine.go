@@ -18,7 +18,7 @@ type GameEngine struct {
 	enemies             []*characters.ActiveEnemy
 	explosives          []*Explosive
 	explosions          []*Explosion
-	inputController     input.Controller
+	inputController     input.InputController
 	inventoryController []*InventoryController
 	Kills               []int
 	levelController     *LevelController
@@ -65,7 +65,7 @@ func NewGameEngine(mission *assets.Mission) *GameEngine {
 }
 
 // SetInputController connects this GameEngine with the input.Controller to be used.
-func (ge *GameEngine) SetInputController(controller input.Controller) {
+func (ge *GameEngine) SetInputController(controller input.InputController) {
 	ge.inputController = controller
 }
 

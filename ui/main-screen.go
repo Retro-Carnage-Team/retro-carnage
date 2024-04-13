@@ -23,7 +23,7 @@ import (
 
 type MainScreen struct {
 	clientScreen common.Screen
-	inputCtrl    input.Controller
+	inputCtrl    input.InputController
 	lastUpdate   time.Time
 	Monitor      *pixelgl.Monitor
 	nextScreen   common.Screen

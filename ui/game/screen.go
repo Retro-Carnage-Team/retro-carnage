@@ -1,7 +1,6 @@
 package game
 
 import (
-	"github.com/faiface/pixel/pixelgl"
 	"retro-carnage/assets"
 	"retro-carnage/engine"
 	"retro-carnage/engine/input"
@@ -9,6 +8,8 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/highscore"
 	"time"
+
+	"github.com/faiface/pixel/pixelgl"
 )
 
 // Screen in this package is the one that show the actual gameplay.
@@ -17,7 +18,7 @@ type Screen struct {
 	fpsInfo              *fpsInfo
 	gameLostAnimation    *gameLostAnimation
 	gameWonAnimation     *gameWonAnimation
-	inputController      input.Controller
+	inputController      input.InputController
 	mission              *assets.Mission
 	missionWonAnimation  *missionWonAnimation
 	playerInfos          []*playerInfo
@@ -28,7 +29,7 @@ type Screen struct {
 }
 
 // SetInputController is used to connect Screen with the global input.Controller instance.
-func (s *Screen) SetInputController(ctrl input.Controller) {
+func (s *Screen) SetInputController(ctrl input.InputController) {
 	s.inputController = ctrl
 }
 

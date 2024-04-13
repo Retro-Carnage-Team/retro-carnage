@@ -33,7 +33,7 @@ type Screen struct {
 	availableMissions         []*assets.Mission
 	briefingFontSize          int
 	crossHairSprite           *pixel.Sprite
-	inputController           input.Controller
+	inputController           input.InputController
 	missionsInitialized       bool
 	missionNameToClientSprite map[string]*pixel.Sprite
 	screenChangeRequired      common.ScreenChangeCallback
@@ -42,7 +42,7 @@ type Screen struct {
 	worldMapSprite            *pixel.Sprite
 }
 
-func (s *Screen) SetInputController(inputCtrl input.Controller) {
+func (s *Screen) SetInputController(inputCtrl input.InputController) {
 	s.inputController = inputCtrl
 }
 

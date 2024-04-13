@@ -27,7 +27,7 @@ const (
 
 type SelectScreen struct {
 	defaultFontSize      int
-	inputController      input.Controller
+	inputController      input.InputController
 	screenChangeRequired common.ScreenChangeCallback
 	selectedOption       int
 	textDimensions       map[string]*geometry.Point
@@ -116,7 +116,7 @@ func (s *SelectScreen) TearDown() {
 	// no tear down action required
 }
 
-func (s *SelectScreen) SetInputController(controller input.Controller) {
+func (s *SelectScreen) SetInputController(controller input.InputController) {
 	s.inputController = controller
 }
 

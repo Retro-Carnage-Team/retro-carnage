@@ -26,7 +26,7 @@ type Screen struct {
 	window               *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(_ input.Controller) {
+func (s *Screen) SetInputController(_ input.InputController) {
 	// Screen doesn't process user input. So no implementation required.
 }
 

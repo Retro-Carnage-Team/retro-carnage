@@ -17,7 +17,7 @@ import (
 type Screen struct {
 	cursorVisible        bool
 	duration             int64
-	inputController      input.Controller
+	inputController      input.InputController
 	PlayerIdx            int
 	playerName           string
 	screenChangeRequired common.ScreenChangeCallback
@@ -31,7 +31,7 @@ const (
 )
 
 // SetInputController passes the input controller to the screen.
-func (s *Screen) SetInputController(inputCtrl input.Controller) {
+func (s *Screen) SetInputController(inputCtrl input.InputController) {
 	s.inputController = inputCtrl
 }
 

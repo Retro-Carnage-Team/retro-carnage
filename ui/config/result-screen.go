@@ -13,7 +13,7 @@ import (
 type ResultScreen struct {
 	infoTextPlayerOne    string
 	infoTextPlayerTwo    string
-	inputController      input.Controller
+	inputController      input.InputController
 	screenChangeRequired common.ScreenChangeCallback
 	timeElapsed          int64
 	window               *pixelgl.Window
@@ -69,7 +69,7 @@ func (s *ResultScreen) TearDown() {
 	// no tear down action required
 }
 
-func (s *ResultScreen) SetInputController(controller input.Controller) {
+func (s *ResultScreen) SetInputController(controller input.InputController) {
 	s.inputController = controller
 }
 

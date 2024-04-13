@@ -18,13 +18,13 @@ const screenTimeout = 60_000
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
-	inputController       input.Controller
+	inputController       input.InputController
 	screenChangeRequired  common.ScreenChangeCallback
 	screenChangeTimeout   int64
 	window                *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(controller input.Controller) {
+func (s *Screen) SetInputController(controller input.InputController) {
 	s.inputController = controller
 }
 
