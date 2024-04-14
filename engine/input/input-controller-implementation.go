@@ -32,16 +32,6 @@ type inputControllerImplementation struct {
 	window              *pixelgl.Window
 }
 
-func (c *inputControllerImplementation) HasTwoOrMoreDevices() bool {
-	for _, j := range joysticks {
-		if c.window.JoystickPresent(j) {
-			// Keyboard is device 0. That means the first available joystick is the second device.
-			return true
-		}
-	}
-	return false
-}
-
 func (c *inputControllerImplementation) AssignControllersToPlayers() {
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) && (2 > len(c.inputSources)) {
@@ -51,7 +41,7 @@ func (c *inputControllerImplementation) AssignControllersToPlayers() {
 		}
 	}
 
-	if 2 > len(c.inputSources) {
+	if len(c.inputSources) < 2 {
 		c.inputSources = append(c.inputSources, &keyboard{Window: c.window})
 		c.lastInputStates = append(c.lastInputStates, nil)
 		c.rapidFireStates = append(c.rapidFireStates, nil)
@@ -155,6 +145,17 @@ func (c *inputControllerImplementation) ControllerUiEventStateCombined() *UiEven
 			PressedButton: !oldState.IsButtonPressed() && newState.IsButtonPressed(),
 		}
 		c.deviceStateCombined = newState
+	}
+	return result
+}
+
+func (c *inputControllerImplementation) GetDevices() []DeviceInfo {
+	var result = append(make([]DeviceInfo, 0), DeviceInfo{DeviceName: DeviceNameKeyboard, JoystickIndex: -1})
+	for _, j := range joysticks {
+		if c.window.JoystickPresent(j) {
+			var joystick = DeviceInfo{DeviceName: c.window.JoystickName(j), JoystickIndex: int(j)}
+			result = append(result, joystick)
+		}
 	}
 	return result
 }

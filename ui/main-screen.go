@@ -32,7 +32,6 @@ type MainScreen struct {
 
 func (ms *MainScreen) Initialize() {
 	ms.inputCtrl = input.NewController(ms.Window)
-	ms.inputCtrl.HasTwoOrMoreDevices()
 	ms.inputCtrl.AssignControllersToPlayers()
 
 	ms.clientScreen = &loading.Screen{}
@@ -51,6 +50,8 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 		ms.nextScreen = &start.Screen{}
 	case common.Title:
 		ms.nextScreen = &title.Screen{}
+	case common.ConfigurationOptions:
+		ms.nextScreen = &config.OptionsScreen{}
 	case common.ConfigurationResult:
 		ms.nextScreen = &config.ResultScreen{}
 	case common.ConfigurationSelect:

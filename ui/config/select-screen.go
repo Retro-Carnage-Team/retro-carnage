@@ -28,6 +28,7 @@ const (
 type SelectScreen struct {
 	defaultFontSize      int
 	inputController      input.InputController
+	multiplayerPossile   bool
 	screenChangeRequired common.ScreenChangeCallback
 	selectedOption       int
 	textDimensions       map[string]*geometry.Point
@@ -36,6 +37,7 @@ type SelectScreen struct {
 
 func (s *SelectScreen) SetUp() {
 	s.defaultFontSize = fonts.DefaultFontSize()
+	s.multiplayerPossile = len(s.inputController.GetDevices()) > 1
 	s.selectedOption = optionOnePlayer
 	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtSelectOnePlayerGame, txtSelectTwoPlayerGame, txtSelectOptions)
 }
@@ -57,7 +59,7 @@ func (s *SelectScreen) Update(_ int64) {
 	var secondLineY = vertCenter + -1.5*s.textDimensions[txtSelectTwoPlayerGame].Y
 
 	var startLine3 = -1.5
-	if s.inputController.HasTwoOrMoreDevices() {
+	if s.multiplayerPossile {
 		txt = text.New(pixel.V(secondLineX, secondLineY), fonts.SizeToFontAtlas[s.defaultFontSize])
 		txt.Color = common.White
 		_, _ = fmt.Fprint(txt, txtSelectTwoPlayerGame)
@@ -142,7 +144,7 @@ func (s *SelectScreen) processUserInput() {
 				s.selectedOption = s.selectedOption - 1
 			}
 		} else if uiEventState.MovedDown {
-			if s.selectedOption == optionOnePlayer && s.inputController.HasTwoOrMoreDevices() {
+			if s.selectedOption == optionOnePlayer && s.multiplayerPossile {
 				s.selectedOption = optionTwoPlayers
 			} else {
 				s.selectedOption = optionOptions
