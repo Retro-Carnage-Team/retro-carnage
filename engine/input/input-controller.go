@@ -10,7 +10,8 @@ type InputController interface {
 	ControllerName(playerIdx int) (string, error)
 	ControllerUiEventState(playerIdx int) (*UiEventState, error)
 	ControllerUiEventStateCombined() *UiEventState
-	GetDevices() []DeviceInfo
+	GetControllers() []ControllerInfo
+	GetControllerConfigurations() []ControllerConfiguration
 }
 
 func NewController(window *pixelgl.Window) InputController {

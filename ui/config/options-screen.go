@@ -16,8 +16,11 @@ type OptionsScreen struct {
 }
 
 func (s *OptionsScreen) SetUp() {
-	for _, c := range s.inputController.GetDevices() {
+	for _, c := range s.inputController.GetControllers() {
 		logging.Info.Printf("Found device %s", c.String())
+	}
+	for _, cc := range s.inputController.GetControllerConfigurations() {
+		logging.Info.Printf("Found device configuration %s", cc.String())
 	}
 }
 

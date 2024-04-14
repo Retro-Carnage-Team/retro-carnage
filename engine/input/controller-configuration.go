@@ -1,5 +1,7 @@
 package input
 
+import "fmt"
+
 const (
 	DeviceNameKeyboard = "Keyboard"
 )
@@ -29,4 +31,8 @@ type ControllerConfiguration struct {
 	InputFire             int    `json:"inputFire"`
 	InputNextWeapon       int    `json:"inputNextWeapon"`
 	InputPreviousWeapon   int    `json:"inputPrevWeapon"`
+}
+
+func (cc ControllerConfiguration) String() string {
+	return fmt.Sprintf("ControllerConfiguration{DeviceName: %s}", cc.DeviceName)
 }

@@ -2,7 +2,12 @@ package input
 
 import (
 	"errors"
+	"fmt"
+	"path"
 	"retro-carnage/logging"
+
+	"encoding/json"
+	"os"
 
 	"github.com/faiface/pixel/pixelgl"
 )
@@ -149,13 +154,63 @@ func (c *inputControllerImplementation) ControllerUiEventStateCombined() *UiEven
 	return result
 }
 
-func (c *inputControllerImplementation) GetDevices() []DeviceInfo {
-	var result = append(make([]DeviceInfo, 0), DeviceInfo{DeviceName: DeviceNameKeyboard, JoystickIndex: -1})
+func (c *inputControllerImplementation) GetControllers() []ControllerInfo {
+	var result = append(make([]ControllerInfo, 0), ControllerInfo{DeviceName: DeviceNameKeyboard, JoystickIndex: -1})
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) {
-			var joystick = DeviceInfo{DeviceName: c.window.JoystickName(j), JoystickIndex: int(j)}
+			var joystick = ControllerInfo{DeviceName: c.window.JoystickName(j), JoystickIndex: int(j)}
 			result = append(result, joystick)
 		}
 	}
 	return result
+}
+
+func (c *inputControllerImplementation) GetControllerConfigurations() []ControllerConfiguration {
+	var result = c.loadControllerConfigurations()
+	// Remove invalid configurations (controller not found / not matching)
+	// If len(configurations) < 2 && unconfigured controllers present: Add default configuration for gamepad
+	// If len(configurations) < 2: Add default configuration for keyboard
+	return result
+}
+
+// loadControllerConfigurations reads the controller configurations that is stored on disk.
+// Returns empty array of not configurations can be found.
+func (c *inputControllerImplementation) loadControllerConfigurations() []ControllerConfiguration {
+	var result = make([]ControllerConfiguration, 0)
+	for i := 0; i < 2; i++ {
+		filePath, err := c.buildConfigurationPath(i)
+		if nil != err {
+			logging.Warning.Fatalf("failed to calculate config path for controller %d", i)
+			continue
+		}
+
+		logging.Trace.Printf("loading controller configuration for player %d from %s", i, filePath)
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			if os.IsNotExist(err) {
+				logging.Info.Printf("controller config file not present %s", filePath)
+			} else {
+				logging.Warning.Printf("failed to read controller config %s", filePath)
+			}
+			continue
+		}
+
+		var config = &ControllerConfiguration{}
+		err = json.Unmarshal(data, config)
+		if err != nil {
+			logging.Warning.Printf("failed to deserialize controller config %s", filePath)
+		}
+		result = append(result, *config)
+	}
+
+	return result
+}
+
+func (c *inputControllerImplementation) buildConfigurationPath(player int) (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if nil != err {
+		return "", err
+	}
+
+	return path.Join(homeDir, "retro-carnage", "settings", fmt.Sprintf("controller-%d.json", player)), nil
 }
