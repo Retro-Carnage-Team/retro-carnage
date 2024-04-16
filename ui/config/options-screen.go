@@ -22,6 +22,11 @@ func (s *OptionsScreen) SetUp() {
 	for _, cc := range s.inputController.GetControllerConfigurations() {
 		logging.Info.Printf("Found device configuration %s", cc.String())
 	}
+
+	var cc = input.ControllerConfiguration{
+		DeviceName: "Test-Device",
+	}
+	s.inputController.SaveControllerConfiguration(cc, 3)
 }
 
 func (s *OptionsScreen) Update(timeElapsedInMs int64) {

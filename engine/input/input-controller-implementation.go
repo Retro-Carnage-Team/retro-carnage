@@ -154,6 +154,7 @@ func (c *inputControllerImplementation) ControllerUiEventStateCombined() *UiEven
 	return result
 }
 
+// GetControllers returns a list of all controllers that are available
 func (c *inputControllerImplementation) GetControllers() []ControllerInfo {
 	var result = append(make([]ControllerInfo, 0), ControllerInfo{DeviceName: DeviceNameKeyboard, JoystickIndex: -1})
 	for _, j := range joysticks {
@@ -167,9 +168,9 @@ func (c *inputControllerImplementation) GetControllers() []ControllerInfo {
 
 func (c *inputControllerImplementation) GetControllerConfigurations() []ControllerConfiguration {
 	var result = c.loadControllerConfigurations()
-	// Remove invalid configurations (controller not found / not matching)
-	// If len(configurations) < 2 && unconfigured controllers present: Add default configuration for gamepad
-	// If len(configurations) < 2: Add default configuration for keyboard
+	// TODO: Remove invalid configurations (controller not found / not matching)
+	// TODO: If len(configurations) < 2 && unconfigured controllers present: Add default configuration for gamepad
+	// TODO: If len(configurations) < 2: Add default configuration for keyboard
 	return result
 }
 
@@ -178,9 +179,8 @@ func (c *inputControllerImplementation) GetControllerConfigurations() []Controll
 func (c *inputControllerImplementation) loadControllerConfigurations() []ControllerConfiguration {
 	var result = make([]ControllerConfiguration, 0)
 	for i := 0; i < 2; i++ {
-		filePath, err := c.buildConfigurationPath(i)
+		filePath, err := c.buildConfigurationFilePath(i)
 		if nil != err {
-			logging.Warning.Fatalf("failed to calculate config path for controller %d", i)
 			continue
 		}
 
@@ -206,11 +206,53 @@ func (c *inputControllerImplementation) loadControllerConfigurations() []Control
 	return result
 }
 
-func (c *inputControllerImplementation) buildConfigurationPath(player int) (string, error) {
-	homeDir, err := os.UserHomeDir()
+// SaveControllerConfiguration stores the given controller configuration for the specified player
+func (c *inputControllerImplementation) SaveControllerConfiguration(cc ControllerConfiguration, playerIdx int) error {
+	folderPath, err := c.buildConfigurationFolderPath()
 	if nil != err {
+		return err
+	}
+
+	if _, err = os.Stat(folderPath); os.IsNotExist(err) {
+		err = os.MkdirAll(folderPath, 0700)
+		if nil != err {
+			logging.Warning.Printf("failed to create folder for configurations: %s", folderPath)
+			return err
+		}
+	}
+
+	filePath, err := c.buildConfigurationFilePath(playerIdx)
+	if nil != err {
+		logging.Warning.Printf("failed to calculate config path for controller %d", playerIdx)
+		return err
+	}
+
+	logging.Trace.Printf("saving controller configuration for player %d to %s", playerIdx, filePath)
+	jsonData, _ := json.Marshal(cc)
+	err = os.WriteFile(filePath, jsonData, 0600)
+	if err != nil {
+		logging.Warning.Printf("failed to write controller config %s", filePath)
+		return err
+	}
+
+	return nil
+}
+
+func (c *inputControllerImplementation) buildConfigurationFilePath(playerIdx int) (string, error) {
+	var folder, err = c.buildConfigurationFolderPath()
+	if err != nil {
 		return "", err
 	}
 
-	return path.Join(homeDir, "retro-carnage", "settings", fmt.Sprintf("controller-%d.json", player)), nil
+	return path.Join(folder, fmt.Sprintf("controller-%d.json", playerIdx)), nil
+}
+
+func (c *inputControllerImplementation) buildConfigurationFolderPath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if nil != err {
+		logging.Warning.Printf("failed to calculate config folder path")
+		return "", err
+	}
+
+	return path.Join(homeDir, ".retro-carnage", "settings"), nil
 }

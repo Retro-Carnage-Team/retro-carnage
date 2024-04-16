@@ -12,6 +12,7 @@ type InputController interface {
 	ControllerUiEventStateCombined() *UiEventState
 	GetControllers() []ControllerInfo
 	GetControllerConfigurations() []ControllerConfiguration
+	SaveControllerConfiguration(cc ControllerConfiguration, playerIdx int) error
 }
 
 func NewController(window *pixelgl.Window) InputController {
