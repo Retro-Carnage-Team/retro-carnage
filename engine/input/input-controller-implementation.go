@@ -168,9 +168,34 @@ func (c *inputControllerImplementation) GetControllers() []ControllerInfo {
 
 func (c *inputControllerImplementation) GetControllerConfigurations() []ControllerConfiguration {
 	var result = c.loadControllerConfigurations()
-	// TODO: Remove invalid configurations (controller not found / not matching)
+	result = c.filterValidConfigurations(result)
+
 	// TODO: If len(configurations) < 2 && unconfigured controllers present: Add default configuration for gamepad
-	// TODO: If len(configurations) < 2: Add default configuration for keyboard
+
+	// Add default configuration for keyboard if there are less then two configured controllers
+	if len(result) < 2 {
+		var containsKeyboard = false
+		for _, cc := range result {
+			containsKeyboard = containsKeyboard || cc.DeviceName == DeviceNameKeyboard
+		}
+		if !containsKeyboard {
+			result = append(result, newControllerConfigurationForKeyboard())
+		}
+	}
+
+	return result
+}
+
+// filterValidConfigurations filters the given list of ControllerConfigurations so that it contains only controllers
+// that are actually present.
+func (c *inputControllerImplementation) filterValidConfigurations(configurations []ControllerConfiguration) []ControllerConfiguration {
+	var result = make([]ControllerConfiguration, 0)
+	for _, cc := range configurations {
+		if (cc.DeviceName == DeviceNameKeyboard) ||
+			(c.window.JoystickPresent(pixelgl.Joystick(cc.JoystickIndex)) && c.window.JoystickName(pixelgl.Joystick(cc.JoystickIndex)) == cc.DeviceName) {
+			result = append(result, cc)
+		}
+	}
 	return result
 }
 

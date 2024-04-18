@@ -1,6 +1,10 @@
 package input
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/faiface/pixel/pixelgl"
+)
 
 const (
 	DeviceNameKeyboard = "Keyboard"
@@ -31,6 +35,21 @@ type ControllerConfiguration struct {
 	InputFire             int    `json:"inputFire"`
 	InputNextWeapon       int    `json:"inputNextWeapon"`
 	InputPreviousWeapon   int    `json:"inputPrevWeapon"`
+}
+
+func newControllerConfigurationForKeyboard() ControllerConfiguration {
+	return ControllerConfiguration{
+		KeyboardConfiguration: KeyboardConfiguration{
+			InputUp:    int(pixelgl.KeyUp),
+			InputDown:  int(pixelgl.KeyDown),
+			InputLeft:  int(pixelgl.KeyLeft),
+			InputRight: int(pixelgl.KeyRight),
+		},
+		DeviceName:          DeviceNameKeyboard,
+		InputFire:           int(pixelgl.KeyLeftControl),
+		InputNextWeapon:     int(pixelgl.KeyA),
+		InputPreviousWeapon: int(pixelgl.KeyZ),
+	}
 }
 
 func (cc ControllerConfiguration) String() string {
