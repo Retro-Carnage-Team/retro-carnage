@@ -1,6 +1,7 @@
 package config
 
 import (
+	cfg "retro-carnage/config"
 	"retro-carnage/engine/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
@@ -19,14 +20,16 @@ func (s *OptionsScreen) SetUp() {
 	for _, c := range s.inputController.GetControllers() {
 		logging.Info.Printf("Found device %s", c.String())
 	}
+
+	var cs = cfg.ConfigService{}
 	for _, cc := range s.inputController.GetControllerConfigurations() {
 		logging.Info.Printf("Found device configuration %s", cc.String())
 	}
 
-	var cc = input.ControllerConfiguration{
+	var cc = cfg.ControllerConfiguration{
 		DeviceName: "Test-Device",
 	}
-	s.inputController.SaveControllerConfiguration(cc, 3)
+	cs.SaveControllerConfiguration(cc, 3)
 }
 
 func (s *OptionsScreen) Update(timeElapsedInMs int64) {

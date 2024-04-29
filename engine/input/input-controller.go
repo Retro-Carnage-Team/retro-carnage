@@ -1,6 +1,8 @@
 package input
 
 import (
+	"retro-carnage/config"
+
 	"github.com/faiface/pixel/pixelgl"
 )
 
@@ -11,8 +13,7 @@ type InputController interface {
 	ControllerUiEventState(playerIdx int) (*UiEventState, error)
 	ControllerUiEventStateCombined() *UiEventState
 	GetControllers() []ControllerInfo
-	GetControllerConfigurations() []ControllerConfiguration
-	SaveControllerConfiguration(cc ControllerConfiguration, playerIdx int) error
+	GetControllerConfigurations() []config.ControllerConfiguration
 }
 
 func NewController(window *pixelgl.Window) InputController {
