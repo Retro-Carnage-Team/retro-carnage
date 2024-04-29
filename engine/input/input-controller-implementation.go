@@ -2,12 +2,8 @@ package input
 
 import (
 	"errors"
-	"fmt"
-	"path"
+	"retro-carnage/config"
 	"retro-carnage/logging"
-
-	"encoding/json"
-	"os"
 
 	"github.com/faiface/pixel/pixelgl"
 )
@@ -156,7 +152,7 @@ func (c *inputControllerImplementation) ControllerUiEventStateCombined() *UiEven
 
 // GetControllers returns a list of all controllers that are available
 func (c *inputControllerImplementation) GetControllers() []ControllerInfo {
-	var result = append(make([]ControllerInfo, 0), ControllerInfo{DeviceName: DeviceNameKeyboard, JoystickIndex: -1})
+	var result = append(make([]ControllerInfo, 0), ControllerInfo{DeviceName: config.DeviceNameKeyboard, JoystickIndex: -1})
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) {
 			var joystick = ControllerInfo{DeviceName: c.window.JoystickName(j), JoystickIndex: int(j)}
@@ -166,8 +162,9 @@ func (c *inputControllerImplementation) GetControllers() []ControllerInfo {
 	return result
 }
 
-func (c *inputControllerImplementation) GetControllerConfigurations() []ControllerConfiguration {
-	var result = c.loadControllerConfigurations()
+func (c *inputControllerImplementation) GetControllerConfigurations() []config.ControllerConfiguration {
+	var cs = config.ConfigService{}
+	var result = cs.LoadControllerConfigurations()
 	result = c.filterValidConfigurations(result)
 
 	// TODO: If len(configurations) < 2 && unconfigured controllers present: Add default configuration for gamepad
@@ -176,10 +173,10 @@ func (c *inputControllerImplementation) GetControllerConfigurations() []Controll
 	if len(result) < 2 {
 		var containsKeyboard = false
 		for _, cc := range result {
-			containsKeyboard = containsKeyboard || cc.DeviceName == DeviceNameKeyboard
+			containsKeyboard = containsKeyboard || cc.DeviceName == config.DeviceNameKeyboard
 		}
 		if !containsKeyboard {
-			result = append(result, newControllerConfigurationForKeyboard())
+			result = append(result, config.NewKeyboardConfiguration())
 		}
 	}
 
@@ -188,96 +185,13 @@ func (c *inputControllerImplementation) GetControllerConfigurations() []Controll
 
 // filterValidConfigurations filters the given list of ControllerConfigurations so that it contains only controllers
 // that are actually present.
-func (c *inputControllerImplementation) filterValidConfigurations(configurations []ControllerConfiguration) []ControllerConfiguration {
-	var result = make([]ControllerConfiguration, 0)
+func (c *inputControllerImplementation) filterValidConfigurations(configurations []config.ControllerConfiguration) []config.ControllerConfiguration {
+	var result = make([]config.ControllerConfiguration, 0)
 	for _, cc := range configurations {
-		if (cc.DeviceName == DeviceNameKeyboard) ||
+		if (cc.DeviceName == config.DeviceNameKeyboard) ||
 			(c.window.JoystickPresent(pixelgl.Joystick(cc.JoystickIndex)) && c.window.JoystickName(pixelgl.Joystick(cc.JoystickIndex)) == cc.DeviceName) {
 			result = append(result, cc)
 		}
 	}
 	return result
-}
-
-// loadControllerConfigurations reads the controller configurations that is stored on disk.
-// Returns empty array of not configurations can be found.
-func (c *inputControllerImplementation) loadControllerConfigurations() []ControllerConfiguration {
-	var result = make([]ControllerConfiguration, 0)
-	for i := 0; i < 2; i++ {
-		filePath, err := c.buildConfigurationFilePath(i)
-		if nil != err {
-			continue
-		}
-
-		logging.Trace.Printf("loading controller configuration for player %d from %s", i, filePath)
-		data, err := os.ReadFile(filePath)
-		if err != nil {
-			if os.IsNotExist(err) {
-				logging.Info.Printf("controller config file not present %s", filePath)
-			} else {
-				logging.Warning.Printf("failed to read controller config %s", filePath)
-			}
-			continue
-		}
-
-		var config = &ControllerConfiguration{}
-		err = json.Unmarshal(data, config)
-		if err != nil {
-			logging.Warning.Printf("failed to deserialize controller config %s", filePath)
-		}
-		result = append(result, *config)
-	}
-
-	return result
-}
-
-// SaveControllerConfiguration stores the given controller configuration for the specified player
-func (c *inputControllerImplementation) SaveControllerConfiguration(cc ControllerConfiguration, playerIdx int) error {
-	folderPath, err := c.buildConfigurationFolderPath()
-	if nil != err {
-		return err
-	}
-
-	if _, err = os.Stat(folderPath); os.IsNotExist(err) {
-		err = os.MkdirAll(folderPath, 0700)
-		if nil != err {
-			logging.Warning.Printf("failed to create folder for configurations: %s", folderPath)
-			return err
-		}
-	}
-
-	filePath, err := c.buildConfigurationFilePath(playerIdx)
-	if nil != err {
-		logging.Warning.Printf("failed to calculate config path for controller %d", playerIdx)
-		return err
-	}
-
-	logging.Trace.Printf("saving controller configuration for player %d to %s", playerIdx, filePath)
-	jsonData, _ := json.Marshal(cc)
-	err = os.WriteFile(filePath, jsonData, 0600)
-	if err != nil {
-		logging.Warning.Printf("failed to write controller config %s", filePath)
-		return err
-	}
-
-	return nil
-}
-
-func (c *inputControllerImplementation) buildConfigurationFilePath(playerIdx int) (string, error) {
-	var folder, err = c.buildConfigurationFolderPath()
-	if err != nil {
-		return "", err
-	}
-
-	return path.Join(folder, fmt.Sprintf("controller-%d.json", playerIdx)), nil
-}
-
-func (c *inputControllerImplementation) buildConfigurationFolderPath() (string, error) {
-	homeDir, err := os.UserHomeDir()
-	if nil != err {
-		logging.Warning.Printf("failed to calculate config folder path")
-		return "", err
-	}
-
-	return path.Join(homeDir, ".retro-carnage", "settings"), nil
 }

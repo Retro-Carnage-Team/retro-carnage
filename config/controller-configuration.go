@@ -1,4 +1,4 @@
-package input
+package config
 
 import (
 	"fmt"
@@ -37,7 +37,7 @@ type ControllerConfiguration struct {
 	InputPreviousWeapon   int    `json:"inputPrevWeapon"`
 }
 
-func newControllerConfigurationForKeyboard() ControllerConfiguration {
+func NewKeyboardConfiguration() ControllerConfiguration {
 	return ControllerConfiguration{
 		KeyboardConfiguration: KeyboardConfiguration{
 			InputUp:    int(pixelgl.KeyUp),
