@@ -81,14 +81,13 @@ func (g *gamepad) convertStickAngleToCardinalDirections(angle float64) (up, down
 }
 
 // State returns the DeviceState of the gamepad.
-func (g *gamepad) State() *DeviceState {
-	var state DeviceState
+func (g *gamepad) State() *InputDeviceState {
+	var state InputDeviceState
 	var horizontal = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftX)
 	var vertical = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftY)
 	if g.isAnalog() {
 		// Checked this with XBox360 and PlayStation controllers
 		state.PrimaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonA)
-		state.SecondaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonB)
 		state.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonX)
 		state.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonY)
 		if g.isStickMovedFully(horizontal, vertical) {
@@ -98,7 +97,6 @@ func (g *gamepad) State() *DeviceState {
 	} else {
 		// Checked this with a SpeedLink Competition Pro USB
 		state.PrimaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonX)
-		state.SecondaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonY)
 		state.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonLeftBumper)
 		state.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonCircle)
 		state.MoveUp = vertical == -1

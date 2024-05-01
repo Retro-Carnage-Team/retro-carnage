@@ -49,7 +49,7 @@ func (s *Screen) SetUp() {
 // Update gets called once during each rendering cycle.
 // It can be used to draw the content of the Screen.
 func (s *Screen) Update(_ int64) {
-	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.ControllerUiEventStateCombined().PressedButton {
+	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.GetUiEventStateCombined().PressedButton {
 		s.screenChangeRequired(common.Title)
 	} else {
 		s.drawTitle()

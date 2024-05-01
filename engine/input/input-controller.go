@@ -7,19 +7,19 @@ import (
 )
 
 type InputController interface {
-	AssignControllersToPlayers()
-	ControllerDeviceState(playerIdx int) (*DeviceState, error)
-	ControllerName(playerIdx int) (string, error)
-	ControllerUiEventState(playerIdx int) (*UiEventState, error)
-	ControllerUiEventStateCombined() *UiEventState
-	GetControllers() []ControllerInfo
-	GetControllerConfigurations() []config.ControllerConfiguration
+	AssignInputDevicesToPlayers()
+	GetInputDeviceState(playerIdx int) (*InputDeviceState, error)
+	GetInputDeviceName(playerIdx int) (string, error)
+	GetUiEventState(playerIdx int) (*UiEventState, error)
+	GetUiEventStateCombined() *UiEventState
+	GetInputDeviceInfos() []InputDeviceInfo
+	GetInputDeviceConfigurations() []config.InputDeviceConfiguration
 }
 
 func NewController(window *pixelgl.Window) InputController {
 	var result = &inputControllerImplementation{window: window}
-	result.inputSources = make([]source, 0)
-	result.lastInputStates = make([]*DeviceState, 0)
+	result.inputSources = make([]inputDevice, 0)
+	result.lastInputStates = make([]*InputDeviceState, 0)
 	result.rapidFireStates = make([]*rapidFireState, 0)
 	return result
 }

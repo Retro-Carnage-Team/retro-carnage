@@ -17,19 +17,19 @@ type OptionsScreen struct {
 }
 
 func (s *OptionsScreen) SetUp() {
-	for _, c := range s.inputController.GetControllers() {
+	for _, c := range s.inputController.GetInputDeviceInfos() {
 		logging.Info.Printf("Found device %s", c.String())
 	}
 
 	var cs = cfg.ConfigService{}
-	for _, cc := range s.inputController.GetControllerConfigurations() {
+	for _, cc := range s.inputController.GetInputDeviceConfigurations() {
 		logging.Info.Printf("Found device configuration %s", cc.String())
 	}
 
-	var cc = cfg.ControllerConfiguration{
+	var cc = cfg.InputDeviceConfiguration{
 		DeviceName: "Test-Device",
 	}
-	cs.SaveControllerConfiguration(cc, 3)
+	cs.SaveInputDeviceConfiguration(cc, 3)
 }
 
 func (s *OptionsScreen) Update(timeElapsedInMs int64) {

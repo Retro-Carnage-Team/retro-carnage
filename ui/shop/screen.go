@@ -227,7 +227,7 @@ func (s *Screen) drawBottomBar() {
 }
 
 func (s *Screen) processUserInput() {
-	var eventState, err = s.inputController.ControllerUiEventState(s.PlayerIdx)
+	var eventState, err = s.inputController.GetUiEventState(s.PlayerIdx)
 	if nil != err {
 		logging.Warning.Printf("Failed to get game controller state: %v", err)
 	} else if nil != eventState {

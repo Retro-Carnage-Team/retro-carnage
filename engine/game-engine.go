@@ -110,7 +110,7 @@ func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
 				behavior.UpdateInvincibility(elapsedTimeInMs)
 			}
 
-			var inputState, err = ge.inputController.ControllerDeviceState(player.Index())
+			var inputState, err = ge.inputController.GetInputDeviceState(player.Index())
 			if nil != err {
 				logging.Warning.Printf("Failed to get input state for player %d: %v\n", player.Index(), err)
 			} else if (nil != inputState) && !behavior.Dying {

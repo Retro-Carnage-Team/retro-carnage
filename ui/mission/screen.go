@@ -189,7 +189,7 @@ func (s *Screen) drawLocationMarker(location pixel.Vec) {
 }
 
 func (s *Screen) processUserInput() {
-	var uiEventState = s.inputController.ControllerUiEventStateCombined()
+	var uiEventState = s.inputController.GetUiEventStateCombined()
 	if nil == uiEventState {
 		return
 	}

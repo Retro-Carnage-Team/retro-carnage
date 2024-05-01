@@ -20,20 +20,16 @@ const (
 	rapidFireThreshold     = 750
 )
 
-type source interface {
-	State() *DeviceState
-	Name() string
-}
-
 type inputControllerImplementation struct {
-	deviceStateCombined *DeviceState
-	inputSources        []source
-	lastInputStates     []*DeviceState
+	deviceStateCombined *InputDeviceState
+	inputSources        []inputDevice
+	lastInputStates     []*InputDeviceState
 	rapidFireStates     []*rapidFireState
 	window              *pixelgl.Window
 }
 
-func (c *inputControllerImplementation) AssignControllersToPlayers() {
+func (c *inputControllerImplementation) AssignInputDevicesToPlayers() {
+	// TODO: Use configured devices instead
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) && (2 > len(c.inputSources)) {
 			c.inputSources = append(c.inputSources, &gamepad{joystick: j, window: c.window})
@@ -43,13 +39,13 @@ func (c *inputControllerImplementation) AssignControllersToPlayers() {
 	}
 
 	if len(c.inputSources) < 2 {
-		c.inputSources = append(c.inputSources, &keyboard{Window: c.window})
+		c.inputSources = append(c.inputSources, &keyboard{window: c.window, configuration: config.NewKeyboardConfiguration()})
 		c.lastInputStates = append(c.lastInputStates, nil)
 		c.rapidFireStates = append(c.rapidFireStates, nil)
 	}
 }
 
-func (c *inputControllerImplementation) ControllerName(playerIdx int) (string, error) {
+func (c *inputControllerImplementation) GetInputDeviceName(playerIdx int) (string, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
 		logging.Error.Printf(log_msg_invalid_player, playerIdx)
 		return "", errors.New(error_invalid_player)
@@ -57,7 +53,7 @@ func (c *inputControllerImplementation) ControllerName(playerIdx int) (string, e
 	return c.inputSources[playerIdx].Name(), nil
 }
 
-func (c *inputControllerImplementation) ControllerDeviceState(playerIdx int) (*DeviceState, error) {
+func (c *inputControllerImplementation) GetInputDeviceState(playerIdx int) (*InputDeviceState, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
 		logging.Error.Printf(log_msg_invalid_player, playerIdx)
 		return nil, errors.New(error_invalid_player)
@@ -65,8 +61,9 @@ func (c *inputControllerImplementation) ControllerDeviceState(playerIdx int) (*D
 	return c.inputSources[playerIdx].State(), nil
 }
 
-func (c *inputControllerImplementation) getControllerDeviceStateCombined() *DeviceState {
-	var result *DeviceState = nil
+func (c *inputControllerImplementation) getControllerDeviceStateCombined() *InputDeviceState {
+	// TODO: Use device configurations
+	var result *InputDeviceState = nil
 	var padCount = 0
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) && (2 > padCount) {
@@ -81,7 +78,7 @@ func (c *inputControllerImplementation) getControllerDeviceStateCombined() *Devi
 		}
 	}
 
-	var keyboard = &keyboard{Window: c.window}
+	var keyboard = &keyboard{window: c.window}
 	var state = keyboard.State()
 	if nil == result {
 		result = state
@@ -91,15 +88,15 @@ func (c *inputControllerImplementation) getControllerDeviceStateCombined() *Devi
 	return result
 }
 
-// ControllerUiEventState returns a UiEventState struct holding UI events. Especially the first call can return nil
+// GetUiEventState returns a UiEventState struct holding UI events. Especially the first call can return nil
 // without being in error state. Callers thus should check the result pointer before accessing it.
-func (c *inputControllerImplementation) ControllerUiEventState(playerIdx int) (*UiEventState, error) {
+func (c *inputControllerImplementation) GetUiEventState(playerIdx int) (*UiEventState, error) {
 	if (0 > playerIdx) || (playerIdx >= len(c.inputSources)) {
 		logging.Error.Printf(log_msg_invalid_player, playerIdx)
 		return nil, errors.New(error_invalid_player)
 	}
 
-	var newState, err = c.ControllerDeviceState(playerIdx)
+	var newState, err = c.GetInputDeviceState(playerIdx)
 	if nil != err {
 		return nil, err
 	}
@@ -109,6 +106,7 @@ func (c *inputControllerImplementation) ControllerUiEventState(playerIdx int) (*
 		c.lastInputStates[playerIdx] = newState
 		c.rapidFireStates[playerIdx] = &rapidFireState{}
 	} else {
+		// TODO: refactor this: build ui-event-state from old & new device state in constuctor method newUiEventState() in ui-event-state.go
 		var oldState = c.lastInputStates[playerIdx]
 		var horizontal = newState.MoveLeft || newState.MoveRight
 		var vertical = newState.MoveUp || newState.MoveDown
@@ -124,12 +122,12 @@ func (c *inputControllerImplementation) ControllerUiEventState(playerIdx int) (*
 	return result, nil
 }
 
-// ControllerUiEventStateCombined returns a UiEventState struct holding UI events. Especially the first call can
+// GetUiEventStateCombined returns a UiEventState struct holding UI events. Especially the first call can
 // return nil without being in error state. Callers thus should check the result pointer before accessing it.
 // The difference between GetControllerUiEventState and GetControllerUiEventStateCombined is that this method returns a
 // struct that contains the values for all input devices. So you can use this method before the input devices are
 // assigned to players.
-func (c *inputControllerImplementation) ControllerUiEventStateCombined() *UiEventState {
+func (c *inputControllerImplementation) GetUiEventStateCombined() *UiEventState {
 	var newState = c.getControllerDeviceStateCombined()
 	var result *UiEventState = nil
 	if nil == c.deviceStateCombined {
@@ -150,24 +148,29 @@ func (c *inputControllerImplementation) ControllerUiEventStateCombined() *UiEven
 	return result
 }
 
-// GetControllers returns a list of all controllers that are available
-func (c *inputControllerImplementation) GetControllers() []ControllerInfo {
-	var result = append(make([]ControllerInfo, 0), ControllerInfo{DeviceName: config.DeviceNameKeyboard, JoystickIndex: -1})
+// GetInputDeviceInfos returns a list of all controllers that are available
+func (c *inputControllerImplementation) GetInputDeviceInfos() []InputDeviceInfo {
+	var result = append(make([]InputDeviceInfo, 0), InputDeviceInfo{DeviceName: config.DeviceNameKeyboard, JoystickIndex: -1})
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) {
-			var joystick = ControllerInfo{DeviceName: c.window.JoystickName(j), JoystickIndex: int(j)}
+			var joystick = InputDeviceInfo{DeviceName: c.window.JoystickName(j), JoystickIndex: int(j)}
 			result = append(result, joystick)
 		}
 	}
 	return result
 }
 
-func (c *inputControllerImplementation) GetControllerConfigurations() []config.ControllerConfiguration {
+func (c *inputControllerImplementation) GetInputDeviceConfigurations() []config.InputDeviceConfiguration {
 	var cs = config.ConfigService{}
-	var result = cs.LoadControllerConfigurations()
+	var result = cs.LoadInputDeviceConfigurations()
 	result = c.filterValidConfigurations(result)
 
-	// TODO: If len(configurations) < 2 && unconfigured controllers present: Add default configuration for gamepad
+	/*
+		TODO:
+		if len(result) < 2 && unconfigured controllers present {
+			// Add default configuration for gamepad
+		}
+	*/
 
 	// Add default configuration for keyboard if there are less then two configured controllers
 	if len(result) < 2 {
@@ -185,8 +188,8 @@ func (c *inputControllerImplementation) GetControllerConfigurations() []config.C
 
 // filterValidConfigurations filters the given list of ControllerConfigurations so that it contains only controllers
 // that are actually present.
-func (c *inputControllerImplementation) filterValidConfigurations(configurations []config.ControllerConfiguration) []config.ControllerConfiguration {
-	var result = make([]config.ControllerConfiguration, 0)
+func (c *inputControllerImplementation) filterValidConfigurations(configurations []config.InputDeviceConfiguration) []config.InputDeviceConfiguration {
+	var result = make([]config.InputDeviceConfiguration, 0)
 	for _, cc := range configurations {
 		if (cc.DeviceName == config.DeviceNameKeyboard) ||
 			(c.window.JoystickPresent(pixelgl.Joystick(cc.JoystickIndex)) && c.window.JoystickName(pixelgl.Joystick(cc.JoystickIndex)) == cc.DeviceName) {

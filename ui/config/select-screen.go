@@ -37,7 +37,7 @@ type SelectScreen struct {
 
 func (s *SelectScreen) SetUp() {
 	s.defaultFontSize = fonts.DefaultFontSize()
-	s.multiplayerPossile = len(s.inputController.GetControllers()) > 1
+	s.multiplayerPossile = len(s.inputController.GetInputDeviceInfos()) > 1
 	s.selectedOption = optionOnePlayer
 	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtSelectOnePlayerGame, txtSelectTwoPlayerGame, txtSelectOptions)
 }
@@ -135,7 +135,7 @@ func (s *SelectScreen) String() string {
 }
 
 func (s *SelectScreen) processUserInput() {
-	var uiEventState = s.inputController.ControllerUiEventStateCombined()
+	var uiEventState = s.inputController.GetUiEventStateCombined()
 	if nil != uiEventState {
 		if uiEventState.PressedButton {
 			s.processOptionSelected()
@@ -155,7 +155,7 @@ func (s *SelectScreen) processUserInput() {
 
 func (s *SelectScreen) processOptionSelected() {
 	if s.selectedOption == optionOnePlayer || s.selectedOption == optionTwoPlayers {
-		s.inputController.AssignControllersToPlayers()
+		s.inputController.AssignInputDevicesToPlayers()
 		characters.PlayerController.StartNewGame(s.selectedOption)
 		s.screenChangeRequired(common.ConfigurationResult)
 	} else {

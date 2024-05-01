@@ -12,8 +12,8 @@ type ConfigService struct{}
 
 // loadControllerConfigurations reads the controller configurations that is stored on disk.
 // Returns empty array of not configurations can be found.
-func (cs *ConfigService) LoadControllerConfigurations() []ControllerConfiguration {
-	var result = make([]ControllerConfiguration, 0)
+func (cs *ConfigService) LoadInputDeviceConfigurations() []InputDeviceConfiguration {
+	var result = make([]InputDeviceConfiguration, 0)
 	for i := 0; i < 2; i++ {
 		filePath, err := cs.buildConfigurationFilePath(i)
 		if nil != err {
@@ -31,7 +31,7 @@ func (cs *ConfigService) LoadControllerConfigurations() []ControllerConfiguratio
 			continue
 		}
 
-		var config = &ControllerConfiguration{}
+		var config = &InputDeviceConfiguration{}
 		err = json.Unmarshal(data, config)
 		if err != nil {
 			logging.Warning.Printf("failed to deserialize controller config %s", filePath)
@@ -42,8 +42,8 @@ func (cs *ConfigService) LoadControllerConfigurations() []ControllerConfiguratio
 	return result
 }
 
-// SaveControllerConfiguration stores the given controller configuration for the specified player
-func (cs *ConfigService) SaveControllerConfiguration(cc ControllerConfiguration, playerIdx int) error {
+// SaveInputDeviceConfiguration stores the given controller configuration for the specified player
+func (cs *ConfigService) SaveInputDeviceConfiguration(cc InputDeviceConfiguration, playerIdx int) error {
 	folderPath, err := cs.buildConfigurationFolderPath()
 	if nil != err {
 		return err
@@ -59,15 +59,15 @@ func (cs *ConfigService) SaveControllerConfiguration(cc ControllerConfiguration,
 
 	filePath, err := cs.buildConfigurationFilePath(playerIdx)
 	if nil != err {
-		logging.Warning.Printf("failed to calculate config path for controller %d", playerIdx)
+		logging.Warning.Printf("failed to calculate config path for input device %d", playerIdx)
 		return err
 	}
 
-	logging.Trace.Printf("saving controller configuration for player %d to %s", playerIdx, filePath)
+	logging.Trace.Printf("saving input device configuration for player %d to %s", playerIdx, filePath)
 	jsonData, _ := json.Marshal(cc)
 	err = os.WriteFile(filePath, jsonData, 0600)
 	if err != nil {
-		logging.Warning.Printf("failed to write controller config %s", filePath)
+		logging.Warning.Printf("failed to write input device config %s", filePath)
 		return err
 	}
 

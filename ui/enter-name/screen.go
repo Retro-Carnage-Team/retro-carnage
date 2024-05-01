@@ -73,7 +73,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 
 	var playerName = s.playerName
-	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.ControllerUiEventStateCombined().PressedButton {
+	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.GetUiEventStateCombined().PressedButton {
 		highscore.EntryControllerInstance.SetPlayerName(s.PlayerIdx, s.playerName)
 		highscore.EntryControllerInstance.AddEntry(highscore.Entry{
 			Name:  s.playerName,

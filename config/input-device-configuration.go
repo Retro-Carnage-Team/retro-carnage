@@ -26,9 +26,9 @@ type GamepadConfiguration struct {
 	JoystickIndex  int  `json:"joystickIndex"`
 }
 
-// ControllerConfiguration holds the configuration for a specific device. This combines common aspects
+// InputDeviceConfiguration holds the configuration for a specific device. This combines common aspects
 // with GamepadConfiguration and KeyboardConfigurations.
-type ControllerConfiguration struct {
+type InputDeviceConfiguration struct {
 	GamepadConfiguration  `json:"gamepadConfig"`
 	KeyboardConfiguration `json:"keyboardConfig"`
 	DeviceName            string `json:"deviceName"`
@@ -37,8 +37,8 @@ type ControllerConfiguration struct {
 	InputPreviousWeapon   int    `json:"inputPrevWeapon"`
 }
 
-func NewKeyboardConfiguration() ControllerConfiguration {
-	return ControllerConfiguration{
+func NewKeyboardConfiguration() InputDeviceConfiguration {
+	return InputDeviceConfiguration{
 		KeyboardConfiguration: KeyboardConfiguration{
 			InputUp:    int(pixelgl.KeyUp),
 			InputDown:  int(pixelgl.KeyDown),
@@ -52,6 +52,6 @@ func NewKeyboardConfiguration() ControllerConfiguration {
 	}
 }
 
-func (cc ControllerConfiguration) String() string {
+func (cc InputDeviceConfiguration) String() string {
 	return fmt.Sprintf("ControllerConfiguration{DeviceName: %s}", cc.DeviceName)
 }

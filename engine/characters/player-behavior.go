@@ -45,7 +45,7 @@ func NewPlayerBehavior(player *Player) *PlayerBehavior {
 	}
 }
 
-func (pb *PlayerBehavior) Update(userInput *input.DeviceState) {
+func (pb *PlayerBehavior) Update(userInput *input.InputDeviceState) {
 	if nil == userInput || !pb.Player.Alive() {
 		return
 	}

@@ -32,7 +32,7 @@ type MainScreen struct {
 
 func (ms *MainScreen) Initialize() {
 	ms.inputCtrl = input.NewController(ms.Window)
-	ms.inputCtrl.AssignControllersToPlayers()
+	ms.inputCtrl.AssignInputDevicesToPlayers()
 
 	ms.clientScreen = &loading.Screen{}
 	ms.setUpScreen(ms.clientScreen)
