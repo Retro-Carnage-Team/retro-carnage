@@ -37,20 +37,15 @@ func NewController(window *pixelgl.Window) InputController {
 }
 
 func (c *InputController) AssignInputDevicesToPlayers() {
-	// TODO: Use configured devices instead
-	for _, j := range joysticks {
-		if c.window.JoystickPresent(j) && (2 > len(c.inputSources)) {
-			c.inputSources = append(c.inputSources, &gamepad{
-				configuration: config.NewGamepadConfiguration(*c.window, j),
-				window:        c.window,
-			})
-			c.lastInputStates = append(c.lastInputStates, nil)
-			c.rapidFireStates = append(c.rapidFireStates, nil)
-		}
+	if len(c.inputSources) > 0 {
+		c.inputSources = make([]inputDevice, 0)
+		c.lastInputStates = make([]*InputDeviceState, 0)
+		c.rapidFireStates = make([]*rapidFireState, 0)
 	}
 
-	if len(c.inputSources) < 2 {
-		c.inputSources = append(c.inputSources, &keyboard{window: c.window, configuration: config.NewKeyboardConfiguration()})
+	var deviceConfigurations = c.GetInputDeviceConfigurations()
+	for _, cfg := range deviceConfigurations {
+		c.inputSources = append(c.inputSources, c.buildInputDevice(cfg))
 		c.lastInputStates = append(c.lastInputStates, nil)
 		c.rapidFireStates = append(c.rapidFireStates, nil)
 	}
@@ -163,7 +158,13 @@ func (c *InputController) GetUiEventStateCombined() *UiEventState {
 
 // GetInputDeviceInfos returns a list of all controllers that are available
 func (c *InputController) GetInputDeviceInfos() []InputDeviceInfo {
-	var result = append(make([]InputDeviceInfo, 0), InputDeviceInfo{DeviceName: config.DeviceNameKeyboard, JoystickIndex: -1})
+	var result = append(
+		make([]InputDeviceInfo, 0),
+		InputDeviceInfo{
+			DeviceName:    config.DeviceNameKeyboard,
+			JoystickIndex: -1,
+		},
+	)
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) {
 			var joystick = InputDeviceInfo{DeviceName: c.window.JoystickName(j), JoystickIndex: int(j)}
@@ -178,12 +179,20 @@ func (c *InputController) GetInputDeviceConfigurations() []config.InputDeviceCon
 	var result = cs.LoadInputDeviceConfigurations()
 	result = c.filterValidConfigurations(result)
 
-	/*
-		TODO:
-		if len(result) < 2 && unconfigured controllers present {
-			// Add default configuration for gamepad
+	for _, j := range joysticks {
+		var joystickPresent = c.window.JoystickPresent(j)
+		var deviceConfigured = false
+		for _, cc := range result {
+			deviceConfigured = deviceConfigured || (int(j) == cc.GamepadConfiguration.JoystickIndex)
 		}
-	*/
+		if len(result) < 2 && joystickPresent && !deviceConfigured {
+			result = append(result, config.NewGamepadConfiguration(*c.window, j))
+		}
+
+		if len(result) == 2 {
+			break
+		}
+	}
 
 	// Add default configuration for keyboard if there are less then two configured controllers
 	if len(result) < 2 {
@@ -205,9 +214,17 @@ func (c *InputController) filterValidConfigurations(configurations []config.Inpu
 	var result = make([]config.InputDeviceConfiguration, 0)
 	for _, cc := range configurations {
 		if (cc.DeviceName == config.DeviceNameKeyboard) ||
-			(c.window.JoystickPresent(pixelgl.Joystick(cc.JoystickIndex)) && c.window.JoystickName(pixelgl.Joystick(cc.JoystickIndex)) == cc.DeviceName) {
+			(c.window.JoystickPresent(pixelgl.Joystick(cc.JoystickIndex)) &&
+				c.window.JoystickName(pixelgl.Joystick(cc.JoystickIndex)) == cc.DeviceName) {
 			result = append(result, cc)
 		}
 	}
 	return result
+}
+
+func (c *InputController) buildInputDevice(cfg config.InputDeviceConfiguration) inputDevice {
+	if cfg.DeviceName == config.DeviceNameKeyboard {
+		return &keyboard{configuration: cfg, window: c.window}
+	}
+	return &gamepad{configuration: cfg, window: c.window}
 }
