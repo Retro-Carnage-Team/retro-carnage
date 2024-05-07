@@ -40,7 +40,10 @@ func (c *InputController) AssignInputDevicesToPlayers() {
 	// TODO: Use configured devices instead
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) && (2 > len(c.inputSources)) {
-			c.inputSources = append(c.inputSources, &gamepad{joystick: j, window: c.window})
+			c.inputSources = append(c.inputSources, &gamepad{
+				configuration: config.NewGamepadConfiguration(*c.window, j),
+				window:        c.window,
+			})
 			c.lastInputStates = append(c.lastInputStates, nil)
 			c.rapidFireStates = append(c.rapidFireStates, nil)
 		}
@@ -76,7 +79,10 @@ func (c *InputController) getControllerDeviceStateCombined() *InputDeviceState {
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) && (2 > padCount) {
 			padCount++
-			var gamepad = &gamepad{joystick: j, window: c.window}
+			var gamepad = &gamepad{
+				configuration: config.NewGamepadConfiguration(*c.window, j),
+				window:        c.window,
+			}
 			var state = gamepad.State()
 			if nil == result {
 				result = state

@@ -2,13 +2,15 @@ package config
 
 import (
 	"fmt"
+	"retro-carnage/logging"
+	"strings"
 
 	"github.com/faiface/pixel/pixelgl"
 )
 
-const (
-	DeviceNameKeyboard = "Keyboard"
-)
+const DeviceNameKeyboard = "Keyboard"
+
+var digitalControllers = []string{"Competition Pro"}
 
 // KeyboardConfiguration holds the configuration aspects that are specific to keyboards.
 // This makes sure that a user can configure e.g. WASD or use arrow keys.
@@ -35,6 +37,45 @@ type InputDeviceConfiguration struct {
 	InputFire             int    `json:"inputFire"`
 	InputNextWeapon       int    `json:"inputNextWeapon"`
 	InputPreviousWeapon   int    `json:"inputPrevWeapon"`
+}
+
+func NewGamepadConfiguration(w pixelgl.Window, j pixelgl.Joystick) InputDeviceConfiguration {
+	if !w.JoystickPresent(j) {
+		logging.Error.Fatalf("NewGamepadConfiguration was called for joystick that is not present!")
+	}
+
+	var name = w.JoystickName(j)
+	var digitalController = false
+	for _, controllerName := range digitalControllers {
+		if strings.Contains(strings.ToLower(name), strings.ToLower(controllerName)) {
+			digitalController = true
+			break
+		}
+	}
+
+	var result = InputDeviceConfiguration{
+		GamepadConfiguration: GamepadConfiguration{
+			HasDigitalAxis: digitalController,
+			JoystickIndex:  int(j),
+		},
+		DeviceName:          name,
+		InputFire:           int(pixelgl.KeyLeftControl),
+		InputNextWeapon:     int(pixelgl.KeyA),
+		InputPreviousWeapon: int(pixelgl.KeyZ),
+	}
+
+	if digitalController {
+		// Checked this with a SpeedLink Competition Pro USB
+		result.InputFire = int(pixelgl.ButtonX)
+		result.InputNextWeapon = int(pixelgl.ButtonCircle)
+		result.InputPreviousWeapon = int(pixelgl.ButtonLeftBumper)
+	} else {
+		// Checked this with XBox360 and PlayStation controllers
+		result.InputFire = int(pixelgl.ButtonA)
+		result.InputNextWeapon = int(pixelgl.ButtonX)
+		result.InputPreviousWeapon = int(pixelgl.ButtonY)
+	}
+	return result
 }
 
 func NewKeyboardConfiguration() InputDeviceConfiguration {
