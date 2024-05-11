@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"retro-carnage/assets"
+	"retro-carnage/config"
 	"retro-carnage/logging"
 	"retro-carnage/ui"
 	"retro-carnage/ui/common/fonts"
@@ -13,22 +14,31 @@ import (
 )
 
 func run() {
-	var monitor = pixelgl.PrimaryMonitor()
+	var configuration = config.GetConfigService().LoadVideoConfigurations()
+	var monitor = configuration.GetConfiguredMonitor()
 	var pixelX, pixelY = monitor.Size()
-	// Set variables to different values to adjust window size
-	pixelX = 1280.0
-	pixelY = 800.0
-	cfg := pixelgl.WindowConfig{
-		Bounds: pixel.R(0, 0, pixelX, pixelY),
-		// commenting out this line will make the app run in a window instead of full screen
-		//Monitor: monitor,
-		Title: "RETRO CARNAGE",
-		VSync: true,
+
+	var cfg pixelgl.WindowConfig
+	if configuration.FullScreen {
+		cfg = pixelgl.WindowConfig{
+			Bounds:  pixel.R(0, 0, pixelX, pixelY),
+			Monitor: monitor,
+			Title:   "RETRO CARNAGE",
+			VSync:   true,
+		}
+	} else {
+		pixelX = float64(configuration.Width)
+		pixelY = float64(configuration.Height)
+		cfg = pixelgl.WindowConfig{
+			Bounds: pixel.R(0, 0, pixelX, pixelY),
+			Title:  "RETRO CARNAGE",
+			VSync:  true,
+		}
 	}
 
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
-		panic(err)
+		logging.Error.Fatalf("failed to create window: %s", err)
 	}
 
 	win.SetCursorVisible(false)
