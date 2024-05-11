@@ -10,13 +10,11 @@ import (
 	"retro-carnage/ui/common/fonts"
 
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 )
 
 const (
-	buttonPadding          = 15
 	optionOnePlayer        = 1
 	optionTwoPlayers       = 2
 	optionOptions          = 3
@@ -28,7 +26,7 @@ const (
 type SelectScreen struct {
 	defaultFontSize      int
 	inputController      input.InputController
-	multiplayerPossile   bool
+	multiplayerPossible  bool
 	screenChangeRequired common.ScreenChangeCallback
 	selectedOption       int
 	textDimensions       map[string]*geometry.Point
@@ -37,7 +35,7 @@ type SelectScreen struct {
 
 func (s *SelectScreen) SetUp() {
 	s.defaultFontSize = fonts.DefaultFontSize()
-	s.multiplayerPossile = len(s.inputController.GetInputDeviceInfos()) > 1
+	s.multiplayerPossible = len(s.inputController.GetInputDeviceInfos()) > 1
 	s.selectedOption = optionOnePlayer
 	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtSelectOnePlayerGame, txtSelectTwoPlayerGame, txtSelectOptions)
 }
@@ -59,7 +57,7 @@ func (s *SelectScreen) Update(_ int64) {
 	var secondLineY = vertCenter + -1.5*s.textDimensions[txtSelectTwoPlayerGame].Y
 
 	var startLine3 = -1.5
-	if s.multiplayerPossile {
+	if s.multiplayerPossible {
 		txt = text.New(pixel.V(secondLineX, secondLineY), fonts.SizeToFontAtlas[s.defaultFontSize])
 		txt.Color = common.White
 		_, _ = fmt.Fprint(txt, txtSelectTwoPlayerGame)
@@ -94,24 +92,12 @@ func (s *SelectScreen) Update(_ int64) {
 		) + buttonPadding
 
 	if s.selectedOption == optionOnePlayer {
-		s.drawSelectionRect(left, bottomFirst, right, topFirst)
+		drawSelectionRect(s.window, left, bottomFirst, right, topFirst)
 	} else if s.selectedOption == optionTwoPlayers {
-		s.drawSelectionRect(left, bottomSecond, right, topSecond)
+		drawSelectionRect(s.window, left, bottomSecond, right, topSecond)
 	} else if s.selectedOption == optionOptions {
-		s.drawSelectionRect(left, bottomThird, right, topThird)
+		drawSelectionRect(s.window, left, bottomThird, right, topThird)
 	}
-}
-
-func (s *SelectScreen) drawSelectionRect(left float64, bottom float64, right float64, top float64) {
-	imd := imdraw.New(nil)
-	imd.Color = common.Yellow
-	imd.EndShape = imdraw.RoundEndShape
-	imd.Push(pixel.V(left, bottom), pixel.V(right, bottom))
-	imd.Push(pixel.V(left, bottom), pixel.V(left, top))
-	imd.Push(pixel.V(left, top), pixel.V(right, top))
-	imd.Push(pixel.V(right, bottom), pixel.V(right, top))
-	imd.Line(4)
-	imd.Draw(s.window)
 }
 
 func (s *SelectScreen) TearDown() {
@@ -144,7 +130,7 @@ func (s *SelectScreen) processUserInput() {
 				s.selectedOption = s.selectedOption - 1
 			}
 		} else if uiEventState.MovedDown {
-			if s.selectedOption == optionOnePlayer && s.multiplayerPossile {
+			if s.selectedOption == optionOnePlayer && s.multiplayerPossible {
 				s.selectedOption = optionTwoPlayers
 			} else {
 				s.selectedOption = optionOptions
