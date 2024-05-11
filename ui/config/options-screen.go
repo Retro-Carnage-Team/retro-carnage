@@ -15,15 +15,10 @@ import (
 )
 
 const (
-	optionAudio        = 1
-	optionVideo        = 2
-	optionControls     = 3
-	optionBack         = 4
-	txtAudio           = "AUDIO SETTINGS"
-	txtControls        = "INPUT SETTINGS"
-	txtHeadlineOptions = "OPTIONS"
-	txtVideo           = "VIDEO SETTINGS"
-	txtBack            = "BACK"
+	optionAudio    = 1
+	optionVideo    = 2
+	optionControls = 3
+	optionBack     = 4
 )
 
 type OptionsScreen struct {
@@ -38,7 +33,7 @@ type OptionsScreen struct {
 func (s *OptionsScreen) SetUp() {
 	s.defaultFontSize = fonts.DefaultFontSize()
 	s.selectedOption = optionAudio
-	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtAudio, txtControls, txtHeadlineOptions, txtVideo, txtBack)
+	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtAudioSettings, txtInputSettings, txtHeadlineOptions, txtVideoSettings, txtBack)
 }
 
 func (s *OptionsScreen) Update(_ int64) {
@@ -46,12 +41,7 @@ func (s *OptionsScreen) Update(_ int64) {
 
 	// draw headline
 	var lineLocationY = s.window.Bounds().H() - headlineDistanceTop
-	var txt = text.New(pixel.V(headlineDistanceLeft, lineLocationY), fonts.SizeToFontAtlas[s.defaultFontSize])
-	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, txtHeadlineOptions)
-	txt.Draw(s.window, pixel.IM)
-
-	// underline headline
+	var txt = s.drawText(txtHeadlineOptions, headlineDistanceLeft, lineLocationY)
 	imd := imdraw.New(nil)
 	imd.Color = common.White
 	imd.EndShape = imdraw.RoundEndShape
@@ -59,30 +49,34 @@ func (s *OptionsScreen) Update(_ int64) {
 	imd.Line(4)
 	imd.Draw(s.window)
 
-	lineLocationY = lineLocationY - 5*s.textDimensions[txtAudio].Y
-	txt = text.New(pixel.V(headlineDistanceLeft, lineLocationY), fonts.SizeToFontAtlas[s.defaultFontSize])
-	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, txtAudio)
-	txt.Draw(s.window, pixel.IM)
+	// option 1: audio
+	lineLocationY = lineLocationY - 5*s.textDimensions[txtAudioSettings].Y
+	txt = s.drawText(txtAudioSettings, headlineDistanceLeft, lineLocationY)
+	if s.selectedOption == optionAudio {
+		drawTextSelectionRect(s.window, txt)
+	}
 
-	lineLocationY = lineLocationY - 3*s.textDimensions[txtAudio].Y
-	txt = text.New(pixel.V(headlineDistanceLeft, lineLocationY), fonts.SizeToFontAtlas[s.defaultFontSize])
-	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, txtVideo)
-	txt.Draw(s.window, pixel.IM)
+	// option 2: video
+	lineLocationY = lineLocationY - 3*s.textDimensions[txtAudioSettings].Y
+	txt = s.drawText(txtVideoSettings, headlineDistanceLeft, lineLocationY)
+	if s.selectedOption == optionVideo {
+		drawTextSelectionRect(s.window, txt)
+	}
 
-	lineLocationY = lineLocationY - 3*s.textDimensions[txtAudio].Y
-	txt = text.New(pixel.V(headlineDistanceLeft, lineLocationY), fonts.SizeToFontAtlas[s.defaultFontSize])
-	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, txtControls)
-	txt.Draw(s.window, pixel.IM)
+	// option 3: controls
+	lineLocationY = lineLocationY - 3*s.textDimensions[txtAudioSettings].Y
+	txt = s.drawText(txtInputSettings, headlineDistanceLeft, lineLocationY)
+	if s.selectedOption == optionControls {
+		drawTextSelectionRect(s.window, txt)
+	}
 
+	// option 4: back
 	var lineLocationX = s.window.Bounds().W() - headlineDistanceTop - s.textDimensions[txtBack].X
 	lineLocationY = headlineDistanceTop
-	txt = text.New(pixel.V(lineLocationX, lineLocationY), fonts.SizeToFontAtlas[s.defaultFontSize])
-	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, txtBack)
-	txt.Draw(s.window, pixel.IM)
+	txt = s.drawText(txtBack, lineLocationX, lineLocationY)
+	if s.selectedOption == optionBack {
+		drawTextSelectionRect(s.window, txt)
+	}
 }
 
 func (s *OptionsScreen) TearDown() {
@@ -131,4 +125,12 @@ func (s *OptionsScreen) processOptionSelected() {
 	default:
 		logging.Error.Fatal("Unexpected selection in OptionsScreen")
 	}
+}
+
+func (s *OptionsScreen) drawText(output string, x float64, y float64) *text.Text {
+	var txt = text.New(pixel.V(x, y), fonts.SizeToFontAtlas[s.defaultFontSize])
+	txt.Color = common.White
+	_, _ = fmt.Fprint(txt, output)
+	txt.Draw(s.window, pixel.IM)
+	return txt
 }
