@@ -24,6 +24,10 @@ func (ds *InputDeviceState) IsButtonPressed() bool {
 }
 
 func (ds *InputDeviceState) Combine(other *InputDeviceState) *InputDeviceState {
+	if other == nil {
+		return ds
+	}
+
 	return &InputDeviceState{
 		MoveUp:        ds.MoveUp || other.MoveUp,
 		MoveDown:      ds.MoveDown || other.MoveDown,

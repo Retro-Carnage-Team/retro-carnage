@@ -20,34 +20,35 @@ const (
 	rapidFireThreshold     = 750
 )
 
+type inputDeviceWithState struct {
+	inputSource    inputDevice
+	lastInputState *InputDeviceState
+	rapidFireState *rapidFireState
+}
+
 type InputController struct {
 	deviceStateCombined *InputDeviceState
-	inputSources        []inputDevice
-	lastInputStates     []*InputDeviceState
-	rapidFireStates     []*rapidFireState
+	inputSources        []inputDeviceWithState
 	window              *pixelgl.Window
 }
 
 func NewController(window *pixelgl.Window) InputController {
 	var result = InputController{window: window}
-	result.inputSources = make([]inputDevice, 0)
-	result.lastInputStates = make([]*InputDeviceState, 0)
-	result.rapidFireStates = make([]*rapidFireState, 0)
+	result.inputSources = make([]inputDeviceWithState, 0)
 	return result
 }
 
 func (c *InputController) AssignInputDevicesToPlayers() {
 	if len(c.inputSources) > 0 {
-		c.inputSources = make([]inputDevice, 0)
-		c.lastInputStates = make([]*InputDeviceState, 0)
-		c.rapidFireStates = make([]*rapidFireState, 0)
+		c.inputSources = make([]inputDeviceWithState, 0)
 	}
 
 	var deviceConfigurations = c.GetInputDeviceConfigurations()
 	for _, cfg := range deviceConfigurations {
-		c.inputSources = append(c.inputSources, c.buildInputDevice(cfg))
-		c.lastInputStates = append(c.lastInputStates, nil)
-		c.rapidFireStates = append(c.rapidFireStates, nil)
+		var newRecord = inputDeviceWithState{
+			inputSource: c.buildInputDevice(cfg),
+		}
+		c.inputSources = append(c.inputSources, newRecord)
 	}
 }
 
@@ -56,7 +57,7 @@ func (c *InputController) GetInputDeviceName(playerIdx int) (string, error) {
 		logging.Error.Printf(log_msg_invalid_player, playerIdx)
 		return "", errors.New(error_invalid_player)
 	}
-	return c.inputSources[playerIdx].Name(), nil
+	return c.inputSources[playerIdx].inputSource.Name(), nil
 }
 
 func (c *InputController) GetInputDeviceState(playerIdx int) (*InputDeviceState, error) {
@@ -64,37 +65,37 @@ func (c *InputController) GetInputDeviceState(playerIdx int) (*InputDeviceState,
 		logging.Error.Printf(log_msg_invalid_player, playerIdx)
 		return nil, errors.New(error_invalid_player)
 	}
-	return c.inputSources[playerIdx].State(), nil
+	return c.inputSources[playerIdx].inputSource.State(), nil
 }
 
 func (c *InputController) getControllerDeviceStateCombined() *InputDeviceState {
-	// TODO: Use device configurations
+	var deviceConfigurations = c.GetInputDeviceConfigurations()
+
 	var result *InputDeviceState = nil
-	var padCount = 0
 	for _, j := range joysticks {
-		if c.window.JoystickPresent(j) && (2 > padCount) {
-			padCount++
-			var gamepad = &gamepad{
+		if !c.window.JoystickPresent(j) {
+			continue
+		}
+
+		var device inputDevice = nil
+		for _, cfg := range deviceConfigurations {
+			if cfg.GamepadConfiguration.JoystickIndex == int(j) && cfg.DeviceName == c.window.JoystickName(j) {
+				device = c.buildInputDevice(cfg)
+			}
+		}
+
+		if device == nil {
+			device = &gamepad{
 				configuration: config.NewGamepadConfiguration(*c.window, j),
 				window:        c.window,
 			}
-			var state = gamepad.State()
-			if nil == result {
-				result = state
-			} else {
-				result = result.Combine(state)
-			}
 		}
+
+		result = device.State().Combine(result)
 	}
 
 	var keyboard = &keyboard{window: c.window}
-	var state = keyboard.State()
-	if nil == result {
-		result = state
-	} else {
-		result = result.Combine(state)
-	}
-	return result
+	return keyboard.State().Combine(result)
 }
 
 // GetUiEventState returns a UiEventState struct holding UI events. Especially the first call can return nil
@@ -111,11 +112,11 @@ func (c *InputController) GetUiEventState(playerIdx int) (*UiEventState, error) 
 	}
 
 	var result *UiEventState = nil
-	if nil == c.lastInputStates[playerIdx] || nil == c.rapidFireStates[playerIdx] {
-		c.lastInputStates[playerIdx] = newState
-		c.rapidFireStates[playerIdx] = &rapidFireState{}
+	if nil == c.inputSources[playerIdx].lastInputState || nil == c.inputSources[playerIdx].rapidFireState {
+		c.inputSources[playerIdx].lastInputState = newState
+		c.inputSources[playerIdx].rapidFireState = &rapidFireState{}
 	} else {
-		var oldState = c.lastInputStates[playerIdx]
+		var oldState = c.inputSources[playerIdx].lastInputState
 		var horizontal = newState.MoveLeft || newState.MoveRight
 		var vertical = newState.MoveUp || newState.MoveDown
 		result = &UiEventState{
@@ -123,9 +124,9 @@ func (c *InputController) GetUiEventState(playerIdx int) (*UiEventState, error) 
 			MovedDown:     !oldState.MoveDown && newState.MoveDown && !horizontal,
 			MovedLeft:     !oldState.MoveLeft && newState.MoveLeft && !vertical,
 			MovedRight:    !oldState.MoveRight && newState.MoveRight && !vertical,
-			PressedButton: c.rapidFireStates[playerIdx].update(newState),
+			PressedButton: c.inputSources[playerIdx].rapidFireState.update(newState),
 		}
-		c.lastInputStates[playerIdx] = newState
+		c.inputSources[playerIdx].lastInputState = newState
 	}
 	return result, nil
 }
