@@ -14,7 +14,7 @@ import (
 )
 
 func run() {
-	var configuration = config.GetConfigService().LoadVideoConfigurations()
+	var configuration = config.GetConfigService().LoadVideoConfiguration()
 	var monitor = configuration.GetConfiguredMonitor()
 	var pixelX, pixelY = monitor.Size()
 

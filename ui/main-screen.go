@@ -52,6 +52,8 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 		ms.nextScreen = &title.Screen{}
 	case common.ConfigurationOptions:
 		ms.nextScreen = &config.OptionsScreen{}
+	case common.ConfigurationVideo:
+		ms.nextScreen = &config.VideoOptionsScreen{}
 	case common.ConfigurationResult:
 		ms.nextScreen = &config.ResultScreen{}
 	case common.ConfigurationSelect:

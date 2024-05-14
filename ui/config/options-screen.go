@@ -53,21 +53,21 @@ func (s *OptionsScreen) Update(_ int64) {
 	lineLocationY = lineLocationY - 5*s.textDimensions[txtAudioSettings].Y
 	txt = s.drawText(txtAudioSettings, headlineDistanceLeft, lineLocationY)
 	if s.selectedOption == optionAudio {
-		drawTextSelectionRect(s.window, txt)
+		drawTextSelectionRect(s.window, txt.Bounds())
 	}
 
 	// option 2: video
 	lineLocationY = lineLocationY - 3*s.textDimensions[txtAudioSettings].Y
 	txt = s.drawText(txtVideoSettings, headlineDistanceLeft, lineLocationY)
 	if s.selectedOption == optionVideo {
-		drawTextSelectionRect(s.window, txt)
+		drawTextSelectionRect(s.window, txt.Bounds())
 	}
 
 	// option 3: controls
 	lineLocationY = lineLocationY - 3*s.textDimensions[txtAudioSettings].Y
 	txt = s.drawText(txtInputSettings, headlineDistanceLeft, lineLocationY)
 	if s.selectedOption == optionControls {
-		drawTextSelectionRect(s.window, txt)
+		drawTextSelectionRect(s.window, txt.Bounds())
 	}
 
 	// option 4: back
@@ -75,7 +75,7 @@ func (s *OptionsScreen) Update(_ int64) {
 	lineLocationY = headlineDistanceTop
 	txt = s.drawText(txtBack, lineLocationX, lineLocationY)
 	if s.selectedOption == optionBack {
-		drawTextSelectionRect(s.window, txt)
+		drawTextSelectionRect(s.window, txt.Bounds())
 	}
 }
 

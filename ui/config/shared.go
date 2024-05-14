@@ -1,12 +1,12 @@
 package config
 
 import (
+	"image/color"
 	"retro-carnage/ui/common"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 )
 
 const (
@@ -15,14 +15,24 @@ const (
 	headlineDistanceTop  = 75
 	txtAudioSettings     = "AUDIO SETTINGS"
 	txtBack              = "BACK"
+	txtDecrease          = "-"
+	txtFullScreen        = "FULLSCREEN"
 	txtHeadlineOptions   = "OPTIONS"
+	txtIncrease          = "+"
 	txtInputSettings     = "INPUT SETTINGS"
+	txtMonitor           = "MONITOR"
+	txtPrimaryMonitor    = "PRIMARY MONITOR"
+	txtSave              = "SAVE"
+	txtScreenmode        = "SCREEN MODE"
+	txtSelection         = "x"
 	txtVideoSettings     = "VIDEO SETTINGS"
+	txtWindowed          = "WINDOWED"
+	txtWindowSize        = "WINDOW SIZE"
 )
 
-func drawSelectionRect(w *pixelgl.Window, left float64, bottom float64, right float64, top float64) {
+func drawRect(w *pixelgl.Window, left float64, bottom float64, right float64, top float64, col color.RGBA) {
 	imd := imdraw.New(nil)
-	imd.Color = common.Yellow
+	imd.Color = col
 	imd.EndShape = imdraw.RoundEndShape
 	imd.Push(pixel.V(left, bottom), pixel.V(right, bottom))
 	imd.Push(pixel.V(left, bottom), pixel.V(left, top))
@@ -32,12 +42,28 @@ func drawSelectionRect(w *pixelgl.Window, left float64, bottom float64, right fl
 	imd.Draw(w)
 }
 
-func drawTextSelectionRect(w *pixelgl.Window, txt *text.Text) {
-	drawSelectionRect(
+func drawSelectionRect(w *pixelgl.Window, left float64, bottom float64, right float64, top float64) {
+	drawRect(w, left, bottom, right, top, common.Yellow)
+}
+
+func drawPossibleSelectionRect(w *pixelgl.Window, txtRect pixel.Rect) {
+	drawRect(
 		w,
-		txt.Bounds().Min.X-buttonPadding,
-		txt.Bounds().Min.Y-buttonPadding,
-		txt.Bounds().Max.X+buttonPadding,
-		txt.Bounds().Max.Y+buttonPadding,
+		txtRect.Min.X-buttonPadding,
+		txtRect.Min.Y-buttonPadding,
+		txtRect.Max.X+buttonPadding,
+		txtRect.Max.Y+buttonPadding,
+		common.LightGray,
+	)
+}
+
+func drawTextSelectionRect(w *pixelgl.Window, txtRect pixel.Rect) {
+	drawRect(
+		w,
+		txtRect.Min.X-buttonPadding,
+		txtRect.Min.Y-buttonPadding,
+		txtRect.Max.X+buttonPadding,
+		txtRect.Max.Y+buttonPadding,
+		common.Yellow,
 	)
 }

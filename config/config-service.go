@@ -79,7 +79,7 @@ func (cs *ConfigService) SaveInputDeviceConfiguration(cc InputDeviceConfiguratio
 
 // LoadVideoConfigurations reads the video configuration that is stored on disk.
 // Returns configuration with default values if no data can be found.
-func (cs *ConfigService) LoadVideoConfigurations() VideoConfiguration {
+func (cs *ConfigService) LoadVideoConfiguration() VideoConfiguration {
 	filePath, err := cs.buildVideoConfigurationFilePath()
 	if nil != err {
 		logging.Warning.Printf("failed to compute video configuration file path")
