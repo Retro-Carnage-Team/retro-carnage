@@ -117,10 +117,16 @@ func (s *VideoOptionsScreen) Update(_ int64) {
 
 	var valueDistanceLeft = headlineDistanceLeft + txt.Bounds().W()/2*3
 
-	// Monitor values
+	// Values
+	s.renderMonitorValues(monitorLabelLocationY, valueDistanceLeft)
+	s.renderScreenModeValues(valueDistanceLeft, screenModeLabelLocationY)
+}
+
+func (s *VideoOptionsScreen) renderMonitorValues(monitorLabelLocationY float64, valueDistanceLeft float64) {
 	var primaryMonitorValueLocationY = monitorLabelLocationY
 	var otherMonitorValueLocationY = monitorLabelLocationY - 2.5*s.textDimensions[txtMonitor].Y
 
+	var txt *text.Text
 	if s.videoConfig.UsePrimaryMonitor {
 		txt = s.drawText(txtSelection, valueDistanceLeft, primaryMonitorValueLocationY)
 		if s.selectedOption == optionVideoUsePrimaryMonitor {
@@ -166,11 +172,12 @@ func (s *VideoOptionsScreen) Update(_ int64) {
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
 	}
+}
 
-	// Screen mode values
+func (s *VideoOptionsScreen) renderScreenModeValues(valueDistanceLeft float64, screenModeLabelLocationY float64) {
 	var distanceBetweenScreenModeBoxes = s.textDimensions[txtSelection].X + s.textDimensions[txtFullScreen].X + buttonPadding*6
 	if s.videoConfig.FullScreen {
-		txt = s.drawText(txtSelection, valueDistanceLeft, screenModeLabelLocationY)
+		var txt = s.drawText(txtSelection, valueDistanceLeft, screenModeLabelLocationY)
 		if s.selectedOption == optionVideoFullscreen {
 			drawTextSelectionRect(s.window, txt.Bounds())
 			drawPossibleSelectionRect(s.window, txt.Bounds().Moved(pixel.Vec{X: distanceBetweenScreenModeBoxes, Y: 0}))
@@ -182,7 +189,7 @@ func (s *VideoOptionsScreen) Update(_ int64) {
 			drawPossibleSelectionRect(s.window, txt.Bounds().Moved(pixel.Vec{X: distanceBetweenScreenModeBoxes, Y: 0}))
 		}
 	} else {
-		txt = s.drawText(txtSelection, valueDistanceLeft+distanceBetweenScreenModeBoxes, screenModeLabelLocationY)
+		var txt = s.drawText(txtSelection, valueDistanceLeft+distanceBetweenScreenModeBoxes, screenModeLabelLocationY)
 		if s.selectedOption == optionVideoWindowed {
 			drawTextSelectionRect(s.window, txt.Bounds())
 			drawPossibleSelectionRect(s.window, txt.Bounds().Moved(pixel.Vec{X: -distanceBetweenScreenModeBoxes, Y: 0}))
