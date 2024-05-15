@@ -30,6 +30,22 @@ const (
 	optionVideoBack                 = 12
 )
 
+var (
+	optionVideoFocusChanges = []focusChange{
+		{movedDown: true, currentSelection: []int{optionVideoUsePrimaryMonitor}, nextSelection: optionVideoUseOtherMonitor},
+		{movedUp: true, currentSelection: []int{optionVideoUseOtherMonitor}, nextSelection: optionVideoUsePrimaryMonitor},
+		{movedRight: true, currentSelection: []int{optionVideoUseOtherMonitor}, nextSelection: optionVideoPreviousMonitor},
+		{movedLeft: true, currentSelection: []int{optionVideoPreviousMonitor}, nextSelection: optionVideoUseOtherMonitor},
+		{movedRight: true, currentSelection: []int{optionVideoPreviousMonitor}, nextSelection: optionVideoNextMonitor},
+		{movedLeft: true, currentSelection: []int{optionVideoNextMonitor}, nextSelection: optionVideoPreviousMonitor},
+		{movedUp: true, currentSelection: []int{optionVideoUseOtherMonitor, optionVideoPreviousMonitor, optionVideoNextMonitor}, nextSelection: optionVideoUsePrimaryMonitor},
+		{movedDown: true, currentSelection: []int{optionVideoUseOtherMonitor, optionVideoPreviousMonitor, optionVideoNextMonitor}, nextSelection: optionVideoFullscreen},
+		{movedRight: true, currentSelection: []int{optionVideoFullscreen}, nextSelection: optionVideoWindowed},
+		{movedLeft: true, currentSelection: []int{optionVideoWindowed}, nextSelection: optionVideoFullscreen},
+		{movedUp: true, currentSelection: []int{optionVideoFullscreen, optionVideoWindowed}, nextSelection: optionVideoUseOtherMonitor},
+	}
+)
+
 type VideoOptionsScreen struct {
 	videoConfig          config.VideoConfiguration
 	defaultFontSize      int
@@ -41,6 +57,7 @@ type VideoOptionsScreen struct {
 	selectedMonitorIndex int
 	selectedMonitorMaxX  int
 	selectedMonitorMaxY  int
+	maxWidthScreenName   float64
 }
 
 func (s *VideoOptionsScreen) SetUp() {
@@ -48,9 +65,10 @@ func (s *VideoOptionsScreen) SetUp() {
 	s.selectedOption = optionVideoUsePrimaryMonitor
 	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtVideoSettings, txtSave, txtBack, txtDecrease,
 		txtFullScreen, txtIncrease, txtMonitor, txtPrimaryMonitor, txtScreenmode, txtVideoSettings, txtWindowed,
-		txtWindowSize, txtSelection,
+		txtWindowSize, txtSelection, txtOtherMonitor,
 	)
 	s.videoConfig = config.GetConfigService().LoadVideoConfiguration()
+	s.maxWidthScreenName = s.getMaxWidthOfScreenNames()
 
 	var configuredMonitorFound = false
 	for i, m := range pixelgl.Monitors() {
@@ -132,21 +150,53 @@ func (s *VideoOptionsScreen) Update(_ int64) {
 	var monitorValueAfterSelectorX = txt.Bounds().Max.X + buttonPadding*3
 	s.drawText(txtPrimaryMonitor, monitorValueAfterSelectorX, primaryMonitorValueLocationY)
 
-	txt = s.drawText(txtDecrease, monitorValueAfterSelectorX, otherMonitorValueLocationY)
+	txt = s.drawText(txtOtherMonitor, monitorValueAfterSelectorX, otherMonitorValueLocationY)
+	txt = s.drawText(txtDecrease, monitorValueAfterSelectorX+buttonPadding*3+txt.Bounds().W(), otherMonitorValueLocationY)
 	if s.selectedOption == optionVideoPreviousMonitor {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
 	}
 
-	txt = s.drawText(txtIncrease, txt.Bounds().Max.X+buttonPadding*3, otherMonitorValueLocationY)
+	var distanceLeftScreenName = txt.Bounds().Max.X + buttonPadding*3
+	s.drawText(s.videoConfig.SelectedMonitor, distanceLeftScreenName, otherMonitorValueLocationY)
+	txt = s.drawText(txtIncrease, distanceLeftScreenName+s.maxWidthScreenName+buttonPadding*3, otherMonitorValueLocationY)
 	if s.selectedOption == optionVideoNextMonitor {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
 	}
 
-	s.drawText(s.videoConfig.SelectedMonitor, txt.Bounds().Max.X+buttonPadding*3, otherMonitorValueLocationY)
+	// Screen mode values
+	var distanceBetweenScreenModeBoxes = s.textDimensions[txtSelection].X + s.textDimensions[txtFullScreen].X + buttonPadding*6
+	if s.videoConfig.FullScreen {
+		txt = s.drawText(txtSelection, valueDistanceLeft, screenModeLabelLocationY)
+		if s.selectedOption == optionVideoFullscreen {
+			drawTextSelectionRect(s.window, txt.Bounds())
+			drawPossibleSelectionRect(s.window, txt.Bounds().Moved(pixel.Vec{X: distanceBetweenScreenModeBoxes, Y: 0}))
+		} else if s.selectedOption == optionVideoWindowed {
+			drawPossibleSelectionRect(s.window, txt.Bounds())
+			drawTextSelectionRect(s.window, txt.Bounds().Moved(pixel.Vec{X: distanceBetweenScreenModeBoxes, Y: 0}))
+		} else {
+			drawPossibleSelectionRect(s.window, txt.Bounds())
+			drawPossibleSelectionRect(s.window, txt.Bounds().Moved(pixel.Vec{X: distanceBetweenScreenModeBoxes, Y: 0}))
+		}
+	} else {
+		txt = s.drawText(txtSelection, valueDistanceLeft+distanceBetweenScreenModeBoxes, screenModeLabelLocationY)
+		if s.selectedOption == optionVideoWindowed {
+			drawTextSelectionRect(s.window, txt.Bounds())
+			drawPossibleSelectionRect(s.window, txt.Bounds().Moved(pixel.Vec{X: -distanceBetweenScreenModeBoxes, Y: 0}))
+		} else if s.selectedOption == optionVideoFullscreen {
+			drawPossibleSelectionRect(s.window, txt.Bounds())
+			drawTextSelectionRect(s.window, txt.Bounds().Moved(pixel.Vec{X: -distanceBetweenScreenModeBoxes, Y: 0}))
+		} else {
+			drawPossibleSelectionRect(s.window, txt.Bounds())
+			drawPossibleSelectionRect(s.window, txt.Bounds().Moved(pixel.Vec{X: -distanceBetweenScreenModeBoxes, Y: 0}))
+		}
+	}
+
+	s.drawText(txtFullScreen, valueDistanceLeft+s.textDimensions[txtSelection].X+buttonPadding*3, screenModeLabelLocationY)
+	s.drawText(txtWindowed, valueDistanceLeft+distanceBetweenScreenModeBoxes+buttonPadding*3, screenModeLabelLocationY)
 }
 
 func (s *VideoOptionsScreen) TearDown() {
@@ -171,22 +221,27 @@ func (s *VideoOptionsScreen) String() string {
 
 func (s *VideoOptionsScreen) processUserInput() {
 	var uiEventState = s.inputController.GetUiEventStateCombined()
-	if nil != uiEventState {
-		if uiEventState.PressedButton {
-			s.processOptionSelected()
-		} else if uiEventState.MovedDown && s.selectedOption == optionVideoUsePrimaryMonitor {
-			s.selectedOption = optionVideoUseOtherMonitor
-		} else if uiEventState.MovedUp && s.selectedOption == optionVideoUseOtherMonitor {
-			s.selectedOption = optionVideoUsePrimaryMonitor
-		} else if uiEventState.MovedRight && s.selectedOption == optionVideoUseOtherMonitor {
-			s.selectedOption = optionVideoPreviousMonitor
-		} else if uiEventState.MovedLeft && s.selectedOption == optionVideoPreviousMonitor {
-			s.selectedOption = optionVideoUseOtherMonitor
-		} else if uiEventState.MovedRight && s.selectedOption == optionVideoPreviousMonitor {
-			s.selectedOption = optionVideoNextMonitor
-		} else if uiEventState.MovedLeft && s.selectedOption == optionVideoNextMonitor {
-			s.selectedOption = optionVideoPreviousMonitor
+	if nil == uiEventState {
+		return
+	}
+
+focusHandling:
+	for _, fc := range optionVideoFocusChanges {
+		if fc.movedLeft == uiEventState.MovedLeft &&
+			fc.movedRight == uiEventState.MovedRight &&
+			fc.movedDown == uiEventState.MovedDown &&
+			fc.movedUp == uiEventState.MovedUp {
+			for _, i := range fc.currentSelection {
+				if i == s.selectedOption {
+					s.selectedOption = fc.nextSelection
+					break focusHandling
+				}
+			}
 		}
+	}
+
+	if uiEventState.PressedButton {
+		s.processOptionSelected()
 	}
 }
 
@@ -201,7 +256,9 @@ func (s *VideoOptionsScreen) processOptionSelected() {
 	case optionVideoNextMonitor:
 		s.selectNextVideoNextMonitor()
 	case optionVideoFullscreen:
+		s.videoConfig.FullScreen = true
 	case optionVideoWindowed:
+		s.videoConfig.FullScreen = false
 	case optionVideoReduceWindowWidth:
 	case optionVideoIncreaseWindowWidth:
 	case optionVideoReduceWindowHeight:
@@ -238,4 +295,15 @@ func (s *VideoOptionsScreen) selectPreviousVideoNextMonitor() {
 func (s *VideoOptionsScreen) selectNextVideoNextMonitor() {
 	s.selectedMonitorIndex = (s.selectedMonitorIndex + 1) % len(pixelgl.Monitors())
 	s.videoConfig.SelectedMonitor = pixelgl.Monitors()[s.selectedMonitorIndex].Name()
+}
+
+func (s *VideoOptionsScreen) getMaxWidthOfScreenNames() float64 {
+	var result = 0.0
+	for _, m := range pixelgl.Monitors() {
+		var width = fonts.GetTextDimension(s.defaultFontSize, m.Name()).X
+		if width > result {
+			result = width
+		}
+	}
+	return result
 }
