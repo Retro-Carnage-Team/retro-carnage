@@ -8,6 +8,7 @@ import (
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
+	"strconv"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -16,6 +17,8 @@ import (
 )
 
 const (
+	minWindowWidth                  = 1024
+	minWindowHeight                 = 768
 	optionVideoUsePrimaryMonitor    = 1
 	optionVideoUseOtherMonitor      = 2
 	optionVideoPreviousMonitor      = 3
@@ -43,6 +46,18 @@ var (
 		{movedRight: true, currentSelection: []int{optionVideoFullscreen}, nextSelection: optionVideoWindowed},
 		{movedLeft: true, currentSelection: []int{optionVideoWindowed}, nextSelection: optionVideoFullscreen},
 		{movedUp: true, currentSelection: []int{optionVideoFullscreen, optionVideoWindowed}, nextSelection: optionVideoUseOtherMonitor},
+		{movedDown: true, currentSelection: []int{optionVideoFullscreen, optionVideoWindowed}, nextSelection: optionVideoReduceWindowWidth},
+		{movedRight: true, currentSelection: []int{optionVideoReduceWindowWidth}, nextSelection: optionVideoIncreaseWindowWidth},
+		{movedLeft: true, currentSelection: []int{optionVideoIncreaseWindowWidth}, nextSelection: optionVideoReduceWindowWidth},
+		{movedUp: true, currentSelection: []int{optionVideoIncreaseWindowWidth, optionVideoReduceWindowWidth}, nextSelection: optionVideoFullscreen},
+		{movedDown: true, currentSelection: []int{optionVideoIncreaseWindowWidth, optionVideoReduceWindowWidth}, nextSelection: optionVideoReduceWindowHeight},
+		{movedRight: true, currentSelection: []int{optionVideoReduceWindowHeight}, nextSelection: optionVideoIncreaseWindowHeight},
+		{movedLeft: true, currentSelection: []int{optionVideoIncreaseWindowHeight}, nextSelection: optionVideoReduceWindowHeight},
+		{movedUp: true, currentSelection: []int{optionVideoIncreaseWindowHeight, optionVideoReduceWindowHeight}, nextSelection: optionVideoReduceWindowWidth},
+		{movedDown: true, currentSelection: []int{optionVideoIncreaseWindowHeight, optionVideoReduceWindowHeight}, nextSelection: optionVideoSave},
+		{movedRight: true, currentSelection: []int{optionVideoSave}, nextSelection: optionVideoBack},
+		{movedLeft: true, currentSelection: []int{optionVideoBack}, nextSelection: optionVideoSave},
+		{movedUp: true, currentSelection: []int{optionVideoSave, optionVideoBack}, nextSelection: optionVideoReduceWindowHeight},
 	}
 )
 
@@ -55,8 +70,6 @@ type VideoOptionsScreen struct {
 	textDimensions       map[string]*geometry.Point
 	window               *pixelgl.Window
 	selectedMonitorIndex int
-	selectedMonitorMaxX  int
-	selectedMonitorMaxY  int
 	maxWidthScreenName   float64
 }
 
@@ -65,7 +78,7 @@ func (s *VideoOptionsScreen) SetUp() {
 	s.selectedOption = optionVideoUsePrimaryMonitor
 	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtVideoSettings, txtSave, txtBack, txtDecrease,
 		txtFullScreen, txtIncrease, txtMonitor, txtPrimaryMonitor, txtScreenmode, txtVideoSettings, txtWindowed,
-		txtWindowSize, txtSelection, txtOtherMonitor,
+		txtWindowSize, txtSelection, txtOtherMonitor, txtFiveDigits,
 	)
 	s.videoConfig = config.GetConfigService().LoadVideoConfiguration()
 	s.maxWidthScreenName = s.getMaxWidthOfScreenNames()
@@ -75,8 +88,12 @@ func (s *VideoOptionsScreen) SetUp() {
 		if s.videoConfig.SelectedMonitor != "" && m.Name() == s.videoConfig.SelectedMonitor {
 			s.selectedMonitorIndex = i
 			var x, y = m.Size()
-			s.selectedMonitorMaxX = int(x)
-			s.selectedMonitorMaxY = int(y)
+			if s.videoConfig.Width > int(x) {
+				s.videoConfig.Width = int(x)
+			}
+			if s.videoConfig.Height > int(y) {
+				s.videoConfig.Height = int(y)
+			}
 			configuredMonitorFound = true
 		}
 	}
@@ -85,8 +102,8 @@ func (s *VideoOptionsScreen) SetUp() {
 		s.videoConfig.SelectedMonitor = pixelgl.Monitors()[0].Name()
 		s.selectedMonitorIndex = 0
 		var x, y = pixelgl.Monitors()[0].Size()
-		s.selectedMonitorMaxX = int(x)
-		s.selectedMonitorMaxY = int(y)
+		s.videoConfig.Width = int(x)
+		s.videoConfig.Height = int(y)
 	}
 }
 
@@ -118,11 +135,24 @@ func (s *VideoOptionsScreen) Update(_ int64) {
 	var valueDistanceLeft = headlineDistanceLeft + txt.Bounds().W()/2*3
 
 	// Values
-	s.renderMonitorValues(monitorLabelLocationY, valueDistanceLeft)
+	s.renderMonitorValues(valueDistanceLeft, monitorLabelLocationY)
 	s.renderScreenModeValues(valueDistanceLeft, screenModeLabelLocationY)
+	s.renderWindowSizeValues(valueDistanceLeft, windowSizeLabelLocationY)
+
+	var lineLocationX = s.window.Bounds().W() - headlineDistanceTop - s.textDimensions[txtBack].X
+	var lineLocationY = headlineDistanceTop
+	txt = s.drawText(txtBack, lineLocationX, float64(lineLocationY))
+	if s.selectedOption == optionVideoBack {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	}
+
+	txt = s.drawText(txtSave, lineLocationX-s.textDimensions[txtSave].X-3*buttonPadding, float64(lineLocationY))
+	if s.selectedOption == optionVideoSave {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	}
 }
 
-func (s *VideoOptionsScreen) renderMonitorValues(monitorLabelLocationY float64, valueDistanceLeft float64) {
+func (s *VideoOptionsScreen) renderMonitorValues(valueDistanceLeft float64, monitorLabelLocationY float64) {
 	var primaryMonitorValueLocationY = monitorLabelLocationY
 	var otherMonitorValueLocationY = monitorLabelLocationY - 2.5*s.textDimensions[txtMonitor].Y
 
@@ -206,6 +236,47 @@ func (s *VideoOptionsScreen) renderScreenModeValues(valueDistanceLeft float64, s
 	s.drawText(txtWindowed, valueDistanceLeft+distanceBetweenScreenModeBoxes+buttonPadding*3, screenModeLabelLocationY)
 }
 
+func (s *VideoOptionsScreen) renderWindowSizeValues(valueDistanceLeft float64, windowSizeLabelLocationY float64) {
+	var txt = s.drawText(txtDecrease, valueDistanceLeft, windowSizeLabelLocationY)
+	if s.selectedOption == optionVideoReduceWindowWidth {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	} else {
+		drawPossibleSelectionRect(s.window, txt.Bounds())
+	}
+
+	var widthLeft = txt.Bounds().Max.X +
+		buttonPadding*3 +
+		(s.textDimensions[txtFiveDigits].X-fonts.GetTextDimension(s.defaultFontSize, strconv.Itoa(s.videoConfig.Width)).X)/2
+	s.drawText(strconv.Itoa(s.videoConfig.Width), widthLeft, windowSizeLabelLocationY)
+
+	txt = s.drawText(txtIncrease, txt.Bounds().Max.X+buttonPadding*6+s.textDimensions[txtFiveDigits].X, windowSizeLabelLocationY)
+	if s.selectedOption == optionVideoIncreaseWindowWidth {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	} else {
+		drawPossibleSelectionRect(s.window, txt.Bounds())
+	}
+
+	var secondLineY = windowSizeLabelLocationY - 2.5*s.textDimensions[txtMonitor].Y
+	txt = s.drawText(txtDecrease, valueDistanceLeft, secondLineY)
+	if s.selectedOption == optionVideoReduceWindowHeight {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	} else {
+		drawPossibleSelectionRect(s.window, txt.Bounds())
+	}
+
+	var heightLeft = txt.Bounds().Max.X +
+		buttonPadding*3 +
+		(s.textDimensions[txtFiveDigits].X-fonts.GetTextDimension(s.defaultFontSize, strconv.Itoa(s.videoConfig.Height)).X)/2
+	s.drawText(strconv.Itoa(s.videoConfig.Height), heightLeft, secondLineY)
+
+	txt = s.drawText(txtIncrease, txt.Bounds().Max.X+buttonPadding*6+s.textDimensions[txtFiveDigits].X, secondLineY)
+	if s.selectedOption == optionVideoIncreaseWindowHeight {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	} else {
+		drawPossibleSelectionRect(s.window, txt.Bounds())
+	}
+}
+
 func (s *VideoOptionsScreen) TearDown() {
 	// no tear down action required
 }
@@ -267,9 +338,13 @@ func (s *VideoOptionsScreen) processOptionSelected() {
 	case optionVideoWindowed:
 		s.videoConfig.FullScreen = false
 	case optionVideoReduceWindowWidth:
+		s.decreaseScreenWidth()
 	case optionVideoIncreaseWindowWidth:
+		s.increaseScreenWidth()
 	case optionVideoReduceWindowHeight:
+		s.decreaseScreenHeight()
 	case optionVideoIncreaseWindowHeight:
+		s.increaseScreenHeight()
 	case optionVideoSave:
 		err := config.GetConfigService().SaveVideoConfiguration(s.videoConfig)
 		if nil != err {
@@ -302,6 +377,34 @@ func (s *VideoOptionsScreen) selectPreviousVideoNextMonitor() {
 func (s *VideoOptionsScreen) selectNextVideoNextMonitor() {
 	s.selectedMonitorIndex = (s.selectedMonitorIndex + 1) % len(pixelgl.Monitors())
 	s.videoConfig.SelectedMonitor = pixelgl.Monitors()[s.selectedMonitorIndex].Name()
+}
+
+func (s *VideoOptionsScreen) decreaseScreenWidth() {
+	if s.videoConfig.Width > minWindowWidth+10 {
+		s.videoConfig.Width = s.videoConfig.Width - 10
+	}
+}
+
+func (s *VideoOptionsScreen) increaseScreenWidth() {
+	s.videoConfig.Width = s.videoConfig.Width + 10
+	var x, _ = pixelgl.Monitors()[s.selectedMonitorIndex].Size()
+	if s.videoConfig.Width > int(x) {
+		s.videoConfig.Width = int(x)
+	}
+}
+
+func (s *VideoOptionsScreen) decreaseScreenHeight() {
+	if s.videoConfig.Height > minWindowHeight+10 {
+		s.videoConfig.Height = s.videoConfig.Height - 10
+	}
+}
+
+func (s *VideoOptionsScreen) increaseScreenHeight() {
+	s.videoConfig.Height = s.videoConfig.Height + 10
+	var _, y = pixelgl.Monitors()[s.selectedMonitorIndex].Size()
+	if s.videoConfig.Height > int(y) {
+		s.videoConfig.Height = int(y)
+	}
 }
 
 func (s *VideoOptionsScreen) getMaxWidthOfScreenNames() float64 {

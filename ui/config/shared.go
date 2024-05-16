@@ -16,6 +16,7 @@ const (
 	txtAudioSettings     = "AUDIO SETTINGS"
 	txtBack              = "BACK"
 	txtDecrease          = "-"
+	txtFiveDigits        = "55555"
 	txtFullScreen        = "FULLSCREEN"
 	txtHeadlineOptions   = "OPTIONS"
 	txtIncrease          = "+"
