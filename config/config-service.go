@@ -21,6 +21,58 @@ func GetConfigService() *ConfigService {
 	return configService
 }
 
+// LoadAudioConfigurations reads the audio configuration that is stored on disk.
+// Returns configuration with default values if no data can be found.
+func (cs *ConfigService) LoadAudioConfiguration() AudioConfiguration {
+	filePath, err := cs.buildAudioConfigurationFilePath()
+	if nil != err {
+		logging.Warning.Printf("failed to compute audio configuration file path")
+		return newDefaultAudioConfiguration()
+	}
+
+	logging.Trace.Printf("loading audio configuration from %s", filePath)
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			logging.Info.Printf("audio config file not present %s", filePath)
+		} else {
+			logging.Warning.Printf("failed to read audio config %s", filePath)
+		}
+		return newDefaultAudioConfiguration()
+	}
+
+	var config = &AudioConfiguration{}
+	err = json.Unmarshal(data, config)
+	if err != nil {
+		logging.Warning.Printf("failed to deserialize audio config %s", filePath)
+	}
+	return *config
+}
+
+// SaveAudioConfiguration stores the given audio configuration
+func (cs *ConfigService) SaveAudioConfiguration(ac AudioConfiguration) error {
+	var err = cs.initializeConfigurationFolder()
+	if nil != err {
+		return err
+	}
+
+	filePath, err := cs.buildAudioConfigurationFilePath()
+	if nil != err {
+		logging.Warning.Println("failed to calculate audio config path")
+		return err
+	}
+
+	logging.Trace.Printf("saving audio configuration to %s", filePath)
+	jsonData, _ := json.Marshal(ac)
+	err = os.WriteFile(filePath, jsonData, 0600)
+	if err != nil {
+		logging.Warning.Printf("failed to write audio config %s", filePath)
+		return err
+	}
+
+	return nil
+}
+
 // LoadInputDeviceConfigurations reads the controller configurations that are stored on disk.
 // Returns empty array if no configurations can be found.
 func (cs *ConfigService) LoadInputDeviceConfigurations() []InputDeviceConfiguration {
@@ -105,7 +157,7 @@ func (cs *ConfigService) LoadVideoConfiguration() VideoConfiguration {
 	return *config
 }
 
-// SaveInputDeviceConfiguration stores the given video configuration
+// SaveVideoConfiguration stores the given video configuration
 func (cs *ConfigService) SaveVideoConfiguration(vc VideoConfiguration) error {
 	var err = cs.initializeConfigurationFolder()
 	if nil != err {
@@ -127,6 +179,15 @@ func (cs *ConfigService) SaveVideoConfiguration(vc VideoConfiguration) error {
 	}
 
 	return nil
+}
+
+func (cs *ConfigService) buildAudioConfigurationFilePath() (string, error) {
+	var folder, err = cs.buildConfigurationFolderPath()
+	if err != nil {
+		return "", err
+	}
+
+	return path.Join(folder, "audio.json"), nil
 }
 
 func (cs *ConfigService) buildInputDeviceConfigurationFilePath(playerIdx int) (string, error) {
