@@ -17,20 +17,20 @@ import (
 )
 
 const (
-	minWindowWidth                  = 1024
-	minWindowHeight                 = 768
-	optionVideoUsePrimaryMonitor    = 1
-	optionVideoUseOtherMonitor      = 2
-	optionVideoPreviousMonitor      = 3
-	optionVideoNextMonitor          = 4
-	optionVideoFullscreen           = 5
-	optionVideoWindowed             = 6
-	optionVideoReduceWindowWidth    = 7
-	optionVideoIncreaseWindowWidth  = 8
-	optionVideoReduceWindowHeight   = 9
-	optionVideoIncreaseWindowHeight = 10
-	optionVideoSave                 = 11
-	optionVideoBack                 = 12
+	minWindowWidth                   = 1024
+	minWindowHeight                  = 768
+	optionVideoUsePrimaryMonitor int = iota
+	optionVideoUseOtherMonitor
+	optionVideoPreviousMonitor
+	optionVideoNextMonitor
+	optionVideoFullscreen
+	optionVideoWindowed
+	optionVideoReduceWindowWidth
+	optionVideoIncreaseWindowWidth
+	optionVideoReduceWindowHeight
+	optionVideoIncreaseWindowHeight
+	optionVideoSave
+	optionVideoBack
 )
 
 var (

@@ -22,6 +22,8 @@ const (
 	txtHeadlineOptions   = "OPTIONS"
 	txtIncrease          = "+"
 	txtInputSettings     = "INPUT SETTINGS"
+	txtInputSettingsP1   = "INPUT SETTINGS PLAYER 1"
+	txtInputSettingsP2   = "INPUT SETTINGS PLAYER 2"
 	txtMonitor           = "MONITOR"
 	txtMusic             = "MUSIC"
 	txtNotConfigured     = "NOT CONFIGURED"

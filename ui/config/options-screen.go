@@ -15,10 +15,10 @@ import (
 )
 
 const (
-	optionAudio    = 1
-	optionVideo    = 2
-	optionControls = 3
-	optionBack     = 4
+	optionAudio int = iota
+	optionVideo
+	optionControls
+	optionBack
 )
 
 type OptionsScreen struct {

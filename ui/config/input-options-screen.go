@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	optionInputSelectPlayer1 = 1
-	optionInputSelectPlayer2 = 2
-	optionInputBack          = 3
+	optionInputSelectPlayer1 int = iota
+	optionInputSelectPlayer2
+	optionInputBack
 )
 
 var (

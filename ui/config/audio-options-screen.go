@@ -17,10 +17,10 @@ import (
 )
 
 const (
-	optionAudioPlayEffects = 1
-	optionAudioPlayMusic   = 2
-	optionAudioSave        = 3
-	optionAudioBack        = 4
+	optionAudioPlayEffects int = iota
+	optionAudioPlayMusic
+	optionAudioSave
+	optionAudioBack
 )
 
 var (
