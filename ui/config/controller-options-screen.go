@@ -28,6 +28,148 @@ const (
 )
 
 var (
+	gamepadButtonNames = map[pixelgl.GamepadButton]string{
+		pixelgl.ButtonA:           "A",
+		pixelgl.ButtonB:           "B",
+		pixelgl.ButtonX:           "X",
+		pixelgl.ButtonY:           "Y",
+		pixelgl.ButtonLeftBumper:  "LEFT BUMPER",
+		pixelgl.ButtonRightBumper: "RIGHT BUMPER",
+		pixelgl.ButtonBack:        "BACK",
+		pixelgl.ButtonStart:       "START",
+		pixelgl.ButtonGuide:       "GUIDE",
+		pixelgl.ButtonLeftThumb:   "LEFT THUMB",
+		pixelgl.ButtonRightThumb:  "RIGHT THUMB",
+		pixelgl.ButtonDpadUp:      "DPAD UP",
+		pixelgl.ButtonDpadRight:   "DPAD RIGHT",
+		pixelgl.ButtonDpadDown:    "DPAD DOWN",
+		pixelgl.ButtonDpadLeft:    "DPAD LEFT",
+	}
+
+	keyboardButtons = []pixelgl.Button{
+		pixelgl.KeySpace,
+		pixelgl.KeyApostrophe,
+		pixelgl.KeyComma,
+		pixelgl.KeyMinus,
+		pixelgl.KeyPeriod,
+		pixelgl.KeySlash,
+		pixelgl.Key0,
+		pixelgl.Key1,
+		pixelgl.Key2,
+		pixelgl.Key3,
+		pixelgl.Key4,
+		pixelgl.Key5,
+		pixelgl.Key6,
+		pixelgl.Key7,
+		pixelgl.Key8,
+		pixelgl.Key9,
+		pixelgl.KeySemicolon,
+		pixelgl.KeyEqual,
+		pixelgl.KeyA,
+		pixelgl.KeyB,
+		pixelgl.KeyC,
+		pixelgl.KeyD,
+		pixelgl.KeyE,
+		pixelgl.KeyF,
+		pixelgl.KeyG,
+		pixelgl.KeyH,
+		pixelgl.KeyI,
+		pixelgl.KeyJ,
+		pixelgl.KeyK,
+		pixelgl.KeyL,
+		pixelgl.KeyM,
+		pixelgl.KeyN,
+		pixelgl.KeyO,
+		pixelgl.KeyP,
+		pixelgl.KeyQ,
+		pixelgl.KeyR,
+		pixelgl.KeyS,
+		pixelgl.KeyT,
+		pixelgl.KeyU,
+		pixelgl.KeyV,
+		pixelgl.KeyW,
+		pixelgl.KeyX,
+		pixelgl.KeyY,
+		pixelgl.KeyZ,
+		pixelgl.KeyLeftBracket,
+		pixelgl.KeyBackslash,
+		pixelgl.KeyRightBracket,
+		pixelgl.KeyGraveAccent,
+		pixelgl.KeyWorld1,
+		pixelgl.KeyWorld2,
+		pixelgl.KeyEscape,
+		pixelgl.KeyEnter,
+		pixelgl.KeyTab,
+		pixelgl.KeyBackspace,
+		pixelgl.KeyInsert,
+		pixelgl.KeyDelete,
+		pixelgl.KeyRight,
+		pixelgl.KeyLeft,
+		pixelgl.KeyDown,
+		pixelgl.KeyUp,
+		pixelgl.KeyPageUp,
+		pixelgl.KeyPageDown,
+		pixelgl.KeyHome,
+		pixelgl.KeyEnd,
+		pixelgl.KeyCapsLock,
+		pixelgl.KeyScrollLock,
+		pixelgl.KeyNumLock,
+		pixelgl.KeyPrintScreen,
+		pixelgl.KeyPause,
+		pixelgl.KeyF1,
+		pixelgl.KeyF2,
+		pixelgl.KeyF3,
+		pixelgl.KeyF4,
+		pixelgl.KeyF5,
+		pixelgl.KeyF6,
+		pixelgl.KeyF7,
+		pixelgl.KeyF8,
+		pixelgl.KeyF9,
+		pixelgl.KeyF10,
+		pixelgl.KeyF11,
+		pixelgl.KeyF12,
+		pixelgl.KeyF13,
+		pixelgl.KeyF14,
+		pixelgl.KeyF15,
+		pixelgl.KeyF16,
+		pixelgl.KeyF17,
+		pixelgl.KeyF18,
+		pixelgl.KeyF19,
+		pixelgl.KeyF20,
+		pixelgl.KeyF21,
+		pixelgl.KeyF22,
+		pixelgl.KeyF23,
+		pixelgl.KeyF24,
+		pixelgl.KeyF25,
+		pixelgl.KeyKP0,
+		pixelgl.KeyKP1,
+		pixelgl.KeyKP2,
+		pixelgl.KeyKP3,
+		pixelgl.KeyKP4,
+		pixelgl.KeyKP5,
+		pixelgl.KeyKP6,
+		pixelgl.KeyKP7,
+		pixelgl.KeyKP8,
+		pixelgl.KeyKP9,
+		pixelgl.KeyKPDecimal,
+		pixelgl.KeyKPDivide,
+		pixelgl.KeyKPMultiply,
+		pixelgl.KeyKPSubtract,
+		pixelgl.KeyKPAdd,
+		pixelgl.KeyKPEnter,
+		pixelgl.KeyKPEqual,
+		pixelgl.KeyLeftShift,
+		pixelgl.KeyLeftControl,
+		pixelgl.KeyLeftAlt,
+		pixelgl.KeyLeftSuper,
+		pixelgl.KeyRightShift,
+		pixelgl.KeyRightControl,
+		pixelgl.KeyRightAlt,
+		pixelgl.KeyRightSuper,
+		pixelgl.KeyMenu,
+		pixelgl.KeyLast,
+	}
+
 	optionControllerFocusChanges = []focusChange{
 		{movedRight: true, currentSelection: []int{optionControllerPreviousController}, nextSelection: optionControllerNextController},
 		{movedLeft: true, currentSelection: []int{optionControllerNextController}, nextSelection: optionControllerPreviousController},
@@ -57,6 +199,7 @@ type ControllerOptionsScreen struct {
 	selectedDeviceIndex     int
 	selectedOption          int
 	textDimensions          map[string]*geometry.Point
+	waitForInput            bool
 	window                  *pixelgl.Window
 }
 
@@ -85,7 +228,11 @@ func (s *ControllerOptionsScreen) SetUp() {
 }
 
 func (s *ControllerOptionsScreen) Update(_ int64) {
-	s.processUserInput()
+	if !s.waitForInput {
+		s.processUserInput()
+	} else {
+		s.assignSelectedButton()
+	}
 
 	// draw headline
 	var headline = txtInputSettingsP1
@@ -125,6 +272,9 @@ func (s *ControllerOptionsScreen) Update(_ int64) {
 	// Values
 	s.renderControllerSelectionValues(valueDistanceLeft, controllerLabelLocationY)
 	s.renderDigitalAxisValue(valueDistanceLeft, axisLabelLocationY)
+	s.renderActionValue(valueDistanceLeft, actionLabelLocationY)
+	s.renderNextWeaponValue(valueDistanceLeft, nextWeaponLabelLocationY)
+	s.renderPreviousWeaponValue(valueDistanceLeft, previousWeaponLabelLocationY)
 
 	// Action buttons
 	var lineLocationX = s.window.Bounds().W() - headlineDistanceTop - s.textDimensions[txtBack].X
@@ -168,6 +318,54 @@ func (s *ControllerOptionsScreen) renderDigitalAxisValue(valueDistanceLeft float
 	}
 
 	if s.selectedOption == optionControllerDigitalAxis {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	} else {
+		drawPossibleSelectionRect(s.window, txt.Bounds())
+	}
+}
+
+func (s *ControllerOptionsScreen) renderActionValue(valueDistanceLeft float64, actionLabelLocationY float64) {
+	var output string
+	if s.selectedOption == optionControllerAction && s.waitForInput {
+		output = txtPressButton
+	} else {
+		output = s.getDisplayTextForValue(s.inputConfig.InputFire)
+	}
+
+	var txt = s.drawText(output, valueDistanceLeft, actionLabelLocationY, common.White)
+	if s.selectedOption == optionControllerAction {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	} else {
+		drawPossibleSelectionRect(s.window, txt.Bounds())
+	}
+}
+
+func (s *ControllerOptionsScreen) renderNextWeaponValue(valueDistanceLeft float64, nextWeaponLabelLocationY float64) {
+	var output string
+	if s.selectedOption == optionControllerNextWeapon && s.waitForInput {
+		output = txtPressButton
+	} else {
+		output = s.getDisplayTextForValue(s.inputConfig.InputNextWeapon)
+	}
+
+	var txt = s.drawText(output, valueDistanceLeft, nextWeaponLabelLocationY, common.White)
+	if s.selectedOption == optionControllerNextWeapon {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	} else {
+		drawPossibleSelectionRect(s.window, txt.Bounds())
+	}
+}
+
+func (s *ControllerOptionsScreen) renderPreviousWeaponValue(valueDistanceLeft float64, previousWeaponLabelLocationY float64) {
+	var output string
+	if s.selectedOption == optionControllerPreviousWeapon && s.waitForInput {
+		output = txtPressButton
+	} else {
+		output = s.getDisplayTextForValue(s.inputConfig.InputPreviousWeapon)
+	}
+
+	var txt = s.drawText(output, valueDistanceLeft, previousWeaponLabelLocationY, common.White)
+	if s.selectedOption == optionControllerPreviousWeapon {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
@@ -228,6 +426,8 @@ func (s *ControllerOptionsScreen) processOptionSelected() {
 		s.selectNextController()
 	case optionControllerDigitalAxis:
 		s.inputConfig.GamepadConfiguration.HasDigitalAxis = !s.inputConfig.GamepadConfiguration.HasDigitalAxis
+	case optionControllerAction, optionControllerNextWeapon, optionControllerPreviousWeapon:
+		s.waitForInput = true
 	case optionControllerSave:
 		var err = config.GetConfigService().SaveInputDeviceConfiguration(s.inputConfig, s.PlayerIdx)
 		if nil != err {
@@ -238,6 +438,36 @@ func (s *ControllerOptionsScreen) processOptionSelected() {
 		s.screenChangeRequired(common.ConfigurationControls)
 	default:
 		logging.Error.Fatal("Unexpected selection in ControllerOptionsScreen")
+	}
+}
+
+func (s *ControllerOptionsScreen) assignSelectedButton() {
+	var selectedValue = -1
+	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
+		for _, btn := range keyboardButtons {
+			if s.window.Pressed(btn) {
+				selectedValue = int(btn)
+				break
+			}
+		}
+	} // else {
+	// TODO
+	//}
+
+	if selectedValue == -1 {
+		return
+	}
+
+	switch s.selectedOption {
+	case optionControllerAction:
+		s.inputConfig.InputFire = selectedValue
+		s.waitForInput = false
+	case optionControllerNextWeapon:
+		s.inputConfig.InputNextWeapon = selectedValue
+		s.waitForInput = false
+	case optionControllerPreviousWeapon:
+		s.inputConfig.InputPreviousWeapon = selectedValue
+		s.waitForInput = false
 	}
 }
 
@@ -273,4 +503,13 @@ func (s *ControllerOptionsScreen) getMaxWidthOfControllerNames() float64 {
 		}
 	}
 	return result
+}
+
+func (s *ControllerOptionsScreen) getDisplayTextForValue(value int) string {
+	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
+		return pixelgl.Button(value).String()
+	}
+
+	var gpButton = pixelgl.GamepadButton(value)
+	return gamepadButtonNames[gpButton]
 }

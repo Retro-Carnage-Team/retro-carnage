@@ -36,6 +36,7 @@ const (
 	txtPlayer1           = "PLAYER 1"
 	txtPlayer2           = "PLAYER 2"
 	txtPrevWeapon        = "PREVIOUS WEAPON"
+	txtPressButton       = "PRESS BUTTON TO SELECT"
 	txtPrimaryMonitor    = "USE PRIMARY MONITOR"
 	txtSave              = "SAVE"
 	txtScreenmode        = "SCREEN MODE"
