@@ -330,9 +330,9 @@ func (s *VideoOptionsScreen) processOptionSelected() {
 	case optionVideoUseOtherMonitor:
 		s.videoConfig.UsePrimaryMonitor = false
 	case optionVideoPreviousMonitor:
-		s.selectPreviousVideoNextMonitor()
+		s.selectPreviousMonitor()
 	case optionVideoNextMonitor:
-		s.selectNextVideoNextMonitor()
+		s.selectNextMonitor()
 	case optionVideoFullscreen:
 		s.videoConfig.FullScreen = true
 	case optionVideoWindowed:
@@ -366,7 +366,7 @@ func (s *VideoOptionsScreen) drawText(output string, x float64, y float64) *text
 	return txt
 }
 
-func (s *VideoOptionsScreen) selectPreviousVideoNextMonitor() {
+func (s *VideoOptionsScreen) selectPreviousMonitor() {
 	s.selectedMonitorIndex = s.selectedMonitorIndex - 1
 	if s.selectedMonitorIndex < 0 {
 		s.selectedMonitorIndex = len(pixelgl.Monitors()) - 1
@@ -374,7 +374,7 @@ func (s *VideoOptionsScreen) selectPreviousVideoNextMonitor() {
 	s.videoConfig.SelectedMonitor = pixelgl.Monitors()[s.selectedMonitorIndex].Name()
 }
 
-func (s *VideoOptionsScreen) selectNextVideoNextMonitor() {
+func (s *VideoOptionsScreen) selectNextMonitor() {
 	s.selectedMonitorIndex = (s.selectedMonitorIndex + 1) % len(pixelgl.Monitors())
 	s.videoConfig.SelectedMonitor = pixelgl.Monitors()[s.selectedMonitorIndex].Name()
 }

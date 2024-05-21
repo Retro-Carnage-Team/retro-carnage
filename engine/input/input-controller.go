@@ -159,13 +159,12 @@ func (c *InputController) GetUiEventStateCombined() *UiEventState {
 
 // GetInputDeviceInfos returns a list of all controllers that are available
 func (c *InputController) GetInputDeviceInfos() []InputDeviceInfo {
-	var result = append(
-		make([]InputDeviceInfo, 0),
-		InputDeviceInfo{
+	var result = []InputDeviceInfo{
+		{
 			DeviceName:    config.DeviceNameKeyboard,
 			JoystickIndex: -1,
 		},
-	)
+	}
 	for _, j := range joysticks {
 		if c.window.JoystickPresent(j) {
 			var joystick = InputDeviceInfo{DeviceName: c.window.JoystickName(j), JoystickIndex: int(j)}
