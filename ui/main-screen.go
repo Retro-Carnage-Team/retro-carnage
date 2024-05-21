@@ -35,7 +35,7 @@ func (ms *MainScreen) Initialize() {
 	ms.inputCtrl.AssignInputDevicesToPlayers()
 
 	ms.clientScreen = &loading.Screen{}
-	ms.setUpScreen(ms.clientScreen)
+	ms.setUpScreen()
 
 	ms.lastUpdate = time.Now()
 }
@@ -101,15 +101,15 @@ func (ms *MainScreen) RunMainLoop() {
 		if nil != ms.nextScreen {
 			ms.clientScreen.TearDown()
 			ms.clientScreen = ms.nextScreen
-			ms.setUpScreen(ms.clientScreen)
+			ms.setUpScreen()
 			ms.nextScreen = nil
 		}
 	}
 }
 
-func (ms *MainScreen) setUpScreen(aScreen common.Screen) {
-	aScreen.SetInputController(ms.inputCtrl)
-	aScreen.SetScreenChangeCallback(ms.requireScreenChange)
-	aScreen.SetWindow(ms.Window)
-	aScreen.SetUp()
+func (ms *MainScreen) setUpScreen() {
+	ms.clientScreen.SetInputController(ms.inputCtrl)
+	ms.clientScreen.SetScreenChangeCallback(ms.requireScreenChange)
+	ms.clientScreen.SetWindow(ms.Window)
+	ms.clientScreen.SetUp()
 }

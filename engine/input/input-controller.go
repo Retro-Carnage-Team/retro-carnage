@@ -27,9 +27,10 @@ type inputDeviceWithState struct {
 }
 
 type InputController struct {
-	deviceStateCombined *InputDeviceState
-	inputSources        []inputDeviceWithState
-	window              *pixelgl.Window
+	deviceConfigurations []config.InputDeviceConfiguration
+	deviceStateCombined  *InputDeviceState
+	inputSources         []inputDeviceWithState
+	window               *pixelgl.Window
 }
 
 func NewController(window *pixelgl.Window) InputController {
@@ -69,7 +70,9 @@ func (c *InputController) GetInputDeviceState(playerIdx int) (*InputDeviceState,
 }
 
 func (c *InputController) getControllerDeviceStateCombined() *InputDeviceState {
-	var deviceConfigurations = c.GetInputDeviceConfigurations()
+	if nil == c.deviceConfigurations {
+		c.deviceConfigurations = c.GetInputDeviceConfigurations()
+	}
 
 	var result *InputDeviceState = nil
 	for _, j := range joysticks {
@@ -78,7 +81,7 @@ func (c *InputController) getControllerDeviceStateCombined() *InputDeviceState {
 		}
 
 		var device inputDevice = nil
-		for _, cfg := range deviceConfigurations {
+		for _, cfg := range c.deviceConfigurations {
 			if cfg.GamepadConfiguration.JoystickIndex == int(j) && cfg.DeviceName == c.window.JoystickName(j) {
 				device = c.buildInputDevice(cfg)
 			}
