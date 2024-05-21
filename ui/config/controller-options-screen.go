@@ -28,6 +28,24 @@ const (
 )
 
 var (
+	gamepadButtons = []pixelgl.GamepadButton{
+		pixelgl.ButtonA,
+		pixelgl.ButtonB,
+		pixelgl.ButtonX,
+		pixelgl.ButtonY,
+		pixelgl.ButtonLeftBumper,
+		pixelgl.ButtonRightBumper,
+		pixelgl.ButtonBack,
+		pixelgl.ButtonStart,
+		pixelgl.ButtonGuide,
+		pixelgl.ButtonLeftThumb,
+		pixelgl.ButtonRightThumb,
+		pixelgl.ButtonDpadUp,
+		pixelgl.ButtonDpadRight,
+		pixelgl.ButtonDpadDown,
+		pixelgl.ButtonDpadLeft,
+	}
+
 	gamepadButtonNames = map[pixelgl.GamepadButton]string{
 		pixelgl.ButtonA:           "A",
 		pixelgl.ButtonB:           "B",
@@ -389,7 +407,10 @@ func (s *ControllerOptionsScreen) SetWindow(window *pixelgl.Window) {
 }
 
 func (s *ControllerOptionsScreen) String() string {
-	return string(common.ConfigurationVideo)
+	if s.PlayerIdx == 0 {
+		return string(common.ConfigurationControlsP1)
+	}
+	return string(common.ConfigurationControlsP2)
 }
 
 func (s *ControllerOptionsScreen) processUserInput() {
@@ -445,14 +466,19 @@ func (s *ControllerOptionsScreen) assignSelectedButton() {
 	var selectedValue = -1
 	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
 		for _, btn := range keyboardButtons {
-			if s.window.Pressed(btn) {
+			if s.window.JustPressed(btn) {
 				selectedValue = int(btn)
 				break
 			}
 		}
-	} // else {
-	// TODO
-	//}
+	} else {
+		for _, btn := range gamepadButtons {
+			if s.window.JoystickJustPressed(pixelgl.Joystick(s.inputConfig.GamepadConfiguration.JoystickIndex), btn) {
+				selectedValue = int(btn)
+				break
+			}
+		}
+	}
 
 	if selectedValue == -1 {
 		return

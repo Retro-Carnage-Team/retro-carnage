@@ -42,6 +42,7 @@ type InputOptionsScreen struct {
 }
 
 func (s *InputOptionsScreen) SetUp() {
+	logging.Info.Println("InputOptionsScreen.Setup")
 	s.defaultFontSize = fonts.DefaultFontSize()
 	s.selectedOption = optionAudioPlayEffects
 	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtInputSettings, txtBack, txtPlayer1, txtPlayer2, txtNotConfigured)
@@ -118,7 +119,7 @@ func (s *InputOptionsScreen) SetWindow(window *pixelgl.Window) {
 }
 
 func (s *InputOptionsScreen) String() string {
-	return string(common.ConfigurationVideo)
+	return string(common.ConfigurationControls)
 }
 
 func (s *InputOptionsScreen) processUserInput() {
