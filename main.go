@@ -16,23 +16,26 @@ import (
 func run() {
 	var configuration = config.GetConfigService().LoadVideoConfiguration()
 	var monitor = configuration.GetConfiguredMonitor()
-	var pixelX, pixelY = monitor.Size()
+	var monitorW, monitorH = monitor.Size()
 
 	var cfg pixelgl.WindowConfig
 	if configuration.FullScreen {
 		cfg = pixelgl.WindowConfig{
-			Bounds:  pixel.R(0, 0, pixelX, pixelY),
+			Bounds:  pixel.R(0, 0, monitorW, monitorH),
 			Monitor: monitor,
 			Title:   "RETRO CARNAGE",
 			VSync:   true,
 		}
 	} else {
-		pixelX = float64(configuration.Width)
-		pixelY = float64(configuration.Height)
+		var confW = float64(configuration.Width)
+		var confH = float64(configuration.Height)
+		var x = (monitorW - confW) / 2
+		var y = (monitorH - confH) / 2
 		cfg = pixelgl.WindowConfig{
-			Bounds: pixel.R(0, 0, pixelX, pixelY),
-			Title:  "RETRO CARNAGE",
-			VSync:  true,
+			Bounds:   pixel.R(0, 0, confW, confH),
+			Position: pixel.Vec{X: x, Y: y},
+			Title:    "RETRO CARNAGE",
+			VSync:    true,
 		}
 	}
 
@@ -44,7 +47,7 @@ func run() {
 	win.SetCursorVisible(false)
 	win.SetSmooth(true)
 
-	fonts.Initialize(pixelX)
+	fonts.Initialize(monitorW)
 	assets.NewStereo()
 
 	var mainScreen = ui.MainScreen{Monitor: monitor, Window: win}
