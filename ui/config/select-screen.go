@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	optionOnePlayer int = iota
+	optionOnePlayer int = iota + 1
 	optionTwoPlayers
 	optionOptions
 	txtSelectOnePlayerGame = "START 1 PLAYER GAME"
