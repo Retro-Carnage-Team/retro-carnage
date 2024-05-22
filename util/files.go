@@ -1,7 +1,7 @@
 package util
 
 import (
-	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -10,7 +10,7 @@ func GetJsonFilesOfDirectory(directory string) ([]string, error) {
 		directory += "/"
 	}
 
-	files, err := ioutil.ReadDir(directory)
+	files, err := os.ReadDir(directory)
 	if err != nil {
 		return nil, err
 	}

@@ -2,14 +2,15 @@ package highscore
 
 import (
 	"fmt"
+	"math"
+	"retro-carnage/assets"
+	"retro-carnage/input"
+	"retro-carnage/ui/common"
+	"retro-carnage/ui/common/fonts"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	"math"
-	"retro-carnage/assets"
-	"retro-carnage/engine/input"
-	"retro-carnage/ui/common"
-	"retro-carnage/ui/common/fonts"
 )
 
 const (
@@ -18,14 +19,14 @@ const (
 
 // Screen is the High Score table screen.
 type Screen struct {
-	inputController      input.Controller
+	inputController      input.InputController
 	screenChangeRequired common.ScreenChangeCallback
 	stereo               *assets.Stereo
 	window               *pixelgl.Window
 }
 
 // SetInputController passes the input controller to the screen.
-func (s *Screen) SetInputController(inputCtrl input.Controller) {
+func (s *Screen) SetInputController(inputCtrl input.InputController) {
 	s.inputController = inputCtrl
 }
 
@@ -48,7 +49,7 @@ func (s *Screen) SetUp() {
 // Update gets called once during each rendering cycle.
 // It can be used to draw the content of the Screen.
 func (s *Screen) Update(_ int64) {
-	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.ControllerUiEventStateCombined().PressedButton {
+	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.GetUiEventStateCombined().PressedButton {
 		s.screenChangeRequired(common.Title)
 	} else {
 		s.drawTitle()

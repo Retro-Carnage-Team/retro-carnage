@@ -7,7 +7,7 @@ import (
 	"retro-carnage/engine"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
@@ -52,7 +52,7 @@ type Screen struct {
 	backgroundImageSprite *pixel.Sprite
 	checkSprite           *pixel.Sprite
 	defaultFontSize       int
-	inputController       input.Controller
+	inputController       input.InputController
 	inventoryController   engine.InventoryController
 	itemNameToSprite      map[string]*pixel.Sprite
 	items                 []*inventoryItem
@@ -67,7 +67,7 @@ type Screen struct {
 	window                *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(controller input.Controller) {
+func (s *Screen) SetInputController(controller input.InputController) {
 	s.inputController = controller
 }
 
@@ -227,7 +227,7 @@ func (s *Screen) drawBottomBar() {
 }
 
 func (s *Screen) processUserInput() {
-	var eventState, err = s.inputController.ControllerUiEventState(s.PlayerIdx)
+	var eventState, err = s.inputController.GetUiEventState(s.PlayerIdx)
 	if nil != err {
 		logging.Warning.Printf("Failed to get game controller state: %v", err)
 	} else if nil != eventState {

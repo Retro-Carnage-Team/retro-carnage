@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
@@ -17,7 +17,7 @@ import (
 type Screen struct {
 	cursorVisible        bool
 	duration             int64
-	inputController      input.Controller
+	inputController      input.InputController
 	PlayerIdx            int
 	playerName           string
 	screenChangeRequired common.ScreenChangeCallback
@@ -31,7 +31,7 @@ const (
 )
 
 // SetInputController passes the input controller to the screen.
-func (s *Screen) SetInputController(inputCtrl input.Controller) {
+func (s *Screen) SetInputController(inputCtrl input.InputController) {
 	s.inputController = inputCtrl
 }
 
@@ -73,7 +73,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 
 	var playerName = s.playerName
-	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.ControllerUiEventStateCombined().PressedButton {
+	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.GetUiEventStateCombined().PressedButton {
 		highscore.EntryControllerInstance.SetPlayerName(s.PlayerIdx, s.playerName)
 		highscore.EntryControllerInstance.AddEntry(highscore.Entry{
 			Name:  s.playerName,

@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	byw "retro-carnage/ui/buy-your-weapons"
 	"retro-carnage/ui/common"
@@ -23,7 +23,7 @@ import (
 
 type MainScreen struct {
 	clientScreen common.Screen
-	inputCtrl    input.Controller
+	inputCtrl    input.InputController
 	lastUpdate   time.Time
 	Monitor      *pixelgl.Monitor
 	nextScreen   common.Screen
@@ -32,11 +32,10 @@ type MainScreen struct {
 
 func (ms *MainScreen) Initialize() {
 	ms.inputCtrl = input.NewController(ms.Window)
-	ms.inputCtrl.HasTwoOrMoreDevices()
-	ms.inputCtrl.AssignControllersToPlayers()
+	ms.inputCtrl.AssignInputDevicesToPlayers()
 
 	ms.clientScreen = &loading.Screen{}
-	ms.setUpScreen(ms.clientScreen)
+	ms.setUpScreen()
 
 	ms.lastUpdate = time.Now()
 }
@@ -51,6 +50,18 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 		ms.nextScreen = &start.Screen{}
 	case common.Title:
 		ms.nextScreen = &title.Screen{}
+	case common.ConfigurationOptions:
+		ms.nextScreen = &config.OptionsScreen{}
+	case common.ConfigurationAudio:
+		ms.nextScreen = &config.AudioOptionsScreen{}
+	case common.ConfigurationVideo:
+		ms.nextScreen = &config.VideoOptionsScreen{}
+	case common.ConfigurationControls:
+		ms.nextScreen = &config.InputOptionsScreen{}
+	case common.ConfigurationControlsP1:
+		ms.nextScreen = &config.ControllerOptionsScreen{PlayerIdx: 0}
+	case common.ConfigurationControlsP2:
+		ms.nextScreen = &config.ControllerOptionsScreen{PlayerIdx: 1}
 	case common.ConfigurationResult:
 		ms.nextScreen = &config.ResultScreen{}
 	case common.ConfigurationSelect:
@@ -90,15 +101,15 @@ func (ms *MainScreen) RunMainLoop() {
 		if nil != ms.nextScreen {
 			ms.clientScreen.TearDown()
 			ms.clientScreen = ms.nextScreen
-			ms.setUpScreen(ms.clientScreen)
+			ms.setUpScreen()
 			ms.nextScreen = nil
 		}
 	}
 }
 
-func (ms *MainScreen) setUpScreen(aScreen common.Screen) {
-	aScreen.SetInputController(ms.inputCtrl)
-	aScreen.SetScreenChangeCallback(ms.requireScreenChange)
-	aScreen.SetWindow(ms.Window)
-	aScreen.SetUp()
+func (ms *MainScreen) setUpScreen() {
+	ms.clientScreen.SetInputController(ms.inputCtrl)
+	ms.clientScreen.SetScreenChangeCallback(ms.requireScreenChange)
+	ms.clientScreen.SetWindow(ms.Window)
+	ms.clientScreen.SetUp()
 }

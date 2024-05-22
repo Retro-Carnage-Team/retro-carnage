@@ -2,7 +2,7 @@ package input
 
 import (
 	"math"
-	"strings"
+	"retro-carnage/config"
 
 	"github.com/faiface/pixel/pixelgl"
 )
@@ -11,10 +11,8 @@ import (
 // Both digital and analog sticks are supported. The class uses the pixel framework / OpenGL to get required hardware
 // information.
 type gamepad struct {
-	analog   *bool
-	joystick pixelgl.Joystick
-	name     string
-	window   *pixelgl.Window
+	configuration config.InputDeviceConfiguration
+	window        *pixelgl.Window
 }
 
 const (
@@ -29,8 +27,6 @@ const (
 	PiTimes13Over8 = (13 * math.Pi) / 8
 	PiTimes15Over8 = (15 * math.Pi) / 8
 )
-
-var digitalControllers = []string{"Competition Pro"}
 
 // isStickMovedFully checks the values of the X & Y axis of an analog stick on whether the stick has been moved fully
 // to (any given) direction. This check has to be performed because the math used to determine the angle of the stick
@@ -81,58 +77,31 @@ func (g *gamepad) convertStickAngleToCardinalDirections(angle float64) (up, down
 }
 
 // State returns the DeviceState of the gamepad.
-func (g *gamepad) State() *DeviceState {
-	var state DeviceState
-	var horizontal = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftX)
-	var vertical = g.window.JoystickAxis(g.joystick, pixelgl.AxisLeftY)
-	if g.isAnalog() {
-		// Checked this with XBox360 and PlayStation controllers
-		state.PrimaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonA)
-		state.SecondaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonB)
-		state.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonX)
-		state.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonY)
-		if g.isStickMovedFully(horizontal, vertical) {
-			var angle = g.computeStickAngle(horizontal, vertical*-1)
-			state.MoveUp, state.MoveDown, state.MoveLeft, state.MoveRight = g.convertStickAngleToCardinalDirections(angle)
-		}
-	} else {
-		// Checked this with a SpeedLink Competition Pro USB
-		state.PrimaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonX)
-		state.SecondaryAction = g.window.JoystickPressed(g.joystick, pixelgl.ButtonY)
-		state.ToggleDown = g.window.JoystickPressed(g.joystick, pixelgl.ButtonLeftBumper)
-		state.ToggleUp = g.window.JoystickPressed(g.joystick, pixelgl.ButtonCircle)
+func (g *gamepad) State() *InputDeviceState {
+	var joystick = pixelgl.Joystick(g.configuration.GamepadConfiguration.JoystickIndex)
+	var horizontal = g.window.JoystickAxis(joystick, pixelgl.AxisLeftX)
+	var vertical = g.window.JoystickAxis(joystick, pixelgl.AxisLeftY)
+
+	var state = InputDeviceState{
+		PrimaryAction: g.window.JoystickPressed(joystick, pixelgl.GamepadButton(g.configuration.InputFire)),
+		ToggleDown:    g.window.JoystickPressed(joystick, pixelgl.GamepadButton(g.configuration.InputPreviousWeapon)),
+		ToggleUp:      g.window.JoystickPressed(joystick, pixelgl.GamepadButton(g.configuration.InputNextWeapon)),
+	}
+
+	if g.configuration.GamepadConfiguration.HasDigitalAxis {
 		state.MoveUp = vertical == -1
 		state.MoveDown = vertical == 1
 		state.MoveLeft = horizontal == -1
 		state.MoveRight = horizontal == 1
+	} else if g.isStickMovedFully(horizontal, vertical) {
+		var angle = g.computeStickAngle(horizontal, vertical*-1)
+		state.MoveUp, state.MoveDown, state.MoveLeft, state.MoveRight = g.convertStickAngleToCardinalDirections(angle)
 	}
+
 	return &state
 }
 
 // Name returns the human readable name of the gamepad.
 func (g *gamepad) Name() string {
-	if g.name != "" {
-		return g.name
-	}
-
-	var name = g.window.JoystickName(g.joystick)
-	g.name = name
-	return name
-}
-
-// isAnalog returns true when the controller axis allows values other than [-1, 0, 1].
-func (g *gamepad) isAnalog() bool {
-	if nil != g.analog {
-		return *g.analog
-	}
-
-	var analogController = true
-	for _, controllerName := range digitalControllers {
-		if strings.Contains(strings.ToLower(g.Name()), strings.ToLower(controllerName)) {
-			analogController = false
-			break
-		}
-	}
-	g.analog = &analogController
-	return analogController
+	return g.configuration.DeviceName
 }

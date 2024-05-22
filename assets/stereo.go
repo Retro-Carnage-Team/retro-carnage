@@ -2,16 +2,18 @@ package assets
 
 import (
 	"fmt"
-	"github.com/faiface/beep"
-	"github.com/faiface/beep/mp3"
-	"github.com/faiface/beep/speaker"
 	"os"
 	"path/filepath"
+	"retro-carnage/config"
 	"retro-carnage/logging"
 	"retro-carnage/util"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/faiface/beep"
+	"github.com/faiface/beep/mp3"
+	"github.com/faiface/beep/speaker"
 )
 
 // Stereo is the class we use to play music and sound effects throughout the application.
@@ -52,8 +54,17 @@ func (sb *Stereo) initialize() {
 	sb.mixer = &beep.Mixer{}
 	speaker.Play(sb.mixer)
 
-	sb.noEffects = strings.Contains(os.Getenv("sound"), "no-fx")
-	sb.noMusic = strings.Contains(os.Getenv("sound"), "no-music")
+	sb.noEffects = false
+	sb.noMusic = false
+
+	var configuration = config.GetConfigService().LoadAudioConfiguration()
+	if !configuration.PlayEffects || strings.Contains(os.Getenv("sound"), "no-fx") {
+		sb.noEffects = true
+	}
+
+	if !configuration.PlayMusic || strings.Contains(os.Getenv("sound"), "no-music") {
+		sb.noMusic = true
+	}
 
 	sb.effects = make(map[SoundEffect]sound)
 	if !sb.noEffects {

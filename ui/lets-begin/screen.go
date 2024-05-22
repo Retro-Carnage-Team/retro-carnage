@@ -2,7 +2,7 @@ package lets_begin
 
 import (
 	"retro-carnage/assets"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
@@ -26,7 +26,7 @@ type Screen struct {
 	window               *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(_ input.Controller) {
+func (s *Screen) SetInputController(_ input.InputController) {
 	// Screen doesn't process user input. So no implementation required.
 }
 

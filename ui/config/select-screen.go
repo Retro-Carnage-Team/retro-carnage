@@ -5,25 +5,28 @@ import (
 	"math"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 )
 
 const (
-	buttonPadding          = 15
+	optionOnePlayer int = iota
+	optionTwoPlayers
+	optionOptions
 	txtSelectOnePlayerGame = "START 1 PLAYER GAME"
 	txtSelectTwoPlayerGame = "START 2 PLAYER GAME"
+	txtSelectOptions       = "OPTIONS"
 )
 
 type SelectScreen struct {
 	defaultFontSize      int
-	inputController      input.Controller
+	inputController      input.InputController
+	multiplayerPossible  bool
 	screenChangeRequired common.ScreenChangeCallback
 	selectedOption       int
 	textDimensions       map[string]*geometry.Point
@@ -32,14 +35,16 @@ type SelectScreen struct {
 
 func (s *SelectScreen) SetUp() {
 	s.defaultFontSize = fonts.DefaultFontSize()
-	s.selectedOption = 1
-	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtSelectOnePlayerGame, txtSelectTwoPlayerGame)
+	s.multiplayerPossible = len(s.inputController.GetInputDeviceInfos()) > 1
+	s.selectedOption = optionOnePlayer
+	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtSelectOnePlayerGame, txtSelectTwoPlayerGame, txtSelectOptions)
 }
 
 func (s *SelectScreen) Update(_ int64) {
 	s.processUserInput()
 
 	var vertCenter = s.window.Bounds().Max.Y / 2
+
 	var firstLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectOnePlayerGame].X) / 2
 	var firstLineY = vertCenter + 1.5*s.textDimensions[txtSelectOnePlayerGame].Y
 
@@ -51,40 +56,47 @@ func (s *SelectScreen) Update(_ int64) {
 	var secondLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectTwoPlayerGame].X) / 2
 	var secondLineY = vertCenter + -1.5*s.textDimensions[txtSelectTwoPlayerGame].Y
 
-	txt = text.New(pixel.V(secondLineX, secondLineY), fonts.SizeToFontAtlas[s.defaultFontSize])
+	var startLine3 = -1.5
+	if s.multiplayerPossible {
+		txt = text.New(pixel.V(secondLineX, secondLineY), fonts.SizeToFontAtlas[s.defaultFontSize])
+		txt.Color = common.White
+		_, _ = fmt.Fprint(txt, txtSelectTwoPlayerGame)
+		txt.Draw(s.window, pixel.IM)
+		startLine3 = -4.5
+	}
+
+	var thirdLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectOptions].X) / 2
+	var thirdLineY = vertCenter + startLine3*s.textDimensions[txtSelectOptions].Y
+
+	txt = text.New(pixel.V(thirdLineX, thirdLineY), fonts.SizeToFontAtlas[s.defaultFontSize])
 	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, txtSelectTwoPlayerGame)
+	_, _ = fmt.Fprint(txt, txtSelectOptions)
 	txt.Draw(s.window, pixel.IM)
 
 	var bottomFirst = firstLineY - buttonPadding
 	var bottomSecond = secondLineY - buttonPadding
+	var bottomThird = thirdLineY - buttonPadding
+
 	var topFirst = firstLineY + s.textDimensions[txtSelectOnePlayerGame].Y
 	var topSecond = secondLineY + s.textDimensions[txtSelectTwoPlayerGame].Y
-	var left = math.Min(firstLineX, secondLineX) - buttonPadding
-	var right = math.Min(firstLineX, secondLineX) +
-		math.Min(s.textDimensions[txtSelectOnePlayerGame].X, s.textDimensions[txtSelectTwoPlayerGame].X) +
-		buttonPadding
+	var topThird = thirdLineY + s.textDimensions[txtSelectOptions].Y
 
-	if s.selectedOption == 1 {
-		imd := imdraw.New(nil)
-		imd.Color = common.Yellow
-		imd.EndShape = imdraw.RoundEndShape
-		imd.Push(pixel.V(left, bottomFirst), pixel.V(right, bottomFirst))
-		imd.Push(pixel.V(left, bottomFirst), pixel.V(left, topFirst))
-		imd.Push(pixel.V(left, topFirst), pixel.V(right, topFirst))
-		imd.Push(pixel.V(right, bottomFirst), pixel.V(right, topFirst))
-		imd.Line(4)
-		imd.Draw(s.window)
-	} else if s.selectedOption == 2 {
-		imd := imdraw.New(nil)
-		imd.Color = common.Yellow
-		imd.EndShape = imdraw.RoundEndShape
-		imd.Push(pixel.V(left, bottomSecond), pixel.V(right, bottomSecond))
-		imd.Push(pixel.V(left, bottomSecond), pixel.V(left, topSecond))
-		imd.Push(pixel.V(left, topSecond), pixel.V(right, topSecond))
-		imd.Push(pixel.V(right, bottomSecond), pixel.V(right, topSecond))
-		imd.Line(4)
-		imd.Draw(s.window)
+	var left = math.Min(math.Min(firstLineX, secondLineX), thirdLineX) - buttonPadding
+	var right = math.Max(firstLineX, secondLineX) +
+		math.Max(
+			math.Max(
+				s.textDimensions[txtSelectOnePlayerGame].X,
+				s.textDimensions[txtSelectTwoPlayerGame].X,
+			),
+			s.textDimensions[txtSelectOptions].X,
+		) + buttonPadding
+
+	if s.selectedOption == optionOnePlayer {
+		drawSelectionRect(s.window, left, bottomFirst, right, topFirst)
+	} else if s.selectedOption == optionTwoPlayers {
+		drawSelectionRect(s.window, left, bottomSecond, right, topSecond)
+	} else if s.selectedOption == optionOptions {
+		drawSelectionRect(s.window, left, bottomThird, right, topThird)
 	}
 }
 
@@ -92,7 +104,7 @@ func (s *SelectScreen) TearDown() {
 	// no tear down action required
 }
 
-func (s *SelectScreen) SetInputController(controller input.Controller) {
+func (s *SelectScreen) SetInputController(controller input.InputController) {
 	s.inputController = controller
 }
 
@@ -109,16 +121,30 @@ func (s *SelectScreen) String() string {
 }
 
 func (s *SelectScreen) processUserInput() {
-	var uiEventState = s.inputController.ControllerUiEventStateCombined()
+	var uiEventState = s.inputController.GetUiEventStateCombined()
 	if nil != uiEventState {
 		if uiEventState.PressedButton {
-			s.inputController.AssignControllersToPlayers()
-			characters.PlayerController.StartNewGame(s.selectedOption)
-			s.screenChangeRequired(common.ConfigurationResult)
-		} else if uiEventState.MovedUp && s.selectedOption == 2 {
-			s.selectedOption = 1
-		} else if uiEventState.MovedDown && s.selectedOption == 1 && s.inputController.HasTwoOrMoreDevices() {
-			s.selectedOption = 2
+			s.processOptionSelected()
+		} else if uiEventState.MovedUp {
+			if s.selectedOption > optionOnePlayer {
+				s.selectedOption = s.selectedOption - 1
+			}
+		} else if uiEventState.MovedDown {
+			if s.selectedOption == optionOnePlayer && s.multiplayerPossible {
+				s.selectedOption = optionTwoPlayers
+			} else {
+				s.selectedOption = optionOptions
+			}
 		}
+	}
+}
+
+func (s *SelectScreen) processOptionSelected() {
+	if s.selectedOption == optionOnePlayer || s.selectedOption == optionTwoPlayers {
+		s.inputController.AssignInputDevicesToPlayers()
+		characters.PlayerController.StartNewGame(s.selectedOption)
+		s.screenChangeRequired(common.ConfigurationResult)
+	} else {
+		s.screenChangeRequired(common.ConfigurationOptions)
 	}
 }

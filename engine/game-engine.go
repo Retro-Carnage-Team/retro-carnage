@@ -5,7 +5,7 @@ import (
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 )
 
@@ -18,7 +18,7 @@ type GameEngine struct {
 	enemies             []*characters.ActiveEnemy
 	explosives          []*Explosive
 	explosions          []*Explosion
-	inputController     input.Controller
+	inputController     input.InputController
 	inventoryController []*InventoryController
 	Kills               []int
 	levelController     *LevelController
@@ -65,7 +65,7 @@ func NewGameEngine(mission *assets.Mission) *GameEngine {
 }
 
 // SetInputController connects this GameEngine with the input.Controller to be used.
-func (ge *GameEngine) SetInputController(controller input.Controller) {
+func (ge *GameEngine) SetInputController(controller input.InputController) {
 	ge.inputController = controller
 }
 
@@ -110,7 +110,7 @@ func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
 				behavior.UpdateInvincibility(elapsedTimeInMs)
 			}
 
-			var inputState, err = ge.inputController.ControllerDeviceState(player.Index())
+			var inputState, err = ge.inputController.GetInputDeviceState(player.Index())
 			if nil != err {
 				logging.Warning.Printf("Failed to get input state for player %d: %v\n", player.Index(), err)
 			} else if (nil != inputState) && !behavior.Dying {

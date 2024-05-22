@@ -2,7 +2,7 @@ package config
 
 import (
 	"retro-carnage/engine/characters"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
@@ -13,7 +13,7 @@ import (
 type ResultScreen struct {
 	infoTextPlayerOne    string
 	infoTextPlayerTwo    string
-	inputController      input.Controller
+	inputController      input.InputController
 	screenChangeRequired common.ScreenChangeCallback
 	timeElapsed          int64
 	window               *pixelgl.Window
@@ -26,7 +26,7 @@ func (s *ResultScreen) SetUp() {
 	s.infoTextPlayerOne = "PLAYER 1: "
 	s.infoTextPlayerTwo = "PLAYER 2: "
 
-	name, err := s.inputController.ControllerName(0)
+	name, err := s.inputController.GetInputDeviceName(0)
 	if nil == err {
 		s.infoTextPlayerOne += name
 	} else {
@@ -34,7 +34,7 @@ func (s *ResultScreen) SetUp() {
 	}
 
 	if characters.PlayerController.NumberOfPlayers() == 2 {
-		name, err = s.inputController.ControllerName(1)
+		name, err = s.inputController.GetInputDeviceName(1)
 		if nil == err {
 			s.infoTextPlayerTwo += name
 		} else {
@@ -57,7 +57,7 @@ func (s *ResultScreen) Update(timeElapsedInMs int64) {
 		renderer.DrawLineToScreenCenter(s.infoTextPlayerTwo, -2.5, common.Yellow)
 	}
 
-	var uiEventState = s.inputController.ControllerUiEventStateCombined()
+	var uiEventState = s.inputController.GetUiEventStateCombined()
 	if nil != uiEventState && uiEventState.PressedButton {
 		s.screenChangeRequired(common.Mission)
 	} else if s.timeElapsed >= 2500 {
@@ -69,7 +69,7 @@ func (s *ResultScreen) TearDown() {
 	// no tear down action required
 }
 
-func (s *ResultScreen) SetInputController(controller input.Controller) {
+func (s *ResultScreen) SetInputController(controller input.InputController) {
 	s.inputController = controller
 }
 

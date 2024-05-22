@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/util"
 	"testing"
 
@@ -16,7 +16,7 @@ func TestPlayerInDefaultStateShouldBeAbleToMoveUp(t *testing.T) {
 	var player = Players[0]
 	player.Reset()
 	var playerBehavior = NewPlayerBehavior(player)
-	var inputState = input.DeviceState{MoveUp: true}
+	var inputState = input.InputDeviceState{MoveUp: true}
 	playerBehavior.Update(&inputState)
 
 	assert.True(t, playerBehavior.Moving)
@@ -27,7 +27,7 @@ func TestPlayerInDefaultStateShouldBeAbleToMoveDiagonally(t *testing.T) {
 	var player = Players[0]
 	player.Reset()
 	var playerBehavior = NewPlayerBehavior(player)
-	var inputState = input.DeviceState{MoveDown: true, MoveRight: true}
+	var inputState = input.InputDeviceState{MoveDown: true, MoveRight: true}
 	playerBehavior.Update(&inputState)
 
 	assert.True(t, playerBehavior.Moving)
@@ -38,8 +38,8 @@ func TestMovingPlayerShouldBeAbleToChangeDirection(t *testing.T) {
 	var player = Players[0]
 	player.Reset()
 	var playerBehavior = NewPlayerBehavior(player)
-	playerBehavior.Update(&input.DeviceState{MoveUp: true})
-	playerBehavior.Update(&input.DeviceState{MoveLeft: true})
+	playerBehavior.Update(&input.InputDeviceState{MoveUp: true})
+	playerBehavior.Update(&input.InputDeviceState{MoveLeft: true})
 
 	assert.True(t, playerBehavior.Moving)
 	assert.Equal(t, geometry.Left, playerBehavior.Direction)
@@ -49,8 +49,8 @@ func TestPlayerShouldKeepDirectionWhenStoppingMovementAndKeepingFiring(t *testin
 	var player = Players[0]
 	player.Reset()
 	var playerBehavior = NewPlayerBehavior(player)
-	playerBehavior.Update(&input.DeviceState{MoveUp: true, PrimaryAction: true})
-	playerBehavior.Update(&input.DeviceState{PrimaryAction: true})
+	playerBehavior.Update(&input.InputDeviceState{MoveUp: true, PrimaryAction: true})
+	playerBehavior.Update(&input.InputDeviceState{PrimaryAction: true})
 
 	assert.False(t, playerBehavior.Moving)
 	assert.Equal(t, geometry.Up, playerBehavior.Direction)
@@ -61,8 +61,8 @@ func TestPlayerShouldAbleToChangeDirectionButNotStartMovingWhenFiring(t *testing
 	var player = Players[0]
 	player.Reset()
 	var playerBehavior = NewPlayerBehavior(player)
-	playerBehavior.Update(&input.DeviceState{PrimaryAction: true})
-	playerBehavior.Update(&input.DeviceState{MoveLeft: true, PrimaryAction: true})
+	playerBehavior.Update(&input.InputDeviceState{PrimaryAction: true})
+	playerBehavior.Update(&input.InputDeviceState{MoveLeft: true, PrimaryAction: true})
 
 	assert.False(t, playerBehavior.Moving)
 	assert.Equal(t, geometry.Left, playerBehavior.Direction)
@@ -84,8 +84,8 @@ func TestSwitchingToNextWeaponGetsFiredOnlyOncePerButtonPress(t *testing.T) {
 	player.SelectFirstWeapon()
 	player.AddChangeListener(&listener)
 	var playerBehavior = NewPlayerBehavior(player)
-	playerBehavior.Update(&input.DeviceState{ToggleUp: true})
-	playerBehavior.Update(&input.DeviceState{ToggleUp: true})
+	playerBehavior.Update(&input.InputDeviceState{ToggleUp: true})
+	playerBehavior.Update(&input.InputDeviceState{ToggleUp: true})
 
 	assert.Equal(t, 1, callCounter)
 	err := player.RemoveChangeListener(&listener)
@@ -107,8 +107,8 @@ func TestSwitchingToPreviousWeaponGetsFiredOnlyOncePerButtonPress(t *testing.T) 
 	player.SelectFirstWeapon()
 	player.AddChangeListener(&listener)
 	var playerBehavior = NewPlayerBehavior(player)
-	playerBehavior.Update(&input.DeviceState{ToggleDown: true})
-	playerBehavior.Update(&input.DeviceState{ToggleDown: true})
+	playerBehavior.Update(&input.InputDeviceState{ToggleDown: true})
+	playerBehavior.Update(&input.InputDeviceState{ToggleDown: true})
 
 	assert.Equal(t, 1, callCounter)
 	err := player.RemoveChangeListener(&listener)
@@ -120,9 +120,9 @@ func TestTriggeredFireGetsSetWhenFiringAndUnsetWhenHeldDown(t *testing.T) {
 	player.Reset()
 	var playerBehavior = NewPlayerBehavior(player)
 
-	playerBehavior.Update(&input.DeviceState{PrimaryAction: true})
+	playerBehavior.Update(&input.InputDeviceState{PrimaryAction: true})
 	assert.True(t, playerBehavior.TriggerPressed)
 
-	playerBehavior.Update(&input.DeviceState{PrimaryAction: true})
+	playerBehavior.Update(&input.InputDeviceState{PrimaryAction: true})
 	assert.False(t, playerBehavior.TriggerPressed)
 }

@@ -3,7 +3,7 @@ package buy_your_weapons
 
 import (
 	"fmt"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
@@ -24,7 +24,7 @@ type Screen struct {
 	window               *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(_ input.Controller) {
+func (s *Screen) SetInputController(_ input.InputController) {
 	// This screen doesn't process user input.
 }
 

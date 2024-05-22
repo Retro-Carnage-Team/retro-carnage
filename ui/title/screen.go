@@ -6,7 +6,7 @@ import (
 	_ "image/jpeg"
 	"math"
 	"retro-carnage/assets"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/ui/common"
 
 	"github.com/faiface/pixel"
@@ -18,13 +18,13 @@ const screenTimeout = 60_000
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
-	inputController       input.Controller
+	inputController       input.InputController
 	screenChangeRequired  common.ScreenChangeCallback
 	screenChangeTimeout   int64
 	window                *pixelgl.Window
 }
 
-func (s *Screen) SetInputController(controller input.Controller) {
+func (s *Screen) SetInputController(controller input.InputController) {
 	s.inputController = controller
 }
 
@@ -51,7 +51,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.backgroundImageSprite.Draw(s.window,
 		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
 
-	var uiEventState = s.inputController.ControllerUiEventStateCombined()
+	var uiEventState = s.inputController.GetUiEventStateCombined()
 	if (nil != uiEventState && uiEventState.PressedButton) || screenTimeout <= s.screenChangeTimeout {
 		s.screenChangeRequired(common.ConfigurationSelect)
 	}

@@ -7,7 +7,7 @@ import (
 	"retro-carnage/assets"
 	"retro-carnage/engine"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
@@ -33,7 +33,7 @@ type Screen struct {
 	availableMissions         []*assets.Mission
 	briefingFontSize          int
 	crossHairSprite           *pixel.Sprite
-	inputController           input.Controller
+	inputController           input.InputController
 	missionsInitialized       bool
 	missionNameToClientSprite map[string]*pixel.Sprite
 	screenChangeRequired      common.ScreenChangeCallback
@@ -42,7 +42,7 @@ type Screen struct {
 	worldMapSprite            *pixel.Sprite
 }
 
-func (s *Screen) SetInputController(inputCtrl input.Controller) {
+func (s *Screen) SetInputController(inputCtrl input.InputController) {
 	s.inputController = inputCtrl
 }
 
@@ -189,7 +189,7 @@ func (s *Screen) drawLocationMarker(location pixel.Vec) {
 }
 
 func (s *Screen) processUserInput() {
-	var uiEventState = s.inputController.ControllerUiEventStateCombined()
+	var uiEventState = s.inputController.GetUiEventStateCombined()
 	if nil == uiEventState {
 		return
 	}
