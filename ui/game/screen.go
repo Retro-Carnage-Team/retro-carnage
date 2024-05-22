@@ -3,7 +3,7 @@ package game
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/highscore"

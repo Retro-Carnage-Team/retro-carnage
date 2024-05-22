@@ -5,7 +5,7 @@ import (
 	"image/color"
 	"retro-carnage/config"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"

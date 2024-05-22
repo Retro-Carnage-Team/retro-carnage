@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	byw "retro-carnage/ui/buy-your-weapons"
 	"retro-carnage/ui/common"

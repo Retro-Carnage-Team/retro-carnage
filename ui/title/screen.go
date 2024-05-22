@@ -6,7 +6,7 @@ import (
 	_ "image/jpeg"
 	"math"
 	"retro-carnage/assets"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/ui/common"
 
 	"github.com/faiface/pixel"

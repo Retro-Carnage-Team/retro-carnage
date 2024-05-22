@@ -3,7 +3,7 @@ package buy_your_weapons
 
 import (
 	"fmt"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 

@@ -1,7 +1,7 @@
 package common
 
 import (
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 
 	"github.com/faiface/pixel/pixelgl"
 )

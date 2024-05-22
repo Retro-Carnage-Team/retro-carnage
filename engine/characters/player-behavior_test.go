@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/util"
 	"testing"
 

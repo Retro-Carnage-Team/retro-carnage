@@ -2,7 +2,7 @@ package characters
 
 import (
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 )
 
 const (

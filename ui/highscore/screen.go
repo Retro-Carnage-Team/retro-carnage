@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 	"retro-carnage/assets"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 

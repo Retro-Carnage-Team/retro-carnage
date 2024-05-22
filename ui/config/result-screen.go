@@ -2,7 +2,7 @@ package config
 
 import (
 	"retro-carnage/engine/characters"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"

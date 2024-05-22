@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/input"
+	"retro-carnage/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
