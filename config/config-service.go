@@ -12,13 +12,19 @@ var (
 	configService *ConfigService
 )
 
-type ConfigService struct{}
+type ConfigService struct {
+	restartRequired bool
+}
 
 func GetConfigService() *ConfigService {
 	if configService == nil {
-		configService = &ConfigService{}
+		configService = &ConfigService{restartRequired: false}
 	}
 	return configService
+}
+
+func (cs *ConfigService) IsRestartRequired() bool {
+	return cs.restartRequired
 }
 
 // LoadAudioConfigurations reads the audio configuration that is stored on disk.
@@ -70,6 +76,7 @@ func (cs *ConfigService) SaveAudioConfiguration(ac AudioConfiguration) error {
 		return err
 	}
 
+	cs.restartRequired = true
 	return nil
 }
 
@@ -178,6 +185,7 @@ func (cs *ConfigService) SaveVideoConfiguration(vc VideoConfiguration) error {
 		return err
 	}
 
+	cs.restartRequired = true
 	return nil
 }
 

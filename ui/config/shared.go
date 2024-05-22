@@ -38,6 +38,7 @@ const (
 	txtPrevWeapon        = "PREVIOUS WEAPON"
 	txtPressButton       = "PRESS BUTTON TO SELECT"
 	txtPrimaryMonitor    = "USE PRIMARY MONITOR"
+	txtRestartRequired   = "RESTART GAME TO APPLY CHANGED SETTINGS"
 	txtSave              = "SAVE"
 	txtScreenmode        = "SCREEN MODE"
 	txtSelection         = "x"

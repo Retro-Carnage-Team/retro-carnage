@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"retro-carnage/config"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/input"
 	"retro-carnage/logging"
@@ -22,6 +23,7 @@ const (
 )
 
 type OptionsScreen struct {
+	configService        *config.ConfigService
 	defaultFontSize      int
 	inputController      input.InputController
 	screenChangeRequired common.ScreenChangeCallback
@@ -31,9 +33,13 @@ type OptionsScreen struct {
 }
 
 func (s *OptionsScreen) SetUp() {
+	s.configService = config.GetConfigService()
 	s.defaultFontSize = fonts.DefaultFontSize()
 	s.selectedOption = optionAudio
-	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtAudioSettings, txtInputSettings, txtHeadlineOptions, txtVideoSettings, txtBack)
+	s.textDimensions = fonts.GetTextDimensions(
+		s.defaultFontSize, txtAudioSettings, txtInputSettings, txtHeadlineOptions, txtVideoSettings, txtBack,
+		txtRestartRequired,
+	)
 }
 
 func (s *OptionsScreen) Update(_ int64) {
@@ -57,14 +63,14 @@ func (s *OptionsScreen) Update(_ int64) {
 	}
 
 	// option 2: video
-	lineLocationY = lineLocationY - 3*s.textDimensions[txtAudioSettings].Y
+	lineLocationY = lineLocationY - 3*s.textDimensions[txtVideoSettings].Y
 	txt = s.drawText(txtVideoSettings, headlineDistanceLeft, lineLocationY)
 	if s.selectedOption == optionVideo {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	}
 
 	// option 3: controls
-	lineLocationY = lineLocationY - 3*s.textDimensions[txtAudioSettings].Y
+	lineLocationY = lineLocationY - 3*s.textDimensions[txtInputSettings].Y
 	txt = s.drawText(txtInputSettings, headlineDistanceLeft, lineLocationY)
 	if s.selectedOption == optionControls {
 		drawTextSelectionRect(s.window, txt.Bounds())
@@ -76,6 +82,16 @@ func (s *OptionsScreen) Update(_ int64) {
 	txt = s.drawText(txtBack, lineLocationX, lineLocationY)
 	if s.selectedOption == optionBack {
 		drawTextSelectionRect(s.window, txt.Bounds())
+	}
+
+	// Restart hint
+	if s.configService.IsRestartRequired() {
+		var hintLocationX = (s.window.Bounds().W() - s.textDimensions[txtRestartRequired].X) / 2
+		var hintLocationY = lineLocationY + 3*s.textDimensions[txtRestartRequired].Y
+		var txt = text.New(pixel.V(hintLocationX, hintLocationY), fonts.SizeToFontAtlas[s.defaultFontSize])
+		txt.Color = common.Red
+		_, _ = fmt.Fprint(txt, txtRestartRequired)
+		txt.Draw(s.window, pixel.IM)
 	}
 }
 
