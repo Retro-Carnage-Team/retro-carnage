@@ -1,6 +1,6 @@
 package assets
 
-import "github.com/faiface/beep"
+import "github.com/gopxl/beep"
 
 type sound interface {
 	decreaseVolume()

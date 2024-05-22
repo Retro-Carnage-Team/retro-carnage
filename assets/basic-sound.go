@@ -1,6 +1,6 @@
 package assets
 
-import "github.com/faiface/beep"
+import "github.com/gopxl/beep"
 
 // basicSound is a sound that gets played exactly one time. No further interaction is possible
 type basicSound struct {
