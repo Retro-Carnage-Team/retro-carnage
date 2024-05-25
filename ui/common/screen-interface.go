@@ -3,7 +3,7 @@ package common
 import (
 	"retro-carnage/input"
 
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 type ScreenChangeCallback = func(screenName ScreenName)

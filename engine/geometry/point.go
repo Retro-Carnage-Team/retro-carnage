@@ -2,8 +2,9 @@ package geometry
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
 	"math"
+
+	"github.com/Retro-Carnage-Team/pixel"
 )
 
 // Point is a specific spot on a 2d plane

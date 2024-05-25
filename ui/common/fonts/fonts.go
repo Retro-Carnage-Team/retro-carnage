@@ -2,15 +2,16 @@ package fonts
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/text"
-	"github.com/golang/freetype/truetype"
 	"image/color"
 	"io/ioutil"
 	"os"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/logging"
 	"unicode"
+
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/text"
+	"github.com/golang/freetype/truetype"
 )
 
 const (

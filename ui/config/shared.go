@@ -4,9 +4,9 @@ import (
 	"image/color"
 	"retro-carnage/ui/common"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/imdraw"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 const (

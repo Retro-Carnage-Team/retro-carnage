@@ -1,13 +1,14 @@
 package game
 
 import (
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
+
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 type gameWonAnimation struct {

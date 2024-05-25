@@ -10,7 +10,7 @@ import (
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/ui/highscore"
 
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 // Screen is where the players can enter their names when they reached a new high score.

@@ -2,8 +2,9 @@ package game
 
 import (
 	"fmt"
-	"github.com/faiface/pixel/pixelgl"
 	"time"
+
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 // fpsInfo is a utility to measure the Frames Per Second (FPS) of the graphical output. This info can then be drawn to

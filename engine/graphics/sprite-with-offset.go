@@ -1,8 +1,9 @@
 package graphics
 
 import (
-	"github.com/faiface/pixel"
 	"retro-carnage/engine/geometry"
+
+	"github.com/Retro-Carnage-Team/pixel"
 )
 
 type SpriteWithOffset struct {

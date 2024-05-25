@@ -4,7 +4,7 @@ import (
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
 
-	"github.com/faiface/pixel"
+	"github.com/Retro-Carnage-Team/pixel"
 )
 
 const (

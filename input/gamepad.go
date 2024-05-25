@@ -4,7 +4,7 @@ import (
 	"math"
 	"retro-carnage/config"
 
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 // gamepad can be used to access the device state of a gamepad or joystick.

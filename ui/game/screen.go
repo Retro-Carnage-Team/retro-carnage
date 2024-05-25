@@ -9,7 +9,7 @@ import (
 	"retro-carnage/ui/highscore"
 	"time"
 
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 // Screen in this package is the one that show the actual gameplay.
