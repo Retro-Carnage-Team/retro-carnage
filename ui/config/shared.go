@@ -59,15 +59,11 @@ func drawRect(w *pixelgl.Window, left float64, bottom float64, right float64, to
 	imd.Draw(w)
 }
 
-func drawSelectionRect(w *pixelgl.Window, left float64, bottom float64, right float64, top float64) {
-	drawRect(w, left, bottom, right, top, common.Yellow)
-}
-
 func drawPossibleSelectionRect(w *pixelgl.Window, txtRect pixel.Rect) {
 	drawRect(
 		w,
 		txtRect.Min.X-buttonPadding,
-		txtRect.Min.Y-buttonPadding,
+		txtRect.Min.Y,
 		txtRect.Max.X+buttonPadding,
 		txtRect.Max.Y+buttonPadding,
 		common.LightGray,
@@ -78,7 +74,7 @@ func drawTextSelectionRect(w *pixelgl.Window, txtRect pixel.Rect) {
 	drawRect(
 		w,
 		txtRect.Min.X-buttonPadding,
-		txtRect.Min.Y-buttonPadding,
+		txtRect.Min.Y,
 		txtRect.Max.X+buttonPadding,
 		txtRect.Max.Y+buttonPadding,
 		common.Yellow,
