@@ -1,6 +1,14 @@
 package engine
 
-import "github.com/Retro-Carnage-Team/pixel/pixelgl"
+import (
+	"retro-carnage/logging"
+
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+)
+
+const (
+	maxCheatLen = 11
+)
 
 var (
 	cheatController          *CheatController
@@ -42,6 +50,7 @@ var (
 )
 
 type CheatController struct {
+	input               []pixelgl.Button
 	unlimitedAmmunition bool
 	unlimitedLives      bool
 	unlimitedMoney      bool
@@ -71,10 +80,53 @@ func (cc *CheatController) IsMonayUnlimited() bool {
 }
 
 func (cc *CheatController) HandleKeyboardInput(button pixelgl.Button) bool {
-	// TODO:
-	// - Add button to buffer
-	// - Check buffer
-	// - Activate or deactivate cheat
-	// - Return true when cheat has been activated
+	var prevInput = cc.input
+	if len(cc.input) == maxCheatLen {
+		prevInput = cc.input[1:]
+	}
+	cc.input = append(prevInput, button)
+
+	var debugOutput = ""
+	for _, btn := range cc.input {
+		debugOutput = debugOutput + btn.String()
+	}
+	logging.Info.Printf("Cheat-Input is %s", debugOutput)
+
+	if cc.compareInputToCheat(unlimitedAmmunitionCheat) {
+		cc.unlimitedAmmunition = !cc.unlimitedAmmunition
+		return true
+	}
+
+	if cc.compareInputToCheat(unlimitedLivesCheat) {
+		cc.unlimitedLives = !cc.unlimitedLives
+		return true
+	}
+
+	if cc.compareInputToCheat(unlimitedMoneyCheat) {
+		cc.unlimitedMoney = !cc.unlimitedMoney
+		return true
+	}
+
 	return false
+}
+
+func (cc *CheatController) Reset() {
+	cc.input = []pixelgl.Button{}
+	cc.unlimitedAmmunition = false
+	cc.unlimitedLives = false
+	cc.unlimitedMoney = false
+}
+
+func (cc *CheatController) compareInputToCheat(cheat []pixelgl.Button) bool {
+	if len(cc.input) < len(cheat) {
+		return false
+	}
+
+	for i, c := range cheat {
+		if cc.input[len(cc.input)-len(cheat)+i] != c {
+			return false
+		}
+	}
+
+	return true
 }
