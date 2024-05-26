@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"math"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/input"
@@ -53,6 +52,10 @@ func (s *SelectScreen) Update(_ int64) {
 	_, _ = fmt.Fprint(txt, txtSelectOnePlayerGame)
 	txt.Draw(s.window, pixel.IM)
 
+	if s.selectedOption == optionOnePlayer {
+		drawTextSelectionRect(s.window, txt.Bounds())
+	}
+
 	var secondLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectTwoPlayerGame].X) / 2
 	var secondLineY = vertCenter + -1.5*s.textDimensions[txtSelectTwoPlayerGame].Y
 
@@ -63,6 +66,10 @@ func (s *SelectScreen) Update(_ int64) {
 		_, _ = fmt.Fprint(txt, txtSelectTwoPlayerGame)
 		txt.Draw(s.window, pixel.IM)
 		startLine3 = -4.5
+
+		if s.selectedOption == optionTwoPlayers {
+			drawTextSelectionRect(s.window, txt.Bounds())
+		}
 	}
 
 	var thirdLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectOptions].X) / 2
@@ -73,30 +80,8 @@ func (s *SelectScreen) Update(_ int64) {
 	_, _ = fmt.Fprint(txt, txtSelectOptions)
 	txt.Draw(s.window, pixel.IM)
 
-	var bottomFirst = firstLineY - buttonPadding
-	var bottomSecond = secondLineY - buttonPadding
-	var bottomThird = thirdLineY - buttonPadding
-
-	var topFirst = firstLineY + s.textDimensions[txtSelectOnePlayerGame].Y
-	var topSecond = secondLineY + s.textDimensions[txtSelectTwoPlayerGame].Y
-	var topThird = thirdLineY + s.textDimensions[txtSelectOptions].Y
-
-	var left = math.Min(math.Min(firstLineX, secondLineX), thirdLineX) - buttonPadding
-	var right = math.Max(firstLineX, secondLineX) +
-		math.Max(
-			math.Max(
-				s.textDimensions[txtSelectOnePlayerGame].X,
-				s.textDimensions[txtSelectTwoPlayerGame].X,
-			),
-			s.textDimensions[txtSelectOptions].X,
-		) + buttonPadding
-
-	if s.selectedOption == optionOnePlayer {
-		drawSelectionRect(s.window, left, bottomFirst, right, topFirst)
-	} else if s.selectedOption == optionTwoPlayers {
-		drawSelectionRect(s.window, left, bottomSecond, right, topSecond)
-	} else if s.selectedOption == optionOptions {
-		drawSelectionRect(s.window, left, bottomThird, right, topThird)
+	if s.selectedOption == optionOptions {
+		drawTextSelectionRect(s.window, txt.Bounds())
 	}
 }
 
