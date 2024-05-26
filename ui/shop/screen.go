@@ -376,7 +376,7 @@ func (s *Screen) drawCostLabel() {
 	}
 
 	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, content)
-	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
+	var lineY = (bottomBarHeight - lineDimensions.Y) / 2
 	fonts.BuildText(pixel.V(30.0, lineY), s.defaultFontSize, common.White, content).Draw(s.window, pixel.IM)
 }
 
@@ -384,14 +384,14 @@ func (s *Screen) drawCreditLabel() {
 	var content = fmt.Sprintf("CREDIT: %d", characters.Players[s.PlayerIdx].Cash())
 	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, content)
 	var lineX = (s.window.Bounds().W() - lineDimensions.X) / 2
-	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
+	var lineY = (bottomBarHeight - lineDimensions.Y) / 2
 	fonts.BuildText(pixel.V(lineX, lineY), s.defaultFontSize, common.White, content).Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) drawExitButton() {
 	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, "EXIT SHOP")
 	var lineX = s.window.Bounds().W() - lineDimensions.X - 30
-	var lineY = (bottomBarHeight-lineDimensions.Y)/2 + buttonPadding
+	var lineY = (bottomBarHeight - lineDimensions.Y) / 2
 	fonts.BuildText(pixel.V(lineX, lineY), s.defaultFontSize, common.White, "EXIT SHOP").Draw(s.window, pixel.IM)
 
 	if s.selectedItemIdx == -1 {
@@ -429,9 +429,7 @@ func (s *Screen) drawModalHeader() {
 
 func (s *Screen) drawModalBody() float64 {
 	var item = s.items[s.selectedItemIdx]
-
 	var textRenderer = fonts.TextRenderer{Window: s.window}
-
 	var textWidth = s.getModalRightBorder() - s.getModalLeftBorder() - modalLabelSpace - modalLabelSpace
 	textLayout, err := textRenderer.CalculateTextLayout(
 		item.Description(),
@@ -464,12 +462,13 @@ func (s *Screen) drawModalBody() float64 {
 
 	var lineY = s.window.Bounds().H() - 100 - bottomBarHeight - tableAreaHeight
 	var atlas = fonts.SizeToFontAtlas[s.modalFontSize]
-	var txt = text.New(pixel.V(s.getModalLeftBorder()+modalLabelSpace, lineY-textLayout.Lines()[0].Dimension().Y), atlas)
+	var txt = text.New(pixel.V(s.getModalLeftBorder()+modalLabelSpace, lineY-modalTableVMargin-textLayout.Lines()[0].Dimension().Y*float64(len(textLayout.Lines()))), atlas)
 	txt.Color = common.Black
 	for _, line := range textLayout.Lines() {
 		_, _ = fmt.Fprintln(txt, line.Text())
 	}
 	txt.Draw(s.window, pixel.IM)
+
 	return modalBodyLowerBorder
 }
 
@@ -496,8 +495,8 @@ func (s *Screen) drawModalBodyWeaponTable(item *inventoryItem) {
 	var firstColumnValueX = firstColumnLabelX + maxLabelWidth + modalLabelSpace
 	var secondColumnLabelX = firstColumnValueX + maxValueWidth + modalColumnSpace
 	var secondColumnValueX = secondColumnLabelX + maxLabelWidth + modalLabelSpace
+	var firstRowY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y*3
 
-	var firstRowY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y
 	fonts.BuildMultiLineText(pixel.V(firstColumnLabelX, firstRowY), s.modalFontSize, common.Black, []string{labelPrice, labelAmmo, labelLength}).Draw(s.window, pixel.IM)
 	fonts.BuildMultiLineText(pixel.V(firstColumnValueX, firstRowY), s.modalFontSize, common.Black, []string{priceValue, weapon.Ammo, weapon.Length}).Draw(s.window, pixel.IM)
 	fonts.BuildMultiLineText(pixel.V(secondColumnLabelX, firstRowY), s.modalFontSize, common.Black, []string{labelSpeed, labelRange, labelWeight}).Draw(s.window, pixel.IM)
@@ -525,13 +524,15 @@ func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
 		priceValue, packageSizeValue, rangeValue,
 	})
 
-	var labelX = (s.window.Bounds().W() - maxLabelWidth - modalLabelSpace - maxValueWidth) / 2
-	var valueX = labelX + maxLabelWidth + modalColumnSpace
-	var labelY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y
+	var columnWidth = maxLabelWidth + modalLabelSpace + maxValueWidth
+	var labelX = s.window.Bounds().W()/2 - columnWidth - modalColumnSpace/2
+	var valueX = labelX + maxLabelWidth + modalLabelSpace
+	var labelY = s.window.Bounds().H() - 100 - bottomBarHeight - modalTableVMargin - s.labelDimensions[labelPrice].Y*2
 
 	var thirdLabel = ""
 	var thirdValue = ""
 	if item.IsGrenade() {
+		labelY -= s.labelDimensions[labelPrice].Y
 		thirdLabel = labelRange
 		thirdValue = rangeValue
 	}
@@ -645,12 +646,12 @@ func (s *Screen) getModalFooterStatusHint() string {
 			for _, ammo := range s.items {
 				if ammo.Name() == weapon.Ammo {
 					var owned, max = ammo.OwnedFromMax(&s.inventoryController)
-					return fmt.Sprintf("You own this weapon and %d of %d bullets", owned, max)
+					return fmt.Sprintf("%d / %d bullets", owned, max)
 				}
 			}
 			logging.Error.Fatalf("Failed to find ammo item: %s", weapon.Ammo)
 		} else {
-			return "You don't own this weapon yet"
+			return ""
 		}
 	}
 
@@ -659,7 +660,7 @@ func (s *Screen) getModalFooterStatusHint() string {
 		buttonType = "grenades"
 	}
 	var owned, max = item.OwnedFromMax(&s.inventoryController)
-	return fmt.Sprintf("You own %d of %d of these %s", owned, max, buttonType)
+	return fmt.Sprintf("%d / %d %s", owned, max, buttonType)
 }
 
 func (s *Screen) isModalButtonBuyWeaponAvailable() bool {
