@@ -13,10 +13,10 @@ import (
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/util"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/imdraw"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/text"
 )
 
 const (
@@ -206,7 +206,7 @@ func (s *Screen) drawPurchaseStatus(areas []geometry.Rectangle) {
 					area.Y+s.checkSprite.Picture().Bounds().H())))
 			}
 		} else {
-			var ratio = item.OwnedPortion(s.PlayerIdx)
+			var ratio = item.OwnedPortion(&s.inventoryController)
 			if ratio > 0 {
 				var barWidth = (area.Width - itemPadding - itemPadding) * ratio
 				imd.Push(
@@ -644,7 +644,7 @@ func (s *Screen) getModalFooterStatusHint() string {
 		if s.inventoryController.WeaponInInventory(item.Name()) {
 			for _, ammo := range s.items {
 				if ammo.Name() == weapon.Ammo {
-					var owned, max = ammo.OwnedFromMax(s.PlayerIdx)
+					var owned, max = ammo.OwnedFromMax(&s.inventoryController)
 					return fmt.Sprintf("You own this weapon and %d of %d bullets", owned, max)
 				}
 			}
@@ -658,7 +658,7 @@ func (s *Screen) getModalFooterStatusHint() string {
 	if item.IsGrenade() {
 		buttonType = "grenades"
 	}
-	var owned, max = item.OwnedFromMax(s.PlayerIdx)
+	var owned, max = item.OwnedFromMax(&s.inventoryController)
 	return fmt.Sprintf("You own %d of %d of these %s", owned, max, buttonType)
 }
 

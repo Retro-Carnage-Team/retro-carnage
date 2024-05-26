@@ -1,6 +1,6 @@
 package config
 
-import "github.com/faiface/pixel/pixelgl"
+import "github.com/Retro-Carnage-Team/pixel/pixelgl"
 
 type VideoConfiguration struct {
 	UsePrimaryMonitor bool   `json:"usePrimaryMonitor"`

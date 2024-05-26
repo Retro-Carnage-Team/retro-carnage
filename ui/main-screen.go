@@ -17,7 +17,7 @@ import (
 	"retro-carnage/ui/title"
 	"time"
 
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 )
 

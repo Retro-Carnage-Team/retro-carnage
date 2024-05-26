@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"retro-carnage/assets"
+	"retro-carnage/engine/cheat"
 	"retro-carnage/util"
 )
 
@@ -15,7 +16,7 @@ const (
 	PlayerPropertyScore          = "score"
 	PlayerPropertySelectedWeapon = "selected-weapon"
 	PlayerPropertyWeapons        = "items"
-	initialCash                  = 50000
+	initialCash                  = 5_000
 	initialLives                 = 3
 	initialScore                 = 0
 )
@@ -39,16 +40,18 @@ type Player struct {
 }
 
 func newPlayer(index int) *Player {
-	var result = &Player{}
-	result.changeListeners = make([]*util.ChangeListener, 0)
-	result.index = index
-	result.cash = initialCash
-	result.lives = initialLives
-	result.score = initialScore
-	result.selectedWeaponName = nil
-	result.ammunition = make(map[string]int, 0)
-	result.grenades = make(map[string]bool, 0)
-	result.weapons = make(map[string]bool, 0)
+	var result = &Player{
+		changeListeners:    make([]*util.ChangeListener, 0),
+		index:              index,
+		cash:               initialCash,
+		lives:              initialLives,
+		score:              initialScore,
+		selectedWeaponName: nil,
+		ammunition:         make(map[string]int, 0),
+		grenades:           make(map[string]bool, 0),
+		weapons:            make(map[string]bool, 0),
+	}
+
 	return result
 }
 
@@ -72,6 +75,10 @@ func (p *Player) Alive() bool {
 }
 
 func (p *Player) AmmunitionCount(ammunition string) int {
+	if cheat.GetCheatController().IsAmmunitionUnlimited() {
+		var ammunition = assets.AmmunitionCrate.GetByName(ammunition)
+		return ammunition.MaxCount
+	}
 	return p.ammunition[ammunition]
 }
 
@@ -112,6 +119,10 @@ func (p *Player) SetCash(cash int) {
 }
 
 func (p *Player) GrenadeCount(grenade string) int {
+	if cheat.GetCheatController().IsAmmunitionUnlimited() {
+		var grenade = assets.GrenadeCrate.GetByName(grenade)
+		return grenade.MaxCount
+	}
 	return p.ammunition[grenade]
 }
 
@@ -266,6 +277,9 @@ func (p *Player) String() string {
 }
 
 func (p *Player) WeaponInInventory(weapon string) bool {
+	if cheat.GetCheatController().IsAmmunitionUnlimited() {
+		return true
+	}
 	return p.weapons[weapon]
 }
 
@@ -282,14 +296,15 @@ func (p *Player) notifyListeners(value interface{}, property string) {
 
 func (p *Player) getNamesOfWeaponsAndGrenadesInInventory() []*string {
 	var result = make([]*string, 0)
+	var allStuffAvailable = cheat.GetCheatController().IsAmmunitionUnlimited()
 	for _, weapon := range assets.WeaponCrate.GetAll() {
-		if p.weapons[weapon.GetName()] {
+		if allStuffAvailable || p.weapons[weapon.GetName()] {
 			var temp = weapon.GetName()
 			result = append(result, &temp)
 		}
 	}
 	for _, grenade := range assets.GrenadeCrate.GetAll() {
-		if p.grenades[grenade.GetName()] {
+		if allStuffAvailable || p.grenades[grenade.GetName()] {
 			var temp = grenade.Name
 			result = append(result, &temp)
 		}

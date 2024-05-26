@@ -3,7 +3,7 @@ module retro-carnage
 go 1.22.2
 
 require (
-	github.com/faiface/pixel v0.10.0
+	github.com/Retro-Carnage-Team/pixel v1.0.1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gopxl/beep v1.4.1
 	github.com/stretchr/testify v1.9.0

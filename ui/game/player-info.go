@@ -11,10 +11,10 @@ import (
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/util"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/imdraw"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/text"
 )
 
 const (

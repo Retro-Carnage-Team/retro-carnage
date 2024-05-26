@@ -7,9 +7,9 @@ import (
 	"retro-carnage/engine/geometry"
 	"strings"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/text"
 )
 
 const err_msg_text_doesnt_fit = "text doesn't fit in output region"

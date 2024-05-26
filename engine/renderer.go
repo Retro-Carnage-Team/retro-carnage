@@ -7,9 +7,9 @@ import (
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/imdraw"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 // Renderer is used to render the current state of an GameEngine to screen

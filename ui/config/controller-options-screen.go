@@ -10,10 +10,10 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/imdraw"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/text"
 )
 
 const (
@@ -28,24 +28,6 @@ const (
 )
 
 var (
-	gamepadButtons = []pixelgl.GamepadButton{
-		pixelgl.ButtonA,
-		pixelgl.ButtonB,
-		pixelgl.ButtonX,
-		pixelgl.ButtonY,
-		pixelgl.ButtonLeftBumper,
-		pixelgl.ButtonRightBumper,
-		pixelgl.ButtonBack,
-		pixelgl.ButtonStart,
-		pixelgl.ButtonGuide,
-		pixelgl.ButtonLeftThumb,
-		pixelgl.ButtonRightThumb,
-		pixelgl.ButtonDpadUp,
-		pixelgl.ButtonDpadRight,
-		pixelgl.ButtonDpadDown,
-		pixelgl.ButtonDpadLeft,
-	}
-
 	gamepadButtonNames = map[pixelgl.GamepadButton]string{
 		pixelgl.ButtonA:           "A",
 		pixelgl.ButtonB:           "B",
@@ -62,130 +44,6 @@ var (
 		pixelgl.ButtonDpadRight:   "DPAD RIGHT",
 		pixelgl.ButtonDpadDown:    "DPAD DOWN",
 		pixelgl.ButtonDpadLeft:    "DPAD LEFT",
-	}
-
-	keyboardButtons = []pixelgl.Button{
-		pixelgl.KeySpace,
-		pixelgl.KeyApostrophe,
-		pixelgl.KeyComma,
-		pixelgl.KeyMinus,
-		pixelgl.KeyPeriod,
-		pixelgl.KeySlash,
-		pixelgl.Key0,
-		pixelgl.Key1,
-		pixelgl.Key2,
-		pixelgl.Key3,
-		pixelgl.Key4,
-		pixelgl.Key5,
-		pixelgl.Key6,
-		pixelgl.Key7,
-		pixelgl.Key8,
-		pixelgl.Key9,
-		pixelgl.KeySemicolon,
-		pixelgl.KeyEqual,
-		pixelgl.KeyA,
-		pixelgl.KeyB,
-		pixelgl.KeyC,
-		pixelgl.KeyD,
-		pixelgl.KeyE,
-		pixelgl.KeyF,
-		pixelgl.KeyG,
-		pixelgl.KeyH,
-		pixelgl.KeyI,
-		pixelgl.KeyJ,
-		pixelgl.KeyK,
-		pixelgl.KeyL,
-		pixelgl.KeyM,
-		pixelgl.KeyN,
-		pixelgl.KeyO,
-		pixelgl.KeyP,
-		pixelgl.KeyQ,
-		pixelgl.KeyR,
-		pixelgl.KeyS,
-		pixelgl.KeyT,
-		pixelgl.KeyU,
-		pixelgl.KeyV,
-		pixelgl.KeyW,
-		pixelgl.KeyX,
-		pixelgl.KeyY,
-		pixelgl.KeyZ,
-		pixelgl.KeyLeftBracket,
-		pixelgl.KeyBackslash,
-		pixelgl.KeyRightBracket,
-		pixelgl.KeyGraveAccent,
-		pixelgl.KeyWorld1,
-		pixelgl.KeyWorld2,
-		pixelgl.KeyEscape,
-		pixelgl.KeyEnter,
-		pixelgl.KeyTab,
-		pixelgl.KeyBackspace,
-		pixelgl.KeyInsert,
-		pixelgl.KeyDelete,
-		pixelgl.KeyRight,
-		pixelgl.KeyLeft,
-		pixelgl.KeyDown,
-		pixelgl.KeyUp,
-		pixelgl.KeyPageUp,
-		pixelgl.KeyPageDown,
-		pixelgl.KeyHome,
-		pixelgl.KeyEnd,
-		pixelgl.KeyCapsLock,
-		pixelgl.KeyScrollLock,
-		pixelgl.KeyNumLock,
-		pixelgl.KeyPrintScreen,
-		pixelgl.KeyPause,
-		pixelgl.KeyF1,
-		pixelgl.KeyF2,
-		pixelgl.KeyF3,
-		pixelgl.KeyF4,
-		pixelgl.KeyF5,
-		pixelgl.KeyF6,
-		pixelgl.KeyF7,
-		pixelgl.KeyF8,
-		pixelgl.KeyF9,
-		pixelgl.KeyF10,
-		pixelgl.KeyF11,
-		pixelgl.KeyF12,
-		pixelgl.KeyF13,
-		pixelgl.KeyF14,
-		pixelgl.KeyF15,
-		pixelgl.KeyF16,
-		pixelgl.KeyF17,
-		pixelgl.KeyF18,
-		pixelgl.KeyF19,
-		pixelgl.KeyF20,
-		pixelgl.KeyF21,
-		pixelgl.KeyF22,
-		pixelgl.KeyF23,
-		pixelgl.KeyF24,
-		pixelgl.KeyF25,
-		pixelgl.KeyKP0,
-		pixelgl.KeyKP1,
-		pixelgl.KeyKP2,
-		pixelgl.KeyKP3,
-		pixelgl.KeyKP4,
-		pixelgl.KeyKP5,
-		pixelgl.KeyKP6,
-		pixelgl.KeyKP7,
-		pixelgl.KeyKP8,
-		pixelgl.KeyKP9,
-		pixelgl.KeyKPDecimal,
-		pixelgl.KeyKPDivide,
-		pixelgl.KeyKPMultiply,
-		pixelgl.KeyKPSubtract,
-		pixelgl.KeyKPAdd,
-		pixelgl.KeyKPEnter,
-		pixelgl.KeyKPEqual,
-		pixelgl.KeyLeftShift,
-		pixelgl.KeyLeftControl,
-		pixelgl.KeyLeftAlt,
-		pixelgl.KeyLeftSuper,
-		pixelgl.KeyRightShift,
-		pixelgl.KeyRightControl,
-		pixelgl.KeyRightAlt,
-		pixelgl.KeyRightSuper,
-		pixelgl.KeyMenu,
-		pixelgl.KeyLast,
 	}
 
 	optionControllerFocusChanges = []focusChange{
@@ -465,14 +323,14 @@ func (s *ControllerOptionsScreen) processOptionSelected() {
 func (s *ControllerOptionsScreen) assignSelectedButton() {
 	var selectedValue = -1
 	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
-		for _, btn := range keyboardButtons {
+		for _, btn := range pixelgl.KeyboardButtons {
 			if s.window.JustPressed(btn) {
 				selectedValue = int(btn)
 				break
 			}
 		}
 	} else {
-		for _, btn := range gamepadButtons {
+		for _, btn := range pixelgl.GamepadButtons {
 			if s.window.JoystickJustPressed(pixelgl.Joystick(s.inputConfig.GamepadConfiguration.JoystickIndex), btn) {
 				selectedValue = int(btn)
 				break

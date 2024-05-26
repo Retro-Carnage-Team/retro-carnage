@@ -1,5 +1,7 @@
 package characters
 
+import "retro-carnage/engine/cheat"
+
 // PlayerCtrl manages the set of players
 type PlayerCtrl struct {
 	numberOfPlayers int
@@ -35,7 +37,9 @@ func (pc *PlayerCtrl) RemainingPlayers() []*Player {
 
 // KillPlayer decreases the number of lives of the specified player by one
 func (pc *PlayerCtrl) KillPlayer(player *Player) {
-	player.SetLives(player.Lives() - 1)
+	if !cheat.GetCheatController().IsNumberOfLivesUnlimited() {
+		player.SetLives(player.Lives() - 1)
+	}
 }
 
 // StartNewGame initializes the controller for a new game of numberOfPlayers players

@@ -8,9 +8,9 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/text"
 )
 
 const (
@@ -49,7 +49,10 @@ func (s *Screen) SetUp() {
 // Update gets called once during each rendering cycle.
 // It can be used to draw the content of the Screen.
 func (s *Screen) Update(_ int64) {
-	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.GetUiEventStateCombined().PressedButton {
+	var uiEventStateCombined = s.inputController.GetUiEventStateCombined()
+	var pressedButton = nil != uiEventStateCombined && uiEventStateCombined.PressedButton
+
+	if s.window.JustPressed(pixelgl.KeyEnter) || pressedButton {
 		s.screenChangeRequired(common.Title)
 	} else {
 		s.drawTitle()

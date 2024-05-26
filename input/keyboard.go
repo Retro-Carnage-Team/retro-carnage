@@ -3,7 +3,7 @@ package input
 import (
 	"retro-carnage/config"
 
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 type keyboard struct {

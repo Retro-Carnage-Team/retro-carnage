@@ -1,9 +1,10 @@
 package shop
 
 import (
-	"github.com/faiface/pixel"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetItemRectOfFirstItem(t *testing.T) {

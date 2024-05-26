@@ -6,7 +6,7 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 const (

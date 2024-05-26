@@ -6,11 +6,12 @@ import (
 	_ "image/jpeg"
 	"math"
 	"retro-carnage/assets"
+	"retro-carnage/engine/cheat"
 	"retro-carnage/input"
 	"retro-carnage/ui/common"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 const backgroundImagePath = "images/other/title.jpg"
@@ -18,9 +19,11 @@ const screenTimeout = 60_000
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
+	cheatController       *cheat.CheatController
 	inputController       input.InputController
 	screenChangeRequired  common.ScreenChangeCallback
 	screenChangeTimeout   int64
+	stereo                *assets.Stereo
 	window                *pixelgl.Window
 }
 
@@ -38,6 +41,8 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 
 func (s *Screen) SetUp() {
 	s.backgroundImageSprite = assets.SpriteRepository.Get(backgroundImagePath)
+	s.cheatController = cheat.GetCheatController()
+	s.stereo = assets.NewStereo()
 	common.TitleScreenInit()
 }
 
@@ -50,6 +55,15 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 
 	s.backgroundImageSprite.Draw(s.window,
 		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
+
+	for _, btn := range pixelgl.KeyboardButtons {
+		if s.window.JustPressed(btn) {
+			if s.cheatController.HandleKeyboardInput(btn) {
+				s.stereo.PlayFx(assets.FxCheatSwitch)
+			}
+			break
+		}
+	}
 
 	var uiEventState = s.inputController.GetUiEventStateCombined()
 	if (nil != uiEventState && uiEventState.PressedButton) || screenTimeout <= s.screenChangeTimeout {

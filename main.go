@@ -9,8 +9,8 @@ import (
 	"retro-carnage/ui"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel"
+	"github.com/Retro-Carnage-Team/pixel/pixelgl"
 )
 
 func run() {
