@@ -2,7 +2,7 @@ package shop
 
 import (
 	"retro-carnage/assets"
-	"retro-carnage/engine/characters"
+	"retro-carnage/engine"
 	"retro-carnage/logging"
 )
 
@@ -49,24 +49,24 @@ func (ii *inventoryItem) IsAmmunition() bool {
 }
 
 // OwnedFromMax returns the current number of these item in inventory and their max count.
-func (ii *inventoryItem) OwnedFromMax(playerIdx int) (int, int) {
+func (ii *inventoryItem) OwnedFromMax(inventoryController *engine.InventoryController) (int, int) {
 	if ii.IsWeapon() {
 		logging.Error.Fatal("this method should be used for grenades and ammunition only")
 		return 0, 0
 	} else if ii.IsGrenade() {
-		var owned = characters.Players[playerIdx].GrenadeCount(ii.Name())
+		var owned = inventoryController.GrenadeCount(ii.Name())
 		var grenade = assets.GrenadeCrate.GetByName(ii.Name())
 		return owned, grenade.MaxCount
 	} else {
-		var owned = characters.Players[playerIdx].AmmunitionCount(ii.Name())
+		var owned = inventoryController.AmmunitionCount(ii.Name())
 		var ammunition = assets.AmmunitionCrate.GetByName(ii.Name())
 		return owned, ammunition.MaxCount
 	}
 }
 
 // OwnedPortion returns the portion of this item's max item count that the user already owns.
-func (ii *inventoryItem) OwnedPortion(playerIdx int) float64 {
-	var owned, max = ii.OwnedFromMax(playerIdx)
+func (ii *inventoryItem) OwnedPortion(inventoryController *engine.InventoryController) float64 {
+	var owned, max = ii.OwnedFromMax(inventoryController)
 	return float64(owned) / float64(max)
 }
 

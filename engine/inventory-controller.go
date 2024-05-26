@@ -3,20 +3,23 @@ package engine
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
+	"retro-carnage/engine/cheat"
 	"retro-carnage/util"
 )
 
 // InventoryController offers easy access to a player's inventory and can manipulate it.
 type InventoryController struct {
-	playerIdx int
-	stereo    *assets.Stereo
+	cheatController *cheat.CheatController
+	playerIdx       int
+	stereo          *assets.Stereo
 }
 
 // NewInventoryController creates and initializes a new instance of InventoryController.
 func NewInventoryController(playerIdx int) InventoryController {
 	return InventoryController{
-		playerIdx: playerIdx,
-		stereo:    assets.NewStereo(),
+		cheatController: cheat.GetCheatController(),
+		playerIdx:       playerIdx,
+		stereo:          assets.NewStereo(),
 	}
 }
 
@@ -50,6 +53,10 @@ func (ic *InventoryController) BuyAmmunition(ammunitionName string) {
 // RemoveAmmunition tries to remove one piece of ammunition for the currently selected weapon. The function returns
 // whether or not that was possible
 func (ic *InventoryController) RemoveAmmunition() bool {
+	if ic.cheatController.IsAmmunitionUnlimited() {
+		return true
+	}
+
 	var player = characters.Players[ic.playerIdx]
 	var selectedWeapon = player.SelectedWeapon()
 	if nil != selectedWeapon {

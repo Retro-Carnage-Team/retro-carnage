@@ -1,4 +1,4 @@
-package engine
+package cheat
 
 import (
 	"retro-carnage/logging"
@@ -36,24 +36,12 @@ var (
 		pixelgl.KeyH,
 		pixelgl.KeyO,
 	}
-	unlimitedMoneyCheat = []pixelgl.Button{
-		pixelgl.KeyT,
-		pixelgl.KeyO,
-		pixelgl.KeyN,
-		pixelgl.KeyY,
-		pixelgl.KeyS,
-		pixelgl.KeyT,
-		pixelgl.KeyA,
-		pixelgl.KeyR,
-		pixelgl.KeyK,
-	}
 )
 
 type CheatController struct {
 	input               []pixelgl.Button
 	unlimitedAmmunition bool
 	unlimitedLives      bool
-	unlimitedMoney      bool
 }
 
 func GetCheatController() *CheatController {
@@ -61,7 +49,6 @@ func GetCheatController() *CheatController {
 		cheatController = &CheatController{
 			unlimitedAmmunition: false,
 			unlimitedLives:      false,
-			unlimitedMoney:      false,
 		}
 	}
 	return cheatController
@@ -73,10 +60,6 @@ func (cc *CheatController) IsAmmunitionUnlimited() bool {
 
 func (cc *CheatController) IsNumberOfLivesUnlimited() bool {
 	return cc.unlimitedLives
-}
-
-func (cc *CheatController) IsMonayUnlimited() bool {
-	return cc.unlimitedMoney
 }
 
 func (cc *CheatController) HandleKeyboardInput(button pixelgl.Button) bool {
@@ -98,12 +81,6 @@ func (cc *CheatController) HandleKeyboardInput(button pixelgl.Button) bool {
 		return true
 	}
 
-	if cc.compareInputToCheat(unlimitedMoneyCheat) {
-		cc.unlimitedMoney = !cc.unlimitedMoney
-		cc.logCheatActivation("money", cc.unlimitedMoney)
-		return true
-	}
-
 	return false
 }
 
@@ -111,7 +88,6 @@ func (cc *CheatController) Reset() {
 	cc.input = []pixelgl.Button{}
 	cc.unlimitedAmmunition = false
 	cc.unlimitedLives = false
-	cc.unlimitedMoney = false
 }
 
 func (cc *CheatController) compareInputToCheat(cheat []pixelgl.Button) bool {

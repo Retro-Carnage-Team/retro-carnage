@@ -45,7 +45,7 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 
 // SetUp is called when the screen got initialized by ui.MainScreen and is about to appear shortly.
 func (s *Screen) SetUp() {
-	s.fpsInfo = &fpsInfo{second: time.Tick(time.Second)}
+	s.fpsInfo = &fpsInfo{second: time.NewTicker(time.Second).C}
 	s.playerInfos = []*playerInfo{
 		newPlayerInfo(0, s.window),
 		newPlayerInfo(1, s.window),
@@ -105,10 +105,12 @@ func (s *Screen) updateGameInProgress(elapsedTimeInMs int64) {
 }
 
 func (s *Screen) updateGameWon(elapsedTimeInMs int64) {
+	var uiEventStateCombined = s.inputController.GetUiEventStateCombined()
+	var buttonPressed = (nil != uiEventStateCombined) && uiEventStateCombined.PressedButton
 	if nil != s.gameWonAnimation {
 		s.gameWonAnimation.update(elapsedTimeInMs)
 		s.gameWonAnimation.drawToScreen()
-		if s.gameWonAnimation.finished || s.inputController.GetUiEventStateCombined().PressedButton {
+		if s.gameWonAnimation.finished || buttonPressed {
 			s.onMissionWon()
 		}
 	} else if nil != s.missionWonAnimation {
@@ -118,7 +120,7 @@ func (s *Screen) updateGameWon(elapsedTimeInMs int64) {
 		s.renderer.Render(0)
 		s.missionWonAnimation.update(elapsedTimeInMs)
 		s.missionWonAnimation.drawToScreen()
-		if s.missionWonAnimation.finished || s.inputController.GetUiEventStateCombined().PressedButton {
+		if s.missionWonAnimation.finished || buttonPressed {
 			var remainingMissions, _ = engine.MissionController.RemainingMissions()
 			// The current mission has not been marked as won, yet. Thus, there is one remaining mission.
 			if (1 == len(remainingMissions)) && (remainingMissions[0].Name == s.mission.Name) {
@@ -137,7 +139,9 @@ func (s *Screen) updateGameLost(elapsedTimeInMs int64) {
 	s.renderer.Render(0)
 	s.gameLostAnimation.update(elapsedTimeInMs)
 	s.gameLostAnimation.drawToScreen()
-	if s.gameLostAnimation.finished || s.inputController.GetUiEventStateCombined().PressedButton {
+	var uiEventStateCombined = s.inputController.GetUiEventStateCombined()
+	var buttonPressed = nil != uiEventStateCombined && uiEventStateCombined.PressedButton
+	if s.gameLostAnimation.finished || buttonPressed {
 		s.moveToHighScoreScreen()
 	}
 }
@@ -155,7 +159,7 @@ func (s *Screen) TearDown() {
 func (s *Screen) onMissionWon() {
 	engine.MissionController.MarkMissionFinished(s.mission)
 	var remainingMissions, _ = engine.MissionController.RemainingMissions()
-	if 0 == len(remainingMissions) {
+	if len(remainingMissions) == 0 {
 		s.moveToHighScoreScreen()
 	} else {
 		s.stereo.PlaySong(assets.ThemeSong)

@@ -6,7 +6,7 @@ import (
 	_ "image/jpeg"
 	"math"
 	"retro-carnage/assets"
-	"retro-carnage/engine"
+	"retro-carnage/engine/cheat"
 	"retro-carnage/input"
 	"retro-carnage/ui/common"
 
@@ -19,7 +19,7 @@ const screenTimeout = 60_000
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
-	cheatController       *engine.CheatController
+	cheatController       *cheat.CheatController
 	inputController       input.InputController
 	screenChangeRequired  common.ScreenChangeCallback
 	screenChangeTimeout   int64
@@ -41,7 +41,7 @@ func (s *Screen) SetWindow(window *pixelgl.Window) {
 
 func (s *Screen) SetUp() {
 	s.backgroundImageSprite = assets.SpriteRepository.Get(backgroundImagePath)
-	s.cheatController = engine.GetCheatController()
+	s.cheatController = cheat.GetCheatController()
 	s.stereo = assets.NewStereo()
 	common.TitleScreenInit()
 }
