@@ -13,6 +13,7 @@ const (
 	FxAr10           SoundEffect = "AR10.mp3"
 	FxBar            SoundEffect = "BAR.mp3"
 	FxCash           SoundEffect = "cash-register.mp3"
+	FxCheatSwitch    SoundEffect = "cheat-switch.mp3"
 	FxDeathEnemy0    SoundEffect = "enemy-death-0.mp3"
 	FxDeathEnemy1    SoundEffect = "enemy-death-1.mp3"
 	FxDeathEnemy2    SoundEffect = "enemy-death-2.mp3"
@@ -61,10 +62,10 @@ const (
 	ThemeSong        Song = "The-Contra-Chop.mp3"
 )
 
-var SoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxCash, FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2,
-	FxDeathEnemy3, FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1, FxDeathPlayer2, FxError,
-	FxFnfal, FxG36, FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxHk21, FxLoading, FxM28A1, FxMg4, FxMg42, FxMp5, FxMp7,
-	FxOutOfAmmo, FxPistol1, FxPistol2, FxRocketLauncher, FxUzi}
+var SoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxCash, FxCheatSwitch, FxDeathEnemy0, FxDeathEnemy1,
+	FxDeathEnemy2, FxDeathEnemy3, FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1,
+	FxDeathPlayer2, FxError, FxFnfal, FxG36, FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxHk21, FxLoading, FxM28A1,
+	FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo, FxPistol1, FxPistol2, FxRocketLauncher, FxUzi}
 
 var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5,
 	FxMp7, FxUzi}

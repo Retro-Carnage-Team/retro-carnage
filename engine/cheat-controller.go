@@ -86,24 +86,21 @@ func (cc *CheatController) HandleKeyboardInput(button pixelgl.Button) bool {
 	}
 	cc.input = append(prevInput, button)
 
-	var debugOutput = ""
-	for _, btn := range cc.input {
-		debugOutput = debugOutput + btn.String()
-	}
-	logging.Info.Printf("Cheat-Input is %s", debugOutput)
-
 	if cc.compareInputToCheat(unlimitedAmmunitionCheat) {
 		cc.unlimitedAmmunition = !cc.unlimitedAmmunition
+		cc.logCheatActivation("ammo", cc.unlimitedAmmunition)
 		return true
 	}
 
 	if cc.compareInputToCheat(unlimitedLivesCheat) {
 		cc.unlimitedLives = !cc.unlimitedLives
+		cc.logCheatActivation("lives", cc.unlimitedLives)
 		return true
 	}
 
 	if cc.compareInputToCheat(unlimitedMoneyCheat) {
 		cc.unlimitedMoney = !cc.unlimitedMoney
+		cc.logCheatActivation("money", cc.unlimitedMoney)
 		return true
 	}
 
@@ -129,4 +126,12 @@ func (cc *CheatController) compareInputToCheat(cheat []pixelgl.Button) bool {
 	}
 
 	return true
+}
+
+func (cc *CheatController) logCheatActivation(topic string, status bool) {
+	var statusString = "OFF"
+	if status {
+		statusString = "ON"
+	}
+	logging.Info.Printf("Cheat for unlimited %s switched %s", topic, statusString)
 }
