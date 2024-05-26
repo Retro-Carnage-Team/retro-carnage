@@ -10,7 +10,7 @@ import (
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/ui/highscore"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 // Screen is where the players can enter their names when they reached a new high score.
@@ -22,7 +22,7 @@ type Screen struct {
 	playerName           string
 	screenChangeRequired common.ScreenChangeCallback
 	stereo               *assets.Stereo
-	window               *pixelgl.Window
+	window               *opengl.Window
 }
 
 const (
@@ -41,7 +41,7 @@ func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 }
 
 // SetWindow passes the application window to the Screen.
-func (s *Screen) SetWindow(window *pixelgl.Window) {
+func (s *Screen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 
@@ -73,7 +73,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 
 	var playerName = s.playerName
-	if s.window.JustPressed(pixelgl.KeyEnter) || s.inputController.GetUiEventStateCombined().PressedButton {
+	if s.window.JustPressed(opengl.KeyEnter) || s.inputController.GetUiEventStateCombined().PressedButton {
 		highscore.EntryControllerInstance.SetPlayerName(s.PlayerIdx, s.playerName)
 		highscore.EntryControllerInstance.AddEntry(highscore.Entry{
 			Name:  s.playerName,
@@ -81,7 +81,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 		})
 		s.exit()
 	} else {
-		if s.window.JustPressed(pixelgl.KeyBackspace) && (0 < len(s.playerName)) {
+		if s.window.JustPressed(opengl.KeyBackspace) && (0 < len(s.playerName)) {
 			s.playerName = s.playerName[:len(s.playerName)-1]
 			playerName = s.playerName
 		}

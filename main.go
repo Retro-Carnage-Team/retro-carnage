@@ -9,8 +9,8 @@ import (
 	"retro-carnage/ui"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 func run() {
@@ -18,9 +18,9 @@ func run() {
 	var monitor = configuration.GetConfiguredMonitor()
 	var monitorW, monitorH = monitor.Size()
 
-	var cfg pixelgl.WindowConfig
+	var cfg opengl.WindowConfig
 	if configuration.FullScreen {
-		cfg = pixelgl.WindowConfig{
+		cfg = opengl.WindowConfig{
 			Bounds:  pixel.R(0, 0, monitorW, monitorH),
 			Monitor: monitor,
 			Title:   "RETRO CARNAGE",
@@ -31,7 +31,7 @@ func run() {
 		var confH = float64(configuration.Height)
 		var x = (monitorW - confW) / 2
 		var y = (monitorH - confH) / 2
-		cfg = pixelgl.WindowConfig{
+		cfg = opengl.WindowConfig{
 			Bounds:   pixel.R(0, 0, confW, confH),
 			Position: pixel.Vec{X: x, Y: y},
 			Title:    "RETRO CARNAGE",
@@ -39,7 +39,7 @@ func run() {
 		}
 	}
 
-	win, err := pixelgl.NewWindow(cfg)
+	win, err := opengl.NewWindow(cfg)
 	if err != nil {
 		logging.Error.Fatalf("failed to create window: %s", err)
 	}
@@ -73,5 +73,5 @@ func main() {
 		}
 	}
 
-	pixelgl.Run(run)
+	opengl.Run(run)
 }

@@ -3,7 +3,7 @@ package cheat
 import (
 	"retro-carnage/logging"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 const (
@@ -12,34 +12,34 @@ const (
 
 var (
 	cheatController          *CheatController
-	unlimitedAmmunitionCheat = []pixelgl.Button{
-		pixelgl.KeyJ,
-		pixelgl.KeyO,
-		pixelgl.KeyH,
-		pixelgl.KeyN,
-		pixelgl.KeyR,
-		pixelgl.KeyA,
-		pixelgl.KeyM,
-		pixelgl.KeyB,
-		pixelgl.KeyO,
+	unlimitedAmmunitionCheat = []opengl.Button{
+		opengl.KeyJ,
+		opengl.KeyO,
+		opengl.KeyH,
+		opengl.KeyN,
+		opengl.KeyR,
+		opengl.KeyA,
+		opengl.KeyM,
+		opengl.KeyB,
+		opengl.KeyO,
 	}
-	unlimitedLivesCheat = []pixelgl.Button{
-		pixelgl.KeyD,
-		pixelgl.KeyU,
-		pixelgl.KeyN,
-		pixelgl.KeyC,
-		pixelgl.KeyA,
-		pixelgl.KeyN,
-		pixelgl.KeyI,
-		pixelgl.KeyD,
-		pixelgl.KeyA,
-		pixelgl.KeyH,
-		pixelgl.KeyO,
+	unlimitedLivesCheat = []opengl.Button{
+		opengl.KeyD,
+		opengl.KeyU,
+		opengl.KeyN,
+		opengl.KeyC,
+		opengl.KeyA,
+		opengl.KeyN,
+		opengl.KeyI,
+		opengl.KeyD,
+		opengl.KeyA,
+		opengl.KeyH,
+		opengl.KeyO,
 	}
 )
 
 type CheatController struct {
-	input               []pixelgl.Button
+	input               []opengl.Button
 	unlimitedAmmunition bool
 	unlimitedLives      bool
 }
@@ -62,7 +62,7 @@ func (cc *CheatController) IsNumberOfLivesUnlimited() bool {
 	return cc.unlimitedLives
 }
 
-func (cc *CheatController) HandleKeyboardInput(button pixelgl.Button) bool {
+func (cc *CheatController) HandleKeyboardInput(button opengl.Button) bool {
 	var prevInput = cc.input
 	if len(cc.input) == maxCheatLen {
 		prevInput = cc.input[1:]
@@ -85,12 +85,12 @@ func (cc *CheatController) HandleKeyboardInput(button pixelgl.Button) bool {
 }
 
 func (cc *CheatController) Reset() {
-	cc.input = []pixelgl.Button{}
+	cc.input = []opengl.Button{}
 	cc.unlimitedAmmunition = false
 	cc.unlimitedLives = false
 }
 
-func (cc *CheatController) compareInputToCheat(cheat []pixelgl.Button) bool {
+func (cc *CheatController) compareInputToCheat(cheat []opengl.Button) bool {
 	if len(cc.input) < len(cheat) {
 		return false
 	}

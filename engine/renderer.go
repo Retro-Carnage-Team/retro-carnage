@@ -7,23 +7,23 @@ import (
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/imdraw"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/imdraw"
 )
 
 // Renderer is used to render the current state of an GameEngine to screen
 type Renderer struct {
-	canvas                *pixelgl.Canvas
+	canvas                *opengl.Canvas
 	engine                *GameEngine
 	outputArea            *geometry.Rectangle
 	playerSpriteSuppliers []*characters.PlayerSpriteSupplier
 	scalingFactor         float64
-	window                *pixelgl.Window
+	window                *opengl.Window
 }
 
 // NewRenderer creates and initializes a new Renderer instance.
-func NewRenderer(engine *GameEngine, window *pixelgl.Window) *Renderer {
+func NewRenderer(engine *GameEngine, window *opengl.Window) *Renderer {
 	var playerSpriteSuppliers = make([]*characters.PlayerSpriteSupplier, 0)
 	for _, player := range characters.PlayerController.ConfiguredPlayers() {
 		playerSpriteSuppliers = append(playerSpriteSuppliers, characters.NewPlayerSpriteSupplier(player))
@@ -38,7 +38,7 @@ func NewRenderer(engine *GameEngine, window *pixelgl.Window) *Renderer {
 // Render draws the state of the GameEngine to screen.
 // The parameter elapsedTimeInMs is used to pick the right sprites for animated objects, like the player character or
 // enemies. Returns a canvas that displays the current game state. Do not modify this canvas outside of this object.
-func (r *Renderer) Render(elapsedTimeInMs int64) *pixelgl.Canvas {
+func (r *Renderer) Render(elapsedTimeInMs int64) *opengl.Canvas {
 	r.drawBackground()
 	r.drawBurnMarks()
 	r.drawEnemies(elapsedTimeInMs)
@@ -214,7 +214,7 @@ func (r *Renderer) initializeGeometry() {
 // initializeCanvas performs the initialization of the canvas.
 // Should not be called from outside this class.
 func (r *Renderer) initializeCanvas() {
-	r.canvas = pixelgl.NewCanvas(pixel.R(
+	r.canvas = opengl.NewCanvas(pixel.R(
 		r.outputArea.X,
 		r.outputArea.Y,
 		r.outputArea.X+r.outputArea.Width,

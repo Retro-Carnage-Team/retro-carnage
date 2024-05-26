@@ -4,7 +4,7 @@ import (
 	"math"
 	"retro-carnage/config"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 // gamepad can be used to access the device state of a gamepad or joystick.
@@ -12,7 +12,7 @@ import (
 // information.
 type gamepad struct {
 	configuration config.InputDeviceConfiguration
-	window        *pixelgl.Window
+	window        *opengl.Window
 }
 
 const (
@@ -78,14 +78,14 @@ func (g *gamepad) convertStickAngleToCardinalDirections(angle float64) (up, down
 
 // State returns the DeviceState of the gamepad.
 func (g *gamepad) State() *InputDeviceState {
-	var joystick = pixelgl.Joystick(g.configuration.GamepadConfiguration.JoystickIndex)
-	var horizontal = g.window.JoystickAxis(joystick, pixelgl.AxisLeftX)
-	var vertical = g.window.JoystickAxis(joystick, pixelgl.AxisLeftY)
+	var joystick = opengl.Joystick(g.configuration.GamepadConfiguration.JoystickIndex)
+	var horizontal = g.window.JoystickAxis(joystick, opengl.AxisLeftX)
+	var vertical = g.window.JoystickAxis(joystick, opengl.AxisLeftY)
 
 	var state = InputDeviceState{
-		PrimaryAction: g.window.JoystickPressed(joystick, pixelgl.GamepadButton(g.configuration.InputFire)),
-		ToggleDown:    g.window.JoystickPressed(joystick, pixelgl.GamepadButton(g.configuration.InputPreviousWeapon)),
-		ToggleUp:      g.window.JoystickPressed(joystick, pixelgl.GamepadButton(g.configuration.InputNextWeapon)),
+		PrimaryAction: g.window.JoystickPressed(joystick, opengl.GamepadButton(g.configuration.InputFire)),
+		ToggleDown:    g.window.JoystickPressed(joystick, opengl.GamepadButton(g.configuration.InputPreviousWeapon)),
+		ToggleUp:      g.window.JoystickPressed(joystick, opengl.GamepadButton(g.configuration.InputNextWeapon)),
 	}
 
 	if g.configuration.GamepadConfiguration.HasDigitalAxis {

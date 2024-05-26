@@ -7,16 +7,16 @@ import (
 	"retro-carnage/engine/geometry"
 	"strings"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
-	"github.com/Retro-Carnage-Team/pixel/text"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
 const err_msg_text_doesnt_fit = "text doesn't fit in output region"
 
 // TextRenderer can be used to render text to the screen
 type TextRenderer struct {
-	Window *pixelgl.Window
+	Window *opengl.Window
 }
 
 // DrawLineToScreenCenter renders a given line of text to the center of the screen. The horizontal position is centered.

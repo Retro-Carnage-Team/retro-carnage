@@ -10,10 +10,10 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/imdraw"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
-	"github.com/Retro-Carnage-Team/pixel/text"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/imdraw"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
 const (
@@ -28,22 +28,22 @@ const (
 )
 
 var (
-	gamepadButtonNames = map[pixelgl.GamepadButton]string{
-		pixelgl.ButtonA:           "A",
-		pixelgl.ButtonB:           "B",
-		pixelgl.ButtonX:           "X",
-		pixelgl.ButtonY:           "Y",
-		pixelgl.ButtonLeftBumper:  "LEFT BUMPER",
-		pixelgl.ButtonRightBumper: "RIGHT BUMPER",
-		pixelgl.ButtonBack:        "BACK",
-		pixelgl.ButtonStart:       "START",
-		pixelgl.ButtonGuide:       "GUIDE",
-		pixelgl.ButtonLeftThumb:   "LEFT THUMB",
-		pixelgl.ButtonRightThumb:  "RIGHT THUMB",
-		pixelgl.ButtonDpadUp:      "DPAD UP",
-		pixelgl.ButtonDpadRight:   "DPAD RIGHT",
-		pixelgl.ButtonDpadDown:    "DPAD DOWN",
-		pixelgl.ButtonDpadLeft:    "DPAD LEFT",
+	gamepadButtonNames = map[opengl.GamepadButton]string{
+		opengl.ButtonA:           "A",
+		opengl.ButtonB:           "B",
+		opengl.ButtonX:           "X",
+		opengl.ButtonY:           "Y",
+		opengl.ButtonLeftBumper:  "LEFT BUMPER",
+		opengl.ButtonRightBumper: "RIGHT BUMPER",
+		opengl.ButtonBack:        "BACK",
+		opengl.ButtonStart:       "START",
+		opengl.ButtonGuide:       "GUIDE",
+		opengl.ButtonLeftThumb:   "LEFT THUMB",
+		opengl.ButtonRightThumb:  "RIGHT THUMB",
+		opengl.ButtonDpadUp:      "DPAD UP",
+		opengl.ButtonDpadRight:   "DPAD RIGHT",
+		opengl.ButtonDpadDown:    "DPAD DOWN",
+		opengl.ButtonDpadLeft:    "DPAD LEFT",
 	}
 
 	optionControllerFocusChanges = []focusChange{
@@ -76,7 +76,7 @@ type ControllerOptionsScreen struct {
 	selectedOption          int
 	textDimensions          map[string]*geometry.Point
 	waitForInput            bool
-	window                  *pixelgl.Window
+	window                  *opengl.Window
 }
 
 func (s *ControllerOptionsScreen) SetUp() {
@@ -260,7 +260,7 @@ func (s *ControllerOptionsScreen) SetScreenChangeCallback(callback common.Screen
 	s.screenChangeRequired = callback
 }
 
-func (s *ControllerOptionsScreen) SetWindow(window *pixelgl.Window) {
+func (s *ControllerOptionsScreen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 
@@ -323,15 +323,15 @@ func (s *ControllerOptionsScreen) processOptionSelected() {
 func (s *ControllerOptionsScreen) assignSelectedButton() {
 	var selectedValue = -1
 	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
-		for _, btn := range pixelgl.KeyboardButtons {
+		for _, btn := range opengl.KeyboardButtons {
 			if s.window.JustPressed(btn) {
 				selectedValue = int(btn)
 				break
 			}
 		}
 	} else {
-		for _, btn := range pixelgl.GamepadButtons {
-			if s.window.JoystickJustPressed(pixelgl.Joystick(s.inputConfig.GamepadConfiguration.JoystickIndex), btn) {
+		for _, btn := range opengl.GamepadButtons {
+			if s.window.JoystickJustPressed(opengl.Joystick(s.inputConfig.GamepadConfiguration.JoystickIndex), btn) {
 				selectedValue = int(btn)
 				break
 			}
@@ -391,9 +391,9 @@ func (s *ControllerOptionsScreen) getMaxWidthOfControllerNames() float64 {
 
 func (s *ControllerOptionsScreen) getDisplayTextForValue(value int) string {
 	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
-		return pixelgl.Button(value).String()
+		return opengl.Button(value).String()
 	}
 
-	var gpButton = pixelgl.GamepadButton(value)
+	var gpButton = opengl.GamepadButton(value)
 	return gamepadButtonNames[gpButton]
 }

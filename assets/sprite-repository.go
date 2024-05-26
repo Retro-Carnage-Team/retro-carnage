@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Retro-Carnage-Team/pixel"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 )
 
 type SpriteRepo struct {

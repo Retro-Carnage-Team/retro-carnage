@@ -13,10 +13,10 @@ import (
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/util"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/imdraw"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
-	"github.com/Retro-Carnage-Team/pixel/text"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/imdraw"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
 const (
@@ -64,7 +64,7 @@ type Screen struct {
 	screenChangeRequired  common.ScreenChangeCallback
 	selectedItemIdx       int
 	stopWatch             *util.StopWatch
-	window                *pixelgl.Window
+	window                *opengl.Window
 }
 
 func (s *Screen) SetInputController(controller input.InputController) {
@@ -75,7 +75,7 @@ func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
 }
 
-func (s *Screen) SetWindow(window *pixelgl.Window) {
+func (s *Screen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 

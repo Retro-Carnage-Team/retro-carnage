@@ -4,9 +4,9 @@ import (
 	"image/color"
 	"retro-carnage/ui/common"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/imdraw"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/imdraw"
 )
 
 const (
@@ -47,7 +47,7 @@ const (
 	txtWindowSize        = "WINDOW SIZE"
 )
 
-func drawRect(w *pixelgl.Window, left float64, bottom float64, right float64, top float64, col color.RGBA) {
+func drawRect(w *opengl.Window, left float64, bottom float64, right float64, top float64, col color.RGBA) {
 	imd := imdraw.New(nil)
 	imd.Color = col
 	imd.EndShape = imdraw.RoundEndShape
@@ -59,7 +59,7 @@ func drawRect(w *pixelgl.Window, left float64, bottom float64, right float64, to
 	imd.Draw(w)
 }
 
-func drawPossibleSelectionRect(w *pixelgl.Window, txtRect pixel.Rect) {
+func drawPossibleSelectionRect(w *opengl.Window, txtRect pixel.Rect) {
 	drawRect(
 		w,
 		txtRect.Min.X-buttonPadding,
@@ -70,7 +70,7 @@ func drawPossibleSelectionRect(w *pixelgl.Window, txtRect pixel.Rect) {
 	)
 }
 
-func drawTextSelectionRect(w *pixelgl.Window, txtRect pixel.Rect) {
+func drawTextSelectionRect(w *opengl.Window, txtRect pixel.Rect) {
 	drawRect(
 		w,
 		txtRect.Min.X-buttonPadding,

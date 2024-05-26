@@ -7,8 +7,8 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 type missionWonAnimationSection int
@@ -35,7 +35,7 @@ var (
 
 type missionWonAnimation struct {
 	animationSection     missionWonAnimationSection
-	backgroundCanvas     *pixelgl.Canvas
+	backgroundCanvas     *opengl.Canvas
 	backgroundColorMask  pixel.RGBA
 	completedTextVisible bool
 	duration             int64
@@ -50,17 +50,17 @@ type missionWonAnimation struct {
 	playerBonus          []int64
 	playerResultLines    []string
 	stereo               *assets.Stereo
-	window               *pixelgl.Window
+	window               *opengl.Window
 }
 
 func createMissionWonAnimation(
 	playerInfos []*playerInfo,
-	gameCanvas *pixelgl.Canvas,
+	gameCanvas *opengl.Canvas,
 	kills []int,
 	mission *assets.Mission,
-	window *pixelgl.Window,
+	window *opengl.Window,
 ) *missionWonAnimation {
-	var bgCanvas = pixelgl.NewCanvas(window.Bounds())
+	var bgCanvas = opengl.NewCanvas(window.Bounds())
 	for _, playerInfo := range playerInfos {
 		playerInfo.draw(bgCanvas)
 	}

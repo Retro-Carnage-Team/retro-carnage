@@ -5,13 +5,13 @@ import (
 	"retro-carnage/config"
 	"retro-carnage/logging"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
-var joysticks = []pixelgl.Joystick{pixelgl.Joystick1, pixelgl.Joystick2, pixelgl.Joystick3, pixelgl.Joystick4,
-	pixelgl.Joystick5, pixelgl.Joystick6, pixelgl.Joystick7, pixelgl.Joystick8, pixelgl.Joystick9, pixelgl.Joystick10,
-	pixelgl.Joystick11, pixelgl.Joystick12, pixelgl.Joystick13, pixelgl.Joystick14, pixelgl.Joystick15,
-	pixelgl.Joystick16}
+var joysticks = []opengl.Joystick{opengl.Joystick1, opengl.Joystick2, opengl.Joystick3, opengl.Joystick4,
+	opengl.Joystick5, opengl.Joystick6, opengl.Joystick7, opengl.Joystick8, opengl.Joystick9, opengl.Joystick10,
+	opengl.Joystick11, opengl.Joystick12, opengl.Joystick13, opengl.Joystick14, opengl.Joystick15,
+	opengl.Joystick16}
 
 const (
 	error_invalid_player   = "invalid argument: no such player"
@@ -30,10 +30,10 @@ type InputController struct {
 	deviceConfigurations []config.InputDeviceConfiguration
 	deviceStateCombined  *InputDeviceState
 	inputSources         []inputDeviceWithState
-	window               *pixelgl.Window
+	window               *opengl.Window
 }
 
-func NewController(window *pixelgl.Window) InputController {
+func NewController(window *opengl.Window) InputController {
 	var result = InputController{window: window}
 	result.inputSources = make([]inputDeviceWithState, 0)
 	return result
@@ -217,8 +217,8 @@ func (c *InputController) filterValidConfigurations(configurations []config.Inpu
 	var result = make([]config.InputDeviceConfiguration, 0)
 	for _, cc := range configurations {
 		if (cc.DeviceName == config.DeviceNameKeyboard) ||
-			(c.window.JoystickPresent(pixelgl.Joystick(cc.JoystickIndex)) &&
-				c.window.JoystickName(pixelgl.Joystick(cc.JoystickIndex)) == cc.DeviceName) {
+			(c.window.JoystickPresent(opengl.Joystick(cc.JoystickIndex)) &&
+				c.window.JoystickName(opengl.Joystick(cc.JoystickIndex)) == cc.DeviceName) {
 			result = append(result, cc)
 		}
 	}

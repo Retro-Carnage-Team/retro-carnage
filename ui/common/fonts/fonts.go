@@ -9,8 +9,8 @@ import (
 	"retro-carnage/logging"
 	"unicode"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/text"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 	"github.com/golang/freetype/truetype"
 )
 

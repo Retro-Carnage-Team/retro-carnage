@@ -3,7 +3,7 @@ module retro-carnage
 go 1.22.2
 
 require (
-	github.com/Retro-Carnage-Team/pixel v1.0.1
+	github.com/Retro-Carnage-Team/pixel2 v0.0.2
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gopxl/beep v1.4.1
 	github.com/stretchr/testify v1.9.0
@@ -19,6 +19,8 @@ require (
 	github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20240307211618-a69d953ea142 // indirect
 	github.com/go-gl/mathgl v1.1.0 // indirect
+	github.com/gopxl/glhf/v2 v2.0.0 // indirect
+	github.com/gopxl/mainthread/v2 v2.0.0 // indirect
 	github.com/hajimehoshi/go-mp3 v0.3.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

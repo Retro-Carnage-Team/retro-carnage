@@ -3,7 +3,7 @@ package graphics
 import (
 	"retro-carnage/engine/geometry"
 
-	"github.com/Retro-Carnage-Team/pixel"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 )
 
 type SpriteWithOffset struct {

@@ -12,9 +12,9 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/imdraw"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/imdraw"
 )
 
 const (
@@ -38,7 +38,7 @@ type Screen struct {
 	missionNameToClientSprite map[string]*pixel.Sprite
 	screenChangeRequired      common.ScreenChangeCallback
 	selectedMission           *assets.Mission
-	window                    *pixelgl.Window
+	window                    *opengl.Window
 	worldMapSprite            *pixel.Sprite
 }
 
@@ -50,7 +50,7 @@ func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
 }
 
-func (s *Screen) SetWindow(window *pixelgl.Window) {
+func (s *Screen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 

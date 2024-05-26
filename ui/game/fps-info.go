@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 // fpsInfo is a utility to measure the Frames Per Second (FPS) of the graphical output. This info can then be drawn to
@@ -26,6 +26,6 @@ func (fi *fpsInfo) update() {
 	}
 }
 
-func (fi *fpsInfo) drawToScreen(window *pixelgl.Window) {
+func (fi *fpsInfo) drawToScreen(window *opengl.Window) {
 	window.SetTitle(fmt.Sprintf("RETRO CARNAGE (%d FPS)", fi.fps))
 }

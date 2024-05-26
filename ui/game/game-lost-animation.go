@@ -6,19 +6,19 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 type gameLostAnimation struct {
-	backgroundCanvas    *pixelgl.Canvas
+	backgroundCanvas    *opengl.Canvas
 	backgroundColorMask pixel.RGBA
 	duration            int64
 	finished            bool
 	mission             *assets.Mission
 	stereo              *assets.Stereo
 	textVisible         bool
-	window              *pixelgl.Window
+	window              *opengl.Window
 }
 
 const (
@@ -30,11 +30,11 @@ var gameOverTextLines = []string{"GAME OVER", "GIVE IT ANOTHER TRY - AND MAKE AN
 
 func createGameLostAnimation(
 	playerInfos []*playerInfo,
-	gameCanvas *pixelgl.Canvas,
+	gameCanvas *opengl.Canvas,
 	mission *assets.Mission,
-	window *pixelgl.Window,
+	window *opengl.Window,
 ) *gameLostAnimation {
-	var bgCanvas = pixelgl.NewCanvas(window.Bounds())
+	var bgCanvas = opengl.NewCanvas(window.Bounds())
 	for _, playerInfo := range playerInfos {
 		playerInfo.draw(bgCanvas)
 	}
