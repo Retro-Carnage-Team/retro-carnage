@@ -3,7 +3,7 @@ package cheat
 import (
 	"testing"
 
-	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,8 +11,8 @@ func TestWrongCheat(t *testing.T) {
 	var cheatController = GetCheatController()
 	cheatController.Reset()
 
-	var buttons = []opengl.Button{
-		opengl.KeyM, opengl.KeyO, opengl.KeyR, opengl.KeyK,
+	var buttons = []pixel.Button{
+		pixel.KeyM, pixel.KeyO, pixel.KeyR, pixel.KeyK,
 	}
 	for _, btn := range buttons {
 		var active = cheatController.HandleKeyboardInput(btn)
@@ -24,22 +24,22 @@ func TestValidCheat(t *testing.T) {
 	var cheatController = GetCheatController()
 	cheatController.Reset()
 
-	var buttons = []opengl.Button{
-		opengl.KeyJ,
-		opengl.KeyO,
-		opengl.KeyH,
-		opengl.KeyN,
-		opengl.KeyR,
-		opengl.KeyA,
-		opengl.KeyM,
-		opengl.KeyB,
+	var buttons = []pixel.Button{
+		pixel.KeyJ,
+		pixel.KeyO,
+		pixel.KeyH,
+		pixel.KeyN,
+		pixel.KeyR,
+		pixel.KeyA,
+		pixel.KeyM,
+		pixel.KeyB,
 	}
 	for _, btn := range buttons {
 		var active = cheatController.HandleKeyboardInput(btn)
 		assert.Equal(t, false, active)
 	}
 
-	var active = cheatController.HandleKeyboardInput(opengl.KeyO)
+	var active = cheatController.HandleKeyboardInput(pixel.KeyO)
 	assert.Equal(t, true, active)
 	assert.Equal(t, true, cheatController.unlimitedAmmunition)
 }
@@ -48,18 +48,18 @@ func TestValidCheatAmidstOtherInput(t *testing.T) {
 	var cheatController = GetCheatController()
 	cheatController.Reset()
 
-	var buttons = []opengl.Button{
-		opengl.KeyA,
-		opengl.KeyJ,
-		opengl.KeyO,
-		opengl.KeyH,
-		opengl.KeyN,
-		opengl.KeyR,
-		opengl.KeyA,
-		opengl.KeyM,
-		opengl.KeyB,
-		opengl.KeyO,
-		opengl.KeyX,
+	var buttons = []pixel.Button{
+		pixel.KeyA,
+		pixel.KeyJ,
+		pixel.KeyO,
+		pixel.KeyH,
+		pixel.KeyN,
+		pixel.KeyR,
+		pixel.KeyA,
+		pixel.KeyM,
+		pixel.KeyB,
+		pixel.KeyO,
+		pixel.KeyX,
 	}
 
 	for _, btn := range buttons {

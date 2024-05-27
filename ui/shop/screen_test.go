@@ -3,7 +3,7 @@ package shop
 import (
 	"testing"
 
-	"github.com/Retro-Carnage-Team/pixel"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 	"github.com/stretchr/testify/assert"
 )
 
