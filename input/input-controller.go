@@ -5,13 +5,14 @@ import (
 	"retro-carnage/config"
 	"retro-carnage/logging"
 
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
-var joysticks = []opengl.Joystick{opengl.Joystick1, opengl.Joystick2, opengl.Joystick3, opengl.Joystick4,
-	opengl.Joystick5, opengl.Joystick6, opengl.Joystick7, opengl.Joystick8, opengl.Joystick9, opengl.Joystick10,
-	opengl.Joystick11, opengl.Joystick12, opengl.Joystick13, opengl.Joystick14, opengl.Joystick15,
-	opengl.Joystick16}
+var joysticks = []pixel.Joystick{pixel.Joystick1, pixel.Joystick2, pixel.Joystick3, pixel.Joystick4,
+	pixel.Joystick5, pixel.Joystick6, pixel.Joystick7, pixel.Joystick8, pixel.Joystick9, pixel.Joystick10,
+	pixel.Joystick11, pixel.Joystick12, pixel.Joystick13, pixel.Joystick14, pixel.Joystick15,
+	pixel.Joystick16}
 
 const (
 	error_invalid_player   = "invalid argument: no such player"
@@ -217,8 +218,8 @@ func (c *InputController) filterValidConfigurations(configurations []config.Inpu
 	var result = make([]config.InputDeviceConfiguration, 0)
 	for _, cc := range configurations {
 		if (cc.DeviceName == config.DeviceNameKeyboard) ||
-			(c.window.JoystickPresent(opengl.Joystick(cc.JoystickIndex)) &&
-				c.window.JoystickName(opengl.Joystick(cc.JoystickIndex)) == cc.DeviceName) {
+			(c.window.JoystickPresent(pixel.Joystick(cc.JoystickIndex)) &&
+				c.window.JoystickName(pixel.Joystick(cc.JoystickIndex)) == cc.DeviceName) {
 			result = append(result, cc)
 		}
 	}

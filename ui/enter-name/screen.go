@@ -10,6 +10,7 @@ import (
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/ui/highscore"
 
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
@@ -73,7 +74,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 
 	var playerName = s.playerName
-	if s.window.JustPressed(opengl.KeyEnter) || s.inputController.GetUiEventStateCombined().PressedButton {
+	if s.window.JustPressed(pixel.KeyEnter) || s.inputController.GetUiEventStateCombined().PressedButton {
 		highscore.EntryControllerInstance.SetPlayerName(s.PlayerIdx, s.playerName)
 		highscore.EntryControllerInstance.AddEntry(highscore.Entry{
 			Name:  s.playerName,
@@ -81,7 +82,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 		})
 		s.exit()
 	} else {
-		if s.window.JustPressed(opengl.KeyBackspace) && (0 < len(s.playerName)) {
+		if s.window.JustPressed(pixel.KeyBackspace) && (0 < len(s.playerName)) {
 			s.playerName = s.playerName[:len(s.playerName)-1]
 			playerName = s.playerName
 		}

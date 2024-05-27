@@ -3,7 +3,7 @@ package cheat
 import (
 	"retro-carnage/logging"
 
-	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 )
 
 const (
@@ -12,34 +12,34 @@ const (
 
 var (
 	cheatController          *CheatController
-	unlimitedAmmunitionCheat = []opengl.Button{
-		opengl.KeyJ,
-		opengl.KeyO,
-		opengl.KeyH,
-		opengl.KeyN,
-		opengl.KeyR,
-		opengl.KeyA,
-		opengl.KeyM,
-		opengl.KeyB,
-		opengl.KeyO,
+	unlimitedAmmunitionCheat = []pixel.Button{
+		pixel.KeyJ,
+		pixel.KeyO,
+		pixel.KeyH,
+		pixel.KeyN,
+		pixel.KeyR,
+		pixel.KeyA,
+		pixel.KeyM,
+		pixel.KeyB,
+		pixel.KeyO,
 	}
-	unlimitedLivesCheat = []opengl.Button{
-		opengl.KeyD,
-		opengl.KeyU,
-		opengl.KeyN,
-		opengl.KeyC,
-		opengl.KeyA,
-		opengl.KeyN,
-		opengl.KeyI,
-		opengl.KeyD,
-		opengl.KeyA,
-		opengl.KeyH,
-		opengl.KeyO,
+	unlimitedLivesCheat = []pixel.Button{
+		pixel.KeyD,
+		pixel.KeyU,
+		pixel.KeyN,
+		pixel.KeyC,
+		pixel.KeyA,
+		pixel.KeyN,
+		pixel.KeyI,
+		pixel.KeyD,
+		pixel.KeyA,
+		pixel.KeyH,
+		pixel.KeyO,
 	}
 )
 
 type CheatController struct {
-	input               []opengl.Button
+	input               []pixel.Button
 	unlimitedAmmunition bool
 	unlimitedLives      bool
 }
@@ -62,7 +62,7 @@ func (cc *CheatController) IsNumberOfLivesUnlimited() bool {
 	return cc.unlimitedLives
 }
 
-func (cc *CheatController) HandleKeyboardInput(button opengl.Button) bool {
+func (cc *CheatController) HandleKeyboardInput(button pixel.Button) bool {
 	var prevInput = cc.input
 	if len(cc.input) == maxCheatLen {
 		prevInput = cc.input[1:]
@@ -85,12 +85,12 @@ func (cc *CheatController) HandleKeyboardInput(button opengl.Button) bool {
 }
 
 func (cc *CheatController) Reset() {
-	cc.input = []opengl.Button{}
+	cc.input = []pixel.Button{}
 	cc.unlimitedAmmunition = false
 	cc.unlimitedLives = false
 }
 
-func (cc *CheatController) compareInputToCheat(cheat []opengl.Button) bool {
+func (cc *CheatController) compareInputToCheat(cheat []pixel.Button) bool {
 	if len(cc.input) < len(cheat) {
 		return false
 	}

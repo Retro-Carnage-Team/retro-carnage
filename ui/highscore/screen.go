@@ -52,7 +52,7 @@ func (s *Screen) Update(_ int64) {
 	var uiEventStateCombined = s.inputController.GetUiEventStateCombined()
 	var pressedButton = nil != uiEventStateCombined && uiEventStateCombined.PressedButton
 
-	if s.window.JustPressed(opengl.KeyEnter) || pressedButton {
+	if s.window.JustPressed(pixel.KeyEnter) || pressedButton {
 		s.screenChangeRequired(common.Title)
 	} else {
 		s.drawTitle()

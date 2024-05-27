@@ -56,7 +56,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.backgroundImageSprite.Draw(s.window,
 		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
 
-	for _, btn := range opengl.KeyboardButtons {
+	for _, btn := range common.KeyboardButtons {
 		if s.window.JustPressed(btn) {
 			if s.cheatController.HandleKeyboardInput(btn) {
 				s.stereo.PlayFx(assets.FxCheatSwitch)

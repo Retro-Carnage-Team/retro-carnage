@@ -28,22 +28,22 @@ const (
 )
 
 var (
-	gamepadButtonNames = map[opengl.GamepadButton]string{
-		opengl.ButtonA:           "A",
-		opengl.ButtonB:           "B",
-		opengl.ButtonX:           "X",
-		opengl.ButtonY:           "Y",
-		opengl.ButtonLeftBumper:  "LEFT BUMPER",
-		opengl.ButtonRightBumper: "RIGHT BUMPER",
-		opengl.ButtonBack:        "BACK",
-		opengl.ButtonStart:       "START",
-		opengl.ButtonGuide:       "GUIDE",
-		opengl.ButtonLeftThumb:   "LEFT THUMB",
-		opengl.ButtonRightThumb:  "RIGHT THUMB",
-		opengl.ButtonDpadUp:      "DPAD UP",
-		opengl.ButtonDpadRight:   "DPAD RIGHT",
-		opengl.ButtonDpadDown:    "DPAD DOWN",
-		opengl.ButtonDpadLeft:    "DPAD LEFT",
+	gamepadButtonNames = map[pixel.GamepadButton]string{
+		pixel.GamepadA:           "A",
+		pixel.GamepadB:           "B",
+		pixel.GamepadX:           "X",
+		pixel.GamepadY:           "Y",
+		pixel.GamepadLeftBumper:  "LEFT BUMPER",
+		pixel.GamepadRightBumper: "RIGHT BUMPER",
+		pixel.GamepadBack:        "BACK",
+		pixel.GamepadStart:       "START",
+		pixel.GamepadGuide:       "GUIDE",
+		pixel.GamepadLeftThumb:   "LEFT THUMB",
+		pixel.GamepadRightThumb:  "RIGHT THUMB",
+		pixel.GamepadDpadUp:      "DPAD UP",
+		pixel.GamepadDpadRight:   "DPAD RIGHT",
+		pixel.GamepadDpadDown:    "DPAD DOWN",
+		pixel.GamepadDpadLeft:    "DPAD LEFT",
 	}
 
 	optionControllerFocusChanges = []focusChange{
@@ -323,15 +323,15 @@ func (s *ControllerOptionsScreen) processOptionSelected() {
 func (s *ControllerOptionsScreen) assignSelectedButton() {
 	var selectedValue = -1
 	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
-		for _, btn := range opengl.KeyboardButtons {
+		for _, btn := range common.KeyboardButtons {
 			if s.window.JustPressed(btn) {
 				selectedValue = int(btn)
 				break
 			}
 		}
 	} else {
-		for _, btn := range opengl.GamepadButtons {
-			if s.window.JoystickJustPressed(opengl.Joystick(s.inputConfig.GamepadConfiguration.JoystickIndex), btn) {
+		for _, btn := range common.GamepadButtons {
+			if s.window.JoystickJustPressed(pixel.Joystick(s.inputConfig.GamepadConfiguration.JoystickIndex), btn) {
 				selectedValue = int(btn)
 				break
 			}
@@ -391,9 +391,9 @@ func (s *ControllerOptionsScreen) getMaxWidthOfControllerNames() float64 {
 
 func (s *ControllerOptionsScreen) getDisplayTextForValue(value int) string {
 	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
-		return opengl.Button(value).String()
+		return pixel.Button(value).String()
 	}
 
-	var gpButton = opengl.GamepadButton(value)
+	var gpButton = pixel.GamepadButton(value)
 	return gamepadButtonNames[gpButton]
 }

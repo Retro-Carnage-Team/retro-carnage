@@ -5,6 +5,7 @@ import (
 	"retro-carnage/logging"
 	"strings"
 
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
@@ -39,7 +40,7 @@ type InputDeviceConfiguration struct {
 	InputPreviousWeapon   int    `json:"inputPrevWeapon"`
 }
 
-func NewGamepadConfiguration(w opengl.Window, j opengl.Joystick) InputDeviceConfiguration {
+func NewGamepadConfiguration(w opengl.Window, j pixel.Joystick) InputDeviceConfiguration {
 	if !w.JoystickPresent(j) {
 		logging.Error.Fatalf("NewGamepadConfiguration was called for joystick that is not present!")
 	}
@@ -59,21 +60,21 @@ func NewGamepadConfiguration(w opengl.Window, j opengl.Joystick) InputDeviceConf
 			JoystickIndex:  int(j),
 		},
 		DeviceName:          name,
-		InputFire:           int(opengl.KeyLeftControl),
-		InputNextWeapon:     int(opengl.KeyA),
-		InputPreviousWeapon: int(opengl.KeyZ),
+		InputFire:           int(pixel.KeyLeftControl),
+		InputNextWeapon:     int(pixel.KeyA),
+		InputPreviousWeapon: int(pixel.KeyZ),
 	}
 
 	if digitalController {
 		// Checked this with a SpeedLink Competition Pro USB
-		result.InputFire = int(opengl.ButtonX)
-		result.InputNextWeapon = int(opengl.ButtonCircle)
-		result.InputPreviousWeapon = int(opengl.ButtonLeftBumper)
+		result.InputFire = int(pixel.GamepadX)
+		result.InputNextWeapon = int(pixel.GamepadCircle)
+		result.InputPreviousWeapon = int(pixel.GamepadLeftBumper)
 	} else {
 		// Checked this with XBox360 and PlayStation controllers
-		result.InputFire = int(opengl.ButtonA)
-		result.InputNextWeapon = int(opengl.ButtonX)
-		result.InputPreviousWeapon = int(opengl.ButtonY)
+		result.InputFire = int(pixel.GamepadA)
+		result.InputNextWeapon = int(pixel.GamepadX)
+		result.InputPreviousWeapon = int(pixel.GamepadY)
 	}
 	return result
 }
@@ -81,15 +82,15 @@ func NewGamepadConfiguration(w opengl.Window, j opengl.Joystick) InputDeviceConf
 func NewKeyboardConfiguration() InputDeviceConfiguration {
 	return InputDeviceConfiguration{
 		KeyboardConfiguration: KeyboardConfiguration{
-			InputUp:    int(opengl.KeyUp),
-			InputDown:  int(opengl.KeyDown),
-			InputLeft:  int(opengl.KeyLeft),
-			InputRight: int(opengl.KeyRight),
+			InputUp:    int(pixel.KeyUp),
+			InputDown:  int(pixel.KeyDown),
+			InputLeft:  int(pixel.KeyLeft),
+			InputRight: int(pixel.KeyRight),
 		},
 		DeviceName:          DeviceNameKeyboard,
-		InputFire:           int(opengl.KeyLeftControl),
-		InputNextWeapon:     int(opengl.KeyA),
-		InputPreviousWeapon: int(opengl.KeyZ),
+		InputFire:           int(pixel.KeyLeftControl),
+		InputNextWeapon:     int(pixel.KeyA),
+		InputPreviousWeapon: int(pixel.KeyZ),
 	}
 }
 
