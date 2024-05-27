@@ -4,7 +4,7 @@ import (
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
 
-	"github.com/Retro-Carnage-Team/pixel"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 )
 
 const (

@@ -7,8 +7,8 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 type gameWonAnimation struct {
@@ -19,7 +19,7 @@ type gameWonAnimation struct {
 	mission          *assets.Mission
 	showText         bool
 	stereo           *assets.Stereo
-	window           *pixelgl.Window
+	window           *opengl.Window
 }
 
 const (
@@ -42,7 +42,7 @@ var gameWonTextLines = []string{
 
 func createGameWonAnimation(
 	mission *assets.Mission,
-	window *pixelgl.Window,
+	window *opengl.Window,
 ) *gameWonAnimation {
 	var backgroundImage = assets.SpriteRepository.Get(gameWonBackground)
 	var scaleX = window.Bounds().Max.X / backgroundImage.Picture().Bounds().Max.X

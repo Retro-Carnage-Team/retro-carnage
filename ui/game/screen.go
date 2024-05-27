@@ -9,7 +9,7 @@ import (
 	"retro-carnage/ui/highscore"
 	"time"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 // Screen in this package is the one that show the actual gameplay.
@@ -25,7 +25,7 @@ type Screen struct {
 	renderer             *engine.Renderer
 	screenChangeRequired common.ScreenChangeCallback
 	stereo               *assets.Stereo
-	window               *pixelgl.Window
+	window               *opengl.Window
 }
 
 // SetInputController is used to connect Screen with the global input.Controller instance.
@@ -38,8 +38,8 @@ func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
 }
 
-// SetWindow is used to connect Screen with the pixelgl.Window instance.
-func (s *Screen) SetWindow(window *pixelgl.Window) {
+// SetWindow is used to connect Screen with the opengl.Window instance.
+func (s *Screen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 
@@ -64,7 +64,7 @@ func (s *Screen) SetUp() {
 
 // Update gets called for every frame that gets displayed.
 // Here we update the state of the gameplay based on the time that has elapsed since the last frame.
-// Then we render the new game state to the pixelgl.Window.
+// Then we render the new game state to the opengl.Window.
 func (s *Screen) Update(elapsedTimeInMs int64) {
 	if nil != s.engine && nil != s.renderer {
 		if !(s.engine.Won || s.engine.Lost) {

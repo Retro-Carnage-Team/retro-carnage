@@ -8,9 +8,9 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
-	"github.com/Retro-Carnage-Team/pixel/text"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
 const (
@@ -29,7 +29,7 @@ type SelectScreen struct {
 	screenChangeRequired common.ScreenChangeCallback
 	selectedOption       int
 	textDimensions       map[string]*geometry.Point
-	window               *pixelgl.Window
+	window               *opengl.Window
 }
 
 func (s *SelectScreen) SetUp() {
@@ -97,7 +97,7 @@ func (s *SelectScreen) SetScreenChangeCallback(callback common.ScreenChangeCallb
 	s.screenChangeRequired = callback
 }
 
-func (s *SelectScreen) SetWindow(window *pixelgl.Window) {
+func (s *SelectScreen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 

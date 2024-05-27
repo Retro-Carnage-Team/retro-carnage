@@ -3,7 +3,7 @@ package common
 import (
 	"retro-carnage/input"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 type ScreenChangeCallback = func(screenName ScreenName)
@@ -28,7 +28,7 @@ type Screen interface {
 	// SetScreenChangeCallback passes a callback function that cann be called to switch to another screen.
 	SetScreenChangeCallback(callback ScreenChangeCallback)
 	// SetWindow passes the application window to the Screen.
-	SetWindow(window *pixelgl.Window)
+	SetWindow(window *opengl.Window)
 
 	/*--- Other ------------------------------------------------------------------------------------------------------*/
 

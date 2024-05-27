@@ -7,7 +7,7 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 type ResultScreen struct {
@@ -16,7 +16,7 @@ type ResultScreen struct {
 	inputController      input.InputController
 	screenChangeRequired common.ScreenChangeCallback
 	timeElapsed          int64
-	window               *pixelgl.Window
+	window               *opengl.Window
 }
 
 const txtOnePlayerGame = "1 PLAYER GAME"
@@ -77,7 +77,7 @@ func (s *ResultScreen) SetScreenChangeCallback(callback common.ScreenChangeCallb
 	s.screenChangeRequired = callback
 }
 
-func (s *ResultScreen) SetWindow(window *pixelgl.Window) {
+func (s *ResultScreen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 

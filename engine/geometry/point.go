@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/Retro-Carnage-Team/pixel"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 )
 
 // Point is a specific spot on a 2d plane

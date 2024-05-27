@@ -8,9 +8,9 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
-	"github.com/Retro-Carnage-Team/pixel/text"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
 const (
@@ -22,7 +22,7 @@ type Screen struct {
 	inputController      input.InputController
 	screenChangeRequired common.ScreenChangeCallback
 	stereo               *assets.Stereo
-	window               *pixelgl.Window
+	window               *opengl.Window
 }
 
 // SetInputController passes the input controller to the screen.
@@ -36,7 +36,7 @@ func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 }
 
 // SetWindow passes the application window to the Screen.
-func (s *Screen) SetWindow(window *pixelgl.Window) {
+func (s *Screen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 
@@ -52,7 +52,7 @@ func (s *Screen) Update(_ int64) {
 	var uiEventStateCombined = s.inputController.GetUiEventStateCombined()
 	var pressedButton = nil != uiEventStateCombined && uiEventStateCombined.PressedButton
 
-	if s.window.JustPressed(pixelgl.KeyEnter) || pressedButton {
+	if s.window.JustPressed(pixel.KeyEnter) || pressedButton {
 		s.screenChangeRequired(common.Title)
 	} else {
 		s.drawTitle()

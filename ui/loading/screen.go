@@ -10,9 +10,9 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
-	"github.com/Retro-Carnage-Team/pixel/text"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 	"golang.org/x/image/colornames"
 )
 
@@ -24,7 +24,7 @@ type Screen struct {
 	screenChangeRequired common.ScreenChangeCallback
 	screenChangeTimeout  int64
 	textDimensions       map[string]*geometry.Point
-	window               *pixelgl.Window
+	window               *opengl.Window
 }
 
 func (s *Screen) SetInputController(_ input.InputController) {
@@ -35,7 +35,7 @@ func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
 }
 
-func (s *Screen) SetWindow(window *pixelgl.Window) {
+func (s *Screen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 

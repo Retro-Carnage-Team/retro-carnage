@@ -6,7 +6,7 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 const (
@@ -23,7 +23,7 @@ type Screen struct {
 	text                 string
 	textLength           int
 	volumeTimer          int64
-	window               *pixelgl.Window
+	window               *opengl.Window
 }
 
 func (s *Screen) SetInputController(_ input.InputController) {
@@ -34,7 +34,7 @@ func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
 }
 
-func (s *Screen) SetWindow(window *pixelgl.Window) {
+func (s *Screen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 

@@ -17,7 +17,7 @@ import (
 	"retro-carnage/ui/title"
 	"time"
 
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 	"golang.org/x/image/colornames"
 )
 
@@ -25,9 +25,9 @@ type MainScreen struct {
 	clientScreen common.Screen
 	inputCtrl    input.InputController
 	lastUpdate   time.Time
-	Monitor      *pixelgl.Monitor
+	Monitor      *opengl.Monitor
 	nextScreen   common.Screen
-	Window       *pixelgl.Window
+	Window       *opengl.Window
 }
 
 func (ms *MainScreen) Initialize() {

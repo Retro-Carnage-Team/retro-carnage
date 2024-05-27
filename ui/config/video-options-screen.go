@@ -10,10 +10,10 @@ import (
 	"retro-carnage/ui/common/fonts"
 	"strconv"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/imdraw"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
-	"github.com/Retro-Carnage-Team/pixel/text"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/imdraw"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
 const (
@@ -68,7 +68,7 @@ type VideoOptionsScreen struct {
 	screenChangeRequired common.ScreenChangeCallback
 	selectedOption       int
 	textDimensions       map[string]*geometry.Point
-	window               *pixelgl.Window
+	window               *opengl.Window
 	selectedMonitorIndex int
 	maxWidthScreenName   float64
 }
@@ -84,7 +84,7 @@ func (s *VideoOptionsScreen) SetUp() {
 	s.maxWidthScreenName = s.getMaxWidthOfScreenNames()
 
 	var configuredMonitorFound = false
-	for i, m := range pixelgl.Monitors() {
+	for i, m := range opengl.Monitors() {
 		if s.videoConfig.SelectedMonitor != "" && m.Name() == s.videoConfig.SelectedMonitor {
 			s.selectedMonitorIndex = i
 			var x, y = m.Size()
@@ -99,9 +99,9 @@ func (s *VideoOptionsScreen) SetUp() {
 	}
 
 	if !configuredMonitorFound {
-		s.videoConfig.SelectedMonitor = pixelgl.Monitors()[0].Name()
+		s.videoConfig.SelectedMonitor = opengl.Monitors()[0].Name()
 		s.selectedMonitorIndex = 0
-		var x, y = pixelgl.Monitors()[0].Size()
+		var x, y = opengl.Monitors()[0].Size()
 		s.videoConfig.Width = int(x)
 		s.videoConfig.Height = int(y)
 	}
@@ -289,7 +289,7 @@ func (s *VideoOptionsScreen) SetScreenChangeCallback(callback common.ScreenChang
 	s.screenChangeRequired = callback
 }
 
-func (s *VideoOptionsScreen) SetWindow(window *pixelgl.Window) {
+func (s *VideoOptionsScreen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 
@@ -369,14 +369,14 @@ func (s *VideoOptionsScreen) drawText(output string, x float64, y float64) *text
 func (s *VideoOptionsScreen) selectPreviousMonitor() {
 	s.selectedMonitorIndex = s.selectedMonitorIndex - 1
 	if s.selectedMonitorIndex < 0 {
-		s.selectedMonitorIndex = len(pixelgl.Monitors()) - 1
+		s.selectedMonitorIndex = len(opengl.Monitors()) - 1
 	}
-	s.videoConfig.SelectedMonitor = pixelgl.Monitors()[s.selectedMonitorIndex].Name()
+	s.videoConfig.SelectedMonitor = opengl.Monitors()[s.selectedMonitorIndex].Name()
 }
 
 func (s *VideoOptionsScreen) selectNextMonitor() {
-	s.selectedMonitorIndex = (s.selectedMonitorIndex + 1) % len(pixelgl.Monitors())
-	s.videoConfig.SelectedMonitor = pixelgl.Monitors()[s.selectedMonitorIndex].Name()
+	s.selectedMonitorIndex = (s.selectedMonitorIndex + 1) % len(opengl.Monitors())
+	s.videoConfig.SelectedMonitor = opengl.Monitors()[s.selectedMonitorIndex].Name()
 }
 
 func (s *VideoOptionsScreen) decreaseScreenWidth() {
@@ -387,7 +387,7 @@ func (s *VideoOptionsScreen) decreaseScreenWidth() {
 
 func (s *VideoOptionsScreen) increaseScreenWidth() {
 	s.videoConfig.Width = s.videoConfig.Width + 10
-	var x, _ = pixelgl.Monitors()[s.selectedMonitorIndex].Size()
+	var x, _ = opengl.Monitors()[s.selectedMonitorIndex].Size()
 	if s.videoConfig.Width > int(x) {
 		s.videoConfig.Width = int(x)
 	}
@@ -401,7 +401,7 @@ func (s *VideoOptionsScreen) decreaseScreenHeight() {
 
 func (s *VideoOptionsScreen) increaseScreenHeight() {
 	s.videoConfig.Height = s.videoConfig.Height + 10
-	var _, y = pixelgl.Monitors()[s.selectedMonitorIndex].Size()
+	var _, y = opengl.Monitors()[s.selectedMonitorIndex].Size()
 	if s.videoConfig.Height > int(y) {
 		s.videoConfig.Height = int(y)
 	}
@@ -409,7 +409,7 @@ func (s *VideoOptionsScreen) increaseScreenHeight() {
 
 func (s *VideoOptionsScreen) getMaxWidthOfScreenNames() float64 {
 	var result = 0.0
-	for _, m := range pixelgl.Monitors() {
+	for _, m := range opengl.Monitors() {
 		var width = fonts.GetTextDimension(s.defaultFontSize, m.Name()).X
 		if width > result {
 			result = width

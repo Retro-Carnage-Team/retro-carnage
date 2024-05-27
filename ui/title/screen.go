@@ -10,8 +10,8 @@ import (
 	"retro-carnage/input"
 	"retro-carnage/ui/common"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
 
 const backgroundImagePath = "images/other/title.jpg"
@@ -24,7 +24,7 @@ type Screen struct {
 	screenChangeRequired  common.ScreenChangeCallback
 	screenChangeTimeout   int64
 	stereo                *assets.Stereo
-	window                *pixelgl.Window
+	window                *opengl.Window
 }
 
 func (s *Screen) SetInputController(controller input.InputController) {
@@ -35,7 +35,7 @@ func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
 	s.screenChangeRequired = callback
 }
 
-func (s *Screen) SetWindow(window *pixelgl.Window) {
+func (s *Screen) SetWindow(window *opengl.Window) {
 	s.window = window
 }
 
@@ -56,7 +56,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.backgroundImageSprite.Draw(s.window,
 		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
 
-	for _, btn := range pixelgl.KeyboardButtons {
+	for _, btn := range common.KeyboardButtons {
 		if s.window.JustPressed(btn) {
 			if s.cheatController.HandleKeyboardInput(btn) {
 				s.stereo.PlayFx(assets.FxCheatSwitch)

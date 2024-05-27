@@ -11,10 +11,10 @@ import (
 	"retro-carnage/ui/common/fonts"
 	"retro-carnage/util"
 
-	"github.com/Retro-Carnage-Team/pixel"
-	"github.com/Retro-Carnage-Team/pixel/imdraw"
-	"github.com/Retro-Carnage-Team/pixel/pixelgl"
-	"github.com/Retro-Carnage-Team/pixel/text"
+	pixel "github.com/Retro-Carnage-Team/pixel2"
+	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/imdraw"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
 const (
@@ -35,7 +35,7 @@ const (
 // drawn efficiently when needed.
 type playerInfo struct {
 	ammunitionChanged bool
-	canvas            *pixelgl.Canvas
+	canvas            *opengl.Canvas
 	changeListener    *util.ChangeListener
 	componentArea     *geometry.Rectangle
 	livesChanged      bool
@@ -43,12 +43,12 @@ type playerInfo struct {
 	playerIdx         int
 	scoreChanged      bool
 	weaponChanged     bool
-	window            *pixelgl.Window
+	window            *opengl.Window
 }
 
 // newPlayerInfo creates and returns a new instance of playerInfo.
 // Use this to construct this component.
-func newPlayerInfo(playerIdx int, window *pixelgl.Window) *playerInfo {
+func newPlayerInfo(playerIdx int, window *opengl.Window) *playerInfo {
 	var players = characters.PlayerController.ConfiguredPlayers()
 	var player *characters.Player = nil
 	if len(players) > playerIdx {
@@ -112,7 +112,7 @@ func (pi *playerInfo) updateCanvas() {
 
 // calculateComponentArea gets the area of this player info component.
 // Should not be called from outside this class.
-func (pi *playerInfo) calculateComponentArea(window *pixelgl.Window) {
+func (pi *playerInfo) calculateComponentArea(window *opengl.Window) {
 	var playerInfoArea = geometry.Rectangle{
 		X:      0,
 		Y:      0,
@@ -128,7 +128,7 @@ func (pi *playerInfo) calculateComponentArea(window *pixelgl.Window) {
 // initializeCanvas performs the lazy initialization of the canvas.
 // Should not be called from outside this class.
 func (pi *playerInfo) initializeCanvas() {
-	pi.canvas = pixelgl.NewCanvas(pixel.R(
+	pi.canvas = opengl.NewCanvas(pixel.R(
 		pi.componentArea.X,
 		pi.componentArea.Y,
 		pi.componentArea.X+pi.componentArea.Width,
