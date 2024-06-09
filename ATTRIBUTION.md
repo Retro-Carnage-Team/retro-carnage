@@ -11,7 +11,7 @@ the author of the software.
 ## Fonts
 
 * XXII ARMY by Lecter Johnson by doubletwo.net ([Link](https://fontsbytes.com/x/xxii-army/)
-  , [License](https://github.com/huddeldaddel/retro-carnage/blob/master/public/fonts/XXII-Dirty-Army-Eula.txt))
+  , [License](https://github.com/Retro-Carnage-Team/retro-carnage-assets/blob/main/fonts/XXII-Dirty-Army-Eula.txt))
 
 ## Images
 
