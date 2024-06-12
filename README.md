@@ -23,7 +23,8 @@ You can find the latest builds for various platforms on the [release page](https
 
 ### Run the game
 
-- Download the application for your platform
+- Download the application archive for your platform
+- Unzip the application archive
 - On Linux only: make application executeable `chmod +x retro-carnage`
 - **Double click on application** or use terminal to run `.\retro-carnage` in application folder
 
