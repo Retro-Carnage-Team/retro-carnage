@@ -11,6 +11,7 @@ import (
 )
 
 const RC_ASSETS = "RC-ASSETS"
+const PLAYER1_IDLE_UP = "images/player-1/idle/up.png"
 const PLAYER1_UP1 = "images/player-1/up/1.png"
 const PLAYER1_UP2 = "images/player-1/up/2.png"
 
@@ -83,4 +84,102 @@ func TestPlaysAnimationInLoop(t *testing.T) {
 			assert.Equal(t, expectedPath, sprite.Source)
 		}
 	}
+}
+
+func TestInvincibilityAnimationWithoutMovement(t *testing.T) {
+	InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
+
+	var player = Players[1]
+	player.Reset()
+
+	var behavior = NewPlayerBehavior(player)
+	behavior.Direction = geometry.Up
+	behavior.Moving = false
+	behavior.StartInvincibility()
+
+	var spriteSupplier = NewPlayerSpriteSupplier(player)
+
+	// Invicibility lasts for 1.500 ms
+	var result = spriteSupplier.Sprite(0, behavior)
+	behavior.UpdateInvincibility(0)
+	assert.Nil(t, result)
+
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.Nil(t, result)
+
+	// After 200 ms the sprite has to be returned
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.NotNil(t, result)
+	assert.Equal(t, PLAYER1_IDLE_UP, result.Source)
+
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.NotNil(t, result)
+	assert.Equal(t, PLAYER1_IDLE_UP, result.Source)
+
+	// After 400 ms nil has to be returned
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.Nil(t, result)
+
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.Nil(t, result)
+
+	// After 600 ms the sprite has to be returned
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.NotNil(t, result)
+	assert.Equal(t, PLAYER1_IDLE_UP, result.Source)
+
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.NotNil(t, result)
+	assert.Equal(t, PLAYER1_IDLE_UP, result.Source)
+
+	// After 800 ms nil has to be returned
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.Nil(t, result)
+
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.Nil(t, result)
+
+	// After 1.000 ms the sprite has to be returned
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.NotNil(t, result)
+	assert.Equal(t, PLAYER1_IDLE_UP, result.Source)
+
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.NotNil(t, result)
+	assert.Equal(t, PLAYER1_IDLE_UP, result.Source)
+
+	// After 1.200 ms nil has to be returned
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.Nil(t, result)
+
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.Nil(t, result)
+
+	// After 1.400 ms the sprite has to be returned
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.NotNil(t, result)
+	assert.Equal(t, PLAYER1_IDLE_UP, result.Source)
+
+	result = spriteSupplier.Sprite(100, behavior)
+	behavior.UpdateInvincibility(100)
+	assert.NotNil(t, result)
+	assert.Equal(t, PLAYER1_IDLE_UP, result.Source)
+
+	// Player is no longer invicible. Test that result is no longer toggled.
+	assert.NotNil(t, spriteSupplier.Sprite(150, behavior))
+	assert.NotNil(t, spriteSupplier.Sprite(150, behavior))
 }
