@@ -45,8 +45,8 @@ func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, behavior *PlayerB
 	var nextSprite = pss.sprite(elapsedTimeInMs, behavior)
 	if behavior.Invincible {
 		pss.durationSinceLastToggle += elapsedTimeInMs
-		if pss.durationSinceLastSprite > durationOfInvincibilityState {
-			pss.durationSinceLastSprite = 0
+		if pss.durationSinceLastToggle >= durationOfInvincibilityState {
+			pss.durationSinceLastToggle = 0
 			pss.invincibilityToggle = !pss.invincibilityToggle
 		}
 
