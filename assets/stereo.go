@@ -45,8 +45,8 @@ func NewStereo() *Stereo {
 }
 
 func (sb *Stereo) initialize() {
-	var mp3Format = beep.Format{SampleRate: mp3SampleRate, NumChannels: mp3Channels, Precision: mp3Precision}
-	err := speaker.Init(mp3Format.SampleRate, mp3Format.SampleRate.N(time.Second/10))
+	var sampleRate beep.SampleRate = mp3SampleRate
+	err := speaker.Init(sampleRate, sampleRate.N(time.Second/10))
 	if err != nil {
 		logging.Error.Println(err.Error())
 	}
