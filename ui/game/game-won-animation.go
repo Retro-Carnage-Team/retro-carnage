@@ -17,7 +17,6 @@ type gameWonAnimation struct {
 	duration         int64
 	finished         bool
 	mission          *assets.Mission
-	showText         bool
 	stereo           *assets.Stereo
 	window           *opengl.Window
 }
@@ -62,7 +61,7 @@ func createGameWonAnimation(
 }
 
 func (gwa *gameWonAnimation) update(elapsedTimeInMs int64) {
-	if 0 == gwa.duration {
+	if gwa.duration == 0 {
 		gwa.initialActions()
 	}
 

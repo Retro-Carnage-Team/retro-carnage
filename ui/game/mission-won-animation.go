@@ -40,7 +40,6 @@ type missionWonAnimation struct {
 	completedTextVisible bool
 	duration             int64
 	finished             bool
-	foregroundColor      pixel.RGBA
 	kills                []int
 	killCounter          []int
 	killCounterDuration  int64
@@ -87,7 +86,7 @@ func createMissionWonAnimation(
 }
 
 func (mwa *missionWonAnimation) update(elapsedTimeInMs int64) {
-	if 0 == mwa.duration {
+	if mwa.duration == 0 {
 		mwa.initialActions()
 	}
 

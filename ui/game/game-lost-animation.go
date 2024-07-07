@@ -52,7 +52,7 @@ func createGameLostAnimation(
 }
 
 func (gla *gameLostAnimation) update(elapsedTimeInMs int64) {
-	if 0 == gla.duration {
+	if gla.duration == 0 {
 		gla.initialActions()
 	}
 
