@@ -399,7 +399,7 @@ func (s *Screen) drawExitButton() {
 		imd.Color = common.Yellow
 		imd.Push(
 			pixel.V(lineX-buttonPadding, lineY-buttonPadding),
-			pixel.V(lineX+buttonPadding*2+lineDimensions.X, lineY+lineDimensions.Y))
+			pixel.V(lineX+buttonPadding*2+lineDimensions.X, lineY+lineDimensions.Y+buttonPadding))
 		imd.Rectangle(selectionBorderWidth)
 		imd.Draw(s.window)
 	}
