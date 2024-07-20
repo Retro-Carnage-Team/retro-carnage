@@ -42,6 +42,7 @@ const (
 	FxPistol1        SoundEffect = "pistol.mp3"
 	FxPistol2        SoundEffect = "pistol2.mp3"
 	FxRocketLauncher SoundEffect = "rlauncher.mp3"
+	FxTankMoving     SoundEffect = "tank-moving.mp3"
 	FxUzi            SoundEffect = "UZI.mp3"
 
 	BackgroundSong1  Song = "All-We-Ever-See-of-Stars.mp3"
@@ -65,7 +66,7 @@ const (
 var SoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxCash, FxCheatSwitch, FxDeathEnemy0, FxDeathEnemy1,
 	FxDeathEnemy2, FxDeathEnemy3, FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1,
 	FxDeathPlayer2, FxError, FxFnfal, FxG36, FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxHk21, FxLoading, FxM28A1,
-	FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo, FxPistol1, FxPistol2, FxRocketLauncher, FxUzi}
+	FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo, FxPistol1, FxPistol2, FxRocketLauncher, FxTankMoving, FxUzi}
 
 var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5,
 	FxMp7, FxUzi}
@@ -87,4 +88,13 @@ func DeathFxForPlayer(playerIdx int) SoundEffect {
 	} else {
 		return FxDeathPlayer2
 	}
+}
+
+func SoundEffectByFileName(fileName string) *SoundEffect {
+	for _, se := range SoundEffects {
+		if se == SoundEffect(fileName) {
+			return &se
+		}
+	}
+	return nil
 }

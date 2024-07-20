@@ -12,18 +12,25 @@ import (
 var (
 	backgroundOffsets map[string]geometry.Point
 
-	enemyActivationRectHorz = &geometry.Rectangle{
-		X:      0,
+	enemyActivationRectLeft = &geometry.Rectangle{
+		X:      -50,
 		Y:      -200,
-		Width:  ScreenSize,
+		Width:  50,
 		Height: ScreenSize + 400,
 	}
 
-	enemyActivationRectVert = &geometry.Rectangle{
+	enemyActivationRectRight = &geometry.Rectangle{
+		X:      ScreenSize + 50,
+		Y:      -200,
+		Width:  50,
+		Height: ScreenSize + 400,
+	}
+
+	enemyActivationRectUp = &geometry.Rectangle{
 		X:      -150,
-		Y:      0,
+		Y:      -50,
 		Width:  ScreenSize + 300,
-		Height: ScreenSize,
+		Height: 50,
 	}
 )
 
@@ -101,16 +108,21 @@ func (lc *LevelController) ActivatedEnemies() []characters.ActiveEnemy {
 	var result = make([]characters.ActiveEnemy, 0)
 	var scrollAdjustment = lc.getScrollAdjustment()
 
-	var activationArea *geometry.Rectangle = enemyActivationRectHorz
-	if lc.segments[lc.currentSegmentIdx].Direction == geometry.Up.Name {
-		activationArea = enemyActivationRectVert
+	var activationArea *geometry.Rectangle
+	switch lc.segments[lc.currentSegmentIdx].Direction {
+	case geometry.Left.Name:
+		activationArea = enemyActivationRectLeft
+	case geometry.Right.Name:
+		activationArea = enemyActivationRectRight
+	case geometry.Up.Name:
+		activationArea = enemyActivationRectUp
 	}
 
 	for i := len(lc.enemies) - 1; i >= 0; i-- {
 		var enemy = lc.enemies[i]
 		var enemyPosition = enemy.Position.Clone().Add(&scrollAdjustment)
 		if nil != activationArea.Intersection(enemyPosition) {
-			result = append(result, lc.activateEnemy(&enemy))
+			result = append(result, lc.activateEnemy(&enemy, &scrollAdjustment))
 			lc.enemies = append(lc.enemies[:i], lc.enemies[i+1:]...)
 		}
 	}
@@ -294,10 +306,11 @@ func (lc *LevelController) ObstaclesOnScreen() []assets.Obstacle {
 	return result
 }
 
-func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy {
+func (lc *LevelController) activateEnemy(e *assets.Enemy, adjustment *geometry.Point) characters.ActiveEnemy {
 	var direction = geometry.GetDirectionByName(e.Direction)
 	var result = characters.ActiveEnemy{
 		Actions:                 e.Actions,
+		ActivationSound:         e.ActivationSound,
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               lc.convertEnemyMovements(e.Movements),
@@ -306,7 +319,7 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy
 		Type:                    characters.EnemyType(e.Type),
 		ViewingDirection:        direction,
 	}
-	result.SetPosition(e.Position.Clone())
+	result.SetPosition(e.Position.Clone().Add(adjustment))
 
 	if int(characters.Person) == e.Type {
 		if nil == direction {
@@ -326,6 +339,14 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy) characters.ActiveEnemy
 		result.SpriteSupplier = characters.NewEnemyGunTurretSpriteSupplier(*result.ViewingDirection)
 	}
 
+	if result.ActivationSound != "" {
+		var soundEffect = assets.SoundEffectByFileName(result.ActivationSound)
+		if soundEffect != nil {
+			var stereoPlayer = assets.NewStereo()
+			stereoPlayer.PlayFx(*soundEffect)
+		}
+	}
+
 	return result
 }
 
@@ -342,12 +363,12 @@ func (lc *LevelController) getScrollAdjustment() geometry.Point {
 	var direction = lc.segments[lc.currentSegmentIdx].Direction
 	var scrollAdjustment = geometry.Point{X: 0, Y: 0}
 	switch direction {
-	case geometry.Up.Name:
-		scrollAdjustment = geometry.Point{X: 0, Y: lc.distanceScrolled}
 	case geometry.Left.Name:
 		scrollAdjustment = geometry.Point{X: lc.distanceScrolled, Y: 0}
 	case geometry.Right.Name:
 		scrollAdjustment = geometry.Point{X: -1 * lc.distanceScrolled, Y: 0}
+	case geometry.Up.Name:
+		scrollAdjustment = geometry.Point{X: 0, Y: lc.distanceScrolled}
 	}
 	return scrollAdjustment
 }

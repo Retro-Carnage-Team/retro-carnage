@@ -9,6 +9,7 @@ import (
 // ActiveEnemy is an Enemy that is (becoming) visible.
 type ActiveEnemy struct {
 	Actions                 []assets.EnemyAction
+	ActivationSound         string
 	currentActionIdx        int
 	currentActionElapsed    int64
 	Dying                   bool
