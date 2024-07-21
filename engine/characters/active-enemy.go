@@ -48,10 +48,6 @@ func (e *ActiveEnemy) Die() {
 	e.DyingAnimationCountDown = 1
 }
 
-func (e *ActiveEnemy) CanDie() bool {
-	return !(e.Dying || e.Type == SpawnArea)
-}
-
 // Move will update the enemies position according to its configured movement pattern and the elapsed time.
 func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 	if !e.Type.CanMove() || len(e.Movements) == 0 {

@@ -69,7 +69,7 @@ var SoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxCash, FxCheatSwitch, F
 	FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo, FxPistol1, FxPistol2, FxRocketLauncher, FxTankMoving, FxUzi}
 
 var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5,
-	FxMp7, FxUzi}
+	FxMp7, FxTankMoving, FxUzi}
 
 var EnemyDeathsSoundEffects = []SoundEffect{FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2, FxDeathEnemy3, FxDeathEnemy4,
 	FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7}
