@@ -10,7 +10,10 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceRoot}",
-            "args": ["${workspaceRoot}/../retro-carnage-assets", "debug"]
+            "args": ["${workspaceRoot}/../retro-carnage-assets", "debug"],
+            "env": {
+                "sound": "no-music"
+              }
         }
     ]
 }

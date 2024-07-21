@@ -18,6 +18,55 @@ func init() {
 	pointsByEnemyType[GunTurret] = 15
 }
 
+func (et EnemyType) CanDie() bool {
+	return et.CanDieWhenHitByBullet() || et.CanDieWhenHitByExplosion() || et.CanDieWhenHitByExplosive()
+}
+
+func (et EnemyType) CanDieWhenHitByBullet() bool {
+	switch et {
+	case Person:
+		return true
+	case Landmine:
+		return false
+	case GunTurret:
+		return false
+	case SpawnArea:
+		return false
+	default:
+		return false
+	}
+}
+
+func (et EnemyType) CanDieWhenHitByExplosion() bool {
+	switch et {
+	case Person:
+		return true
+	case Landmine:
+		return true
+	case GunTurret:
+		return true
+	case SpawnArea:
+		return false
+	default:
+		return false
+	}
+}
+
+func (et EnemyType) CanDieWhenHitByExplosive() bool {
+	switch et {
+	case Person:
+		return true
+	case Landmine:
+		return true
+	case GunTurret:
+		return true
+	case SpawnArea:
+		return false
+	default:
+		return false
+	}
+}
+
 // CanFire returns true when this type of enemy can fire bullets. For instances of this type of enemy actions depend on
 // the configured action pattern.
 func (et EnemyType) CanFire() bool {

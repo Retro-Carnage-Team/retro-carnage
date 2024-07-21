@@ -88,10 +88,10 @@ func (r *Renderer) drawPlayers(elapsedTimeInMs int64) {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = r.engine.playerBehaviors[player.Index()]
 		var spriteWithOffset = r.playerSpriteSuppliers[player.Index()].Sprite(elapsedTimeInMs, behavior)
+		// spriteWithOffset will be null a couple of times per second when player is invincible.
 		if nil != spriteWithOffset {
 			r.drawSpriteToCanvas(spriteWithOffset, r.engine.playerPositions[player.Index()])
 		}
-		// spriteWithOffset will be null a couple of times per second when player is invincible. No need to log this.
 	}
 }
 

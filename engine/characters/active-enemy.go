@@ -9,6 +9,7 @@ import (
 // ActiveEnemy is an Enemy that is (becoming) visible.
 type ActiveEnemy struct {
 	Actions                 []assets.EnemyAction
+	ActivationSound         string
 	currentActionIdx        int
 	currentActionElapsed    int64
 	Dying                   bool
@@ -45,10 +46,6 @@ func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
 func (e *ActiveEnemy) Die() {
 	e.Dying = true
 	e.DyingAnimationCountDown = 1
-}
-
-func (e *ActiveEnemy) CanDie() bool {
-	return !(e.Dying || e.Type == SpawnArea)
 }
 
 // Move will update the enemies position according to its configured movement pattern and the elapsed time.

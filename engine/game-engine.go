@@ -412,22 +412,27 @@ func (ge *GameEngine) checkPlayerForCollisionWithBullet(rect *geometry.Rectangle
 // Enemy will be killed if a deadly collision is detected.
 func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 	for _, enemy := range ge.enemies {
-		if enemy.CanDie() {
-			// Check for hits by explosion
-			death, killer := ge.checkEnemyForCollisionWithExplosion(enemy)
+		if enemy.Dying || !enemy.Type.CanDie() {
+			continue
+		}
 
-			// Check for hits by bullets and explosives
-			if !death {
-				death, killer = ge.checkEnemyForCollisionWithBullet(enemy)
-			}
+		var death = false
+		var killer = -1
 
-			if !death {
-				death, killer = ge.checkEnemyForCollisionWithExplosive(enemy)
-			}
+		if enemy.Type.CanDieWhenHitByExplosion() {
+			death, killer = ge.checkEnemyForCollisionWithExplosion(enemy)
+		}
 
-			if death {
-				ge.killEnemy(enemy, killer)
-			}
+		if !death && enemy.Type.CanDieWhenHitByBullet() {
+			death, killer = ge.checkEnemyForCollisionWithBullet(enemy)
+		}
+
+		if !death && enemy.Type.CanDieWhenHitByExplosive() {
+			death, killer = ge.checkEnemyForCollisionWithExplosive(enemy)
+		}
+
+		if death {
+			ge.killEnemy(enemy, killer)
 		}
 	}
 }
@@ -477,14 +482,27 @@ func (ge *GameEngine) checkEnemyForCollisionWithExplosive(enemy *characters.Acti
 func (ge *GameEngine) killEnemy(enemy *characters.ActiveEnemy, killer int) {
 	enemy.Dying = true
 	enemy.DyingAnimationCountDown = 1
+
 	if killer != -1 {
 		ge.Kills[killer] += 1
 		var player = ge.playerBehaviors[killer].Player
 		player.SetScore(player.Score() + enemy.Type.GetPointsForKill())
 	}
+
 	if characters.Person == enemy.Type {
 		ge.stereo.PlayFx(assets.RandomEnemyDeathSoundEffect())
 		enemy.DyingAnimationCountDown = characters.DurationOfEnemyDeathAnimation
+	}
+
+	if enemy.ActivationSound != "" {
+		var activationSound = enemy.ActivationSound
+		if activationSound != "" {
+			var soundEffect = assets.SoundEffectByFileName(activationSound)
+			if soundEffect != nil {
+				logging.Info.Printf("Trying to stop activation sound effect %s", activationSound)
+				ge.stereo.StopFx(*soundEffect)
+			}
+		}
 	}
 }
 
