@@ -21,7 +21,7 @@ func TestLandmineReturnsStaticSprite(t *testing.T) {
 		},
 		Skin:             "",
 		SpriteSupplier:   nil,
-		Type:             Landmine,
+		Type:             EnemyTypeLandmine{},
 		ViewingDirection: &geometry.Down,
 	}
 

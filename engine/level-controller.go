@@ -308,45 +308,20 @@ func (lc *LevelController) ObstaclesOnScreen() []assets.Obstacle {
 
 func (lc *LevelController) activateEnemy(e *assets.Enemy, adjustment *geometry.Point) characters.ActiveEnemy {
 	var direction = geometry.GetDirectionByName(e.Direction)
+	var enemyType = characters.GetEnemyTypeByCode(e.Type)
 	var result = characters.ActiveEnemy{
 		Actions:                 e.Actions,
-		ActivationSound:         e.ActivationSound,
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               lc.convertEnemyMovements(e.Movements),
 		Skin:                    characters.EnemySkin(e.Skin),
 		SpawnDelays:             e.SpawnDelays,
-		Type:                    characters.EnemyType(e.Type),
+		SpriteSupplier:          enemyType.BuildEnemySpriteSupplier(*direction),
+		Type:                    enemyType,
 		ViewingDirection:        direction,
 	}
 	result.SetPosition(e.Position.Clone().Add(adjustment))
-
-	if int(characters.Person) == e.Type {
-		if nil == direction {
-			logging.Error.Fatalf("no such direction: %s", e.Direction)
-		}
-		if !characters.IsEnemySkin(e.Skin) {
-			logging.Error.Fatalf("no such enemy skin: %s", e.Skin)
-		}
-		result.SpriteSupplier = characters.NewEnemyPersonSpriteSupplier(*result.ViewingDirection)
-	}
-
-	if int(characters.Landmine) == e.Type {
-		result.SpriteSupplier = &characters.EnemyLandmineSpriteSupplier{}
-	}
-
-	if int(characters.GunTurret) == e.Type {
-		result.SpriteSupplier = characters.NewEnemyGunTurretSpriteSupplier(*result.ViewingDirection)
-	}
-
-	if result.ActivationSound != "" {
-		var soundEffect = assets.SoundEffectByFileName(result.ActivationSound)
-		if soundEffect != nil {
-			var stereoPlayer = assets.NewStereo()
-			stereoPlayer.PlayFx(*soundEffect)
-		}
-	}
-
+	enemyType.OnActivation(&result)
 	return result
 }
 

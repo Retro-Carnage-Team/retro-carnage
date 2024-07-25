@@ -9,7 +9,6 @@ import (
 // ActiveEnemy is an Enemy that is (becoming) visible.
 type ActiveEnemy struct {
 	Actions                 []assets.EnemyAction
-	ActivationSound         string
 	currentActionIdx        int
 	currentActionElapsed    int64
 	Dying                   bool
@@ -122,7 +121,7 @@ func (e *ActiveEnemy) spawnEnemyInstance() *ActiveEnemy {
 		DyingAnimationCountDown: 0,
 		Movements:               append(make([]EnemyMovement, 0), e.Movements...),
 		Skin:                    e.Skin,
-		Type:                    Person,
+		Type:                    EnemyTypePerson{},
 		ViewingDirection:        e.ViewingDirection,
 	}
 	result.SetPosition(e.Position().Clone())

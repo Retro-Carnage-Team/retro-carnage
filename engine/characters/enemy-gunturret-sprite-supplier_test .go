@@ -21,7 +21,7 @@ func TestGunTurretReturnsStaticSprite(t *testing.T) {
 		},
 		Skin:             "",
 		SpriteSupplier:   nil,
-		Type:             GunTurret,
+		Type:             EnemyTypeGunTurret{},
 		ViewingDirection: &geometry.UpRight,
 	}
 

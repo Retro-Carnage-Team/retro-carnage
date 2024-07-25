@@ -377,7 +377,7 @@ func (ge *GameEngine) checkPlayerForDeadlyCollisionWithEnemy(rect *geometry.Rect
 		if !enemy.Dying && enemy.Type.IsCollisionDeadly() {
 			var collisionWithEnemy = rect.Intersection(enemy.Position())
 			if nil != collisionWithEnemy {
-				if characters.Landmine == enemy.Type {
+				if enemy.Type.IsCollisionExplosive() {
 					ge.explosions = append(ge.explosions, NewExplosion(false, -1, enemy))
 					ge.stereo.PlayFx(assets.FxGrenade2)
 				}
@@ -412,7 +412,7 @@ func (ge *GameEngine) checkPlayerForCollisionWithBullet(rect *geometry.Rectangle
 // Enemy will be killed if a deadly collision is detected.
 func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 	for _, enemy := range ge.enemies {
-		if enemy.Dying || !enemy.Type.CanDie() {
+		if enemy.Dying {
 			continue
 		}
 
@@ -442,7 +442,7 @@ func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 func (ge *GameEngine) checkEnemyForCollisionWithExplosion(enemy *characters.ActiveEnemy) (death bool, killer int) {
 	for _, explosion := range ge.explosions {
 		if nil != enemy.Position().Intersection(explosion.Position()) {
-			if characters.Landmine == enemy.Type {
+			if enemy.Type.CanDieWhenHitByExplosion() {
 				var newExplosion = NewExplosion(explosion.causedByPlayer, explosion.playerIdx, enemy)
 				ge.explosions = append(ge.explosions, newExplosion)
 			}
@@ -455,7 +455,7 @@ func (ge *GameEngine) checkEnemyForCollisionWithExplosion(enemy *characters.Acti
 // checkEnemyForCollisionWithBullet checks this enemy for deadly collisions with bullets.
 // Returns true and index of the player that fired the bullet if such a collision is detected.
 func (ge *GameEngine) checkEnemyForCollisionWithBullet(enemy *characters.ActiveEnemy) (death bool, killer int) {
-	if characters.Person == enemy.Type && !death {
+	if enemy.Type.CanDieWhenHitByBullet() {
 		for _, bullet := range ge.bullets {
 			if nil != enemy.Position().Intersection(bullet.Position()) {
 				return true, bullet.playerIdx
@@ -490,20 +490,11 @@ func (ge *GameEngine) killEnemy(enemy *characters.ActiveEnemy, killer int) {
 	}
 
 	if characters.Person == enemy.Type {
-		ge.stereo.PlayFx(assets.RandomEnemyDeathSoundEffect())
+		// TODO: Hier sollte der SpriteSupplier des Gegeners abgefragt werden.
 		enemy.DyingAnimationCountDown = characters.DurationOfEnemyDeathAnimation
 	}
 
-	if enemy.ActivationSound != "" {
-		var activationSound = enemy.ActivationSound
-		if activationSound != "" {
-			var soundEffect = assets.SoundEffectByFileName(activationSound)
-			if soundEffect != nil {
-				logging.Info.Printf("Trying to stop activation sound effect %s", activationSound)
-				ge.stereo.StopFx(*soundEffect)
-			}
-		}
-	}
+	enemy.Type.OnDeath(enemy)
 }
 
 func (ge *GameEngine) handlePlayerReachedLevelGoal() {

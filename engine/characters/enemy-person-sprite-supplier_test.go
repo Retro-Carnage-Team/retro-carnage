@@ -48,7 +48,7 @@ func buildEnemyPerson() ActiveEnemy {
 		},
 		Skin:             WoodlandWithSMG,
 		SpriteSupplier:   nil,
-		Type:             Person,
+		Type:             EnemyTypePerson{},
 		ViewingDirection: &geometry.Down,
 	}
 }
