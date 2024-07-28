@@ -5,7 +5,7 @@ import "retro-carnage/engine/geometry"
 type EnemyTypeGunTurret struct{}
 
 func (et EnemyTypeGunTurret) BuildEnemySpriteSupplier(viewingDirection geometry.Direction) EnemySpriteSupplier {
-	return NewEnemyGunTurretSpriteSupplier(viewingDirection)
+	return NewGunTurretSpriteSupplier(viewingDirection)
 }
 
 func (et EnemyTypeGunTurret) CanDieWhenHitByBullet() bool {

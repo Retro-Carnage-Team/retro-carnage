@@ -480,20 +480,16 @@ func (ge *GameEngine) checkEnemyForCollisionWithExplosive(enemy *characters.Acti
 }
 
 func (ge *GameEngine) killEnemy(enemy *characters.ActiveEnemy, killer int) {
-	enemy.Dying = true
-	enemy.DyingAnimationCountDown = 1
-
 	if killer != -1 {
 		ge.Kills[killer] += 1
 		var player = ge.playerBehaviors[killer].Player
 		player.SetScore(player.Score() + enemy.Type.GetPointsForKill())
 	}
 
-	if characters.Person == enemy.Type {
-		// TODO: Hier sollte der SpriteSupplier des Gegeners abgefragt werden.
-		enemy.DyingAnimationCountDown = characters.DurationOfEnemyDeathAnimation
+	enemy.Dying = true
+	if enemy.Type.IsVisible() {
+		enemy.DyingAnimationCountDown = enemy.SpriteSupplier.GetDurationOfEnemyDeathAnimation()
 	}
-
 	enemy.Type.OnDeath(enemy)
 }
 

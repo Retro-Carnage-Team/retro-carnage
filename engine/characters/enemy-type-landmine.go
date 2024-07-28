@@ -5,7 +5,7 @@ import "retro-carnage/engine/geometry"
 type EnemyTypeLandmine struct{}
 
 func (et EnemyTypeLandmine) BuildEnemySpriteSupplier(viewingDirection geometry.Direction) EnemySpriteSupplier {
-	return &EnemyLandmineSpriteSupplier{}
+	return &LandmineSpriteSupplier{}
 }
 
 func (et EnemyTypeLandmine) CanDieWhenHitByBullet() bool {

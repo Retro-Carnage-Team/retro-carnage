@@ -8,7 +8,7 @@ import (
 type EnemyTypePerson struct{}
 
 func (et EnemyTypePerson) BuildEnemySpriteSupplier(viewingDirection geometry.Direction) EnemySpriteSupplier {
-	return NewEnemyPersonSpriteSupplier(viewingDirection)
+	return NewPersonSpriteSupplier(viewingDirection)
 }
 
 func (et EnemyTypePerson) CanDieWhenHitByBullet() bool {

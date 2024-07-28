@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLandmineReturnsStaticSprite(t *testing.T) {
+func TestGunTurretReturnsStaticSprite(t *testing.T) {
 	InitEnemySkins("testdata/skins")
-	var landmine = ActiveEnemy{
+	var gunTurret = ActiveEnemy{
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               []EnemyMovement{},
@@ -21,18 +21,18 @@ func TestLandmineReturnsStaticSprite(t *testing.T) {
 		},
 		Skin:             "",
 		SpriteSupplier:   nil,
-		Type:             EnemyTypeLandmine{},
-		ViewingDirection: &geometry.Down,
+		Type:             EnemyTypeGunTurret{},
+		ViewingDirection: &geometry.UpRight,
 	}
 
-	var spriteSupplier = EnemyLandmineSpriteSupplier{}
+	var spriteSupplier = GunTurretSpriteSupplier{}
 	assert.NotNil(t, spriteSupplier)
 
-	var sprite = spriteSupplier.Sprite(0, landmine)
+	var sprite = spriteSupplier.Sprite(0, gunTurret)
 	assert.NotNil(t, sprite)
-	assert.Equal(t, landmineSprite, sprite.Source)
+	assert.Equal(t, "images/environment/gun-turret-up_right.png", sprite.Source)
 
-	sprite = spriteSupplier.Sprite(DurationOfEnemyMovementFrame*1.4, landmine)
+	sprite = spriteSupplier.Sprite(durationOfEnemyMovementFrame*1.4, gunTurret)
 	assert.NotNil(t, sprite)
-	assert.Equal(t, landmineSprite, sprite.Source)
+	assert.Equal(t, "images/environment/gun-turret-up_right.png", sprite.Source)
 }

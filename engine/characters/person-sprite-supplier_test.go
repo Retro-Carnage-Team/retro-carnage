@@ -13,18 +13,18 @@ const ENEMY0_DOWN2 = "images/enemy-0/down/2.png"
 func TestPersonReturnsSpritesOfAnimation(t *testing.T) {
 	InitEnemySkins("testdata/skins")
 	var person = buildEnemyPerson()
-	var spriteSupplier = NewEnemyPersonSpriteSupplier(*person.ViewingDirection)
+	var spriteSupplier = NewPersonSpriteSupplier(*person.ViewingDirection)
 	assert.NotNil(t, spriteSupplier)
 
 	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(1, person).Source)
 	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(2, person).Source)
-	assert.Equal(t, ENEMY0_DOWN2, spriteSupplier.Sprite(DurationOfEnemyMovementFrame, person).Source)
+	assert.Equal(t, ENEMY0_DOWN2, spriteSupplier.Sprite(durationOfEnemyMovementFrame, person).Source)
 }
 
 func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
 	InitEnemySkins("testdata/skins")
 	var person = buildEnemyPerson()
-	var spriteSupplier = NewEnemyPersonSpriteSupplier(*person.ViewingDirection)
+	var spriteSupplier = NewPersonSpriteSupplier(*person.ViewingDirection)
 
 	assert.NotNil(t, spriteSupplier)
 	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(1, person).Source)
@@ -32,7 +32,7 @@ func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
 	person.Die()
 
 	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(2, person).Source)
-	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(DurationOfEnemyDeathAnimationFrame, person).Source)
+	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(durationOfEnemyDeathAnimationFrame, person).Source)
 }
 
 func buildEnemyPerson() ActiveEnemy {
