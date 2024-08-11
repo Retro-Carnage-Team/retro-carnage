@@ -9,7 +9,6 @@ type TankSpriteSupplier struct {
 	durationSinceLastSprite int64
 	direction               geometry.Direction
 	lastIndex               int
-	wasDying                bool
 }
 
 func NewTankSpriteSupplier(direction geometry.Direction) *TankSpriteSupplier {
@@ -17,7 +16,6 @@ func NewTankSpriteSupplier(direction geometry.Direction) *TankSpriteSupplier {
 		direction:               direction,
 		durationSinceLastSprite: 0,
 		lastIndex:               0,
-		wasDying:                false,
 	}
 }
 
@@ -28,12 +26,7 @@ func (supplier *TankSpriteSupplier) GetDurationOfEnemyDeathAnimation() int64 {
 func (supplier *TankSpriteSupplier) Sprite(msSinceLastSprite int64, enemy ActiveEnemy) *graphics.SpriteWithOffset {
 	var skinFrames = enemySkins[enemy.Skin].MovementByDirection[supplier.direction.Name]
 	if enemy.Dying {
-		if !supplier.wasDying {
-			supplier.durationSinceLastSprite = 0
-			supplier.wasDying = true
-		} else {
-			supplier.durationSinceLastSprite += msSinceLastSprite
-		}
+		supplier.durationSinceLastSprite += msSinceLastSprite
 
 		if supplier.durationSinceLastSprite > durationOfEnemyMovementFrame {
 			supplier.durationSinceLastSprite = 0
