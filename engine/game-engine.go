@@ -483,6 +483,7 @@ func (ge *GameEngine) removeBulletsStoppedByEnemy(enemy *characters.ActiveEnemy)
 	}
 	if bulletIndex != -1 {
 		ge.removeBullet(bulletIndex)
+		ge.stereo.PlayFx(assets.RandomRicochetSoundEffect())
 	}
 }
 
