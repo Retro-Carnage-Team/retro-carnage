@@ -4,7 +4,7 @@ import "retro-carnage/engine/geometry"
 
 type EnemyType interface {
 	// BuildEnemySpriteSupplier returns a sprite supplier for this type of enemy
-	BuildEnemySpriteSupplier(viewingDirection geometry.Direction) EnemySpriteSupplier
+	BuildEnemySpriteSupplier(viewingDirection *geometry.Direction) EnemySpriteSupplier
 
 	// CanDieWhenHitByBullet returns true when enemies of this type can be killed with bullets
 	CanDieWhenHitByBullet() bool

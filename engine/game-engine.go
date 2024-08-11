@@ -175,7 +175,7 @@ func (ge *GameEngine) updateEnemiesDeaths(elapsedTimeInMs int64) {
 	for i := len(ge.enemies) - 1; i >= 0; i-- {
 		if ge.enemies[i].Dying {
 			ge.enemies[i].DyingAnimationCountDown -= elapsedTimeInMs
-			if 0 >= ge.enemies[i].DyingAnimationCountDown {
+			if ge.enemies[i].DyingAnimationCountDown < 0 {
 				ge.removeEnemy(i)
 			}
 		}
@@ -508,11 +508,7 @@ func (ge *GameEngine) killEnemy(enemy *characters.ActiveEnemy, killer int) {
 		player.SetScore(player.Score() + enemy.Type.GetPointsForKill())
 	}
 
-	enemy.Dying = true
-	if enemy.Type.IsVisible() {
-		enemy.DyingAnimationCountDown = enemy.SpriteSupplier.GetDurationOfEnemyDeathAnimation()
-	}
-	enemy.Type.OnDeath(enemy)
+	enemy.Die()
 }
 
 func (ge *GameEngine) handlePlayerReachedLevelGoal() {

@@ -44,7 +44,10 @@ func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
 // Die will kill this ActiveEnemy (and start it's dying animation)
 func (e *ActiveEnemy) Die() {
 	e.Dying = true
-	e.DyingAnimationCountDown = 1
+	if !e.Type.IsVisible() {
+		e.DyingAnimationCountDown = e.SpriteSupplier.GetDurationOfEnemyDeathAnimation()
+	}
+	e.Type.OnDeath(e)
 }
 
 // Move will update the enemies position according to its configured movement pattern and the elapsed time.

@@ -7,8 +7,8 @@ import (
 
 type EnemyTypeTank struct{}
 
-func (et EnemyTypeTank) BuildEnemySpriteSupplier(viewingDirection geometry.Direction) EnemySpriteSupplier {
-	return NewTankSpriteSupplier(viewingDirection)
+func (et EnemyTypeTank) BuildEnemySpriteSupplier(viewingDirection *geometry.Direction) EnemySpriteSupplier {
+	return NewTankSpriteSupplier(*viewingDirection)
 }
 
 func (et EnemyTypeTank) CanDieWhenHitByBullet() bool {

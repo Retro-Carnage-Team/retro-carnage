@@ -316,7 +316,7 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy, adjustment *geometry.P
 		Movements:               lc.convertEnemyMovements(e.Movements),
 		Skin:                    characters.EnemySkin(e.Skin),
 		SpawnDelays:             e.SpawnDelays,
-		SpriteSupplier:          enemyType.BuildEnemySpriteSupplier(*direction),
+		SpriteSupplier:          enemyType.BuildEnemySpriteSupplier(direction),
 		Type:                    enemyType,
 		ViewingDirection:        direction,
 	}
