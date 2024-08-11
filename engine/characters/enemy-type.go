@@ -31,10 +31,13 @@ type EnemyType interface {
 	GetPointsForKill() int
 
 	// IsCollisionDeadly returns true when a collision of a player with this type of enemy leads to the players death.
-	IsCollisionDeadly() bool
+	IsCollisionDeadly(e *ActiveEnemy) bool
 
 	// IsCollisionDeadly returns true when a collision of a player with this type of enemy leads to an explosion
 	IsCollisionExplosive() bool
+
+	// IsStoppingBullets returns true when enemies cannot be killed by bullets but stop them (like tanks)
+	IsStoppingBullets() bool
 
 	// IsVisible returns true when this type of enemy is displayed on screen
 	IsVisible() bool
@@ -44,6 +47,9 @@ type EnemyType interface {
 
 	// Is called when an enemy of this type died
 	OnDeath(e *ActiveEnemy)
+
+	// Is called when all enemy movements have been processed
+	OnMovementStopped(e *ActiveEnemy)
 }
 
 var (

@@ -37,11 +37,15 @@ func (et EnemyTypeSpawnArea) GetPointsForKill() int {
 	return 0
 }
 
-func (et EnemyTypeSpawnArea) IsCollisionDeadly() bool {
+func (et EnemyTypeSpawnArea) IsCollisionDeadly(e *ActiveEnemy) bool {
 	return false
 }
 
 func (et EnemyTypeSpawnArea) IsCollisionExplosive() bool {
+	return false
+}
+
+func (et EnemyTypeSpawnArea) IsStoppingBullets() bool {
 	return false
 }
 
@@ -53,7 +57,10 @@ func (et EnemyTypeSpawnArea) OnActivation(e *ActiveEnemy) {
 	// no logic specific to activation areas
 }
 
-// Is called when an enemy of this type died
 func (et EnemyTypeSpawnArea) OnDeath(e *ActiveEnemy) {
 	// spawn areas do not die
+}
+
+func (et EnemyTypeSpawnArea) OnMovementStopped(e *ActiveEnemy) {
+	// spawn areas can not move
 }

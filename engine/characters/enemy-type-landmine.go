@@ -36,12 +36,16 @@ func (et EnemyTypeLandmine) GetPointsForKill() int {
 	return 5
 }
 
-func (et EnemyTypeLandmine) IsCollisionDeadly() bool {
+func (et EnemyTypeLandmine) IsCollisionDeadly(e *ActiveEnemy) bool {
 	return true
 }
 
 func (et EnemyTypeLandmine) IsCollisionExplosive() bool {
 	return true
+}
+
+func (et EnemyTypeLandmine) IsStoppingBullets() bool {
+	return false
 }
 
 func (et EnemyTypeLandmine) IsVisible() bool {
@@ -52,7 +56,10 @@ func (et EnemyTypeLandmine) OnActivation(e *ActiveEnemy) {
 	// no logic specific to landmines
 }
 
-// Is called when an enemy of this type died
 func (et EnemyTypeLandmine) OnDeath(e *ActiveEnemy) {
 	// no logic specific to landmines
+}
+
+func (et EnemyTypeLandmine) OnMovementStopped(e *ActiveEnemy) {
+	// landmines can not move
 }

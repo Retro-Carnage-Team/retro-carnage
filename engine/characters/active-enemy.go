@@ -74,6 +74,9 @@ func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 			e.removeFirstMovement()
 		}
 	}
+	if len(e.Movements) == 0 {
+		e.Type.OnMovementStopped(e)
+	}
 }
 
 // Spawn returns a new enemy instance - when it's time to do so.

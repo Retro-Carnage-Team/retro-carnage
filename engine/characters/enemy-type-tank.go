@@ -39,12 +39,16 @@ func (et EnemyTypeTank) GetPointsForKill() int {
 	return 100
 }
 
-func (et EnemyTypeTank) IsCollisionDeadly() bool {
-	return true
+func (et EnemyTypeTank) IsCollisionDeadly(e *ActiveEnemy) bool {
+	return len(e.Movements) > 0
 }
 
 func (et EnemyTypeTank) IsCollisionExplosive() bool {
 	return false
+}
+
+func (et EnemyTypeTank) IsStoppingBullets() bool {
+	return true
 }
 
 func (et EnemyTypeTank) IsVisible() bool {
@@ -52,12 +56,16 @@ func (et EnemyTypeTank) IsVisible() bool {
 }
 
 func (et EnemyTypeTank) OnActivation(e *ActiveEnemy) {
-	var stereoPlayer = assets.NewStereo()
-	stereoPlayer.PlayFx(assets.FxTankMoving)
+	if len(e.Movements) > 0 {
+		var stereoPlayer = assets.NewStereo()
+		stereoPlayer.PlayFx(assets.FxTankMoving)
+	}
 }
 
-// Is called when an enemy of this type died
 func (et EnemyTypeTank) OnDeath(e *ActiveEnemy) {
-	var stereoPlayer = assets.NewStereo()
-	stereoPlayer.StopFx(assets.FxTankMoving)
+	assets.NewStereo().StopFx(assets.FxTankMoving)
+}
+
+func (et EnemyTypeTank) OnMovementStopped(e *ActiveEnemy) {
+	assets.NewStereo().StopFx(assets.FxTankMoving)
 }

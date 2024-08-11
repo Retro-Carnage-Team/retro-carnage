@@ -39,11 +39,15 @@ func (et EnemyTypePerson) GetPointsForKill() int {
 	return 10
 }
 
-func (et EnemyTypePerson) IsCollisionDeadly() bool {
+func (et EnemyTypePerson) IsCollisionDeadly(e *ActiveEnemy) bool {
 	return true
 }
 
 func (et EnemyTypePerson) IsCollisionExplosive() bool {
+	return false
+}
+
+func (et EnemyTypePerson) IsStoppingBullets() bool {
 	return false
 }
 
@@ -55,8 +59,11 @@ func (et EnemyTypePerson) OnActivation(e *ActiveEnemy) {
 	// No logic specific to persons
 }
 
-// Is called when an enemy of this type died
 func (et EnemyTypePerson) OnDeath(e *ActiveEnemy) {
 	var randomDeathSound = assets.RandomEnemyDeathSoundEffect()
 	assets.NewStereo().StopFx(randomDeathSound)
+}
+
+func (et EnemyTypePerson) OnMovementStopped(e *ActiveEnemy) {
+	// No logic specific to persons
 }

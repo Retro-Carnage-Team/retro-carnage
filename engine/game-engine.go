@@ -374,7 +374,7 @@ func (ge *GameEngine) handleDeadlyCollisionsOfPlayer() {
 // checkPlayerForDeadlyCollisionWithEnemy returns true when the player collided with a deadly enemy.
 func (ge *GameEngine) checkPlayerForDeadlyCollisionWithEnemy(rect *geometry.Rectangle) bool {
 	for _, enemy := range ge.enemies {
-		if !enemy.Dying && enemy.Type.IsCollisionDeadly() {
+		if !enemy.Dying && enemy.Type.IsCollisionDeadly(enemy) {
 			var collisionWithEnemy = rect.Intersection(enemy.Position())
 			if nil != collisionWithEnemy {
 				if enemy.Type.IsCollisionExplosive() {
@@ -423,6 +423,10 @@ func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 			death, killer = ge.checkEnemyForCollisionWithExplosion(enemy)
 		}
 
+		if enemy.Type.IsStoppingBullets() {
+			ge.removeBulletsStoppedByEnemy(enemy)
+		}
+
 		if !death && enemy.Type.CanDieWhenHitByBullet() {
 			death, killer = ge.checkEnemyForCollisionWithBullet(enemy)
 		}
@@ -463,6 +467,23 @@ func (ge *GameEngine) checkEnemyForCollisionWithBullet(enemy *characters.ActiveE
 		}
 	}
 	return false, -1
+}
+
+func (ge *GameEngine) removeBulletsStoppedByEnemy(enemy *characters.ActiveEnemy) {
+	if !enemy.Type.IsStoppingBullets() {
+		return
+	}
+
+	var bulletIndex = -1
+	for idx, bullet := range ge.bullets {
+		if nil != enemy.Position().Intersection(bullet.Position()) {
+			bulletIndex = idx
+			break
+		}
+	}
+	if bulletIndex != -1 {
+		ge.removeBullet(bulletIndex)
+	}
 }
 
 // checkEnemyForCollisionWithExplosive checks this enemy for deadly collisions with explosives.

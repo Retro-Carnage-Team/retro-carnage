@@ -36,12 +36,16 @@ func (et EnemyTypeGunTurret) GetPointsForKill() int {
 	return 15
 }
 
-func (et EnemyTypeGunTurret) IsCollisionDeadly() bool {
+func (et EnemyTypeGunTurret) IsCollisionDeadly(e *ActiveEnemy) bool {
 	return false
 }
 
 func (et EnemyTypeGunTurret) IsCollisionExplosive() bool {
 	return false
+}
+
+func (et EnemyTypeGunTurret) IsStoppingBullets() bool {
+	return true
 }
 
 func (et EnemyTypeGunTurret) IsVisible() bool {
@@ -52,7 +56,10 @@ func (et EnemyTypeGunTurret) OnActivation(e *ActiveEnemy) {
 	// no logic specific to gun turrets
 }
 
-// Is called when an enemy of this type died
 func (et EnemyTypeGunTurret) OnDeath(e *ActiveEnemy) {
 	// no logic specific to gun turrets
+}
+
+func (et EnemyTypeGunTurret) OnMovementStopped(e *ActiveEnemy) {
+	// gun turrets can not move
 }
