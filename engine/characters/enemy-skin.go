@@ -23,11 +23,21 @@ const (
 
 	// A gun turret
 	GunTurretSkin EnemySkin = "gun-turret"
+
+	// A gun turret
+	TankSkin EnemySkin = "tank"
 )
 
 var (
 	enemySkins     map[EnemySkin]*Skin
-	enemySkinNames = []EnemySkin{WoodlandWithSMG, GreyJumperWithRifle, DigitalWithPistols, WoodlandWithBulletproofVest, GunTurretSkin}
+	enemySkinNames = []EnemySkin{
+		WoodlandWithSMG,
+		GreyJumperWithRifle,
+		DigitalWithPistols,
+		WoodlandWithBulletproofVest,
+		GunTurretSkin,
+		TankSkin,
+	}
 )
 
 // InitEnemySkins initializes the enemy skins. The skins get loaded from the given directory where they are expected to

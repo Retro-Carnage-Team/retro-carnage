@@ -21,18 +21,18 @@ func TestLandmineReturnsStaticSprite(t *testing.T) {
 		},
 		Skin:             "",
 		SpriteSupplier:   nil,
-		Type:             Landmine,
+		Type:             EnemyTypeLandmine{},
 		ViewingDirection: &geometry.Down,
 	}
 
-	var spriteSupplier = EnemyLandmineSpriteSupplier{}
+	var spriteSupplier = LandmineSpriteSupplier{}
 	assert.NotNil(t, spriteSupplier)
 
 	var sprite = spriteSupplier.Sprite(0, landmine)
 	assert.NotNil(t, sprite)
 	assert.Equal(t, landmineSprite, sprite.Source)
 
-	sprite = spriteSupplier.Sprite(DurationOfEnemyMovementFrame*1.4, landmine)
+	sprite = spriteSupplier.Sprite(durationOfEnemyMovementFrame*1.4, landmine)
 	assert.NotNil(t, sprite)
 	assert.Equal(t, landmineSprite, sprite.Source)
 }

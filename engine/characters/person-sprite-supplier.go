@@ -8,27 +8,30 @@ import (
 )
 
 const (
-	DurationOfEnemyDeathAnimationFrame = 75 // in ms
-	DurationOfEnemyDeathAnimation      = DurationOfEnemyDeathAnimationFrame * 10
-	DurationOfEnemyMovementFrame       = 75 // in ms
+	durationOfEnemyDeathAnimationFrame = 75 // in ms
+	durationOfEnemyMovementFrame       = 75 // in ms
 )
 
-type EnemyPersonSpriteSupplier struct {
+type PersonSpriteSupplier struct {
 	durationSinceLastSprite int64
 	lastDirection           geometry.Direction
 	lastIndex               int
 	wasDying                bool
 }
 
-func NewEnemyPersonSpriteSupplier(direction geometry.Direction) *EnemyPersonSpriteSupplier {
-	return &EnemyPersonSpriteSupplier{
+func NewPersonSpriteSupplier(direction geometry.Direction) *PersonSpriteSupplier {
+	return &PersonSpriteSupplier{
 		lastDirection:           direction,
 		durationSinceLastSprite: 0,
 		lastIndex:               0,
 	}
 }
 
-func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy ActiveEnemy) *graphics.SpriteWithOffset {
+func (supplier *PersonSpriteSupplier) GetDurationOfEnemyDeathAnimation() int64 {
+	return durationOfEnemyDeathAnimationFrame * 10
+}
+
+func (supplier *PersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy ActiveEnemy) *graphics.SpriteWithOffset {
 	var skinFrames = enemySkins[enemy.Skin].MovementByDirection[enemy.ViewingDirection.Name]
 	if enemy.Dying {
 		if !supplier.wasDying {
@@ -40,7 +43,7 @@ func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy
 
 		var result = skinFrames[supplier.lastIndex].ToSpriteWithOffset()
 		if supplier.durationSinceLastSprite != 0 {
-			var alpha = 1.0 - 1.0/float64(DurationOfEnemyDeathAnimation)*float64(supplier.durationSinceLastSprite)
+			var alpha = 1.0 - 1.0/float64(supplier.GetDurationOfEnemyDeathAnimation())*float64(supplier.durationSinceLastSprite)
 			var rgba = pixel.Alpha(alpha)
 			result.ColorMask = &rgba
 		}
@@ -54,7 +57,7 @@ func (supplier *EnemyPersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy
 			return skinFrame.ToSpriteWithOffset()
 		} else {
 			supplier.durationSinceLastSprite += msSinceLastSprite
-			if supplier.durationSinceLastSprite > DurationOfEnemyMovementFrame {
+			if supplier.durationSinceLastSprite > durationOfEnemyMovementFrame {
 				supplier.durationSinceLastSprite = 0
 				supplier.lastIndex = (supplier.lastIndex + 1) % len(skinFrames)
 			}

@@ -21,18 +21,18 @@ func TestGunTurretReturnsStaticSprite(t *testing.T) {
 		},
 		Skin:             "",
 		SpriteSupplier:   nil,
-		Type:             GunTurret,
+		Type:             EnemyTypeGunTurret{},
 		ViewingDirection: &geometry.UpRight,
 	}
 
-	var spriteSupplier = EnemyGunTurretSpriteSupplier{}
+	var spriteSupplier = GunTurretSpriteSupplier{}
 	assert.NotNil(t, spriteSupplier)
 
 	var sprite = spriteSupplier.Sprite(0, gunTurret)
 	assert.NotNil(t, sprite)
 	assert.Equal(t, "images/environment/gun-turret-up_right.png", sprite.Source)
 
-	sprite = spriteSupplier.Sprite(DurationOfEnemyMovementFrame*1.4, gunTurret)
+	sprite = spriteSupplier.Sprite(durationOfEnemyMovementFrame*1.4, gunTurret)
 	assert.NotNil(t, sprite)
 	assert.Equal(t, "images/environment/gun-turret-up_right.png", sprite.Source)
 }

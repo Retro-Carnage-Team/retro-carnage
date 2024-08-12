@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	DurationOfPlayerDeathAnimationFrame = 75  // in ms
-	DurationOfPlayerMovementFrame       = 75  // in ms
-	durationOfInvincibilityState        = 200 // in ms
+	DurationOfPlayerDeathAnimationFrame = 75 // in ms
+	DurationOfPlayerMovementFrame       = 75 // in ms
+	// TODO: This is the wrong place to have this value hard coded
+	durationOfInvincibilityState = 200 // in ms
 )
 
 // PlayerSpriteSupplier returns sprites for the current state of the Player
@@ -96,7 +97,7 @@ func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, behavior *PlayerB
 }
 
 func (pss *PlayerSpriteSupplier) spriteForDyingPlayer() *graphics.SpriteWithOffset {
-	var deathFrames = pss.skin.DeathAnimation
+	var deathFrames = pss.skin.DeathAnimation[geometry.Up.Name]
 	if pss.wasDying {
 		if DurationOfPlayerDeathAnimationFrame <= pss.durationSinceLastSprite {
 			pss.lastIndex = util.MinInt(pss.lastIndex+1, len(deathFrames)-1)

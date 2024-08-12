@@ -6,18 +6,22 @@ import (
 	"retro-carnage/logging"
 )
 
-type EnemyGunTurretSpriteSupplier struct {
+type GunTurretSpriteSupplier struct {
 }
 
-func NewEnemyGunTurretSpriteSupplier(direction geometry.Direction) *EnemyGunTurretSpriteSupplier {
+func NewGunTurretSpriteSupplier(direction geometry.Direction) *GunTurretSpriteSupplier {
 	if !direction.IsDiagonal() {
 		logging.Error.Fatalf("Gun turrets can have diagonal directions, only. Found %s instead", direction.Name)
 	}
 
-	return &EnemyGunTurretSpriteSupplier{}
+	return &GunTurretSpriteSupplier{}
 }
 
-func (supplier *EnemyGunTurretSpriteSupplier) Sprite(msSinceLastSprite int64, enemy ActiveEnemy) *graphics.SpriteWithOffset {
+func (supplier *GunTurretSpriteSupplier) GetDurationOfEnemyDeathAnimation() int64 {
+	return 1
+}
+
+func (supplier *GunTurretSpriteSupplier) Sprite(msSinceLastSprite int64, enemy ActiveEnemy) *graphics.SpriteWithOffset {
 	var skinFrame = enemySkins[enemy.Skin].Idle[enemy.ViewingDirection.Name]
 	return skinFrame.ToSpriteWithOffset()
 }

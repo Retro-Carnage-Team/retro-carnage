@@ -41,6 +41,15 @@ const (
 	FxOutOfAmmo      SoundEffect = "outofammo.mp3"
 	FxPistol1        SoundEffect = "pistol.mp3"
 	FxPistol2        SoundEffect = "pistol2.mp3"
+	FxRicochet0      SoundEffect = "ricochet-0.mp3"
+	FxRicochet1      SoundEffect = "ricochet-1.mp3"
+	FxRicochet2      SoundEffect = "ricochet-2.mp3"
+	FxRicochet3      SoundEffect = "ricochet-3.mp3"
+	FxRicochet4      SoundEffect = "ricochet-4.mp3"
+	FxRicochet5      SoundEffect = "ricochet-5.mp3"
+	FxRicochet6      SoundEffect = "ricochet-6.mp3"
+	FxRicochet7      SoundEffect = "ricochet-7.mp3"
+	FxRicochet8      SoundEffect = "ricochet-8.mp3"
 	FxRocketLauncher SoundEffect = "rlauncher.mp3"
 	FxTankMoving     SoundEffect = "tank-moving.mp3"
 	FxUzi            SoundEffect = "UZI.mp3"
@@ -66,7 +75,8 @@ const (
 var SoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxCash, FxCheatSwitch, FxDeathEnemy0, FxDeathEnemy1,
 	FxDeathEnemy2, FxDeathEnemy3, FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1,
 	FxDeathPlayer2, FxError, FxFnfal, FxG36, FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxHk21, FxLoading, FxM28A1,
-	FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo, FxPistol1, FxPistol2, FxRocketLauncher, FxTankMoving, FxUzi}
+	FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo, FxPistol1, FxPistol2, FxRicochet0, FxRicochet1, FxRicochet2, FxRicochet3,
+	FxRicochet4, FxRicochet5, FxRicochet6, FxRicochet7, FxRicochet8, FxRocketLauncher, FxTankMoving, FxUzi}
 
 var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5,
 	FxMp7, FxTankMoving, FxUzi}
@@ -78,8 +88,15 @@ var Music = []Song{BackgroundSong1, BackgroundSong2, BackgroundSong3, Background
 	BackgroundSong7, BackgroundSong8, BackgroundSong9, BackgroundSong10, BackgroundSong11, BackgroundSong12,
 	BackgroundSong13, GameOverSong, GameWonSong, ThemeSong}
 
+var RicochetSoundEffects = []SoundEffect{FxRicochet0, FxRicochet1, FxRicochet2, FxRicochet3, FxRicochet4, FxRicochet5,
+	FxRicochet6, FxRicochet7, FxRicochet8}
+
 func RandomEnemyDeathSoundEffect() SoundEffect {
 	return EnemyDeathsSoundEffects[rand.Intn(len(EnemyDeathsSoundEffects))]
+}
+
+func RandomRicochetSoundEffect() SoundEffect {
+	return RicochetSoundEffects[rand.Intn(len(RicochetSoundEffects))]
 }
 
 func DeathFxForPlayer(playerIdx int) SoundEffect {

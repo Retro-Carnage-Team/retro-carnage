@@ -9,7 +9,6 @@ import (
 // ActiveEnemy is an Enemy that is (becoming) visible.
 type ActiveEnemy struct {
 	Actions                 []assets.EnemyAction
-	ActivationSound         string
 	currentActionIdx        int
 	currentActionElapsed    int64
 	Dying                   bool
@@ -45,7 +44,10 @@ func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
 // Die will kill this ActiveEnemy (and start it's dying animation)
 func (e *ActiveEnemy) Die() {
 	e.Dying = true
-	e.DyingAnimationCountDown = 1
+	if !e.Type.IsVisible() {
+		e.DyingAnimationCountDown = e.SpriteSupplier.GetDurationOfEnemyDeathAnimation()
+	}
+	e.Type.OnDeath(e)
 }
 
 // Move will update the enemies position according to its configured movement pattern and the elapsed time.
@@ -61,7 +63,7 @@ func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 		var newViewingDirection = geometry.GetDirectionByName(currentMovement.Direction)
 		if newViewingDirection != nil && newViewingDirection.Name != e.ViewingDirection.Name {
 			e.ViewingDirection = newViewingDirection
-			e.SpriteSupplier = NewEnemyPersonSpriteSupplier(*newViewingDirection)
+			e.SpriteSupplier = NewPersonSpriteSupplier(*newViewingDirection)
 		}
 
 		var duration = util.MinInt64(remaining, currentMovement.Duration-currentMovement.TimeElapsed)
@@ -74,6 +76,9 @@ func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 		if currentMovement.TimeElapsed >= currentMovement.Duration {
 			e.removeFirstMovement()
 		}
+	}
+	if len(e.Movements) == 0 {
+		e.Type.OnMovementStopped(e)
 	}
 }
 
@@ -122,10 +127,10 @@ func (e *ActiveEnemy) spawnEnemyInstance() *ActiveEnemy {
 		DyingAnimationCountDown: 0,
 		Movements:               append(make([]EnemyMovement, 0), e.Movements...),
 		Skin:                    e.Skin,
-		Type:                    Person,
+		Type:                    EnemyTypePerson{},
 		ViewingDirection:        e.ViewingDirection,
 	}
 	result.SetPosition(e.Position().Clone())
-	result.SpriteSupplier = NewEnemyPersonSpriteSupplier(*result.ViewingDirection)
+	result.SpriteSupplier = NewPersonSpriteSupplier(*result.ViewingDirection)
 	return result
 }

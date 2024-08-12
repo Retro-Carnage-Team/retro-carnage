@@ -82,7 +82,7 @@ func (pb *PlayerBehavior) direction(up bool, down bool, left bool, right bool) g
 
 func (pb *PlayerBehavior) Die() {
 	pb.Dying = true
-	pb.dyingAnimationCountDown = SkinForPlayer(pb.Player.index).DurationOfDeathAnimation()
+	pb.dyingAnimationCountDown = SkinForPlayer(pb.Player.index).DurationOfDeathAnimation(pb.Direction)
 }
 
 func (pb *PlayerBehavior) UpdateDeath(elapsedTimeInMs int64) {

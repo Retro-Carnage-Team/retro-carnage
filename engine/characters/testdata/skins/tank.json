@@ -1,0 +1,13 @@
+{
+  "name": "gun-turret",
+  "movement": {
+    "up_right": [],
+    "right": [],
+    "down_right": [],
+    "down": [],
+    "down_left": [],
+    "left": [],
+    "up_left": []
+  },
+  "idle": {}
+}
