@@ -34,7 +34,9 @@ type SelectScreen struct {
 
 func (s *SelectScreen) SetUp() {
 	s.defaultFontSize = fonts.DefaultFontSize()
-	s.multiplayerPossible = len(s.inputController.GetInputDeviceInfos()) > 1
+	// Multiplayer is not implemented, yet
+	// s.multiplayerPossible = len(s.inputController.GetInputDeviceInfos()) > 1
+	s.multiplayerPossible = false
 	s.selectedOption = optionOnePlayer
 	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtSelectOnePlayerGame, txtSelectTwoPlayerGame, txtSelectOptions)
 }
