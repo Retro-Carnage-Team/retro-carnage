@@ -36,6 +36,9 @@ type EnemyType interface {
 	// IsCollisionDeadly returns true when a collision of a player with this type of enemy leads to an explosion
 	IsCollisionExplosive() bool
 
+	// IsObstacle returns true when enemies of this time become an obstacle when they're dying (like tanks)
+	IsObstacle() bool
+
 	// IsStoppingBullets returns true when enemies cannot be killed by bullets but stop them (like tanks)
 	IsStoppingBullets() bool
 

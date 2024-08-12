@@ -47,6 +47,10 @@ func (et EnemyTypePerson) IsCollisionExplosive() bool {
 	return false
 }
 
+func (et EnemyTypePerson) IsObstacle() bool {
+	return false
+}
+
 func (et EnemyTypePerson) IsStoppingBullets() bool {
 	return false
 }

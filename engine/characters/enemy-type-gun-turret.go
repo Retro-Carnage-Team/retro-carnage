@@ -44,6 +44,10 @@ func (et EnemyTypeGunTurret) IsCollisionExplosive() bool {
 	return false
 }
 
+func (et EnemyTypeGunTurret) IsObstacle() bool {
+	return false
+}
+
 func (et EnemyTypeGunTurret) IsStoppingBullets() bool {
 	return true
 }

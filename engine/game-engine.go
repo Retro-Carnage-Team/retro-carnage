@@ -122,6 +122,18 @@ func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
 }
 
 func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, obstacles []assets.Obstacle) {
+	var enemyObstacles = make([]assets.Obstacle, 0)
+	for _, enemy := range ge.enemies {
+		if enemy.Type.IsObstacle() {
+			enemyObstacles = append(enemyObstacles, assets.Obstacle{
+				Rectangle:       *enemy.Position(),
+				StopsBullets:    enemy.Type.IsStoppingBullets(),
+				StopsExplosives: false,
+			})
+		}
+	}
+
+	var obstaclesAndCorpses = append(obstacles, enemyObstacles...)
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = ge.playerBehaviors[player.Index()]
 		if !behavior.Dying && behavior.Moving {
@@ -130,7 +142,7 @@ func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, ob
 				elapsedTimeInMs,
 				behavior.Direction,
 				oldPosition,
-				obstacles,
+				obstaclesAndCorpses,
 			)
 		}
 	}
@@ -412,10 +424,6 @@ func (ge *GameEngine) checkPlayerForCollisionWithBullet(rect *geometry.Rectangle
 // Enemy will be killed if a deadly collision is detected.
 func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 	for _, enemy := range ge.enemies {
-		if enemy.Dying {
-			continue
-		}
-
 		var death = false
 		var killer = -1
 

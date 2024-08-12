@@ -47,6 +47,10 @@ func (et EnemyTypeTank) IsCollisionExplosive() bool {
 	return false
 }
 
+func (et EnemyTypeTank) IsObstacle() bool {
+	return true
+}
+
 func (et EnemyTypeTank) IsStoppingBullets() bool {
 	return true
 }

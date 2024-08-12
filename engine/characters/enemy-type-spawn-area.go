@@ -45,6 +45,10 @@ func (et EnemyTypeSpawnArea) IsCollisionExplosive() bool {
 	return false
 }
 
+func (et EnemyTypeSpawnArea) IsObstacle() bool {
+	return false
+}
+
 func (et EnemyTypeSpawnArea) IsStoppingBullets() bool {
 	return false
 }

@@ -44,6 +44,10 @@ func (et EnemyTypeLandmine) IsCollisionExplosive() bool {
 	return true
 }
 
+func (et EnemyTypeLandmine) IsObstacle() bool {
+	return false
+}
+
 func (et EnemyTypeLandmine) IsStoppingBullets() bool {
 	return false
 }
