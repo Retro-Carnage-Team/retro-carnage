@@ -47,7 +47,7 @@ func buildEnemyPerson() ActiveEnemy {
 			Height: 50,
 		},
 		Skin:             WoodlandWithSMG,
-		SpriteSupplier:   nil,
+		SpriteSupplier:   NewPersonSpriteSupplier(geometry.Down),
 		Type:             EnemyTypePerson{},
 		ViewingDirection: &geometry.Down,
 	}
