@@ -40,7 +40,7 @@ func (mc *MissionCtrl) RemainingMissions() ([]*assets.Mission, error) {
 }
 
 func (mc *MissionCtrl) MarkMissionFinished(mission *assets.Mission) {
-	mc.finishedMissionNames = append(mc.finishedMissionNames, mission.Name)	
+	mc.finishedMissionNames = append(mc.finishedMissionNames, mission.Name)
 }
 
 func (mc *MissionCtrl) CurrentMission() *assets.Mission {

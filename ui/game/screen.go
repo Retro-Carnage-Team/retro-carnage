@@ -53,7 +53,7 @@ func (s *Screen) SetUp() {
 	s.stereo = assets.NewStereo()
 	s.mission = engine.MissionController.CurrentMission()
 	if nil == s.mission {
-		logging.Error.Fatalf("No missing selected on game screen")
+		logging.Error.Fatalf("No mission selected on game screen")
 	}
 
 	s.stereo.PlaySong(s.mission.Music)
