@@ -6,11 +6,15 @@ import (
 	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
+	"retro-carnage/ui/common/fonts"
 	"retro-carnage/ui/highscore"
 	"time"
 
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
 )
+
+const pausedMessage = "GAME PAUSED"
 
 // Screen in this package is the one that show the actual gameplay.
 type Screen struct {
@@ -21,6 +25,7 @@ type Screen struct {
 	inputController      input.InputController
 	mission              *assets.Mission
 	missionWonAnimation  *missionWonAnimation
+	paused               bool
 	playerInfos          []*playerInfo
 	renderer             *engine.Renderer
 	screenChangeRequired common.ScreenChangeCallback
@@ -45,6 +50,7 @@ func (s *Screen) SetWindow(window *opengl.Window) {
 
 // SetUp is called when the screen got initialized by ui.MainScreen and is about to appear shortly.
 func (s *Screen) SetUp() {
+	s.paused = false
 	s.fpsInfo = &fpsInfo{second: time.NewTicker(time.Second).C}
 	s.playerInfos = []*playerInfo{
 		newPlayerInfo(0, s.window),
@@ -66,22 +72,31 @@ func (s *Screen) SetUp() {
 // Here we update the state of the gameplay based on the time that has elapsed since the last frame.
 // Then we render the new game state to the opengl.Window.
 func (s *Screen) Update(elapsedTimeInMs int64) {
-	if nil != s.engine && nil != s.renderer {
-		if !(s.engine.Won || s.engine.Lost) {
-			for _, playerInfo := range s.playerInfos {
-				playerInfo.draw(s.window)
-			}
+	if nil == s.engine || nil == s.renderer {
+		return
+	}
+
+	if !(s.engine.Won || s.engine.Lost) {
+		for _, playerInfo := range s.playerInfos {
+			playerInfo.draw(s.window)
+		}
+		if s.window.JustReleased(pixel.KeyPause) {
+			s.paused = !s.paused
+		}
+		if s.paused {
+			s.renderGamePausedScreen()
+		} else {
 			s.updateGameInProgress(elapsedTimeInMs)
 			s.renderer.Render(elapsedTimeInMs)
 		}
+	}
 
-		if s.engine.Won {
-			s.updateGameWon(elapsedTimeInMs)
-		}
+	if s.engine.Won {
+		s.updateGameWon(elapsedTimeInMs)
+	}
 
-		if s.engine.Lost {
-			s.updateGameLost(elapsedTimeInMs)
-		}
+	if s.engine.Lost {
+		s.updateGameLost(elapsedTimeInMs)
 	}
 
 	s.fpsInfo.update()
@@ -152,6 +167,15 @@ func (s *Screen) updateGameLost(elapsedTimeInMs int64) {
 	if s.gameLostAnimation.finished || buttonPressed {
 		s.moveToHighScoreScreen()
 	}
+}
+
+func (s *Screen) renderGamePausedScreen() {
+	var gameCanvas = s.renderer.Render(0)
+	var matrix = pixel.IM.Moved(s.window.Bounds().Center())
+	gameCanvas.DrawColorMask(s.window, matrix, pixel.RGBA{A: 0.5})
+
+	var renderer = fonts.TextRenderer{Window: s.window}
+	renderer.DrawLineToScreenCenter(pausedMessage, 0, common.White)
 }
 
 // TearDown is called by ui.MainWindow when the Screen has been displayed for the last time.
