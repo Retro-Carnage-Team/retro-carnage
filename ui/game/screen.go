@@ -72,29 +72,31 @@ func (s *Screen) SetUp() {
 // Here we update the state of the gameplay based on the time that has elapsed since the last frame.
 // Then we render the new game state to the opengl.Window.
 func (s *Screen) Update(elapsedTimeInMs int64) {
-	if nil != s.engine && nil != s.renderer {
-		if !(s.engine.Won || s.engine.Lost) {
-			for _, playerInfo := range s.playerInfos {
-				playerInfo.draw(s.window)
-			}
-			if s.window.JustReleased(pixel.KeyPause) {
-				s.paused = !s.paused
-			}
-			if s.paused {
-				s.renderGamePausedScreen()
-			} else {
-				s.updateGameInProgress(elapsedTimeInMs)
-				s.renderer.Render(elapsedTimeInMs)
-			}
-		}
+	if nil == s.engine || nil == s.renderer {
+		return
+	}
 
-		if s.engine.Won {
-			s.updateGameWon(elapsedTimeInMs)
+	if !(s.engine.Won || s.engine.Lost) {
+		for _, playerInfo := range s.playerInfos {
+			playerInfo.draw(s.window)
 		}
+		if s.window.JustReleased(pixel.KeyPause) {
+			s.paused = !s.paused
+		}
+		if s.paused {
+			s.renderGamePausedScreen()
+		} else {
+			s.updateGameInProgress(elapsedTimeInMs)
+			s.renderer.Render(elapsedTimeInMs)
+		}
+	}
 
-		if s.engine.Lost {
-			s.updateGameLost(elapsedTimeInMs)
-		}
+	if s.engine.Won {
+		s.updateGameWon(elapsedTimeInMs)
+	}
+
+	if s.engine.Lost {
+		s.updateGameLost(elapsedTimeInMs)
 	}
 
 	s.fpsInfo.update()
