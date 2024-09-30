@@ -16,10 +16,7 @@ Development status as of 2021-08-09
 
 ## Getting the latest release
 
-You can find the latest builds for various platforms on the [release page](https://github.com/Retro-Carnage-Team/retro-carnage/releases).
-
-- Latest version for [Linux x86-64](https://rcpublic.blob.core.windows.net/rcrelease/v2024.05/Retro-Carnage-v2024.05-Linux.zip)
-- Latest version for [Windows x86-64](https://rcpublic.blob.core.windows.net/rcrelease/v2024.05/Retro-Carnage-v2024.05-Windows.zip)
+You can find the latest builds for various platforms on the [downloads page](https://www.retro-carnage.net/downloads/).
 
 ### Run the game
 
