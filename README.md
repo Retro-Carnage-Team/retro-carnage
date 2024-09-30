@@ -35,9 +35,7 @@ You can find the latest builds for various platforms on the [release page](https
 
 #### All platforms
 
-- git
-- Golang (>= 1.22) 
-- PowerShell
+First of all, you should install the necessary tools on your computer to be able to work with the source code. You will need [git](https://git-scm.com/) and [Golang](https://go.dev/). Some scripts that make development easier are written in PowerShell. PowerShell is already installed when you're running Microsoft Windows. With Linux you still need to [install PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux?view=powershell-7.4) if you want to use the scripts - but this is optional.
 
 #### On Ubuntu
 
@@ -60,7 +58,7 @@ Install [tdm-gcc](https://jmeubank.github.io/tdm-gcc/) so that various go-bindin
 Get the code and assets
 
 `git clone https://github.com/Retro-Carnage-Team/retro-carnage.git`  
-`git clone https://github.com/Retro-Carnage-Team/retro-carnage-assets`
+`git clone https://github.com/Retro-Carnage-Team/retro-carnage-assets.git`
 
 Change into the src directory, install required modules, compile the application
 
@@ -79,7 +77,9 @@ The repository contains IDE settings for Visual Studio Code to debug, run, and t
 Run the steps to install the development environment first (see previous chapter).
 Open a terminal, navigate into the application folder and run the test script:
 
-`pwsh .\test.ps1`
+`pwsh ./test.ps1`
+
+[![asciicast](https://asciinema.org/a/CTqq3ZDI2RtSlwLga6YVERYF4.svg)](https://asciinema.org/a/CTqq3ZDI2RtSlwLga6YVERYF4)
 
 ## Authors
 
