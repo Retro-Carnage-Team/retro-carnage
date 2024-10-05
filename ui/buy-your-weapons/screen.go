@@ -7,7 +7,9 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
 const (
@@ -55,8 +57,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 			s.screenChangeRequired(common.ShopP2)
 		}
 	}
-	var renderer = fonts.TextRenderer{Window: s.window}
-	renderer.DrawLineToScreenCenter(s.text, 0, common.White)
+	s.drawText()
 }
 
 func (s *Screen) TearDown() {
@@ -68,6 +69,19 @@ func (s *Screen) String() string {
 		return string(common.BuyYourWeaponsP1)
 	}
 	return string(common.BuyYourWeaponsP2)
+}
+
+func (s *Screen) drawText() {
+	var defaultFontSize = fonts.DefaultFontSize()
+	var lineDimensions = fonts.GetTextDimension(defaultFontSize, s.getFullText())
+
+	var vertCenter = s.window.Bounds().Max.Y / 2
+	var lineX = (s.window.Bounds().Max.X - lineDimensions.X) / 2
+
+	var txt = text.New(pixel.V(lineX, vertCenter), fonts.SizeToFontAtlas[defaultFontSize])
+	txt.Color = common.White
+	_, _ = fmt.Fprint(txt, s.text)
+	txt.Draw(s.window, pixel.IM)
 }
 
 func (s *Screen) getFullText() string {
