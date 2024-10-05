@@ -53,6 +53,7 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	}
 	s.renderScreen()
 	if !s.themeLoaded && (s.screenChangeTimeout > 100) {
+		s.stereo.BufferSong(assets.ThemeSong)
 		s.stereo.PlaySong(assets.ThemeSong)
 		s.themeLoaded = true
 	}

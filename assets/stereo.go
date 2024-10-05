@@ -101,13 +101,20 @@ func (sb *Stereo) StopFx(effect SoundEffect) {
 	}
 }
 
+// IsSongBuffered returns whether or not the given song is buffered (and thus can be played).
+func (sb *Stereo) IsSongBuffered(song Song) bool {
+	sb.musicMutex.Lock()
+	var aSoundIsNil = nil == sb.music[song]
+	sb.musicMutex.Unlock()
+	return !aSoundIsNil
+}
+
 // PlaySong starts the playback of a given Song
 func (sb *Stereo) PlaySong(song Song) {
 	if sb.noMusic {
 		return
 	}
 
-	sb.BufferSong(song)
 	sb.musicMutex.Lock()
 	sb.music[song].play(sb.mixer)
 	sb.musicMutex.Unlock()
@@ -119,11 +126,7 @@ func (sb *Stereo) BufferSong(song Song) {
 		return
 	}
 
-	sb.musicMutex.Lock()
-	var aSoundIsNil = nil == sb.music[song]
-	sb.musicMutex.Unlock()
-
-	if aSoundIsNil {
+	if !sb.IsSongBuffered(song) {
 		var err error = nil
 		var aSound sound
 		aSound, err = loadMusic(song)
