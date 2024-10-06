@@ -34,7 +34,7 @@ func (ms *MainScreen) Initialize() {
 	ms.inputCtrl = input.NewController(ms.Window)
 	ms.inputCtrl.AssignInputDevicesToPlayers()
 
-	ms.clientScreen = &loading.Screen{}
+	ms.clientScreen = loading.NewScreen()
 	ms.setUpScreen()
 
 	ms.lastUpdate = time.Now()
@@ -45,7 +45,7 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 
 	switch screenName {
 	case common.Loading:
-		ms.nextScreen = &loading.Screen{}
+		ms.nextScreen = loading.NewScreen()
 	case common.Start:
 		ms.nextScreen = start.NewScreen()
 	case common.Title:
@@ -69,9 +69,9 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 	case common.Mission:
 		ms.nextScreen = &mission.Screen{}
 	case common.BuyYourWeaponsP1:
-		ms.nextScreen = &byw.Screen{PlayerIdx: 0}
+		ms.nextScreen = byw.NewScreen(0)
 	case common.BuyYourWeaponsP2:
-		ms.nextScreen = &byw.Screen{PlayerIdx: 1}
+		ms.nextScreen = byw.NewScreen(1)
 	case common.ShopP1:
 		ms.nextScreen = &shop.Screen{PlayerIdx: 0}
 	case common.ShopP2:

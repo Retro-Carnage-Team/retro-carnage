@@ -47,7 +47,7 @@ func (s *Screen) SetUp() {
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
 	s.controller.update(elapsedTimeInMs)
-	s.renderScreen()
+	s.drawScreen()
 }
 
 func (s *Screen) TearDown() {
@@ -58,7 +58,7 @@ func (s *Screen) String() string {
 	return string(common.Start)
 }
 
-func (s *Screen) renderScreen() {
+func (s *Screen) drawScreen() {
 	var renderer = fonts.TextRenderer{Window: s.window}
 	renderer.DrawLineToScreenCenter(txtFirstLine, 4, common.Red)
 	renderer.DrawLineToScreenCenter(txtSecondLine, 2.8, common.Yellow)
