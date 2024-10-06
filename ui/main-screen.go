@@ -34,7 +34,7 @@ func (ms *MainScreen) Initialize() {
 	ms.inputCtrl = input.NewController(ms.Window)
 	ms.inputCtrl.AssignInputDevicesToPlayers()
 
-	ms.clientScreen = &loading.Screen{}
+	ms.clientScreen = loading.NewScreen()
 	ms.setUpScreen()
 
 	ms.lastUpdate = time.Now()
@@ -45,7 +45,7 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 
 	switch screenName {
 	case common.Loading:
-		ms.nextScreen = &loading.Screen{}
+		ms.nextScreen = loading.NewScreen()
 	case common.Start:
 		ms.nextScreen = start.NewScreen()
 	case common.Title:
