@@ -4,7 +4,6 @@
 package start
 
 import (
-	"retro-carnage/assets"
 	"retro-carnage/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
@@ -19,11 +18,15 @@ const (
 )
 
 type Screen struct {
-	screenChangeRequired common.ScreenChangeCallback
-	screenChangeTimeout  int64
-	stereo               *assets.Stereo
-	themeLoaded          bool
-	window               *opengl.Window
+	controller *controller
+	window     *opengl.Window
+}
+
+func NewScreen() *Screen {
+	var result = Screen{
+		controller: NewController(),
+	}
+	return &result
 }
 
 func (s *Screen) SetInputController(_ input.InputController) {
@@ -31,7 +34,7 @@ func (s *Screen) SetInputController(_ input.InputController) {
 }
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.screenChangeRequired = callback
+	s.controller.SetScreenChangeCallback(callback)
 }
 
 func (s *Screen) SetWindow(window *opengl.Window) {
@@ -39,24 +42,12 @@ func (s *Screen) SetWindow(window *opengl.Window) {
 }
 
 func (s *Screen) SetUp() {
-	s.screenChangeTimeout = 0
-	s.stereo = assets.NewStereo()
-	s.themeLoaded = false
-
-	common.StartScreenInit()
+	// No set up action required
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
-	s.screenChangeTimeout += elapsedTimeInMs
-	if s.themeLoaded {
-		s.screenChangeRequired(common.Title)
-	}
+	s.controller.Update(elapsedTimeInMs)
 	s.renderScreen()
-	if !s.themeLoaded && (s.screenChangeTimeout > 100) {
-		s.stereo.BufferSong(assets.ThemeSong)
-		s.stereo.PlaySong(assets.ThemeSong)
-		s.themeLoaded = true
-	}
 }
 
 func (s *Screen) TearDown() {

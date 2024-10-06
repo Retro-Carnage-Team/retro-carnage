@@ -12,7 +12,7 @@
             "program": "${workspaceRoot}",
             "args": ["${workspaceRoot}/../retro-carnage-assets", "debug"],
             "env": {
-                "sound": "no-music"
+                "sound": ""
               }
         }
     ]
