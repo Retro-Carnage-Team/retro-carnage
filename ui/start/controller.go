@@ -2,6 +2,7 @@ package start
 
 import (
 	"retro-carnage/assets"
+	"retro-carnage/engine/characters"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 )
@@ -15,23 +16,22 @@ type controller struct {
 	themeLoaded          bool
 }
 
-func NewController() *controller {
+func newController() *controller {
 	var controller = controller{
 		screenChangeTimeout: 0,
 		stereo:              assets.NewStereo(),
 		themeLoaded:         false,
 	}
 
-	common.StartScreenInit()
-	go controller.stereo.BufferSong(assets.ThemeSong)
+	controller.init()
 	return &controller
 }
 
-func (c *controller) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
+func (c *controller) setScreenChangeCallback(callback common.ScreenChangeCallback) {
 	c.screenChangeRequired = callback
 }
 
-func (c *controller) Update(elapsedTimeInMs int64) {
+func (c *controller) update(elapsedTimeInMs int64) {
 	c.screenChangeTimeout += elapsedTimeInMs
 
 	if !c.themeLoaded {
@@ -50,4 +50,13 @@ func (c *controller) Update(elapsedTimeInMs int64) {
 			c.screenChangeRequired(common.Title)
 		}
 	}
+}
+
+func (c *controller) init() {
+	go characters.InitEnemySkins("skins")
+	go characters.InitPlayerSkins("skins")
+
+	go c.stereo.BufferSong(assets.ThemeSong)
+	go c.stereo.BufferSong(assets.GameOverSong)
+	go c.stereo.BufferSong(assets.GameWonSong)
 }
