@@ -12,18 +12,16 @@ import (
 	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
-const (
-	timeAfterLastChar = 500
-	timeBetweenChars  = 120
-)
-
 type Screen struct {
-	millisecondsPassed   int64
-	PlayerIdx            int
-	screenChangeRequired common.ScreenChangeCallback
-	text                 string
-	textLength           int
-	window               *opengl.Window
+	controller *controller
+	window     *opengl.Window
+}
+
+func NewScreen(playerIdx int) *Screen {
+	var result = Screen{
+		controller: newController(playerIdx),
+	}
+	return &result
 }
 
 func (s *Screen) SetInputController(_ input.InputController) {
@@ -31,7 +29,7 @@ func (s *Screen) SetInputController(_ input.InputController) {
 }
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.screenChangeRequired = callback
+	s.controller.setScreenChangeCallback(callback)
 }
 
 func (s *Screen) SetWindow(window *opengl.Window) {
@@ -43,21 +41,8 @@ func (s *Screen) SetUp() {
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
-	s.millisecondsPassed += elapsedTimeInMs
-	if s.textLength < 25 {
-		if s.millisecondsPassed >= timeBetweenChars {
-			s.textLength++
-			s.text = s.getFullText()[:s.textLength]
-			s.millisecondsPassed = 0
-		}
-	} else if s.millisecondsPassed >= timeAfterLastChar {
-		if s.PlayerIdx == 0 {
-			s.screenChangeRequired(common.ShopP1)
-		} else {
-			s.screenChangeRequired(common.ShopP2)
-		}
-	}
-	s.drawText()
+	s.controller.update(elapsedTimeInMs)
+	s.drawScreen()
 }
 
 func (s *Screen) TearDown() {
@@ -65,25 +50,21 @@ func (s *Screen) TearDown() {
 }
 
 func (s *Screen) String() string {
-	if s.PlayerIdx == 0 {
+	if s.controller.playerIdx == 0 {
 		return string(common.BuyYourWeaponsP1)
 	}
 	return string(common.BuyYourWeaponsP2)
 }
 
-func (s *Screen) drawText() {
+func (s *Screen) drawScreen() {
 	var defaultFontSize = fonts.DefaultFontSize()
-	var lineDimensions = fonts.GetTextDimension(defaultFontSize, s.getFullText())
+	var lineDimensions = fonts.GetTextDimension(defaultFontSize, s.controller.getFullText())
 
 	var vertCenter = s.window.Bounds().Max.Y / 2
 	var lineX = (s.window.Bounds().Max.X - lineDimensions.X) / 2
 
 	var txt = text.New(pixel.V(lineX, vertCenter), fonts.SizeToFontAtlas[defaultFontSize])
 	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, s.text)
+	_, _ = fmt.Fprint(txt, s.controller.text)
 	txt.Draw(s.window, pixel.IM)
-}
-
-func (s *Screen) getFullText() string {
-	return fmt.Sprintf("BUY YOUR WEAPONS PLAYER %d", s.PlayerIdx+1)
 }

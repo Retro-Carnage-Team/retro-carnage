@@ -69,9 +69,9 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 	case common.Mission:
 		ms.nextScreen = &mission.Screen{}
 	case common.BuyYourWeaponsP1:
-		ms.nextScreen = &byw.Screen{PlayerIdx: 0}
+		ms.nextScreen = byw.NewScreen(0)
 	case common.BuyYourWeaponsP2:
-		ms.nextScreen = &byw.Screen{PlayerIdx: 1}
+		ms.nextScreen = byw.NewScreen(1)
 	case common.ShopP1:
 		ms.nextScreen = &shop.Screen{PlayerIdx: 0}
 	case common.ShopP2:
