@@ -4,7 +4,6 @@ package loading
 
 import (
 	"fmt"
-	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/input"
 	"retro-carnage/ui/common"
@@ -16,15 +15,22 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-const screenTimeout = 8500
-const txtFirstLine = "RETRO CARNAGE"
-const txtSecondLine = "IS LOADING"
+const (
+	txtFirstLine  = "RETRO CARNAGE"
+	txtSecondLine = "IS LOADING"
+)
 
 type Screen struct {
-	screenChangeRequired common.ScreenChangeCallback
-	screenChangeTimeout  int64
-	textDimensions       map[string]*geometry.Point
-	window               *opengl.Window
+	controller     *controller
+	textDimensions map[string]*geometry.Point
+	window         *opengl.Window
+}
+
+func NewScreen() *Screen {
+	var result = Screen{
+		controller: newController(),
+	}
+	return &result
 }
 
 func (s *Screen) SetInputController(_ input.InputController) {
@@ -32,7 +38,7 @@ func (s *Screen) SetInputController(_ input.InputController) {
 }
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.screenChangeRequired = callback
+	s.controller.setScreenChangeCallback(callback)
 }
 
 func (s *Screen) SetWindow(window *opengl.Window) {
@@ -40,16 +46,23 @@ func (s *Screen) SetWindow(window *opengl.Window) {
 }
 
 func (s *Screen) SetUp() {
-	s.screenChangeTimeout = 0
 	s.textDimensions = fonts.GetTextDimensions(fonts.DefaultFontSize(), txtFirstLine, txtSecondLine)
-
-	var stereo = assets.NewStereo()
-	stereo.PlayFx(assets.FxLoading)
-
-	common.LoadingScreenInit()
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
+	s.controller.update(elapsedTimeInMs)
+	s.drawScreen()
+}
+
+func (s *Screen) TearDown() {
+	// No tear down action required
+}
+
+func (s *Screen) String() string {
+	return string(common.Loading)
+}
+
+func (s *Screen) drawScreen() {
 	var firstLineDimensions = s.textDimensions[txtFirstLine]
 	var firstLineX = (s.window.Bounds().Max.X - firstLineDimensions.X) / 2
 	var firstLineY = (s.window.Bounds().Max.Y-(3*firstLineDimensions.Y))/2 + firstLineDimensions.Y*1.5
@@ -68,17 +81,4 @@ func (s *Screen) Update(elapsedTimeInMs int64) {
 	_, _ = fmt.Fprint(txt, txtSecondLine)
 	txt.Color = colornames.Red
 	txt.Draw(s.window, pixel.IM)
-
-	s.screenChangeTimeout += elapsedTimeInMs
-	if s.screenChangeTimeout >= screenTimeout && common.LoadingScreenInitDone() {
-		s.screenChangeRequired(common.Start)
-	}
-}
-
-func (s *Screen) TearDown() {
-	// No tear down action required
-}
-
-func (s *Screen) String() string {
-	return string(common.Loading)
 }

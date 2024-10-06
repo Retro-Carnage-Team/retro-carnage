@@ -43,7 +43,6 @@ func (s *Screen) SetUp() {
 	s.backgroundImageSprite = assets.SpriteRepository.Get(backgroundImagePath)
 	s.cheatController = cheat.GetCheatController()
 	s.stereo = assets.NewStereo()
-	common.TitleScreenInit()
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {

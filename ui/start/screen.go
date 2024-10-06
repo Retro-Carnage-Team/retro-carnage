@@ -24,7 +24,7 @@ type Screen struct {
 
 func NewScreen() *Screen {
 	var result = Screen{
-		controller: NewController(),
+		controller: newController(),
 	}
 	return &result
 }
@@ -34,7 +34,7 @@ func (s *Screen) SetInputController(_ input.InputController) {
 }
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.controller.SetScreenChangeCallback(callback)
+	s.controller.setScreenChangeCallback(callback)
 }
 
 func (s *Screen) SetWindow(window *opengl.Window) {
@@ -46,7 +46,7 @@ func (s *Screen) SetUp() {
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
-	s.controller.Update(elapsedTimeInMs)
+	s.controller.update(elapsedTimeInMs)
 	s.renderScreen()
 }
 
