@@ -67,8 +67,7 @@ func (s *Screen) Update(_ int64) {
 	s.controller.update()
 	s.drawWorldMap()
 
-	if s.controller.missionsInitialized {
-
+	if s.controller.model.initialized {
 		s.drawMissionLocations()
 		s.drawClientPicture()
 		s.drawMissionDescription()
@@ -97,20 +96,20 @@ func (s *Screen) drawMissionLocations() {
 		Y: mapCenter.Y - (worldMapHeight*factor)/2,
 	}
 
-	for _, city := range s.controller.availableMissions {
+	for _, city := range s.controller.model.availableMissions {
 		var cityLocation = pixel.Vec{
 			X: mapBottomLeft.X + (city.Location.Longitude * factor),
 			Y: mapBottomLeft.Y + (worldMapHeight * factor) - (city.Location.Latitude * factor),
 		}
 		s.drawLocationMarker(cityLocation)
-		if city.Name == s.controller.selectedMission.Name {
+		if city.Name == s.controller.model.selectedMission.Name {
 			s.crossHairSprite.Draw(s.window, pixel.IM.Moved(cityLocation))
 		}
 	}
 }
 
 func (s *Screen) drawClientPicture() {
-	var clientSprite = assets.SpriteRepository.Get(s.controller.selectedMission.Client)
+	var clientSprite = assets.SpriteRepository.Get(s.controller.model.selectedMission.Client)
 	var scalingFactor = (s.window.Bounds().Max.Y * 3 / 16) / clientSprite.Picture().Bounds().Max.Y
 	var margin = s.window.Bounds().Max.Y * 1 / 32
 	var positionX = margin + (clientSprite.Picture().Bounds().Max.X * scalingFactor / 2)
@@ -122,7 +121,7 @@ func (s *Screen) drawClientPicture() {
 }
 
 func (s *Screen) drawMissionDescription() {
-	var clientSprite = assets.SpriteRepository.Get(s.controller.selectedMission.Client)
+	var clientSprite = assets.SpriteRepository.Get(s.controller.model.selectedMission.Client)
 	var scalingFactor = (s.window.Bounds().Max.Y * 3 / 16) / clientSprite.Picture().Bounds().Max.Y
 	var margin = s.window.Bounds().Max.Y * 1 / 32
 
@@ -130,7 +129,7 @@ func (s *Screen) drawMissionDescription() {
 	var positionY = s.window.Bounds().Max.Y - margin - (clientSprite.Picture().Bounds().Max.Y * scalingFactor)
 	var textAreaWidth = s.window.Bounds().Max.X - positionX - margin
 	var textAreaHeight = s.window.Bounds().Max.Y/4 - margin - margin
-	var text = s.controller.selectedMission.Briefing
+	var text = s.controller.model.selectedMission.Briefing
 
 	var renderer = fonts.TextRenderer{Window: s.window}
 	textLayout, err := renderer.CalculateTextLayout(text, s.briefingFontSize, int(textAreaWidth), int(textAreaHeight))
