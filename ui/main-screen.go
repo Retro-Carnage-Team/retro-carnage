@@ -49,7 +49,7 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 	case common.Start:
 		ms.nextScreen = start.NewScreen()
 	case common.Title:
-		ms.nextScreen = &title.Screen{}
+		ms.nextScreen = title.NewScreen()
 	case common.ConfigurationOptions:
 		ms.nextScreen = &config.OptionsScreen{}
 	case common.ConfigurationAudio:
