@@ -9,11 +9,9 @@ import (
 )
 
 type controller struct {
-	availableMissions    []*assets.Mission
 	inputController      input.InputController
-	missionsInitialized  bool
+	model                missionModel
 	screenChangeRequired common.ScreenChangeCallback
-	selectedMission      *assets.Mission
 }
 
 func newController() *controller {
@@ -44,17 +42,17 @@ func (c *controller) initializeMissions() {
 		logging.Error.Fatalf("List of remaining missions is empty. Game should have ended!")
 	}
 
-	c.availableMissions = remainingMissions
-	c.selectedMission = remainingMissions[0]
+	c.model.availableMissions = remainingMissions
+	c.model.selectedMission = remainingMissions[0]
 }
 
 func (c *controller) update() {
-	if !c.missionsInitialized && assets.MissionRepository.Initialized() {
-		c.missionsInitialized = true
+	if !c.model.initialized && assets.MissionRepository.Initialized() {
 		c.initializeMissions()
+		c.model.initialized = true
 	}
 
-	if c.missionsInitialized {
+	if c.model.initialized {
 		c.processUserInput()
 	}
 }
@@ -66,26 +64,26 @@ func (c *controller) processUserInput() {
 	}
 
 	if uiEventState.PressedButton {
-		engine.MissionController.SelectMission(c.selectedMission)
+		engine.MissionController.SelectMission(c.model.selectedMission)
 		c.screenChangeRequired(common.BuyYourWeaponsP1)
-		go assets.NewStereo().BufferSong(c.selectedMission.Music)
+		go assets.NewStereo().BufferSong(c.model.selectedMission.Music)
 	} else {
-		var nextMission = c.selectedMission
+		var nextMission = c.model.selectedMission
 		var err error = nil
 		if uiEventState.MovedUp {
-			nextMission, err = engine.MissionController.NextMissionNorth(&c.selectedMission.Location)
+			nextMission, err = engine.MissionController.NextMissionNorth(&c.model.selectedMission.Location)
 		} else if uiEventState.MovedDown {
-			nextMission, err = engine.MissionController.NextMissionSouth(&c.selectedMission.Location)
+			nextMission, err = engine.MissionController.NextMissionSouth(&c.model.selectedMission.Location)
 		} else if uiEventState.MovedLeft {
-			nextMission, err = engine.MissionController.NextMissionWest(&c.selectedMission.Location)
+			nextMission, err = engine.MissionController.NextMissionWest(&c.model.selectedMission.Location)
 		} else if uiEventState.MovedRight {
-			nextMission, err = engine.MissionController.NextMissionEast(&c.selectedMission.Location)
+			nextMission, err = engine.MissionController.NextMissionEast(&c.model.selectedMission.Location)
 		}
 		if nil != err {
 			logging.Error.Fatalf("Failed to get next mission: %v", err)
 		}
 		if nil != nextMission {
-			c.selectedMission = nextMission
+			c.model.selectedMission = nextMission
 		}
 	}
 }
