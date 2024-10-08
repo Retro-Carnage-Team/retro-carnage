@@ -6,7 +6,6 @@ import (
 	_ "image/jpeg"
 	"math"
 	"retro-carnage/assets"
-	"retro-carnage/engine/cheat"
 	"retro-carnage/input"
 	"retro-carnage/ui/common"
 
@@ -15,24 +14,26 @@ import (
 )
 
 const backgroundImagePath = "images/other/title.jpg"
-const screenTimeout = 60_000
 
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
-	cheatController       *cheat.CheatController
-	inputController       input.InputController
-	screenChangeRequired  common.ScreenChangeCallback
-	screenChangeTimeout   int64
-	stereo                *assets.Stereo
+	controller            *controller
 	window                *opengl.Window
 }
 
+func NewScreen() *Screen {
+	var result = Screen{
+		controller: newController(),
+	}
+	return &result
+}
+
 func (s *Screen) SetInputController(controller input.InputController) {
-	s.inputController = controller
+	s.controller.setInputController(controller)
 }
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.screenChangeRequired = callback
+	s.controller.setScreenChangeCallback(callback)
 }
 
 func (s *Screen) SetWindow(window *opengl.Window) {
@@ -41,33 +42,11 @@ func (s *Screen) SetWindow(window *opengl.Window) {
 
 func (s *Screen) SetUp() {
 	s.backgroundImageSprite = assets.SpriteRepository.Get(backgroundImagePath)
-	s.cheatController = cheat.GetCheatController()
-	s.stereo = assets.NewStereo()
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
-	s.screenChangeTimeout += elapsedTimeInMs
-
-	var factorX = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
-	var factorY = s.window.Bounds().Max.Y / s.backgroundImageSprite.Picture().Bounds().Max.Y
-	var factor = math.Max(factorX, factorY)
-
-	s.backgroundImageSprite.Draw(s.window,
-		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
-
-	for _, btn := range common.KeyboardButtons {
-		if s.window.JustPressed(btn) {
-			if s.cheatController.HandleKeyboardInput(btn) {
-				s.stereo.PlayFx(assets.FxCheatSwitch)
-			}
-			break
-		}
-	}
-
-	var uiEventState = s.inputController.GetUiEventStateCombined()
-	if (nil != uiEventState && uiEventState.PressedButton) || screenTimeout <= s.screenChangeTimeout {
-		s.screenChangeRequired(common.ConfigurationSelect)
-	}
+	s.controller.update(elapsedTimeInMs, s.window)
+	s.drawScreen()
 }
 
 func (s *Screen) TearDown() {
@@ -76,4 +55,13 @@ func (s *Screen) TearDown() {
 
 func (s *Screen) String() string {
 	return string(common.Title)
+}
+
+func (s *Screen) drawScreen() {
+	var factorX = s.window.Bounds().Max.X / s.backgroundImageSprite.Picture().Bounds().Max.X
+	var factorY = s.window.Bounds().Max.Y / s.backgroundImageSprite.Picture().Bounds().Max.Y
+	var factor = math.Max(factorX, factorY)
+	s.backgroundImageSprite.Draw(
+		s.window,
+		pixel.IM.Scaled(pixel.Vec{X: 0, Y: 0}, factor).Moved(s.window.Bounds().Center()))
 }
