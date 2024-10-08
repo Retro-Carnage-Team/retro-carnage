@@ -5,7 +5,6 @@ package mission
 import (
 	"math"
 	"retro-carnage/assets"
-	"retro-carnage/engine"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/input"
 	"retro-carnage/logging"
@@ -30,24 +29,26 @@ var (
 )
 
 type Screen struct {
-	availableMissions         []*assets.Mission
-	briefingFontSize          int
-	crossHairSprite           *pixel.Sprite
-	inputController           input.InputController
-	missionsInitialized       bool
-	missionNameToClientSprite map[string]*pixel.Sprite
-	screenChangeRequired      common.ScreenChangeCallback
-	selectedMission           *assets.Mission
-	window                    *opengl.Window
-	worldMapSprite            *pixel.Sprite
+	briefingFontSize int
+	controller       *controller
+	crossHairSprite  *pixel.Sprite
+	window           *opengl.Window
+	worldMapSprite   *pixel.Sprite
+}
+
+func NewScreen() *Screen {
+	var result = Screen{
+		controller: newController(),
+	}
+	return &result
 }
 
 func (s *Screen) SetInputController(inputCtrl input.InputController) {
-	s.inputController = inputCtrl
+	s.controller.setInputController(inputCtrl)
 }
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.screenChangeRequired = callback
+	s.controller.setScreenChangeCallback(callback)
 }
 
 func (s *Screen) SetWindow(window *opengl.Window) {
@@ -55,44 +56,19 @@ func (s *Screen) SetWindow(window *opengl.Window) {
 }
 
 func (s *Screen) SetUp() {
-	if !assets.MissionRepository.Initialized() {
-		assets.MissionRepository.Initialize()
-	} else {
-		s.initializeMissions()
-	}
+	s.controller.initialize()
+
 	s.briefingFontSize = fonts.DefaultFontSize() - 2
 	s.crossHairSprite = assets.SpriteRepository.Get(crossHairImagePath)
 	s.worldMapSprite = assets.SpriteRepository.Get(worldMapImagePath)
 }
 
-func (s *Screen) initializeMissions() {
-	remainingMissions, err := engine.MissionController.RemainingMissions()
-	if nil != err {
-		logging.Error.Fatalf("Failed to retrieve list of remaining missions: %v", err)
-	}
-	if len(remainingMissions) == 0 {
-		logging.Error.Fatalf("List of remaining missions is empty. Game should have ended!")
-	}
-
-	s.missionNameToClientSprite = make(map[string]*pixel.Sprite)
-	for _, mission := range remainingMissions {
-		s.missionNameToClientSprite[mission.Name] = assets.SpriteRepository.Get(mission.Client)
-	}
-
-	s.availableMissions = remainingMissions
-	s.selectedMission = remainingMissions[0]
-}
-
 func (s *Screen) Update(_ int64) {
-	if !s.missionsInitialized && assets.MissionRepository.Initialized() {
-		s.missionsInitialized = true
-		s.initializeMissions()
-	}
-
+	s.controller.update()
 	s.drawWorldMap()
 
-	if s.missionsInitialized {
-		s.processUserInput()
+	if s.controller.missionsInitialized {
+
 		s.drawMissionLocations()
 		s.drawClientPicture()
 		s.drawMissionDescription()
@@ -121,20 +97,20 @@ func (s *Screen) drawMissionLocations() {
 		Y: mapCenter.Y - (worldMapHeight*factor)/2,
 	}
 
-	for _, city := range s.availableMissions {
+	for _, city := range s.controller.availableMissions {
 		var cityLocation = pixel.Vec{
 			X: mapBottomLeft.X + (city.Location.Longitude * factor),
 			Y: mapBottomLeft.Y + (worldMapHeight * factor) - (city.Location.Latitude * factor),
 		}
 		s.drawLocationMarker(cityLocation)
-		if city.Name == s.selectedMission.Name {
+		if city.Name == s.controller.selectedMission.Name {
 			s.crossHairSprite.Draw(s.window, pixel.IM.Moved(cityLocation))
 		}
 	}
 }
 
 func (s *Screen) drawClientPicture() {
-	var clientSprite = s.missionNameToClientSprite[s.selectedMission.Name]
+	var clientSprite = assets.SpriteRepository.Get(s.controller.selectedMission.Client)
 	var scalingFactor = (s.window.Bounds().Max.Y * 3 / 16) / clientSprite.Picture().Bounds().Max.Y
 	var margin = s.window.Bounds().Max.Y * 1 / 32
 	var positionX = margin + (clientSprite.Picture().Bounds().Max.X * scalingFactor / 2)
@@ -146,7 +122,7 @@ func (s *Screen) drawClientPicture() {
 }
 
 func (s *Screen) drawMissionDescription() {
-	var clientSprite = s.missionNameToClientSprite[s.selectedMission.Name]
+	var clientSprite = assets.SpriteRepository.Get(s.controller.selectedMission.Client)
 	var scalingFactor = (s.window.Bounds().Max.Y * 3 / 16) / clientSprite.Picture().Bounds().Max.Y
 	var margin = s.window.Bounds().Max.Y * 1 / 32
 
@@ -154,7 +130,7 @@ func (s *Screen) drawMissionDescription() {
 	var positionY = s.window.Bounds().Max.Y - margin - (clientSprite.Picture().Bounds().Max.Y * scalingFactor)
 	var textAreaWidth = s.window.Bounds().Max.X - positionX - margin
 	var textAreaHeight = s.window.Bounds().Max.Y/4 - margin - margin
-	var text = s.selectedMission.Briefing
+	var text = s.controller.selectedMission.Briefing
 
 	var renderer = fonts.TextRenderer{Window: s.window}
 	textLayout, err := renderer.CalculateTextLayout(text, s.briefingFontSize, int(textAreaWidth), int(textAreaHeight))
@@ -186,35 +162,4 @@ func (s *Screen) drawLocationMarker(location pixel.Vec) {
 	imd.Push(location)
 	imd.Circle(locationMarkerRadius, 5)
 	imd.Draw(s.window)
-}
-
-func (s *Screen) processUserInput() {
-	var uiEventState = s.inputController.GetUiEventStateCombined()
-	if nil == uiEventState {
-		return
-	}
-
-	if uiEventState.PressedButton {
-		engine.MissionController.SelectMission(s.selectedMission)
-		s.screenChangeRequired(common.BuyYourWeaponsP1)
-		go assets.NewStereo().BufferSong(s.selectedMission.Music)
-	} else {
-		var nextMission = s.selectedMission
-		var err error = nil
-		if uiEventState.MovedUp {
-			nextMission, err = engine.MissionController.NextMissionNorth(&s.selectedMission.Location)
-		} else if uiEventState.MovedDown {
-			nextMission, err = engine.MissionController.NextMissionSouth(&s.selectedMission.Location)
-		} else if uiEventState.MovedLeft {
-			nextMission, err = engine.MissionController.NextMissionWest(&s.selectedMission.Location)
-		} else if uiEventState.MovedRight {
-			nextMission, err = engine.MissionController.NextMissionEast(&s.selectedMission.Location)
-		}
-		if nil != err {
-			logging.Error.Fatalf("Failed to get next mission: %v", err)
-		}
-		if nil != nextMission {
-			s.selectedMission = nextMission
-		}
-	}
 }
