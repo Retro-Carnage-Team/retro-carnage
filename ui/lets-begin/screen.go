@@ -2,8 +2,6 @@ package lets_begin
 
 import (
 	"fmt"
-	"retro-carnage/assets"
-	"retro-carnage/engine"
 	"retro-carnage/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
@@ -14,20 +12,19 @@ import (
 )
 
 const (
-	displayText             = "LET THE MISSION BEGIN..."
-	timeAfterLastChar       = 500
-	timeBetweenChars        = 120
-	timeBetweenVolumeChange = 150
+	displayText = "LET THE MISSION BEGIN..."
 )
 
 type Screen struct {
-	characterTimer       int64
-	screenChangeRequired common.ScreenChangeCallback
-	stereo               *assets.Stereo
-	text                 string
-	textLength           int
-	volumeTimer          int64
-	window               *opengl.Window
+	controller *controller
+	window     *opengl.Window
+}
+
+func NewScreen() *Screen {
+	var result = Screen{
+		controller: newController(),
+	}
+	return &result
 }
 
 func (s *Screen) SetInputController(_ input.InputController) {
@@ -35,7 +32,7 @@ func (s *Screen) SetInputController(_ input.InputController) {
 }
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.screenChangeRequired = callback
+	s.controller.setScreenChangeCallback(callback)
 }
 
 func (s *Screen) SetWindow(window *opengl.Window) {
@@ -43,39 +40,12 @@ func (s *Screen) SetWindow(window *opengl.Window) {
 }
 
 func (s *Screen) SetUp() {
-	s.stereo = assets.NewStereo()
+	// not required
 }
 
 func (s *Screen) Update(elapsedTimeInMs int64) {
-	s.characterTimer += elapsedTimeInMs
-	s.volumeTimer += elapsedTimeInMs
-	if s.textLength < len(displayText) {
-		// text has not been fully typed
-		if s.characterTimer >= timeBetweenChars {
-			s.textLength++
-			s.text = displayText[:s.textLength]
-			s.characterTimer = 0
-		}
-		if s.volumeTimer >= timeBetweenVolumeChange {
-			s.stereo.DecreaseVolume(assets.ThemeSong)
-			s.volumeTimer = 0
-		}
-	} else if s.isMissionInitialized() {
-		// text has been typed and initialization is completed
-		s.screenChangeRequired(common.Game)
-		s.stereo.StopSong(assets.ThemeSong)
-	} else {
-		// text has been typed - but initialization is not completed
-		s.textLength = s.textLength - 3
-		s.text = displayText[:s.textLength]
-		s.characterTimer = 0
-	}
-	s.drawText()
-}
-
-func (s *Screen) isMissionInitialized() bool {
-	var music = engine.MissionController.CurrentMission().Music
-	return s.stereo.IsSongBuffered(music)
+	s.controller.update(elapsedTimeInMs)
+	s.drawScreen()
 }
 
 func (s *Screen) TearDown() {
@@ -86,7 +56,7 @@ func (s *Screen) String() string {
 	return string(common.LetTheMissionBegin)
 }
 
-func (s *Screen) drawText() {
+func (s *Screen) drawScreen() {
 	var defaultFontSize = fonts.DefaultFontSize()
 	var lineDimensions = fonts.GetTextDimension(defaultFontSize, displayText)
 
@@ -95,6 +65,6 @@ func (s *Screen) drawText() {
 
 	var txt = text.New(pixel.V(lineX, vertCenter), fonts.SizeToFontAtlas[defaultFontSize])
 	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, s.text)
+	_, _ = fmt.Fprint(txt, s.controller.model.text)
 	txt.Draw(s.window, pixel.IM)
 }
