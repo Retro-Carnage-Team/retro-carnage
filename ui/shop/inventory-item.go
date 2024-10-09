@@ -69,30 +69,3 @@ func (ii *inventoryItem) OwnedPortion(inventoryController *engine.InventoryContr
 	var owned, max = ii.OwnedFromMax(inventoryController)
 	return float64(owned) / float64(max)
 }
-
-func getAllInventoryItems() (result []*inventoryItem) {
-	result = make([]*inventoryItem, 0)
-	var idx = 0
-	for _, weapon := range assets.WeaponCrate.GetAll() {
-		result = append(result, &inventoryItem{
-			delegate: weapon,
-			index:    idx,
-		})
-		idx += 1
-	}
-	for _, grenade := range assets.GrenadeCrate.GetAll() {
-		result = append(result, &inventoryItem{
-			delegate: grenade,
-			index:    idx,
-		})
-		idx += 1
-	}
-	for _, ammunition := range assets.AmmunitionCrate.GetAll() {
-		result = append(result, &inventoryItem{
-			delegate: ammunition,
-			index:    idx,
-		})
-		idx += 1
-	}
-	return
-}

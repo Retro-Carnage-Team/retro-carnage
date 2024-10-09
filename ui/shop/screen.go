@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"retro-carnage/assets"
-	"retro-carnage/engine"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/input"
@@ -51,28 +50,31 @@ const (
 type Screen struct {
 	backgroundImageSprite *pixel.Sprite
 	checkSprite           *pixel.Sprite
+	controller            *controller
 	defaultFontSize       int
-	inputController       input.InputController
-	inventoryController   engine.InventoryController
 	itemNameToSprite      map[string]*pixel.Sprite
-	items                 []*inventoryItem
 	labelDimensions       map[string]*geometry.Point
-	modalButtonSelection  modalButton
 	modalFontSize         int
-	modalVisible          bool
-	PlayerIdx             int
-	screenChangeRequired  common.ScreenChangeCallback
-	selectedItemIdx       int
+	model                 *model
 	stopWatch             *util.StopWatch
 	window                *opengl.Window
 }
 
+func NewScreen(playerIdx int) *Screen {
+	var model = newModel(playerIdx)
+	var result = Screen{
+		controller: newController(model),
+		model:      model,
+	}
+	return &result
+}
+
 func (s *Screen) SetInputController(controller input.InputController) {
-	s.inputController = controller
+	s.controller.setInputController(controller)
 }
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.screenChangeRequired = callback
+	s.controller.setScreenChangeCallback(callback)
 }
 
 func (s *Screen) SetWindow(window *opengl.Window) {
@@ -84,15 +86,11 @@ func (s *Screen) SetUp() {
 	s.checkSprite = assets.SpriteRepository.Get(checkImagePath)
 	s.defaultFontSize = fonts.DefaultFontSize()
 	s.modalFontSize = calcModalFontSize(s.defaultFontSize)
-	s.inventoryController = engine.NewInventoryController(s.PlayerIdx)
 	s.labelDimensions = fonts.GetTextDimensions(s.modalFontSize, labelAmmo, labelLength, labelPackageSize, labelPrice,
 		labelRange, labelSpeed, labelWeight)
-	s.selectedItemIdx = 0
-	s.modalVisible = false
 
-	s.items = getAllInventoryItems()
 	s.itemNameToSprite = make(map[string]*pixel.Sprite)
-	for _, item := range s.items {
+	for _, item := range s.model.items {
 		s.itemNameToSprite[item.Name()] = assets.SpriteRepository.Get(item.Image())
 	}
 
@@ -108,20 +106,21 @@ func calcModalFontSize(defaultFontSize int) int {
 }
 
 func (s *Screen) Update(_ int64) {
-	if s.modalVisible {
+	if s.model.modalVisible {
 		s.stopWatch.Start()
 	}
 
-	s.processUserInput()
+	s.controller.processUserInput()
+
 	s.drawBackground()
 	s.drawItems()
 	s.drawBottomBar()
 
-	if s.modalVisible {
+	if s.model.modalVisible {
 		s.drawModal()
 	}
 
-	if s.modalVisible {
+	if s.model.modalVisible {
 		_ = s.stopWatch.Stop()
 		logging.Trace.Print(s.stopWatch.PrintDebugMessage())
 	}
@@ -132,7 +131,7 @@ func (s *Screen) TearDown() {
 }
 
 func (s *Screen) String() string {
-	if s.PlayerIdx == 0 {
+	if s.model.playerIdx == 0 {
 		return string(common.ShopP1)
 	}
 	return string(common.ShopP2)
@@ -149,7 +148,7 @@ func (s *Screen) drawBackground() {
 
 func (s *Screen) drawItems() {
 	var itemAreas = make([]geometry.Rectangle, 0)
-	for idx := range s.items {
+	for idx := range s.model.items {
 		itemAreas = append(itemAreas, getItemRect(s.window.Bounds().Max, idx))
 	}
 
@@ -170,8 +169,8 @@ func (s *Screen) drawItemBackgrounds(itemAreas []geometry.Rectangle) {
 }
 
 func (s *Screen) drawItemSelectionBorder(areas []geometry.Rectangle) {
-	if 0 <= s.selectedItemIdx && 30 >= s.selectedItemIdx && !s.modalVisible {
-		var area = areas[s.selectedItemIdx]
+	if 0 <= s.model.selectedItemIdx && 30 >= s.model.selectedItemIdx && !s.model.modalVisible {
+		var area = areas[s.model.selectedItemIdx]
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
 		imd.Push(pixel.V(area.X, area.Y), pixel.V(area.X+area.Width, area.Y+area.Height))
@@ -181,11 +180,11 @@ func (s *Screen) drawItemSelectionBorder(areas []geometry.Rectangle) {
 }
 
 func (s *Screen) drawItemImages(itemAreas []geometry.Rectangle) {
-	var sampleSprite = s.itemNameToSprite[s.items[0].Name()]
+	var sampleSprite = s.itemNameToSprite[s.model.items[0].Name()]
 	var factorX = (itemAreas[0].Width - itemPadding*2) / sampleSprite.Picture().Bounds().W()
 	var factorY = (itemAreas[0].Height - itemPadding*2) / sampleSprite.Picture().Bounds().H()
 	var factor = math.Min(factorX, factorY)
-	for idx, item := range s.items {
+	for idx, item := range s.model.items {
 		var itemArea = itemAreas[idx]
 		s.itemNameToSprite[item.Name()].Draw(s.window, pixel.IM.
 			Scaled(pixel.V(0, 0), factor).
@@ -198,15 +197,15 @@ func (s *Screen) drawPurchaseStatus(areas []geometry.Rectangle) {
 	imd.Color = common.White
 
 	for idx, area := range areas {
-		var item = s.items[idx]
+		var item = s.model.items[idx]
 		if item.IsWeapon() {
-			if s.inventoryController.WeaponInInventory(item.Name()) {
+			if s.controller.inventoryController.WeaponInInventory(item.Name()) {
 				s.checkSprite.Draw(s.window, pixel.IM.Moved(pixel.V(
 					area.X+area.Width-s.checkSprite.Picture().Bounds().W(),
 					area.Y+s.checkSprite.Picture().Bounds().H())))
 			}
 		} else {
-			var ratio = item.OwnedPortion(&s.inventoryController)
+			var ratio = item.OwnedPortion(&s.controller.inventoryController)
 			if ratio > 0 {
 				var barWidth = (area.Width - itemPadding - itemPadding) * ratio
 				imd.Push(
@@ -226,153 +225,10 @@ func (s *Screen) drawBottomBar() {
 	s.drawExitButton()
 }
 
-func (s *Screen) processUserInput() {
-	var eventState, err = s.inputController.GetUiEventState(s.PlayerIdx)
-	if nil != err {
-		logging.Warning.Printf("Failed to get game controller state: %v", err)
-	} else if nil != eventState {
-		if eventState.MovedDown && !s.modalVisible {
-			s.processSelectionMovedDown()
-		} else if eventState.MovedUp && !s.modalVisible {
-			s.processSelectionMovedUp()
-		} else if eventState.MovedRight {
-			s.processSelectionMovedRight()
-		} else if eventState.MovedLeft {
-			s.processSelectionMovedLeft()
-		}
-		if eventState.PressedButton {
-			s.processButtonPressed()
-		}
-	}
-}
-
-func (s *Screen) processSelectionMovedDown() {
-	if s.selectedItemIdx != -1 {
-		if 5 <= s.selectedItemIdx/5 {
-			s.selectedItemIdx = -1
-		} else {
-			s.selectedItemIdx += 5
-		}
-	} else {
-		s.selectedItemIdx = 4
-	}
-}
-
-func (s *Screen) processSelectionMovedUp() {
-	if s.selectedItemIdx != -1 {
-		if 5 > s.selectedItemIdx {
-			s.selectedItemIdx = -1
-		} else {
-			s.selectedItemIdx -= 5
-		}
-	} else {
-		s.selectedItemIdx = len(s.items) - 1
-	}
-}
-
-func (s *Screen) processSelectionMovedRight() {
-	if s.modalVisible {
-		if s.modalButtonSelection == buttonBuyWeapon {
-			if s.isModalButtonBuyAmmunitionAvailable() {
-				s.modalButtonSelection = buttonBuyAmmo
-			} else {
-				s.modalButtonSelection = buttonCloseModal
-			}
-		} else if s.modalButtonSelection == buttonBuyAmmo {
-			s.modalButtonSelection = buttonCloseModal
-		}
-	} else if s.selectedItemIdx != -1 {
-		if s.selectedItemIdx%5 == 4 {
-			s.selectedItemIdx -= 4
-		} else {
-			s.selectedItemIdx += 1
-		}
-	}
-}
-
-func (s *Screen) processSelectionMovedLeft() {
-	if s.modalVisible {
-		if s.modalButtonSelection == buttonBuyAmmo && s.isModalButtonBuyWeaponAvailable() {
-			s.modalButtonSelection = buttonBuyWeapon
-		} else if s.modalButtonSelection == buttonCloseModal {
-			if s.isModalButtonBuyAmmunitionAvailable() {
-				s.modalButtonSelection = buttonBuyAmmo
-			} else if s.isModalButtonBuyWeaponAvailable() {
-				s.modalButtonSelection = buttonBuyWeapon
-			}
-		}
-	} else if s.selectedItemIdx != -1 {
-		if s.selectedItemIdx%5 == 0 {
-			s.selectedItemIdx += 4
-		} else {
-			s.selectedItemIdx -= 1
-		}
-	}
-}
-
-func (s *Screen) processButtonPressed() {
-	if s.modalVisible {
-		s.processButtonPressedOnModal()
-	} else {
-		s.processButtonPressedOnShop()
-	}
-}
-
-func (s *Screen) processButtonPressedOnModal() {
-	var item = s.items[s.selectedItemIdx]
-	switch s.modalButtonSelection {
-	case buttonBuyWeapon:
-		s.inventoryController.BuyWeapon(item.Name())
-		if s.isModalButtonBuyAmmunitionAvailable() {
-			s.modalButtonSelection = buttonBuyAmmo
-		} else {
-			s.modalButtonSelection = buttonCloseModal
-		}
-	case buttonBuyAmmo:
-		if item.IsWeapon() {
-			weapon := assets.WeaponCrate.GetByName(item.Name())
-			s.inventoryController.BuyAmmunition(weapon.Ammo)
-		} else if item.IsGrenade() {
-			s.inventoryController.BuyGrenade(item.Name())
-		} else if item.IsAmmunition() {
-			s.inventoryController.BuyAmmunition(item.Name())
-		}
-		if !s.isModalButtonBuyAmmunitionAvailable() {
-			s.modalButtonSelection = buttonCloseModal
-		}
-	case buttonCloseModal:
-		s.modalVisible = false
-	}
-}
-
-func (s *Screen) processButtonPressedOnShop() {
-	if s.selectedItemIdx == -1 {
-		characters.PlayerController.ConfiguredPlayers()[s.PlayerIdx].SelectFirstWeapon()
-		if (s.PlayerIdx == 0) && (characters.PlayerController.NumberOfPlayers() == 2) {
-			s.screenChangeRequired(common.BuyYourWeaponsP2)
-		} else {
-			s.screenChangeRequired(common.LetTheMissionBegin)
-		}
-	} else {
-		s.showModal()
-	}
-}
-
-func (s *Screen) showModal() {
-	if s.isModalButtonBuyWeaponAvailable() {
-		s.modalButtonSelection = buttonBuyWeapon
-	} else if s.isModalButtonBuyAmmunitionAvailable() {
-		s.modalButtonSelection = buttonBuyAmmo
-	} else {
-		s.modalButtonSelection = buttonCloseModal
-	}
-	s.modalVisible = true
-}
-
 func (s *Screen) drawCostLabel() {
 	var content = "COST: -"
-	if s.selectedItemIdx != -1 {
-		content = fmt.Sprintf("COST: %d", s.items[s.selectedItemIdx].Price())
+	if s.model.selectedItemIdx != -1 {
+		content = fmt.Sprintf("COST: %d", s.model.items[s.model.selectedItemIdx].Price())
 	}
 
 	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, content)
@@ -381,7 +237,7 @@ func (s *Screen) drawCostLabel() {
 }
 
 func (s *Screen) drawCreditLabel() {
-	var content = fmt.Sprintf("CREDIT: %d", characters.Players[s.PlayerIdx].Cash())
+	var content = fmt.Sprintf("CREDIT: %d", characters.Players[s.model.playerIdx].Cash())
 	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, content)
 	var lineX = (s.window.Bounds().W() - lineDimensions.X) / 2
 	var lineY = (bottomBarHeight - lineDimensions.Y) / 2
@@ -394,7 +250,7 @@ func (s *Screen) drawExitButton() {
 	var lineY = (bottomBarHeight - lineDimensions.Y) / 2
 	fonts.BuildText(pixel.V(lineX, lineY), s.defaultFontSize, common.White, "EXIT SHOP").Draw(s.window, pixel.IM)
 
-	if s.selectedItemIdx == -1 {
+	if s.model.selectedItemIdx == -1 {
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
 		imd.Push(
@@ -420,7 +276,7 @@ func (s *Screen) drawModalHeader() {
 	imd.Rectangle(0)
 	imd.Draw(s.window)
 
-	var itemName = s.items[s.selectedItemIdx].Name()
+	var itemName = s.model.items[s.model.selectedItemIdx].Name()
 	var lineDimensions = fonts.GetTextDimension(s.defaultFontSize, itemName)
 	var lineX = s.getModalLeftBorder() + 30
 	var lineY = s.window.Bounds().H() - 100 - bottomBarHeight + (bottomBarHeight-lineDimensions.Y)/2
@@ -428,7 +284,7 @@ func (s *Screen) drawModalHeader() {
 }
 
 func (s *Screen) drawModalBody() float64 {
-	var item = s.items[s.selectedItemIdx]
+	var item = s.model.items[s.model.selectedItemIdx]
 	var textRenderer = fonts.TextRenderer{Window: s.window}
 	var textWidth = s.getModalRightBorder() - s.getModalLeftBorder() - modalLabelSpace - modalLabelSpace
 	textLayout, err := textRenderer.CalculateTextLayout(
@@ -563,10 +419,10 @@ func (s *Screen) drawModalFooter(upperBorder float64) {
 	}
 
 	var leftBorder = s.drawModalCloseButton(upperBorder, upperBorder-bottomBarHeight)
-	if s.isModalButtonBuyAmmunitionAvailable() {
+	if s.controller.isModalButtonBuyAmmunitionAvailable() {
 		leftBorder = s.drawModalBuyAmmoButton(upperBorder, upperBorder-bottomBarHeight, leftBorder)
 	}
-	if s.isModalButtonBuyWeaponAvailable() {
+	if s.controller.isModalButtonBuyWeaponAvailable() {
 		s.drawModalBuyWeaponButton(upperBorder, upperBorder-bottomBarHeight, leftBorder)
 	}
 }
@@ -613,7 +469,7 @@ func (s *Screen) drawModalButton(top float64, bottom float64, rightBorder float6
 		BuildText(pixel.V(buttonTextX, buttonTextY), s.modalFontSize, common.White, labelText).
 		Draw(s.window, pixel.IM)
 
-	if s.modalButtonSelection == buttonType {
+	if s.model.modalButtonSelection == buttonType {
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
 		imd.Push(upperRight, lowerLeft)
@@ -624,7 +480,7 @@ func (s *Screen) drawModalButton(top float64, bottom float64, rightBorder float6
 
 func (s *Screen) getModalBuyAmmoButtonLabel() string {
 	const template = "BUY %d BULLET(S) FOR $ %d"
-	var item = s.items[s.selectedItemIdx]
+	var item = s.model.items[s.model.selectedItemIdx]
 	if item.IsWeapon() {
 		var weapon = assets.WeaponCrate.GetByName(item.Name())
 		var ammo = assets.AmmunitionCrate.GetByName(weapon.Ammo)
@@ -639,13 +495,13 @@ func (s *Screen) getModalBuyAmmoButtonLabel() string {
 }
 
 func (s *Screen) getModalFooterStatusHint() string {
-	var item = s.items[s.selectedItemIdx]
+	var item = s.model.items[s.model.selectedItemIdx]
 	if item.IsWeapon() {
 		var weapon = assets.WeaponCrate.GetByName(item.Name())
-		if s.inventoryController.WeaponInInventory(item.Name()) {
-			for _, ammo := range s.items {
+		if s.controller.inventoryController.WeaponInInventory(item.Name()) {
+			for _, ammo := range s.model.items {
 				if ammo.Name() == weapon.Ammo {
-					var owned, max = ammo.OwnedFromMax(&s.inventoryController)
+					var owned, max = ammo.OwnedFromMax(&s.controller.inventoryController)
 					return fmt.Sprintf("%d / %d bullets", owned, max)
 				}
 			}
@@ -659,32 +515,8 @@ func (s *Screen) getModalFooterStatusHint() string {
 	if item.IsGrenade() {
 		buttonType = "grenades"
 	}
-	var owned, max = item.OwnedFromMax(&s.inventoryController)
+	var owned, max = item.OwnedFromMax(&s.controller.inventoryController)
 	return fmt.Sprintf("%d / %d %s", owned, max, buttonType)
-}
-
-func (s *Screen) isModalButtonBuyWeaponAvailable() bool {
-	return s.selectedItemIdx != -1 &&
-		s.items[s.selectedItemIdx].IsWeapon() &&
-		s.inventoryController.WeaponProcurable(s.items[s.selectedItemIdx].Name())
-}
-
-func (s *Screen) isModalButtonBuyAmmunitionAvailable() bool {
-	if s.selectedItemIdx == -1 {
-		return false
-	}
-
-	var item = s.items[s.selectedItemIdx]
-	if item.IsGrenade() {
-		return s.inventoryController.GrenadeProcurable(item.Name())
-	}
-
-	var ammoName = item.Name()
-	if item.IsWeapon() {
-		var weapon = assets.WeaponCrate.GetByName(item.Name())
-		ammoName = weapon.Ammo
-	}
-	return s.inventoryController.AmmunitionProcurable(ammoName)
 }
 
 func (s *Screen) getModalLeftBorder() float64 {
