@@ -14,15 +14,16 @@ const (
 
 type controller struct {
 	characterTimer       int64
-	model                model
+	model                *model
 	screenChangeRequired common.ScreenChangeCallback
 	stereo               *assets.Stereo
 	textLength           int
 	volumeTimer          int64
 }
 
-func newController() *controller {
+func newController(model *model) *controller {
 	var result = controller{
+		model:  model,
 		stereo: assets.NewStereo(),
 	}
 	return &result
