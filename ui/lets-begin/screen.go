@@ -17,12 +17,15 @@ const (
 
 type Screen struct {
 	controller *controller
+	model      *model
 	window     *opengl.Window
 }
 
 func NewScreen() *Screen {
+	var model = model{}
 	var result = Screen{
-		controller: newController(),
+		controller: newController(&model),
+		model:      &model,
 	}
 	return &result
 }
@@ -65,6 +68,6 @@ func (s *Screen) drawScreen() {
 
 	var txt = text.New(pixel.V(lineX, vertCenter), fonts.SizeToFontAtlas[defaultFontSize])
 	txt.Color = common.White
-	_, _ = fmt.Fprint(txt, s.controller.model.text)
+	_, _ = fmt.Fprint(txt, s.model.text)
 	txt.Draw(s.window, pixel.IM)
 }

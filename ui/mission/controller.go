@@ -10,12 +10,14 @@ import (
 
 type controller struct {
 	inputController      input.InputController
-	model                missionModel
+	model                *model
 	screenChangeRequired common.ScreenChangeCallback
 }
 
-func newController() *controller {
-	var result = controller{}
+func newController(model *model) *controller {
+	var result = controller{
+		model: model,
+	}
 	return &result
 }
 
