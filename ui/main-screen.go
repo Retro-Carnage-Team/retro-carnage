@@ -81,9 +81,9 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 	case common.Game:
 		ms.nextScreen = &game.Screen{}
 	case common.EnterNameP1:
-		ms.nextScreen = &en.Screen{PlayerIdx: 0}
+		ms.nextScreen = en.NewScreen(0)
 	case common.EnterNameP2:
-		ms.nextScreen = &en.Screen{PlayerIdx: 1}
+		ms.nextScreen = en.NewScreen(1)
 	case common.HighScore:
 		ms.nextScreen = &highscore.Screen{}
 	}
