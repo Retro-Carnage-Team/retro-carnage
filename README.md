@@ -11,7 +11,7 @@ by [Elite Systems](http://www.elite-systems.co.uk).
 
 This game is currently in development and not ready to get played, yet.
 
-[![Watch the video](youtube-2021-06-03.png)](https://youtu.be/1hznukfynLM)
+[![Watch the video](youtube-2021-06-03.png)](https://www.youtube.com/watch?v=BVgoLAjg2Vg)
 Development status as of 2024-10-13
 
 ## Getting the latest release
