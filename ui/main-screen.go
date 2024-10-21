@@ -59,9 +59,9 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 	case common.ConfigurationControls:
 		ms.nextScreen = &config.InputOptionsScreen{}
 	case common.ConfigurationControlsP1:
-		ms.nextScreen = &config.ControllerOptionsScreen{PlayerIdx: 0}
+		ms.nextScreen = config.NewControllerOptionsScreen(0)
 	case common.ConfigurationControlsP2:
-		ms.nextScreen = &config.ControllerOptionsScreen{PlayerIdx: 1}
+		ms.nextScreen = config.NewControllerOptionsScreen(1)
 	case common.ConfigurationResult:
 		ms.nextScreen = &config.ResultScreen{}
 	case common.ConfigurationSelect:

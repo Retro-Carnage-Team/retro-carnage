@@ -3,10 +3,8 @@ package config
 import (
 	"fmt"
 	"image/color"
-	"retro-carnage/config"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/input"
-	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
@@ -16,103 +14,45 @@ import (
 	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
-const (
-	optionControllerPreviousController = iota
-	optionControllerNextController
-	optionControllerDigitalAxis
-	optionControllerAction
-	optionControllerNextWeapon
-	optionControllerPreviousWeapon
-	optionControllerSave
-	optionControllerBack
-)
-
-var (
-	gamepadButtonNames = map[pixel.GamepadButton]string{
-		pixel.GamepadA:           "A",
-		pixel.GamepadB:           "B",
-		pixel.GamepadX:           "X",
-		pixel.GamepadY:           "Y",
-		pixel.GamepadLeftBumper:  "LEFT BUMPER",
-		pixel.GamepadRightBumper: "RIGHT BUMPER",
-		pixel.GamepadBack:        "BACK",
-		pixel.GamepadStart:       "START",
-		pixel.GamepadGuide:       "GUIDE",
-		pixel.GamepadLeftThumb:   "LEFT THUMB",
-		pixel.GamepadRightThumb:  "RIGHT THUMB",
-		pixel.GamepadDpadUp:      "DPAD UP",
-		pixel.GamepadDpadRight:   "DPAD RIGHT",
-		pixel.GamepadDpadDown:    "DPAD DOWN",
-		pixel.GamepadDpadLeft:    "DPAD LEFT",
-	}
-
-	optionControllerFocusChanges = []focusChange{
-		{movedRight: true, currentSelection: []int{optionControllerPreviousController}, nextSelection: optionControllerNextController},
-		{movedLeft: true, currentSelection: []int{optionControllerNextController}, nextSelection: optionControllerPreviousController},
-		{movedDown: true, currentSelection: []int{optionControllerPreviousController, optionControllerNextController}, nextSelection: optionControllerDigitalAxis},
-		{movedUp: true, currentSelection: []int{optionControllerDigitalAxis}, nextSelection: optionControllerPreviousController},
-		{movedDown: true, currentSelection: []int{optionControllerDigitalAxis}, nextSelection: optionControllerAction},
-		{movedUp: true, currentSelection: []int{optionControllerAction}, nextSelection: optionControllerDigitalAxis},
-		{movedDown: true, currentSelection: []int{optionControllerAction}, nextSelection: optionControllerNextWeapon},
-		{movedUp: true, currentSelection: []int{optionControllerNextWeapon}, nextSelection: optionControllerAction},
-		{movedDown: true, currentSelection: []int{optionControllerNextWeapon}, nextSelection: optionControllerPreviousWeapon},
-		{movedUp: true, currentSelection: []int{optionControllerPreviousWeapon}, nextSelection: optionControllerNextWeapon},
-		{movedDown: true, currentSelection: []int{optionControllerPreviousWeapon}, nextSelection: optionControllerSave},
-		{movedUp: true, currentSelection: []int{optionControllerSave, optionControllerBack}, nextSelection: optionControllerPreviousWeapon},
-		{movedRight: true, currentSelection: []int{optionControllerSave}, nextSelection: optionControllerBack},
-		{movedLeft: true, currentSelection: []int{optionControllerBack}, nextSelection: optionControllerSave},
-	}
-)
-
 type ControllerOptionsScreen struct {
-	PlayerIdx               int
-	availableDevices        []input.InputDeviceInfo
+	controller              *controllerOptionsController
 	defaultFontSize         int
-	inputConfig             config.InputDeviceConfiguration
-	inputController         input.InputController
 	maxControllerNameLength float64
-	screenChangeRequired    common.ScreenChangeCallback
-	selectedDeviceIndex     int
-	selectedOption          int
+	model                   *controllerOptionsModel
 	textDimensions          map[string]*geometry.Point
-	waitForInput            bool
 	window                  *opengl.Window
 }
 
+func NewControllerOptionsScreen(playerIdx int) *ControllerOptionsScreen {
+	var model = controllerOptionsModel{
+		playerIdx:      playerIdx,
+		selectedOption: optionControllerPreviousController,
+	}
+	var controller = newControllerOptionsController(&model)
+	var result = ControllerOptionsScreen{
+		controller: controller,
+		model:      &model,
+	}
+	return &result
+}
+
 func (s *ControllerOptionsScreen) SetUp() {
+	s.controller.setUp()
+
 	s.defaultFontSize = fonts.DefaultFontSize()
-	s.selectedOption = optionControllerPreviousController
 	s.textDimensions = fonts.GetTextDimensions(
 		s.defaultFontSize, txtInputSettingsP1, txtInputSettingsP1, txtSave, txtBack, txtNotConfigured, txtKeyboard,
 		txtController, txtActionFire, txtNextWeapon, txtPrevWeapon, txtSelection, txtDecrease, txtIncrease, txtDigitalAxis,
 	)
-	s.availableDevices = s.inputController.GetInputDeviceInfos()
 	s.maxControllerNameLength = s.getMaxWidthOfControllerNames()
-
-	var inputConfigs = config.GetConfigService().LoadInputDeviceConfigurations()
-	if len(inputConfigs) > s.PlayerIdx {
-		s.inputConfig = inputConfigs[s.PlayerIdx]
-		for i, d := range s.availableDevices {
-			if d.DeviceName == s.inputConfig.DeviceName {
-				s.selectedDeviceIndex = i
-				break
-			}
-		}
-	} else {
-		s.inputConfig.DeviceName = config.DeviceNameKeyboard
-	}
 }
 
 func (s *ControllerOptionsScreen) Update(_ int64) {
-	if !s.waitForInput {
-		s.processUserInput()
-	} else {
-		s.assignSelectedButton()
-	}
+	s.controller.update(s.window)
 
 	// draw headline
 	var headline = txtInputSettingsP1
-	if s.PlayerIdx == 1 {
+	if s.model.playerIdx == 1 {
 		headline = txtInputSettingsP2
 	}
 	var headlineLocationY = s.window.Bounds().H() - headlineDistanceTop
@@ -156,29 +96,29 @@ func (s *ControllerOptionsScreen) Update(_ int64) {
 	var lineLocationX = s.window.Bounds().W() - headlineDistanceTop - s.textDimensions[txtBack].X
 	var lineLocationY = headlineDistanceTop
 	txt = s.drawText(txtBack, lineLocationX, float64(lineLocationY), common.White)
-	if s.selectedOption == optionControllerBack {
+	if s.model.selectedOption == optionControllerBack {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	}
 
 	txt = s.drawText(txtSave, lineLocationX-s.textDimensions[txtSave].X-3*buttonPadding, float64(lineLocationY), common.White)
-	if s.selectedOption == optionControllerSave {
+	if s.model.selectedOption == optionControllerSave {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	}
 }
 
 func (s *ControllerOptionsScreen) renderControllerSelectionValues(valueDistanceLeft float64, controllerLabelLocationY float64) {
 	var txt = s.drawText(txtDecrease, valueDistanceLeft, controllerLabelLocationY, common.White)
-	if s.selectedOption == optionControllerPreviousController {
+	if s.model.selectedOption == optionControllerPreviousController {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
 	}
 
 	var distanceLeftControllerName = txt.Bounds().Max.X + buttonPadding*3
-	s.drawText(s.inputConfig.DeviceName, distanceLeftControllerName, controllerLabelLocationY, common.White)
+	s.drawText(s.model.inputConfig.DeviceName, distanceLeftControllerName, controllerLabelLocationY, common.White)
 
 	txt = s.drawText(txtIncrease, distanceLeftControllerName+s.maxControllerNameLength+buttonPadding*3, controllerLabelLocationY, common.White)
-	if s.selectedOption == optionControllerNextController {
+	if s.model.selectedOption == optionControllerNextController {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
@@ -187,13 +127,13 @@ func (s *ControllerOptionsScreen) renderControllerSelectionValues(valueDistanceL
 
 func (s *ControllerOptionsScreen) renderDigitalAxisValue(valueDistanceLeft float64, axisLabelLocationY float64) {
 	var txt *text.Text
-	if s.inputConfig.GamepadConfiguration.HasDigitalAxis {
+	if s.model.inputConfig.GamepadConfiguration.HasDigitalAxis {
 		txt = s.drawText(txtSelection, valueDistanceLeft, axisLabelLocationY, common.White)
 	} else {
 		txt = s.drawText(txtSelection, valueDistanceLeft, axisLabelLocationY, common.Black)
 	}
 
-	if s.selectedOption == optionControllerDigitalAxis {
+	if s.model.selectedOption == optionControllerDigitalAxis {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
@@ -202,14 +142,14 @@ func (s *ControllerOptionsScreen) renderDigitalAxisValue(valueDistanceLeft float
 
 func (s *ControllerOptionsScreen) renderActionValue(valueDistanceLeft float64, actionLabelLocationY float64) {
 	var output string
-	if s.selectedOption == optionControllerAction && s.waitForInput {
+	if s.model.selectedOption == optionControllerAction && s.model.waitForInput {
 		output = txtPressButton
 	} else {
-		output = s.getDisplayTextForValue(s.inputConfig.InputFire)
+		output = s.controller.getDisplayTextForValue(s.model.inputConfig.InputFire)
 	}
 
 	var txt = s.drawText(output, valueDistanceLeft, actionLabelLocationY, common.White)
-	if s.selectedOption == optionControllerAction {
+	if s.model.selectedOption == optionControllerAction {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
@@ -218,14 +158,14 @@ func (s *ControllerOptionsScreen) renderActionValue(valueDistanceLeft float64, a
 
 func (s *ControllerOptionsScreen) renderNextWeaponValue(valueDistanceLeft float64, nextWeaponLabelLocationY float64) {
 	var output string
-	if s.selectedOption == optionControllerNextWeapon && s.waitForInput {
+	if s.model.selectedOption == optionControllerNextWeapon && s.model.waitForInput {
 		output = txtPressButton
 	} else {
-		output = s.getDisplayTextForValue(s.inputConfig.InputNextWeapon)
+		output = s.controller.getDisplayTextForValue(s.model.inputConfig.InputNextWeapon)
 	}
 
 	var txt = s.drawText(output, valueDistanceLeft, nextWeaponLabelLocationY, common.White)
-	if s.selectedOption == optionControllerNextWeapon {
+	if s.model.selectedOption == optionControllerNextWeapon {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
@@ -234,14 +174,14 @@ func (s *ControllerOptionsScreen) renderNextWeaponValue(valueDistanceLeft float6
 
 func (s *ControllerOptionsScreen) renderPreviousWeaponValue(valueDistanceLeft float64, previousWeaponLabelLocationY float64) {
 	var output string
-	if s.selectedOption == optionControllerPreviousWeapon && s.waitForInput {
+	if s.model.selectedOption == optionControllerPreviousWeapon && s.model.waitForInput {
 		output = txtPressButton
 	} else {
-		output = s.getDisplayTextForValue(s.inputConfig.InputPreviousWeapon)
+		output = s.controller.getDisplayTextForValue(s.model.inputConfig.InputPreviousWeapon)
 	}
 
 	var txt = s.drawText(output, valueDistanceLeft, previousWeaponLabelLocationY, common.White)
-	if s.selectedOption == optionControllerPreviousWeapon {
+	if s.model.selectedOption == optionControllerPreviousWeapon {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	} else {
 		drawPossibleSelectionRect(s.window, txt.Bounds())
@@ -253,11 +193,11 @@ func (s *ControllerOptionsScreen) TearDown() {
 }
 
 func (s *ControllerOptionsScreen) SetInputController(controller input.InputController) {
-	s.inputController = controller
+	s.controller.setInputController(controller)
 }
 
 func (s *ControllerOptionsScreen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.screenChangeRequired = callback
+	s.controller.setScreenChangeCallback(callback)
 }
 
 func (s *ControllerOptionsScreen) SetWindow(window *opengl.Window) {
@@ -265,94 +205,10 @@ func (s *ControllerOptionsScreen) SetWindow(window *opengl.Window) {
 }
 
 func (s *ControllerOptionsScreen) String() string {
-	if s.PlayerIdx == 0 {
+	if s.model.playerIdx == 0 {
 		return string(common.ConfigurationControlsP1)
 	}
 	return string(common.ConfigurationControlsP2)
-}
-
-func (s *ControllerOptionsScreen) processUserInput() {
-	var uiEventState = s.inputController.GetUiEventStateCombined()
-	if nil == uiEventState {
-		return
-	}
-
-focusHandling:
-	for _, fc := range optionControllerFocusChanges {
-		if fc.movedLeft == uiEventState.MovedLeft &&
-			fc.movedRight == uiEventState.MovedRight &&
-			fc.movedDown == uiEventState.MovedDown &&
-			fc.movedUp == uiEventState.MovedUp {
-			for _, i := range fc.currentSelection {
-				if i == s.selectedOption {
-					s.selectedOption = fc.nextSelection
-					break focusHandling
-				}
-			}
-		}
-	}
-
-	if uiEventState.PressedButton {
-		s.processOptionSelected()
-	}
-}
-
-func (s *ControllerOptionsScreen) processOptionSelected() {
-	switch s.selectedOption {
-	case optionControllerPreviousController:
-		s.selectPreviousController()
-	case optionControllerNextController:
-		s.selectNextController()
-	case optionControllerDigitalAxis:
-		s.inputConfig.GamepadConfiguration.HasDigitalAxis = !s.inputConfig.GamepadConfiguration.HasDigitalAxis
-	case optionControllerAction, optionControllerNextWeapon, optionControllerPreviousWeapon:
-		s.waitForInput = true
-	case optionControllerSave:
-		var err = config.GetConfigService().SaveInputDeviceConfiguration(s.inputConfig, s.PlayerIdx)
-		if nil != err {
-			logging.Warning.Printf("failed to save controller settings for player %d: %s", s.PlayerIdx, err)
-		}
-		s.screenChangeRequired(common.ConfigurationControls)
-	case optionControllerBack:
-		s.screenChangeRequired(common.ConfigurationControls)
-	default:
-		logging.Error.Fatal("Unexpected selection in ControllerOptionsScreen")
-	}
-}
-
-func (s *ControllerOptionsScreen) assignSelectedButton() {
-	var selectedValue = -1
-	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
-		for _, btn := range common.KeyboardButtons {
-			if s.window.JustPressed(btn) {
-				selectedValue = int(btn)
-				break
-			}
-		}
-	} else {
-		for _, btn := range common.GamepadButtons {
-			if s.window.JoystickJustPressed(pixel.Joystick(s.inputConfig.GamepadConfiguration.JoystickIndex), btn) {
-				selectedValue = int(btn)
-				break
-			}
-		}
-	}
-
-	if selectedValue == -1 {
-		return
-	}
-
-	switch s.selectedOption {
-	case optionControllerAction:
-		s.inputConfig.InputFire = selectedValue
-		s.waitForInput = false
-	case optionControllerNextWeapon:
-		s.inputConfig.InputNextWeapon = selectedValue
-		s.waitForInput = false
-	case optionControllerPreviousWeapon:
-		s.inputConfig.InputPreviousWeapon = selectedValue
-		s.waitForInput = false
-	}
 }
 
 func (s *ControllerOptionsScreen) drawText(output string, x float64, y float64, col color.RGBA) *text.Text {
@@ -363,37 +219,13 @@ func (s *ControllerOptionsScreen) drawText(output string, x float64, y float64, 
 	return txt
 }
 
-func (s *ControllerOptionsScreen) selectPreviousController() {
-	s.selectedDeviceIndex = s.selectedDeviceIndex - 1
-	if s.selectedDeviceIndex < 0 {
-		s.selectedDeviceIndex = len(s.availableDevices) - 1
-	}
-	s.inputConfig.DeviceName = s.availableDevices[s.selectedDeviceIndex].DeviceName
-	s.inputConfig.JoystickIndex = s.availableDevices[s.selectedDeviceIndex].JoystickIndex
-}
-
-func (s *ControllerOptionsScreen) selectNextController() {
-	s.selectedDeviceIndex = (s.selectedDeviceIndex + 1) % len(s.availableDevices)
-	s.inputConfig.DeviceName = s.availableDevices[s.selectedDeviceIndex].DeviceName
-	s.inputConfig.JoystickIndex = s.availableDevices[s.selectedDeviceIndex].JoystickIndex
-}
-
 func (s *ControllerOptionsScreen) getMaxWidthOfControllerNames() float64 {
 	var result = 0.0
-	for _, m := range s.availableDevices {
+	for _, m := range s.model.availableDevices {
 		var width = fonts.GetTextDimension(s.defaultFontSize, m.DeviceName).X
 		if width > result {
 			result = width
 		}
 	}
 	return result
-}
-
-func (s *ControllerOptionsScreen) getDisplayTextForValue(value int) string {
-	if s.inputConfig.DeviceName == config.DeviceNameKeyboard {
-		return pixel.Button(value).String()
-	}
-
-	var gpButton = pixel.GamepadButton(value)
-	return gamepadButtonNames[gpButton]
 }
