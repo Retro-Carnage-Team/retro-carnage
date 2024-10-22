@@ -53,19 +53,19 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 	case common.ConfigurationOptions:
 		ms.nextScreen = &config.OptionsScreen{}
 	case common.ConfigurationAudio:
-		ms.nextScreen = &config.AudioOptionsScreen{}
+		ms.nextScreen = config.NewAudioOptionsScreen()
 	case common.ConfigurationVideo:
-		ms.nextScreen = &config.VideoOptionsScreen{}
+		ms.nextScreen = config.NewVideoOptionsScreen()
 	case common.ConfigurationControls:
-		ms.nextScreen = &config.InputOptionsScreen{}
+		ms.nextScreen = config.NewInputOptionsScreen()
 	case common.ConfigurationControlsP1:
-		ms.nextScreen = &config.ControllerOptionsScreen{PlayerIdx: 0}
+		ms.nextScreen = config.NewControllerOptionsScreen(0)
 	case common.ConfigurationControlsP2:
-		ms.nextScreen = &config.ControllerOptionsScreen{PlayerIdx: 1}
+		ms.nextScreen = config.NewControllerOptionsScreen(1)
 	case common.ConfigurationResult:
-		ms.nextScreen = &config.ResultScreen{}
+		ms.nextScreen = config.NewResultScreen()
 	case common.ConfigurationSelect:
-		ms.nextScreen = &config.SelectScreen{}
+		ms.nextScreen = config.NewSelectScreen()
 	case common.Mission:
 		ms.nextScreen = mission.NewScreen()
 	case common.BuyYourWeaponsP1:

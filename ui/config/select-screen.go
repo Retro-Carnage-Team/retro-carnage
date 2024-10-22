@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/input"
 	"retro-carnage/ui/common"
@@ -14,36 +13,65 @@ import (
 )
 
 const (
-	optionOnePlayer int = iota + 1
-	optionTwoPlayers
-	optionOptions
 	txtSelectOnePlayerGame = "START 1 PLAYER GAME"
 	txtSelectTwoPlayerGame = "START 2 PLAYER GAME"
 	txtSelectOptions       = "OPTIONS"
 )
 
 type SelectScreen struct {
-	defaultFontSize      int
-	inputController      input.InputController
-	multiplayerPossible  bool
-	screenChangeRequired common.ScreenChangeCallback
-	selectedOption       int
-	textDimensions       map[string]*geometry.Point
-	window               *opengl.Window
+	controller      *selectController
+	defaultFontSize int
+	model           *selectModel
+	textDimensions  map[string]*geometry.Point
+	window          *opengl.Window
+}
+
+func NewSelectScreen() *SelectScreen {
+	var model = selectModel{
+		// Multiplayer has to be tested thoroughly first
+		// multiplayerPossible: len(s.inputController.GetInputDeviceInfos()) > 1
+		multiplayerPossible: false,
+		selectedOption:      optionOnePlayer,
+	}
+	var controller = newSelectController(&model)
+	var result = SelectScreen{
+		controller: controller,
+		model:      &model,
+	}
+	return &result
 }
 
 func (s *SelectScreen) SetUp() {
 	s.defaultFontSize = fonts.DefaultFontSize()
-	// Multiplayer is not implemented, yet
-	// s.multiplayerPossible = len(s.inputController.GetInputDeviceInfos()) > 1
-	s.multiplayerPossible = false
-	s.selectedOption = optionOnePlayer
 	s.textDimensions = fonts.GetTextDimensions(s.defaultFontSize, txtSelectOnePlayerGame, txtSelectTwoPlayerGame, txtSelectOptions)
 }
 
 func (s *SelectScreen) Update(_ int64) {
-	s.processUserInput()
+	s.controller.update()
+	s.drawScreen()
+}
 
+func (s *SelectScreen) TearDown() {
+	// no tear down action required
+}
+
+func (s *SelectScreen) SetInputController(controller input.InputController) {
+	s.controller.setInputController(controller)
+}
+
+func (s *SelectScreen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
+	s.controller.setScreenChangeCallback(callback)
+}
+
+func (s *SelectScreen) SetWindow(window *opengl.Window) {
+	s.window = window
+}
+
+func (s *SelectScreen) String() string {
+	return string(common.ConfigurationSelect)
+}
+
+func (s *SelectScreen) drawScreen() {
 	var vertCenter = s.window.Bounds().Max.Y / 2
 
 	var firstLineX = (s.window.Bounds().Max.X - s.textDimensions[txtSelectOnePlayerGame].X) / 2
@@ -54,7 +82,7 @@ func (s *SelectScreen) Update(_ int64) {
 	_, _ = fmt.Fprint(txt, txtSelectOnePlayerGame)
 	txt.Draw(s.window, pixel.IM)
 
-	if s.selectedOption == optionOnePlayer {
+	if s.model.selectedOption == optionOnePlayer {
 		drawTextSelectionRect(s.window, txt.Bounds())
 	}
 
@@ -62,14 +90,14 @@ func (s *SelectScreen) Update(_ int64) {
 	var secondLineY = vertCenter + -1.5*s.textDimensions[txtSelectTwoPlayerGame].Y
 
 	var startLine3 = -1.5
-	if s.multiplayerPossible {
+	if s.model.multiplayerPossible {
 		txt = text.New(pixel.V(secondLineX, secondLineY), fonts.SizeToFontAtlas[s.defaultFontSize])
 		txt.Color = common.White
 		_, _ = fmt.Fprint(txt, txtSelectTwoPlayerGame)
 		txt.Draw(s.window, pixel.IM)
 		startLine3 = -4.5
 
-		if s.selectedOption == optionTwoPlayers {
+		if s.model.selectedOption == optionTwoPlayers {
 			drawTextSelectionRect(s.window, txt.Bounds())
 		}
 	}
@@ -82,56 +110,7 @@ func (s *SelectScreen) Update(_ int64) {
 	_, _ = fmt.Fprint(txt, txtSelectOptions)
 	txt.Draw(s.window, pixel.IM)
 
-	if s.selectedOption == optionOptions {
+	if s.model.selectedOption == optionOptions {
 		drawTextSelectionRect(s.window, txt.Bounds())
-	}
-}
-
-func (s *SelectScreen) TearDown() {
-	// no tear down action required
-}
-
-func (s *SelectScreen) SetInputController(controller input.InputController) {
-	s.inputController = controller
-}
-
-func (s *SelectScreen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
-	s.screenChangeRequired = callback
-}
-
-func (s *SelectScreen) SetWindow(window *opengl.Window) {
-	s.window = window
-}
-
-func (s *SelectScreen) String() string {
-	return string(common.ConfigurationSelect)
-}
-
-func (s *SelectScreen) processUserInput() {
-	var uiEventState = s.inputController.GetUiEventStateCombined()
-	if nil != uiEventState {
-		if uiEventState.PressedButton {
-			s.processOptionSelected()
-		} else if uiEventState.MovedUp {
-			if s.selectedOption > optionOnePlayer {
-				s.selectedOption = s.selectedOption - 1
-			}
-		} else if uiEventState.MovedDown {
-			if s.selectedOption == optionOnePlayer && s.multiplayerPossible {
-				s.selectedOption = optionTwoPlayers
-			} else {
-				s.selectedOption = optionOptions
-			}
-		}
-	}
-}
-
-func (s *SelectScreen) processOptionSelected() {
-	if s.selectedOption == optionOnePlayer || s.selectedOption == optionTwoPlayers {
-		s.inputController.AssignInputDevicesToPlayers()
-		characters.PlayerController.StartNewGame(s.selectedOption)
-		s.screenChangeRequired(common.ConfigurationResult)
-	} else {
-		s.screenChangeRequired(common.ConfigurationOptions)
 	}
 }
