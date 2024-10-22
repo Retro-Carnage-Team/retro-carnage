@@ -65,7 +65,7 @@ func (ms *MainScreen) requireScreenChange(screenName common.ScreenName) {
 	case common.ConfigurationResult:
 		ms.nextScreen = &config.ResultScreen{}
 	case common.ConfigurationSelect:
-		ms.nextScreen = &config.SelectScreen{}
+		ms.nextScreen = config.NewSelectScreen()
 	case common.Mission:
 		ms.nextScreen = mission.NewScreen()
 	case common.BuyYourWeaponsP1:
