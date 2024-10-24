@@ -8,5 +8,5 @@ type Entry struct {
 }
 
 func (e Entry) ToString(index int) string {
-	return fmt.Sprintf("%2d     %7d     %s", index, e.Score, e.Name)
+	return fmt.Sprintf("%02d     %07d     %s", index, e.Score, e.Name)
 }
