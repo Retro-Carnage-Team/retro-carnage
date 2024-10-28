@@ -31,7 +31,7 @@ jobs:
       run: go build -v ./...
     - name: Download test assets
       shell: bash
-      run: git clone https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/retro-carnage-assets
+      run: git clone --depth 1 https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/retro-carnage-assets
     - name: Set environment variables for test execution      
       run: |
         echo "sound=no-fx;no-music" >> "$GITHUB_ENV"
