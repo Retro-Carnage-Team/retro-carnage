@@ -1,0 +1,52 @@
+# This workflow will build and test to Retro-Carnage application.
+#
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Build
+
+on:  
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22.x'
+    - name: Install dev libraries
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev
+    - name: Install dependencies
+      run: go get -d .
+    - name: Build
+      run: go build -v ./...
+    - name: Download assets      
+      shell: bash
+      run: |  
+        git clone --depth 1 https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/${{ github.ref_name }}
+        rm -rf /tmp/${{ github.ref_name }}/.git
+    - name: Copy binary
+      run: mv ./retro-carnage /tmp/${{ github.ref_name }}/
+    - name: Build archive
+      shell: bash
+      run: |
+        cd /tmp
+        zip -r -9 /tmp/Retro-Carnage-${{ github.ref_name }}-Linux.zip ./${{ github.ref_name }}
+        cd -
+    - name: Upload release archive
+      shell: bash
+      run: |
+        mkdir /tmp/rc-upload
+        mkdir /tmp/rc-upload/releases
+        mkdir /tmp/rc-upload/releases/${{ github.ref_name }}
+        mv /tmp/Retro-Carnage-${{ github.ref_name }}-Linux.zip /tmp/rc-upload/releases/${{ github.ref_name }}
+        chmod +x ./upload-release.sh
+        ./upload-release.sh ${{vars.FTP_HOST}} ${{secrets.FTP_USER}} ${{secrets.FTP_PASS}}
