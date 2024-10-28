@@ -19,6 +19,8 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.22.x'
+    - name: Make the script files executable
+      run: chmod +x ./upload-release.sh
     - name: Install dev libraries
       shell: bash
       run: |
@@ -35,18 +37,14 @@ jobs:
         rm -rf /tmp/${{ github.ref_name }}/.git
     - name: Copy binary
       run: mv ./retro-carnage /tmp/${{ github.ref_name }}/
-    - name: Build archive
+    - name: Build release archive
       shell: bash
       run: |
         cd /tmp
-        zip -r -9 /tmp/Retro-Carnage-${{ github.ref_name }}-Linux.zip ./${{ github.ref_name }}
-        cd -
-    - name: Upload release archive
-      shell: bash
-      run: |
         mkdir /tmp/rc-upload
         mkdir /tmp/rc-upload/releases
         mkdir /tmp/rc-upload/releases/${{ github.ref_name }}
-        mv /tmp/Retro-Carnage-${{ github.ref_name }}-Linux.zip /tmp/rc-upload/releases/${{ github.ref_name }}
-        chmod +x ./upload-release.sh
-        ./upload-release.sh ${{vars.FTP_HOST}} ${{secrets.FTP_USER}} ${{secrets.FTP_PASS}}
+        zip -r -9 /tmp/rc-upload/releases/${{ github.ref_name }}/Retro-Carnage-${{ github.ref_name }}-Linux.zip ./${{ github.ref_name }}
+        cd -
+    - name: Upload release archive
+      run: ./upload-release.sh ${{vars.FTP_HOST}} ${{secrets.FTP_USER}} ${{secrets.FTP_PASS}}
