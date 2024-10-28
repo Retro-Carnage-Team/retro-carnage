@@ -45,6 +45,7 @@ jobs:
         mkdir /tmp/rc-upload/releases
         mkdir /tmp/rc-upload/releases/${{ github.ref_name }}
         zip -r -9 /tmp/rc-upload/releases/${{ github.ref_name }}/Retro-Carnage-${{ github.ref_name }}-Linux.zip ./${{ github.ref_name }}
+        curl -o /tmp/rc-upload/releases/${{ github.ref_name }}/Retro-Carnage-${{ github.ref_name }}-Code.zip https://codeload.github.com/Retro-Carnage-Team/retro-carnage/zip/refs/tags/${{ github.ref_name }}
         cd -
     - name: Upload release archive
       run: ./upload-release.sh ${{vars.FTP_HOST}} ${{secrets.FTP_USER}} ${{secrets.FTP_PASS}}
