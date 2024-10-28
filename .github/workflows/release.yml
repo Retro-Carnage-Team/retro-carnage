@@ -23,7 +23,7 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev
+        sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev lftp
     - name: Install dependencies
       run: go get -d .
     - name: Build
