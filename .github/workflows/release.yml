@@ -65,9 +65,8 @@ jobs:
       shell: pwsh
       run: |   
         git clone --depth 1 https://github.com/Retro-Carnage-Team/retro-carnage-assets.git ${{ github.ref_name }}        
-        Remove-Item -Recurse ${{ github.ref_name }}\.git
-        Copy-Item -Path .\retro-carnage.exe -Destination "${{ github.ref_name }}"
-        Compress-Archive -Path "${{ github.ref_name }}" -DestinationPath Retro-Carnage-Windows.zip
+        Copy-Item -Path .\retro-carnage.exe -Destination ${{ github.ref_name }}
+        Compress-Archive -Path ${{ github.ref_name }} -DestinationPath Retro-Carnage-Windows.zip
     - name: Upload release archive
       uses: Dylan700/sftp-upload-action@latest
       with:
