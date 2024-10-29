@@ -21,34 +21,33 @@ jobs:
         go-version: '1.22.x'
     - name: Make the script files executable
       run: chmod +x ./upload-release.sh
-#    - name: Install dev libraries
-#      shell: bash
-#      run: |
-#        sudo apt-get update
-#        sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev lftp
-#    - name: Install dependencies
-#      run: go get -d .
-#    - name: Build
-#      run: go build -v
-#    - name: Download assets      
-#      shell: bash
-#      run: |  
-#        git clone --depth 1 https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/${{ github.ref_name }}
-#        rm -rf /tmp/${{ github.ref_name }}/.git
-#    - name: Copy binary
-#      run: mv ./retro-carnage /tmp/${{ github.ref_name }}/
-#    - name: Build release archive
-#      shell: bash
-#      run: |
-#        cd /tmp
-#        mkdir /tmp/rc-upload
-#        mkdir /tmp/rc-upload/releases
-#        mkdir /tmp/rc-upload/releases/${{ github.ref_name }}
-#        zip -r -9 /tmp/rc-upload/releases/${{ github.ref_name }}/Retro-Carnage-${{ github.ref_name }}-Linux.zip ./${{ github.ref_name }}
-#        curl -o /tmp/rc-upload/releases/${{ github.ref_name }}/Retro-Carnage-${{ github.ref_name }}-Code.zip https://codeload.github.com/Retro-Carnage-Team/retro-carnage/zip/refs/tags/${{ github.ref_name }}
-#        cd -
-#    - name: Upload release archive
-#      run: ./upload-release.sh ${{vars.FTP_HOST}} ${{secrets.FTP_USER}} ${{secrets.FTP_PASS}}
+    - name: Install dev libraries
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev lftp
+    - name: Install dependencies
+      run: go get -d .
+    - name: Build
+      run: go build -v
+    - name: Download assets      
+      shell: bash
+      run: |  
+        git clone --depth 1 https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/${{ github.ref_name }}
+        rm -rf /tmp/${{ github.ref_name }}/.git
+    - name: Copy binary
+      run: mv ./retro-carnage /tmp/${{ github.ref_name }}/
+    - name: Build release archive
+      shell: bash
+      run: |
+        cd /tmp
+        mkdir /tmp/rc-upload
+        mkdir /tmp/rc-upload/releases
+        zip -r -9 /tmp/rc-upload/releases/Retro-Carnage-Linux.zip ./${{ github.ref_name }}
+        curl -o /tmp/rc-upload/releases/Retro-Carnage-Code.zip https://codeload.github.com/Retro-Carnage-Team/retro-carnage/zip/refs/tags/${{ github.ref_name }}
+        cd -
+    - name: Upload release archive
+      run: ./upload-release.sh ${{vars.FTP_HOST}} ${{secrets.FTP_USER}} ${{secrets.FTP_PASS}}
   
   release-for-windows:
     runs-on: windows-latest
