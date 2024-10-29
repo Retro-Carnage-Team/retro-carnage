@@ -63,13 +63,11 @@ jobs:
       run: go build -v
     - name: Build release archive
       shell: pwsh
-      run: |
-        $tempFolder = [System.Environment]::GetEnvironmentVariable('TEMP','User')        
-        git clone --depth 1 https://github.com/Retro-Carnage-Team/retro-carnage-assets.git $tempFolder\${{ github.ref_name }}
-        Get-ChildItem $tempFolder\${{ github.ref_name }}
-        Remove-Item -Recurse $tempFolder\${{ github.ref_name }}\.git
-        Copy-Item -Path .\retro-carnage.exe -Destination "$tempFolder\${{ github.ref_name }}"
-        Compress-Archive -Path "$tempFolder\${{ github.ref_name }}" -DestinationPath Retro-Carnage-Windows.zip
+      run: |   
+        git clone --depth 1 https://github.com/Retro-Carnage-Team/retro-carnage-assets.git ${{ github.ref_name }}        
+        Remove-Item -Recurse ${{ github.ref_name }}\.git
+        Copy-Item -Path .\retro-carnage.exe -Destination "${{ github.ref_name }}"
+        Compress-Archive -Path "${{ github.ref_name }}" -DestinationPath Retro-Carnage-Windows.zip
     - name: Upload release archive
       uses: Dylan700/sftp-upload-action@latest
       with:
