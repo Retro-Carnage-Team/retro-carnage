@@ -70,7 +70,7 @@ jobs:
     - name: Upload release archive
       uses: Dylan700/sftp-upload-action@latest
       with:
-        server: ${{vars.FTP_HOST}}
+        server: ${{vars.FTP_HOST_NAME}}
         username: ${{secrets.FTP_USER}}
         password: ${{secrets.FTP_PASS}}
         port: 22
