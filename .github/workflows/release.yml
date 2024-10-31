@@ -33,7 +33,7 @@ jobs:
     - name: Download assets      
       shell: bash
       run: |  
-        git clone --depth 1 https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/${{ github.ref_name }}
+        git clone --depth 1 --branch ${{ github.ref_name }} https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/${{ github.ref_name }}
         rm -rf /tmp/${{ github.ref_name }}/.git
     - name: Copy binary
       run: mv ./retro-carnage /tmp/${{ github.ref_name }}/
@@ -64,7 +64,7 @@ jobs:
     - name: Build release archive
       shell: pwsh
       run: |   
-        git clone --depth 1 https://github.com/Retro-Carnage-Team/retro-carnage-assets.git ${{ github.ref_name }}        
+        git clone --depth 1 --branch ${{ github.ref_name }} https://github.com/Retro-Carnage-Team/retro-carnage-assets.git ${{ github.ref_name }}        
         Copy-Item -Path .\retro-carnage.exe -Destination ${{ github.ref_name }}
         New-Item -Name "archive" -ItemType "directory"
         Compress-Archive -Path ${{ github.ref_name }} -DestinationPath "archive\Retro-Carnage-Windows.zip"
