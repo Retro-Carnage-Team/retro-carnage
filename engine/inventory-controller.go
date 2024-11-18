@@ -43,7 +43,7 @@ func (ic *InventoryController) BuyAmmunition(ammunitionName string) {
 		var player = characters.Players[ic.playerIdx]
 		var increasedCount = player.AmmunitionCount(ammunitionName) + ammunition.PackageSize
 		player.SetAmmunitionCount(ammunitionName, util.MinInt(increasedCount, ammunition.MaxCount))
-		player.SetCash(player.Cash() - ammunition.GetPrice())
+		player.SetCash(player.Cash() - ammunition.Price)
 		ic.stereo.PlayFx(assets.FxCash)
 	} else {
 		ic.stereo.PlayFx(assets.FxError)

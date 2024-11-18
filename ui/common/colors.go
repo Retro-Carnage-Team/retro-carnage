@@ -8,6 +8,7 @@ import (
 
 var (
 	Black      = ParseHexColor("#000000")
+	DirtyWhite = ParseHexColor("#f6f4e6")
 	Green      = ParseHexColor("#12a45d")
 	LightGray  = ParseHexColor("#d3d3d3")
 	ModalBg    = ParseHexColor("#2f4f4e")

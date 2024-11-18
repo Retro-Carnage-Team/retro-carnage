@@ -162,7 +162,7 @@ func (p *Player) SetLives(lives int) {
 
 func (p *Player) PistolSelected() bool {
 	var weapon = p.SelectedWeapon()
-	return (nil != weapon) && (assets.Pistol == weapon.WeaponType)
+	return (nil != weapon) && (assets.NonAutomatic == weapon.WeaponType)
 }
 
 func (p *Player) Reset() {
