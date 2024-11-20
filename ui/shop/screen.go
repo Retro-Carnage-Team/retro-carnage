@@ -161,7 +161,7 @@ func (s *Screen) drawItems() {
 
 func (s *Screen) drawItemBackgrounds(itemAreas []geometry.Rectangle) {
 	imd := imdraw.New(nil)
-	imd.Color = common.Gray
+	imd.Color = common.DirtyWhite
 	for _, area := range itemAreas {
 		imd.Push(pixel.V(area.X, area.Y), pixel.V(area.X+area.Width, area.Y+area.Height))
 		imd.Rectangle(0)
