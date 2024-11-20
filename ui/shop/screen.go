@@ -20,6 +20,7 @@ import (
 
 const (
 	backgroundImagePath  = "images/other/shop.jpg"
+	barPadding           = 5.0
 	bottomBarHeight      = 70
 	buttonPadding        = 10
 	checkImagePath       = "images/other/check-circle.png"
@@ -160,7 +161,7 @@ func (s *Screen) drawItems() {
 
 func (s *Screen) drawItemBackgrounds(itemAreas []geometry.Rectangle) {
 	imd := imdraw.New(nil)
-	imd.Color = common.Black
+	imd.Color = common.DirtyWhite
 	for _, area := range itemAreas {
 		imd.Push(pixel.V(area.X, area.Y), pixel.V(area.X+area.Width, area.Y+area.Height))
 		imd.Rectangle(0)
@@ -194,7 +195,7 @@ func (s *Screen) drawItemImages(itemAreas []geometry.Rectangle) {
 
 func (s *Screen) drawPurchaseStatus(areas []geometry.Rectangle) {
 	imd := imdraw.New(nil)
-	imd.Color = common.White
+	imd.Color = common.Black
 
 	for idx, area := range areas {
 		var item = s.model.items[idx]
@@ -204,15 +205,15 @@ func (s *Screen) drawPurchaseStatus(areas []geometry.Rectangle) {
 					area.X+area.Width-s.checkSprite.Picture().Bounds().W(),
 					area.Y+s.checkSprite.Picture().Bounds().H())))
 			}
-		} else {
-			var ratio = item.OwnedPortion(&s.controller.inventoryController)
-			if ratio > 0 {
-				var barWidth = (area.Width - itemPadding - itemPadding) * ratio
-				imd.Push(
-					pixel.V(area.X+itemPadding, area.Y+itemPadding),
-					pixel.V(area.X+itemPadding+barWidth, area.Y+itemPadding+5))
-				imd.Rectangle(0)
-			}
+		}
+
+		var ratio = item.OwnedPortion(&s.controller.inventoryController)
+		if ratio > 0 {
+			var barWidth = (area.Width - barPadding - barPadding) * ratio
+			imd.Push(
+				pixel.V(area.X+barPadding, area.Y+barPadding),
+				pixel.V(area.X+barPadding+barWidth, area.Y+barPadding+5))
+			imd.Rectangle(0)
 		}
 	}
 

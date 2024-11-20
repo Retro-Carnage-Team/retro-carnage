@@ -3,7 +3,6 @@ package shop
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine"
-	"retro-carnage/logging"
 )
 
 // inventoryItemDelegate defines the shared functionality of grenades, ammunition and items.
@@ -51,8 +50,10 @@ func (ii *inventoryItem) IsAmmunition() bool {
 // OwnedFromMax returns the current number of these item in inventory and their max count.
 func (ii *inventoryItem) OwnedFromMax(inventoryController *engine.InventoryController) (int, int) {
 	if ii.IsWeapon() {
-		logging.Error.Fatal("this method should be used for grenades and ammunition only")
-		return 0, 0
+		var weapon = assets.WeaponCrate.GetByName(ii.Name())
+		var owned = inventoryController.AmmunitionCount(weapon.Ammo)
+		var ammunition = assets.AmmunitionCrate.GetByName(weapon.Ammo)
+		return owned, ammunition.MaxCount
 	} else if ii.IsGrenade() {
 		var owned = inventoryController.GrenadeCount(ii.Name())
 		var grenade = assets.GrenadeCrate.GetByName(ii.Name())

@@ -3,9 +3,9 @@ package assets
 type WeaponType int
 
 const (
-	Pistol    WeaponType = 0
-	Automatic WeaponType = 1
-	RPG       WeaponType = 2
+	NonAutomatic WeaponType = 0
+	Automatic    WeaponType = 1
+	RPG          WeaponType = 2
 )
 
 type Weapon struct {

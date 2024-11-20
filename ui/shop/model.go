@@ -37,12 +37,5 @@ func getAllInventoryItems() (result []*inventoryItem) {
 		})
 		idx += 1
 	}
-	for _, ammunition := range assets.AmmunitionCrate.GetAll() {
-		result = append(result, &inventoryItem{
-			delegate: ammunition,
-			index:    idx,
-		})
-		idx += 1
-	}
 	return
 }
