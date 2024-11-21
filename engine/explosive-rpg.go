@@ -24,8 +24,8 @@ func NewExplosiveRpg(
 			distanceMoved:    0,
 			distanceToTarget: float64(selectedRpg.BulletRange),
 			direction:        direction,
-			FiredByPlayer:    true,
-			FiredByPlayerIdx: playerIdx,
+			firedByPlayer:    true,
+			playerIdx:        playerIdx,
 			position: &geometry.Rectangle{
 				X:      playerPosition.X + offset.X,
 				Y:      playerPosition.Y + offset.Y,

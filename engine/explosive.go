@@ -18,8 +18,8 @@ type Explosive struct {
 	distanceMoved     float64
 	distanceToTarget  float64
 	direction         geometry.Direction
-	FiredByPlayer     bool
-	FiredByPlayerIdx  int
+	firedByPlayer     bool
+	playerIdx         int
 	position          *geometry.Rectangle
 	speed             float64
 	SpriteSupplier    ExplosiveSpriteSupplier
@@ -34,8 +34,8 @@ func NewExplosiveGrenadeByPlayer(
 	selectedWeapon *assets.Grenade,
 ) *Explosive {
 	var expGrenade = newExplosiveGrenade(playerPosition, direction, selectedWeapon)
-	expGrenade.FiredByPlayer = true
-	expGrenade.FiredByPlayerIdx = playerIdx
+	expGrenade.firedByPlayer = true
+	expGrenade.playerIdx = playerIdx
 	return expGrenade
 }
 
@@ -97,8 +97,8 @@ func newExplosiveGrenade(
 		distanceMoved:    0,
 		distanceToTarget: float64(selectedWeapon.MovementDistance),
 		direction:        direction,
-		FiredByPlayer:    false,
-		FiredByPlayerIdx: -1,
+		firedByPlayer:    false,
+		playerIdx:        -1,
 		position: &geometry.Rectangle{
 			X:      attackerPosition.X + offset.X,
 			Y:      attackerPosition.Y + offset.Y,
