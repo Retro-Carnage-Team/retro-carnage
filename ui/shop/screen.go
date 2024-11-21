@@ -2,6 +2,7 @@ package shop
 
 import (
 	"fmt"
+	"image/color"
 	"math"
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
@@ -161,8 +162,21 @@ func (s *Screen) drawItems() {
 
 func (s *Screen) drawItemBackgrounds(itemAreas []geometry.Rectangle) {
 	imd := imdraw.New(nil)
-	imd.Color = common.DirtyWhite
-	for _, area := range itemAreas {
+
+	var bgDefault = common.DirtyWhite
+	var bgSelected color.RGBA
+	bgSelected.R = bgDefault.R
+	bgSelected.G = bgDefault.G
+	bgSelected.B = bgDefault.B
+	bgSelected.A = 0
+
+	for idx, area := range itemAreas {
+		if idx == s.model.selectedItemIdx {
+			imd.Color = bgSelected
+		} else {
+			imd.Color = common.DirtyWhite
+		}
+
 		imd.Push(pixel.V(area.X, area.Y), pixel.V(area.X+area.Width, area.Y+area.Height))
 		imd.Rectangle(0)
 	}
@@ -170,7 +184,7 @@ func (s *Screen) drawItemBackgrounds(itemAreas []geometry.Rectangle) {
 }
 
 func (s *Screen) drawItemSelectionBorder(areas []geometry.Rectangle) {
-	if 0 <= s.model.selectedItemIdx && 30 >= s.model.selectedItemIdx && !s.model.modalVisible {
+	if s.model.selectedItemIdx >= 0 && s.model.selectedItemIdx <= 30 && !s.model.modalVisible {
 		var area = areas[s.model.selectedItemIdx]
 		imd := imdraw.New(nil)
 		imd.Color = common.Yellow
