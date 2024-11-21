@@ -84,6 +84,8 @@ var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, F
 var EnemyDeathsSoundEffects = []SoundEffect{FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2, FxDeathEnemy3, FxDeathEnemy4,
 	FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7}
 
+var GrenadeSoundEffects = []SoundEffect{FxGrenade1, FxGrenade2, FxGrenade3}
+
 var Music = []Song{BackgroundSong1, BackgroundSong2, BackgroundSong3, BackgroundSong4, BackgroundSong5, BackgroundSong6,
 	BackgroundSong7, BackgroundSong8, BackgroundSong9, BackgroundSong10, BackgroundSong11, BackgroundSong12,
 	BackgroundSong13, GameOverSong, GameWonSong, ThemeSong}
@@ -93,6 +95,10 @@ var RicochetSoundEffects = []SoundEffect{FxRicochet0, FxRicochet1, FxRicochet2, 
 
 func RandomEnemyDeathSoundEffect() SoundEffect {
 	return EnemyDeathsSoundEffects[rand.Intn(len(EnemyDeathsSoundEffects))]
+}
+
+func RandomGrenadeSoundEffect() SoundEffect {
+	return GrenadeSoundEffects[rand.Intn(len(GrenadeSoundEffects))]
 }
 
 func RandomRicochetSoundEffect() SoundEffect {

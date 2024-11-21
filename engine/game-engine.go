@@ -225,23 +225,32 @@ func (ge *GameEngine) updateExplosives(elapsedTimeInMs int64, obstacles []assets
 }
 
 func (ge *GameEngine) detonateExplosive(explosive *Explosive) {
-	ge.explosions = append(ge.explosions, NewExplosion(explosive.FiredByPlayer, explosive.FiredByPlayerIdx, explosive))
-	ge.stereo.PlayFx(assets.FxGrenade1)
+	ge.explosions = append(ge.explosions, NewExplosion(explosive.firedByPlayer, explosive.playerIdx, explosive))
+	ge.stereo.PlayFx(assets.RandomGrenadeSoundEffect())
 }
 
 func (ge *GameEngine) updateBullets(elapsedTimeInMs int64, obstacles []assets.Obstacle) {
 	for i := len(ge.bullets) - 1; i >= 0; i-- {
-		var reachedRange = ge.bullets[i].Move(elapsedTimeInMs)
+		var bullet = ge.bullets[i]
+		var reachedRange = bullet.Move(elapsedTimeInMs)
 		var hitObstacle = false
 		for _, obstacle := range obstacles {
-			if !hitObstacle && obstacle.StopsBullets && (nil != obstacle.Intersection(ge.bullets[i].Position())) {
+			if !hitObstacle && obstacle.StopsBullets && (nil != obstacle.Intersection(bullet.Position())) {
 				hitObstacle = true
 			}
 		}
 		if reachedRange || hitObstacle {
+			if bullet.explodes {
+				ge.detonateBullet(bullet)
+			}
 			ge.removeBullet(i)
 		}
 	}
+}
+
+func (ge *GameEngine) detonateBullet(bullet *Bullet) {
+	ge.explosions = append(ge.explosions, NewExplosion(bullet.firedByPlayer, bullet.playerIdx, bullet))
+	ge.stereo.PlayFx(assets.RandomGrenadeSoundEffect())
 }
 
 // scrollObjectsOnScreen updates the positions of all elements on screen with the given scrollOffset.
@@ -503,7 +512,7 @@ func (ge *GameEngine) checkEnemyForCollisionWithExplosive(enemy *characters.Acti
 		if explosive.ExplodesOnContact && nil != explosive.Position().Intersection(enemy.Position()) {
 			ge.detonateExplosive(explosive)
 			ge.removeExplosive(i)
-			return true, explosive.FiredByPlayerIdx
+			return true, explosive.playerIdx
 		}
 	}
 	return false, -1

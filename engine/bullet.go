@@ -7,10 +7,12 @@ import (
 )
 
 const (
-	BulletHeight     = 5
-	BulletWidth      = 5
-	EnemyBulletSpeed = 1.4
-	EnemyBulletRange = 500
+	BulletHeight          = 5
+	BulletWidth           = 5
+	EnemyBulletSpeed      = 1.4
+	EnemyBulletRange      = 500
+	ExplosiveBulletHeight = 8
+	ExplosiveBulletWidth  = 8
 )
 
 // Bullet is a projectile that has been fired by a player or enemy.
@@ -18,6 +20,7 @@ type Bullet struct {
 	distanceMoved    float64
 	distanceToTarget float64
 	direction        geometry.Direction
+	explodes         bool
 	firedByPlayer    bool
 	playerIdx        int
 	position         *geometry.Rectangle
@@ -31,17 +34,27 @@ func NewBulletFiredByPlayer(
 	direction geometry.Direction,
 	selectedWeapon *assets.Weapon,
 ) (result *Bullet) {
+
+	var bulletHeight float64 = BulletHeight
+	var bulletWidth float64 = BulletWidth
+	var ammo = assets.AmmunitionCrate.GetByName(selectedWeapon.Ammo)
+	if ammo.Explosive {
+		bulletHeight = ExplosiveBulletHeight
+		bulletWidth = ExplosiveBulletWidth
+	}
+
 	result = &Bullet{
 		distanceMoved:    0,
 		distanceToTarget: float64(selectedWeapon.BulletRange),
 		direction:        direction,
+		explodes:         ammo.Explosive,
 		firedByPlayer:    true,
 		playerIdx:        playerIdx,
 		position: &geometry.Rectangle{
 			X:      playerPosition.X,
 			Y:      playerPosition.Y,
-			Width:  BulletWidth,
-			Height: BulletHeight,
+			Width:  bulletHeight,
+			Height: bulletWidth,
 		},
 		speed: selectedWeapon.BulletSpeed,
 	}
