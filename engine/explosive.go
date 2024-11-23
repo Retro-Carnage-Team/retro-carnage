@@ -7,10 +7,9 @@ import (
 )
 
 const (
-	GrenadeHeight = 17
-	GrenadeWidth  = 32
-	RpgHeight     = 10
-	RpgWidth      = 10
+	grenadeHeight          = 17
+	grenadeWidth           = 32
+	grenadeTypeUsedByEnemy = "M67"
 )
 
 // Something that can explode
@@ -44,7 +43,7 @@ func NewExplosiveGrenadeByEnemy(
 	enemyPosition *geometry.Rectangle,
 	direction geometry.Direction,
 ) *Explosive {
-	return newExplosiveGrenade(enemyPosition, direction, assets.GrenadeCrate.GetByName("DM41"))
+	return newExplosiveGrenade(enemyPosition, direction, assets.GrenadeCrate.GetByName(grenadeTypeUsedByEnemy))
 }
 
 // Move updates the position of the explosive on screen.
@@ -52,9 +51,7 @@ func NewExplosiveGrenadeByEnemy(
 func (e *Explosive) Move(elapsedTimeInMs int64) bool {
 	if e.distanceMoved < e.distanceToTarget {
 		var maxDistance = e.distanceToTarget - e.distanceMoved
-		e.distanceMoved += geometry.CalculateMovementDistance(elapsedTimeInMs, e.speed, &maxDistance)
-		e.position.X += geometry.CalculateMovementX(elapsedTimeInMs, e.direction, e.speed, &maxDistance)
-		e.position.Y += geometry.CalculateMovementY(elapsedTimeInMs, e.direction, e.speed, &maxDistance)
+		e.distanceMoved += geometry.Move(e.position, elapsedTimeInMs, e.direction, 0, e.speed, &maxDistance)
 	}
 	return e.distanceMoved >= e.distanceToTarget
 }
@@ -66,9 +63,9 @@ func (e *Explosive) Position() *geometry.Rectangle {
 func grenadeOffsets(direction geometry.Direction) geometry.Point {
 	switch {
 	case direction == geometry.Up:
-		return geometry.Point{X: 45, Y: -GrenadeHeight}
+		return geometry.Point{X: 45, Y: -grenadeHeight}
 	case direction == geometry.UpRight:
-		return geometry.Point{X: 45, Y: -GrenadeHeight}
+		return geometry.Point{X: 45, Y: -grenadeHeight}
 	case direction == geometry.Right:
 		return geometry.Point{X: 90, Y: 100}
 	case direction == geometry.DownRight:
@@ -76,11 +73,11 @@ func grenadeOffsets(direction geometry.Direction) geometry.Point {
 	case direction == geometry.Down:
 		return geometry.Point{X: 45, Y: 200}
 	case direction == geometry.DownLeft:
-		return geometry.Point{X: -GrenadeWidth, Y: 100}
+		return geometry.Point{X: -grenadeWidth, Y: 100}
 	case direction == geometry.Left:
-		return geometry.Point{X: -GrenadeWidth, Y: 100}
+		return geometry.Point{X: -grenadeWidth, Y: 100}
 	case direction == geometry.UpLeft:
-		return geometry.Point{X: 0, Y: -GrenadeHeight}
+		return geometry.Point{X: 0, Y: -grenadeHeight}
 	default:
 		logging.Error.Fatalf("no grenadeOffset for direction: %s", direction.Name)
 		return geometry.Point{}
@@ -94,17 +91,12 @@ func newExplosiveGrenade(
 ) *Explosive {
 	var offset = grenadeOffsets(direction)
 	return &Explosive{
-		distanceMoved:    0,
-		distanceToTarget: float64(selectedWeapon.MovementDistance),
-		direction:        direction,
-		firedByPlayer:    false,
-		playerIdx:        -1,
-		position: &geometry.Rectangle{
-			X:      attackerPosition.X + offset.X,
-			Y:      attackerPosition.Y + offset.Y,
-			Width:  GrenadeWidth,
-			Height: GrenadeHeight,
-		},
+		distanceMoved:     0,
+		distanceToTarget:  float64(selectedWeapon.MovementDistance),
+		direction:         direction,
+		firedByPlayer:     false,
+		playerIdx:         -1,
+		position:          &geometry.Rectangle{X: attackerPosition.X + offset.X, Y: attackerPosition.Y + offset.Y, Width: grenadeWidth, Height: grenadeHeight},
 		speed:             selectedWeapon.MovementSpeed,
 		SpriteSupplier:    &GrenadeSpriteSupplier{},
 		ExplodesOnContact: false,

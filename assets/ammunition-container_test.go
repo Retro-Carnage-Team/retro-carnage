@@ -14,10 +14,16 @@ func init() {
 }
 
 func TestAmmunitionCrateGetAll(t *testing.T) {
-	assert.Equal(t, 10, len(AmmunitionCrate.GetAll()))
+	// Attention: This test depends on elements specified in the retro-carnage-assets repository.
+	assert.Equal(t, 13, len(AmmunitionCrate.GetAll()))
 }
 
 func TestAmmunitionCrateGetByNameValid(t *testing.T) {
 	ammo := AmmunitionCrate.GetByName("9 x 19 mm")
 	assert.Equal(t, "9 x 19 mm", ammo.Name)
+}
+
+func TestAmmunitionScattering(t *testing.T) {
+	ammo := AmmunitionCrate.GetByName("18.2 x 76 mm")
+	assert.Equal(t, true, ammo.Scattering)
 }

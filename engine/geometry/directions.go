@@ -1,5 +1,7 @@
 package geometry
 
+import "math"
+
 // Direction specifies one of eight possible directions (cardinal and diagonal).
 type Direction struct {
 	Name  string
@@ -46,4 +48,36 @@ func GetDirectionByName(name string) *Direction {
 
 func (d Direction) IsDiagonal() bool {
 	return d == UpRight || d == UpLeft || d == DownLeft || d == DownRight
+}
+
+// ToAngle returns the angle of the direction in radians
+func (d Direction) ToAngle() float64 {
+	switch d {
+	case Right:
+		// 0 * math.Pi / 4
+		return 0
+	case UpRight:
+		// 1 * math.Pi / 4
+		return math.Pi / 4
+	case Up:
+		// 2 * math.Pi / 4
+		return math.Pi / 2
+	case UpLeft:
+		// 3 * math.Pi / 4
+		return 3 * math.Pi / 4
+	case Left:
+		// 4 * math.Pi / 4
+		return math.Pi
+	case DownLeft:
+		// 5 * math.Pi / 4
+		return 5 * math.Pi / 4
+	case Down:
+		// 6 * math.Pi / 4
+		return 3 * math.Pi / 2
+	case DownRight:
+		// 7 * math.Pi / 4
+		return 7 * math.Pi / 4
+	default:
+		return 0
+	}
 }

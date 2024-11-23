@@ -4,71 +4,41 @@ import (
 	"math"
 )
 
-func CalculateMovementDistance(elapsedTimeInMs int64, distancePerMs float64, maxDistance *float64) float64 {
+// CalculateMovementVector returns a Point that holds the movement specified by duration, speed (distancePerMs) and
+// direction.
+func CalculateMovementVector(duration int64, direction Direction, distancePerMs float64) Point {
+	var distance = calculateDistance(duration, distancePerMs, nil)
+	return Point{
+		X: calculateDistanceX(distance, direction, 0),
+		Y: calculateDistanceY(distance, direction, 0),
+	}
+}
+
+// Move modified a given position so that it reflects a movement specified by the duration and direction of the movement.
+// The direction can be modified by a deviation in degrees - e.g. for shotgun shots that scatter on screen.
+// Speed is given as distancePerMs. You can specify a maximum distance - e.g. for bullets which have a restricted range.
+// Returns the distance of movement.
+func Move(position *Rectangle, duration int64, direction Direction, deviationInRadians float64, distancePerMs float64, maxDistance *float64) float64 {
+	var distance = calculateDistance(duration, distancePerMs, maxDistance)
+	position.X += calculateDistanceX(distance, direction, deviationInRadians)
+	position.Y += calculateDistanceY(distance, direction, deviationInRadians)
+	return math.Round(distance)
+}
+
+func calculateDistance(elapsedTimeInMs int64, distancePerMs float64, maxDistance *float64) float64 {
 	var distance = float64(elapsedTimeInMs) * distancePerMs
 	if nil != maxDistance {
-		return math.Min(*maxDistance, distance)
+		distance = math.Min(*maxDistance, distance)
 	}
 	return distance
 }
 
-type movementCallbackFunc func(direction Direction, distance float64, diagonalDistance float64) float64
-
-func calculateMovement(elapsedTimeInMs int64, direction Direction, distancePerMs float64, maxDistance *float64, fn movementCallbackFunc) float64 {
-	var distanceExact = CalculateMovementDistance(elapsedTimeInMs, distancePerMs, maxDistance)
-	var diagonalDistance = math.Round(math.Sqrt((distanceExact * distanceExact) / 2))
-	var distance = math.Round(distanceExact)
-	return fn(direction, distance, diagonalDistance)
+func calculateDistanceX(distance float64, direction Direction, deviationInRadians float64) float64 {
+	var angle = direction.ToAngle() + deviationInRadians
+	return math.Cos(angle) * distance
 }
 
-func CalculateMovementX(elapsedTimeInMs int64, direction Direction, distancePerMs float64, maxDistance *float64) float64 {
-	var fn movementCallbackFunc = func(direction Direction, distance float64, diagonalDistance float64) float64 {
-		switch direction {
-		case Up:
-			return 0.0
-		case UpRight:
-			return diagonalDistance
-		case Right:
-			return distance
-		case DownRight:
-			return diagonalDistance
-		case Down:
-			return 0
-		case DownLeft:
-			return diagonalDistance * -1
-		case Left:
-			return distance * -1
-		case UpLeft:
-			return diagonalDistance * -1
-		default:
-			return 0
-		}
-	}
-	return calculateMovement(elapsedTimeInMs, direction, distancePerMs, maxDistance, fn)
-}
-
-func CalculateMovementY(elapsedTimeInMs int64, direction Direction, distancePerMs float64, maxDistance *float64) float64 {
-	var fn movementCallbackFunc = func(direction Direction, distance float64, diagonalDistance float64) float64 {
-		switch direction {
-		case Up:
-			return distance * -1
-		case UpRight:
-			return diagonalDistance * -1
-		case Right:
-			return 0
-		case DownRight:
-			return diagonalDistance
-		case Down:
-			return distance
-		case DownLeft:
-			return diagonalDistance
-		case Left:
-			return 0
-		case UpLeft:
-			return diagonalDistance * -1
-		default:
-			return 0
-		}
-	}
-	return calculateMovement(elapsedTimeInMs, direction, distancePerMs, maxDistance, fn)
+func calculateDistanceY(distance float64, direction Direction, deviationInRadians float64) float64 {
+	var angle = direction.ToAngle() + deviationInRadians
+	return -1 * math.Sin(angle) * distance
 }
