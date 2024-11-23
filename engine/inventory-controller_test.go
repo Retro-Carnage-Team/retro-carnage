@@ -10,7 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const rc_assets = "RC-ASSETS"
+const (
+	rc_assets = "RC-ASSETS"
+	PISTOL    = "P30"
+)
 
 func init() {
 	assets.AmmunitionCrate.InitializeInTest(filepath.Join(os.Getenv(rc_assets), "items/ammunition/"))
@@ -72,21 +75,20 @@ func TestBuyingAGrenadeShouldDecreaseAmountOfCashAvailable(t *testing.T) {
 func TestWeaponsShouldBeProcurableWhenUserHasCashAndDidNotBuyItBefore(t *testing.T) {
 	var inventoryController = NewInventoryController(0)
 	characters.Players[0].Reset()
-	const weapon = "P7"
-	assert.False(t, inventoryController.WeaponInInventory(weapon))
-	assert.True(t, inventoryController.WeaponProcurable(weapon))
-	inventoryController.BuyWeapon(weapon)
-	assert.True(t, inventoryController.WeaponInInventory(weapon))
-	assert.False(t, inventoryController.WeaponProcurable(weapon))
+
+	assert.False(t, inventoryController.WeaponInInventory(PISTOL))
+	assert.True(t, inventoryController.WeaponProcurable(PISTOL))
+	inventoryController.BuyWeapon(PISTOL)
+	assert.True(t, inventoryController.WeaponInInventory(PISTOL))
+	assert.False(t, inventoryController.WeaponProcurable(PISTOL))
 }
 
 func TestBuyingWeaponsShouldDecreaseAmountOfCashAvailable(t *testing.T) {
 	var inventoryController = NewInventoryController(0)
 	var player = characters.Players[0]
 	player.Reset()
-	const weapon = "P7"
 	var oldCash = player.Cash()
-	inventoryController.BuyWeapon(weapon)
+	inventoryController.BuyWeapon(PISTOL)
 	assert.Less(t, player.Cash(), oldCash)
 }
 
