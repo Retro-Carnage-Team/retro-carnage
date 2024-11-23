@@ -36,10 +36,7 @@ func UpdatePlayerMovement(
 }
 
 func getMovementVector(elapsedTimeInMs int64, direction geometry.Direction) geometry.Point {
-	return geometry.Point{
-		X: geometry.CalculateMovementX(elapsedTimeInMs, direction, PlayerMovementPerMs, nil),
-		Y: geometry.CalculateMovementY(elapsedTimeInMs, direction, PlayerMovementPerMs, nil),
-	}
+	return geometry.CalculateMovementVector(elapsedTimeInMs, direction, PlayerMovementPerMs)
 }
 
 func limitPlayerMovementToScreenArea(position *geometry.Rectangle) *geometry.Rectangle {

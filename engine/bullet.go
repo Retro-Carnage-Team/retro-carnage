@@ -90,9 +90,7 @@ func NewBulletFiredByEnemy(enemy *characters.ActiveEnemy) (result *Bullet) {
 func (b *Bullet) Move(elapsedTimeInMs int64) bool {
 	if b.distanceMoved < b.distanceToTarget {
 		var maxDistance = b.distanceToTarget - b.distanceMoved
-		b.distanceMoved += geometry.CalculateMovementDistance(elapsedTimeInMs, b.speed, &maxDistance)
-		b.position.X += geometry.CalculateMovementX(elapsedTimeInMs, b.direction, b.speed, &maxDistance)
-		b.position.Y += geometry.CalculateMovementY(elapsedTimeInMs, b.direction, b.speed, &maxDistance)
+		b.distanceMoved += geometry.Move(b.position, elapsedTimeInMs, b.direction, 0, b.speed, &maxDistance)
 	}
 	return b.distanceMoved >= b.distanceToTarget
 }

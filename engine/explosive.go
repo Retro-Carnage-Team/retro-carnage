@@ -52,9 +52,7 @@ func NewExplosiveGrenadeByEnemy(
 func (e *Explosive) Move(elapsedTimeInMs int64) bool {
 	if e.distanceMoved < e.distanceToTarget {
 		var maxDistance = e.distanceToTarget - e.distanceMoved
-		e.distanceMoved += geometry.CalculateMovementDistance(elapsedTimeInMs, e.speed, &maxDistance)
-		e.position.X += geometry.CalculateMovementX(elapsedTimeInMs, e.direction, e.speed, &maxDistance)
-		e.position.Y += geometry.CalculateMovementY(elapsedTimeInMs, e.direction, e.speed, &maxDistance)
+		e.distanceMoved += geometry.Move(e.position, elapsedTimeInMs, e.direction, 0, e.speed, &maxDistance)
 	}
 	return e.distanceMoved >= e.distanceToTarget
 }
