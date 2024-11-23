@@ -22,3 +22,8 @@ func TestAmmunitionCrateGetByNameValid(t *testing.T) {
 	ammo := AmmunitionCrate.GetByName("9 x 19 mm")
 	assert.Equal(t, "9 x 19 mm", ammo.Name)
 }
+
+func TestAmmunitionScattering(t *testing.T) {
+	ammo := AmmunitionCrate.GetByName("18.2 x 76 mm")
+	assert.Equal(t, true, ammo.Scattering)
+}

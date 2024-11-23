@@ -40,5 +40,5 @@ func calculateDistanceX(distance float64, direction Direction, deviationInRadian
 
 func calculateDistanceY(distance float64, direction Direction, deviationInRadians float64) float64 {
 	var angle = direction.ToAngle() + deviationInRadians
-	return math.Sin(angle) * distance
+	return -1 * math.Sin(angle) * distance
 }

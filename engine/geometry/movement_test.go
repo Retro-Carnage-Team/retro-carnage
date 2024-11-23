@@ -16,19 +16,19 @@ func TestCalculateMovementVectorRight(t *testing.T) {
 func TestCalculateMovementVectorDown(t *testing.T) {
 	var result = CalculateMovementVector(100, Down, 1.5)
 	assert.InDelta(t, 0.0, result.X, 0.00001)
-	assert.InDelta(t, -150.0, result.Y, 0.00001)
+	assert.InDelta(t, 150.0, result.Y, 0.00001)
 }
 
 func TestCalculateMovementVectorDownLeft(t *testing.T) {
 	var result = CalculateMovementVector(100, DownLeft, 1.5)
 	assert.InDelta(t, -106.066017, result.X, 0.00001)
-	assert.InDelta(t, -106.066017, result.Y, 0.00001)
+	assert.InDelta(t, 106.066017, result.Y, 0.00001)
 }
 
 func TestCalculateMovementVectorDownRight(t *testing.T) {
 	var result = CalculateMovementVector(100, DownRight, 1.5)
 	assert.InDelta(t, 106.066017, result.X, 0.00001)
-	assert.InDelta(t, -106.066017, result.Y, 0.00001)
+	assert.InDelta(t, 106.066017, result.Y, 0.00001)
 }
 
 func TestMoveLeftNoDeviationNoMax(t *testing.T) {
@@ -48,7 +48,7 @@ func TestMoveLeftWithDeviationNoMax(t *testing.T) {
 	Move(&rect, 100, Left, math.Pi/4.0, 1.5, nil)
 
 	assert.InDelta(t, -106.066017, rect.X, 0.00001)
-	assert.InDelta(t, -106.066017, rect.Y, 0.00001)
+	assert.InDelta(t, 106.066017, rect.Y, 0.00001)
 
 	assert.InDelta(t, 1, rect.Width, 0.00001)
 	assert.InDelta(t, 1, rect.Height, 0.00001)
@@ -62,7 +62,7 @@ func TestMoveLeftWithDeviationAndMax(t *testing.T) {
 	Move(&rect, 100, Left, math.Pi/4.0, 1.5, &max)
 
 	assert.InDelta(t, -106.066017/2, rect.X, 0.00001)
-	assert.InDelta(t, -106.066017/2, rect.Y, 0.00001)
+	assert.InDelta(t, 106.066017/2, rect.Y, 0.00001)
 
 	assert.InDelta(t, 1, rect.Width, 0.00001)
 	assert.InDelta(t, 1, rect.Height, 0.00001)

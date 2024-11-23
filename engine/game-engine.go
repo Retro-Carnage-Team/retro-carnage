@@ -367,8 +367,8 @@ func (ge *GameEngine) handlePlayerWeaponTriggerHeld(
 func (ge *GameEngine) fireBullet(player *characters.Player, behavior *characters.PlayerBehavior) {
 	var weapon = player.SelectedWeapon()
 	var position = ge.playerPositions[player.Index()]
-	var bullet = NewBulletFiredByPlayer(player.Index(), position, behavior.Direction, weapon)
-	ge.bullets = append(ge.bullets, bullet)
+	var bullets = NewBulletFiredByPlayer(player.Index(), position, behavior.Direction, weapon)
+	ge.bullets = append(ge.bullets, bullets...)
 	behavior.TimeSinceLastBullet = 0
 }
 
