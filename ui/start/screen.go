@@ -1,6 +1,3 @@
-// Package start contains the second screen shown to the user. The screen displays a copyright notice and the dedication
-// lines. Once the screen has been loaded, the theme song gets buffered. The next screen gets displayed when the theme
-// song has been fully buffered.
 package start
 
 import (
@@ -8,13 +5,32 @@ import (
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
+	pixel "github.com/Retro-Carnage-Team/pixel2"
 	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
+	"github.com/Retro-Carnage-Team/pixel2/ext/text"
 )
 
-const (
-	txtFirstLine  = "RETRO CARNAGE"
-	txtSecondLine = "(C) 2020 THOMAS WERNER"
-	txtThirdLine  = "Dedicated to Emma & Jonathan Werner"
+var (
+	lines = []string{
+		"The year is 2030.",
+		"",
+		"Technological progress enables humanity to live in peace and harmony.",
+		"A failed AI experiment gives rise to Crulgon, an all-powerful robot ruler.",
+		"He quickly gains control of a vast army of highly developed war robots.",
+		"With an iron grip and unstoppable precision, his robot army overruns the",
+		"world, destroying entire cities and erecting robot fortresses. Humans are",
+		"enslaved and the freedom of the Earth is at stake.",
+		"",
+		"It seems that resistance to this mechanical nightmare is in vain. But deep",
+		"in the underground bunkers of a last human fortress, a spark of hope is growing.",
+		"You and your team of fearless resistance fighters are the only chance to",
+		"liberate the Earth.",
+		"",
+		"You must face Crulgon and his army, destroy his machines and free humanity",
+		"from the clutches of the mechanical tyrant.",
+		"",
+		"Your battle begins now.",
+	}
 )
 
 type Screen struct {
@@ -29,8 +45,8 @@ func NewScreen() *Screen {
 	return &result
 }
 
-func (s *Screen) SetInputController(_ input.InputController) {
-	// This screen doesn't handle user input. Therefor no implementation required.
+func (s *Screen) SetInputController(i input.InputController) {
+	s.controller.setInputController(i)
 }
 
 func (s *Screen) SetScreenChangeCallback(callback common.ScreenChangeCallback) {
@@ -59,8 +75,19 @@ func (s *Screen) String() string {
 }
 
 func (s *Screen) drawScreen() {
-	var renderer = fonts.TextRenderer{Window: s.window}
-	renderer.DrawLineToScreenCenter(txtFirstLine, 4, common.Red)
-	renderer.DrawLineToScreenCenter(txtSecondLine, 2.8, common.Yellow)
-	renderer.DrawLineToScreenCenter(txtThirdLine, 0, common.Green)
+	var smallFontSize = fonts.DefaultFontSize() - 8
+	var atlas = fonts.SizeToFontAtlas[smallFontSize]
+	txt := text.New(pixel.V(50, 500), atlas)
+	txt.Color = common.White
+
+	for _, s := range lines {
+		txt.WriteString(s)
+		txt.WriteRune('\n')
+	}
+
+	var posX = (s.window.Bounds().W() - txt.Bounds().W()) / 2
+	var posY = (s.window.Bounds().H() - txt.Bounds().H()) / 2
+	txt.Orig = pixel.V(posX, posY)
+
+	txt.Draw(s.window, pixel.IM)
 }
