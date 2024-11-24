@@ -3,21 +3,18 @@
 package loading
 
 import (
-	"fmt"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/input"
 	"retro-carnage/ui/common"
 	"retro-carnage/ui/common/fonts"
 
-	pixel "github.com/Retro-Carnage-Team/pixel2"
 	"github.com/Retro-Carnage-Team/pixel2/backends/opengl"
-	"github.com/Retro-Carnage-Team/pixel2/ext/text"
-	"golang.org/x/image/colornames"
 )
 
 const (
 	txtFirstLine  = "RETRO CARNAGE"
-	txtSecondLine = "IS LOADING"
+	txtSecondLine = "(C) 2020 THOMAS WERNER"
+	txtThirdLine  = "Dedicated to Emma & Jonathan Werner"
 )
 
 type Screen struct {
@@ -63,22 +60,8 @@ func (s *Screen) String() string {
 }
 
 func (s *Screen) drawScreen() {
-	var firstLineDimensions = s.textDimensions[txtFirstLine]
-	var firstLineX = (s.window.Bounds().Max.X - firstLineDimensions.X) / 2
-	var firstLineY = (s.window.Bounds().Max.Y-(3*firstLineDimensions.Y))/2 + firstLineDimensions.Y*1.5
-
-	var secondLineDimensions = s.textDimensions[txtSecondLine]
-	var secondLineX = (s.window.Bounds().Max.X - secondLineDimensions.X) / 2
-	var secondLineY = (s.window.Bounds().Max.Y - (3 * secondLineDimensions.Y)) / 2
-
-	var defaultFontSize = fonts.DefaultFontSize()
-	var txt = text.New(pixel.V(firstLineX, firstLineY), fonts.SizeToFontAtlas[defaultFontSize])
-	_, _ = fmt.Fprint(txt, txtFirstLine)
-	txt.Color = colornames.Red
-	txt.Draw(s.window, pixel.IM)
-
-	txt = text.New(pixel.V(secondLineX, secondLineY), fonts.SizeToFontAtlas[defaultFontSize])
-	_, _ = fmt.Fprint(txt, txtSecondLine)
-	txt.Color = colornames.Red
-	txt.Draw(s.window, pixel.IM)
+	var renderer = fonts.TextRenderer{Window: s.window}
+	renderer.DrawLineToScreenCenter(txtFirstLine, 4, common.Red)
+	renderer.DrawLineToScreenCenter(txtSecondLine, 2.8, common.Yellow)
+	renderer.DrawLineToScreenCenter(txtThirdLine, 0, common.Green)
 }

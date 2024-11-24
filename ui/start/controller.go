@@ -3,13 +3,15 @@ package start
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
+	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
 )
 
-const MIN_SCREEN_DURATION = 1_000
+const MIN_SCREEN_DURATION = 7_500
 
 type controller struct {
+	inputController      input.InputController
 	screenChangeRequired common.ScreenChangeCallback
 	screenChangeTimeout  int64
 	stereo               *assets.Stereo
@@ -27,6 +29,10 @@ func newController() *controller {
 	return &controller
 }
 
+func (c *controller) setInputController(i input.InputController) {
+	c.inputController = i
+}
+
 func (c *controller) setScreenChangeCallback(callback common.ScreenChangeCallback) {
 	c.screenChangeRequired = callback
 }
@@ -36,9 +42,6 @@ func (c *controller) update(elapsedTimeInMs int64) {
 
 	if !c.themeLoaded {
 		c.themeLoaded = c.stereo.IsSongBuffered(assets.ThemeSong)
-		if c.themeLoaded {
-			c.stereo.PlaySong(assets.ThemeSong)
-		}
 	}
 
 	if c.themeLoaded {
@@ -46,8 +49,12 @@ func (c *controller) update(elapsedTimeInMs int64) {
 			logging.Error.Fatalf("No ScreenChangeCallback set in start.controller")
 		}
 
-		if c.screenChangeTimeout > MIN_SCREEN_DURATION {
+		var uiEventState = c.inputController.GetUiEventStateCombined()
+		if (nil != uiEventState && uiEventState.PressedButton) || c.screenChangeTimeout > MIN_SCREEN_DURATION {
 			c.screenChangeRequired(common.Title)
+			if c.themeLoaded {
+				c.stereo.PlaySong(assets.ThemeSong)
+			}
 		}
 	}
 }

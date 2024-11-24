@@ -3,7 +3,7 @@ package fonts
 import (
 	"fmt"
 	"image/color"
-	"io/ioutil"
+	"io"
 	"os"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/logging"
@@ -73,7 +73,7 @@ func loadTTF(path string) (*truetype.Font, error) {
 	}
 	defer file.Close()
 
-	bytes, err := ioutil.ReadAll(file)
+	bytes, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
