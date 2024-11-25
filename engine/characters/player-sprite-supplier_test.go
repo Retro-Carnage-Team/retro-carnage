@@ -23,7 +23,7 @@ func TestSpriteForIdlePlayer(t *testing.T) {
 	var behavior = NewPlayerBehavior(player)
 	behavior.Moving = false
 	behavior.Direction = geometry.Right
-	var spriteSupplier = NewPlayerSpriteSupplier(player)
+	var spriteSupplier = NewPlayerSpriteSupplier(player, 200)
 	var result = spriteSupplier.Sprite(0, behavior)
 
 	assert.Equal(t, "images/player-1/idle/right.png", result.Source)
@@ -37,7 +37,7 @@ func TestSprite0IsReturnedWhenPlayerStartsToMove(t *testing.T) {
 	var behavior = NewPlayerBehavior(player)
 	behavior.Moving = false
 	behavior.Direction = geometry.Right
-	var spriteSupplier = NewPlayerSpriteSupplier(player)
+	var spriteSupplier = NewPlayerSpriteSupplier(player, 200)
 	spriteSupplier.Sprite(0, behavior)
 
 	behavior.Moving = true
@@ -56,7 +56,7 @@ func TestDoesNotPlayTheAnimationWithoutDelay(t *testing.T) {
 	var behavior = NewPlayerBehavior(player)
 	behavior.Moving = true
 	behavior.Direction = geometry.Up
-	var spriteSupplier = NewPlayerSpriteSupplier(player)
+	var spriteSupplier = NewPlayerSpriteSupplier(player, 200)
 
 	var first = spriteSupplier.Sprite(0, behavior)
 	assert.Equal(t, PLAYER1_UP1, first.Source)
@@ -72,7 +72,7 @@ func TestPlaysAnimationInLoop(t *testing.T) {
 	var behavior = NewPlayerBehavior(player)
 	behavior.Moving = true
 	behavior.Direction = geometry.Up
-	var spriteSupplier = NewPlayerSpriteSupplier(player)
+	var spriteSupplier = NewPlayerSpriteSupplier(player, 200)
 
 	var spriteCount = len(spriteSupplier.skin.MovementByDirection[geometry.Up.Name])
 	assert.True(t, 0 < spriteCount)
@@ -97,7 +97,7 @@ func TestInvincibilityAnimationWithoutMovement(t *testing.T) {
 	behavior.Moving = false
 	behavior.StartInvincibility()
 
-	var spriteSupplier = NewPlayerSpriteSupplier(player)
+	var spriteSupplier = NewPlayerSpriteSupplier(player, 200)
 
 	// Invicibility lasts for 1.500 ms
 	AssertNextSpriteIsNil(0, spriteSupplier, behavior, t)
