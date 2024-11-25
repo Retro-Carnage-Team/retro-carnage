@@ -6,7 +6,7 @@ require (
 	github.com/Retro-Carnage-Team/pixel2 v0.0.2
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gopxl/beep v1.4.1
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	golang.org/x/image v0.22.0
 )
 
