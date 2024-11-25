@@ -9,35 +9,35 @@ import (
 const (
 	DurationOfPlayerDeathAnimationFrame = 75 // in ms
 	DurationOfPlayerMovementFrame       = 75 // in ms
-	// TODO: This is the wrong place to have this value hard coded
-	durationOfInvincibilityState = 200 // in ms
 )
 
 // PlayerSpriteSupplier returns sprites for the current state of the Player
 type PlayerSpriteSupplier struct {
-	directionOfLastSprite   geometry.Direction
-	durationSinceLastSprite int64
-	durationSinceLastToggle int64
-	invincibilityToggle     bool
-	lastIndex               int
-	lastSprite              *graphics.SpriteWithOffset
-	skin                    *Skin
-	wasDying                bool
-	wasMoving               bool
+	directionOfLastSprite        geometry.Direction
+	durationOfInvincibilityState int64
+	durationSinceLastSprite      int64
+	durationSinceLastToggle      int64
+	invincibilityToggle          bool
+	lastIndex                    int
+	lastSprite                   *graphics.SpriteWithOffset
+	skin                         *Skin
+	wasDying                     bool
+	wasMoving                    bool
 }
 
 // NewPlayerSpriteSupplier creates and initializes a new PlayerSpriteSupplier for a given Player.
-func NewPlayerSpriteSupplier(player *Player) *PlayerSpriteSupplier {
+func NewPlayerSpriteSupplier(player *Player, durationOfInvincibilityState int64) *PlayerSpriteSupplier {
 	return &PlayerSpriteSupplier{
-		directionOfLastSprite:   geometry.Up,
-		durationSinceLastSprite: 0,
-		durationSinceLastToggle: 0,
-		invincibilityToggle:     true,
-		lastIndex:               0,
-		lastSprite:              nil,
-		skin:                    playerSkins[player.index],
-		wasDying:                false,
-		wasMoving:               false,
+		directionOfLastSprite:        geometry.Up,
+		durationOfInvincibilityState: durationOfInvincibilityState,
+		durationSinceLastSprite:      0,
+		durationSinceLastToggle:      0,
+		invincibilityToggle:          true,
+		lastIndex:                    0,
+		lastSprite:                   nil,
+		skin:                         playerSkins[player.index],
+		wasDying:                     false,
+		wasMoving:                    false,
 	}
 }
 
@@ -46,7 +46,7 @@ func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, behavior *PlayerB
 	var nextSprite = pss.sprite(elapsedTimeInMs, behavior)
 	if behavior.Invincible {
 		pss.durationSinceLastToggle += elapsedTimeInMs
-		if pss.durationSinceLastToggle >= durationOfInvincibilityState {
+		if pss.durationSinceLastToggle >= pss.durationOfInvincibilityState {
 			pss.durationSinceLastToggle = 0
 			pss.invincibilityToggle = !pss.invincibilityToggle
 		}

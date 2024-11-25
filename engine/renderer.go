@@ -26,7 +26,7 @@ type Renderer struct {
 func NewRenderer(engine *GameEngine, window *opengl.Window) *Renderer {
 	var playerSpriteSuppliers = make([]*characters.PlayerSpriteSupplier, 0)
 	for _, player := range characters.PlayerController.ConfiguredPlayers() {
-		playerSpriteSuppliers = append(playerSpriteSuppliers, characters.NewPlayerSpriteSupplier(player))
+		playerSpriteSuppliers = append(playerSpriteSuppliers, characters.NewPlayerSpriteSupplier(player, DurationOfInvincibilityState))
 	}
 
 	var result = &Renderer{engine: engine, playerSpriteSuppliers: playerSpriteSuppliers, window: window}
