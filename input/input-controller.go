@@ -98,7 +98,10 @@ func (c *InputController) getControllerDeviceStateCombined() *InputDeviceState {
 		result = device.State().Combine(result)
 	}
 
-	var keyboard = &keyboard{window: c.window}
+	var keyboard = &keyboard{
+		configuration: config.NewKeyboardConfiguration(),
+		window:        c.window,
+	}
 	return keyboard.State().Combine(result)
 }
 

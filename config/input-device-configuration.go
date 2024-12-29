@@ -88,7 +88,7 @@ func NewKeyboardConfiguration() InputDeviceConfiguration {
 			InputRight: int(pixel.KeyRight),
 		},
 		DeviceName:          DeviceNameKeyboard,
-		InputFire:           int(pixel.KeyLeftControl),
+		InputFire:           int(pixel.KeySpace),
 		InputNextWeapon:     int(pixel.KeyA),
 		InputPreviousWeapon: int(pixel.KeyZ),
 	}
