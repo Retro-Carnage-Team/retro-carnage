@@ -30,7 +30,7 @@ func (et EnemyTypeSpawnArea) CanMove() bool {
 }
 
 func (et EnemyTypeSpawnArea) CanSpawn() bool {
-	return false
+	return true
 }
 
 func (et EnemyTypeSpawnArea) GetPointsForKill() int {
@@ -54,7 +54,7 @@ func (et EnemyTypeSpawnArea) IsStoppingBullets() bool {
 }
 
 func (et EnemyTypeSpawnArea) IsVisible() bool {
-	return true
+	return false
 }
 
 func (et EnemyTypeSpawnArea) OnActivation(e *ActiveEnemy) {

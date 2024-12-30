@@ -18,7 +18,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.22.x'
+        go-version: '1.23.x'
     - name: Make the script files executable
       run: chmod +x ./upload-release.sh
     - name: Install dev libraries
@@ -56,7 +56,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.22.x'
+        go-version: '1.23.x'
     - name: Install dependencies
       run: go get -d .
     - name: Build
