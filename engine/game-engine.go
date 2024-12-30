@@ -7,6 +7,7 @@ import (
 	"retro-carnage/engine/graphics"
 	"retro-carnage/input"
 	"retro-carnage/logging"
+	"slices"
 )
 
 // GameEngine is the heart and soul of the game screen - the class that contains the actual game logic.
@@ -149,41 +150,62 @@ func (ge *GameEngine) updatePlayerPositionWithMovement(elapsedTimeInMs int64, ob
 }
 
 func (ge *GameEngine) updateEnemies(elapsedTimeInMs int64) {
-	var spawnedEnemies = make([]*characters.ActiveEnemy, 0)
-	ge.updateEnemiesDeaths(elapsedTimeInMs)
+	ge.updateEnemyDeaths(elapsedTimeInMs)
+	ge.updateEnemySpawns(elapsedTimeInMs)
+
 	for _, enemy := range ge.enemies {
 		if enemy.Dying {
 			continue
 		}
 
 		enemy.Move(elapsedTimeInMs)
+		ge.updateEnemyActions(enemy, elapsedTimeInMs)
+	}
+}
 
-		var enemyAction = enemy.Action(elapsedTimeInMs)
-		if nil != enemyAction {
-			if assets.EnemyActionBullet == *enemyAction {
-				ge.bullets = append(ge.bullets, NewBulletFiredByEnemy(enemy))
-			} else if assets.EnemyActionGrenade == *enemyAction {
-				var grenade = NewExplosiveGrenadeByEnemy(enemy.Position(), *enemy.ViewingDirection)
-				ge.explosives = append(ge.explosives, grenade)
-			} else {
-				logging.Warning.Printf("Invalid enemy configuration. Unknown action %s", *enemyAction)
-			}
+// updateEnemyActions gets the actions for the given enemy and executes them.
+func (ge *GameEngine) updateEnemyActions(enemy *characters.ActiveEnemy, elapsedTimeInMs int64) {
+	var enemyAction = enemy.Action(elapsedTimeInMs)
+	if nil != enemyAction {
+		if assets.EnemyActionBullet == *enemyAction {
+			ge.bullets = append(ge.bullets, NewBulletFiredByEnemy(enemy))
+		} else if assets.EnemyActionGrenade == *enemyAction {
+			var grenade = NewExplosiveGrenadeByEnemy(enemy.Position(), *enemy.ViewingDirection)
+			ge.explosives = append(ge.explosives, grenade)
+		} else {
+			logging.Warning.Printf("Invalid enemy configuration. Unknown action %s", *enemyAction)
 		}
+	}
+}
 
-		var spawnedEnemy = enemy.Spawn(elapsedTimeInMs)
+// updateEnemySpawns spawns new enemies when spawn areas are ready.
+// Depleted spawn areas will be removed.
+func (ge *GameEngine) updateEnemySpawns(elapsedTimeInMs int64) {
+	var spawnedEnemies = make([]*characters.ActiveEnemy, 0)
+	var depletedSpawnAreas = make([]int, 0)
+
+	for idx, enemy := range ge.enemies {
+		spawnedEnemy, depleted := enemy.Spawn(elapsedTimeInMs)
 		if nil != spawnedEnemy {
 			spawnedEnemies = append(spawnedEnemies, spawnedEnemy)
+		}
+		if depleted {
+			depletedSpawnAreas = append(depletedSpawnAreas, idx)
 		}
 	}
 
 	if len(spawnedEnemies) > 0 {
 		ge.enemies = append(ge.enemies, spawnedEnemies...)
 	}
+
+	for _, enemyIndex := range slices.Backward(depletedSpawnAreas) {
+		ge.removeEnemy(enemyIndex)
+	}
 }
 
-// updateEnemiesDeaths updates the dying animation countdown of all active enemies.
+// updateEnemyDeaths updates the dying animation countdown of all active enemies.
 // Removes those enemies that have a remaining count down <= 0.
-func (ge *GameEngine) updateEnemiesDeaths(elapsedTimeInMs int64) {
+func (ge *GameEngine) updateEnemyDeaths(elapsedTimeInMs int64) {
 	for i := len(ge.enemies) - 1; i >= 0; i-- {
 		if ge.enemies[i].Dying {
 			ge.enemies[i].DyingAnimationCountDown -= elapsedTimeInMs

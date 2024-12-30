@@ -16,6 +16,8 @@ type ActiveEnemy struct {
 	Movements               []EnemyMovement
 	position                geometry.Rectangle
 	Skin                    EnemySkin
+	SpawnCapacity           int
+	spawnCounter            int
 	SpawnDelays             []int64
 	SpriteSupplier          EnemySpriteSupplier
 	Type                    EnemyType
@@ -83,22 +85,29 @@ func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 }
 
 // Spawn returns a new enemy instance - when it's time to do so.
-// It updates the internal state of this ActiveEnemy based on the timeElapsedInMs. If it's time for this ActiveEnemy to
-// spawn a new enemy, the corresponding enemy will be returned. If the ActiveEnemy shouldn't perform any/ action, nil
-// will be returned.
-func (e *ActiveEnemy) Spawn(timeElapsedInMs int64) *ActiveEnemy {
+//
+// It updates the internal state of this ActiveEnemy based on the timeElapsedInMs. If it's time for this SpawnArea to
+// spawn a new enemy, the corresponding enemy will be returned. If the SpawnArea shouldn't spawn right now, nil will be
+// returned.
+// Second part of the result is a bool that indicates whether or not this Spawn Area is depleted. In that case it can be
+// removed from game state.
+func (e *ActiveEnemy) Spawn(timeElapsedInMs int64) (*ActiveEnemy, bool) {
 	if !e.Type.CanSpawn() || len(e.SpawnDelays) == 0 {
-		return nil
+		return nil, false
+	}
+
+	if (e.SpawnCapacity != 0) && (e.spawnCounter == e.SpawnCapacity) {
+		return nil, true
 	}
 
 	e.currentActionElapsed += timeElapsedInMs
-	if e.currentActionElapsed > e.SpawnDelays[e.currentActionIdx] {
+	if e.currentActionElapsed >= e.SpawnDelays[e.currentActionIdx] {
 		e.currentActionElapsed = 0
 		e.currentActionIdx = (e.currentActionIdx + 1) % len(e.SpawnDelays)
-		return e.spawnEnemyInstance()
+		return e.spawnEnemyInstance(), (e.SpawnCapacity != 0) && (e.spawnCounter == e.SpawnCapacity)
 	}
 
-	return nil
+	return nil, false
 }
 
 // Position returns the current position of this enemy.
@@ -121,6 +130,7 @@ func (e *ActiveEnemy) removeFirstMovement() {
 }
 
 func (e *ActiveEnemy) spawnEnemyInstance() *ActiveEnemy {
+	e.spawnCounter += 1
 	var result = &ActiveEnemy{
 		Actions:                 e.Actions,
 		Dying:                   false,
