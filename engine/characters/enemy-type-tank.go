@@ -56,7 +56,7 @@ func (et EnemyTypeTank) IsStoppingBullets() bool {
 }
 
 func (et EnemyTypeTank) IsVisible() bool {
-	return false
+	return true
 }
 
 func (et EnemyTypeTank) OnActivation(e *ActiveEnemy) {

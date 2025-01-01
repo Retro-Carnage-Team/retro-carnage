@@ -56,7 +56,7 @@ func (et EnemyTypePerson) IsStoppingBullets() bool {
 }
 
 func (et EnemyTypePerson) IsVisible() bool {
-	return false
+	return true
 }
 
 func (et EnemyTypePerson) OnActivation(e *ActiveEnemy) {
