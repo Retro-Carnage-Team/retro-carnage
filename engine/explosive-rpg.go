@@ -4,6 +4,7 @@ import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/graphics"
 )
 
 const (
@@ -33,7 +34,7 @@ func NewExplosiveRpg(
 			playerIdx:         playerIdx,
 			position:          &geometry.Rectangle{X: playerPosition.X + offset.X, Y: playerPosition.Y + offset.Y, Width: rpgWidth, Height: rpgHeight},
 			speed:             selectedRpg.BulletSpeed,
-			SpriteSupplier:    NewRpgSpriteSupplier(direction),
+			SpriteSupplier:    graphics.NewRpgSpriteSupplier(direction),
 			ExplodesOnContact: true,
 		},
 	}
