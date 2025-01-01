@@ -53,7 +53,7 @@ func (et EnemyTypeGunTurret) IsStoppingBullets() bool {
 }
 
 func (et EnemyTypeGunTurret) IsVisible() bool {
-	return false
+	return true
 }
 
 func (et EnemyTypeGunTurret) OnActivation(e *ActiveEnemy) {

@@ -69,7 +69,7 @@ func (r *Renderer) drawBackground() {
 // Do not call from outside this class.
 func (r *Renderer) drawEnemies(elapsedTimeInMs int64) {
 	for _, enemy := range r.engine.enemies {
-		if enemy.Type.IsVisible() {
+		if !enemy.Type.IsVisible() {
 			continue
 		}
 

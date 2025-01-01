@@ -53,7 +53,7 @@ func (et EnemyTypeLandmine) IsStoppingBullets() bool {
 }
 
 func (et EnemyTypeLandmine) IsVisible() bool {
-	return false
+	return true
 }
 
 func (et EnemyTypeLandmine) OnActivation(e *ActiveEnemy) {
