@@ -3,6 +3,7 @@ package engine
 import (
 	"math"
 	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/graphics"
 )
 
 const (
@@ -46,7 +47,7 @@ func (e *Explosion) CreatesMark() bool {
 func (e *Explosion) CreateMark() *BurnMark {
 	var result = BurnMark{
 		position:       e.position.Clone(),
-		SpriteSupplier: &BurnMarkSpriteSupplier{},
+		SpriteSupplier: &graphics.BurnMarkSpriteSupplier{},
 	}
 	e.hasMark = true
 	return &result
