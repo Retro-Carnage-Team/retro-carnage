@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	durationOfExplosion = DurationOfExplosionFrame * NumberOfExplosionSprites
+	durationOfExplosion = graphics.DurationOfExplosionFrame * graphics.NumberOfExplosionSprites
 )
 
 // Explosion is a representation of an Explosive that did it's job.
@@ -17,7 +17,7 @@ type Explosion struct {
 	hasMark        bool
 	playerIdx      int
 	position       *geometry.Rectangle
-	SpriteSupplier *ExplosionSpriteSupplier
+	SpriteSupplier *graphics.ExplosionSpriteSupplier
 }
 
 // NewExplosion creates and initializes a new Explosion.
@@ -33,7 +33,7 @@ func NewExplosion(causedByPlayer bool, playerIdx int, explosive geometry.Positio
 			Width:  ExplosionHitRectWidth,
 			Height: ExplosionHitRectHeight,
 		},
-		SpriteSupplier: &ExplosionSpriteSupplier{},
+		SpriteSupplier: &graphics.ExplosionSpriteSupplier{},
 	}
 }
 
