@@ -3,6 +3,7 @@ package engine
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/graphics"
 	"retro-carnage/logging"
 )
 
@@ -21,7 +22,7 @@ type Explosive struct {
 	playerIdx         int
 	position          *geometry.Rectangle
 	speed             float64
-	SpriteSupplier    ExplosiveSpriteSupplier
+	SpriteSupplier    graphics.ExplosiveSpriteSupplier
 	ExplodesOnContact bool
 }
 
@@ -98,7 +99,7 @@ func newExplosiveGrenade(
 		playerIdx:         -1,
 		position:          &geometry.Rectangle{X: attackerPosition.X + offset.X, Y: attackerPosition.Y + offset.Y, Width: grenadeWidth, Height: grenadeHeight},
 		speed:             selectedWeapon.MovementSpeed,
-		SpriteSupplier:    &GrenadeSpriteSupplier{},
+		SpriteSupplier:    &graphics.GrenadeSpriteSupplier{},
 		ExplodesOnContact: false,
 	}
 }
