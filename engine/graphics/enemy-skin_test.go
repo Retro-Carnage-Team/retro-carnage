@@ -1,4 +1,4 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/engine/geometry"

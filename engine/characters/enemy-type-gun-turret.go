@@ -1,9 +1,11 @@
 package characters
 
+import "retro-carnage/engine/graphics"
+
 type EnemyTypeGunTurret struct{}
 
-func (et EnemyTypeGunTurret) BuildEnemySpriteSupplier(enemy *ActiveEnemy) EnemySpriteSupplier {
-	return NewGunTurretSpriteSupplier(*enemy.ViewingDirection, ActiveEnemyVisuals{activeEnemy: enemy})
+func (et EnemyTypeGunTurret) BuildEnemySpriteSupplier(enemy *ActiveEnemy) graphics.EnemySpriteSupplier {
+	return graphics.NewGunTurretSpriteSupplier(*enemy.ViewingDirection, ActiveEnemyVisuals{activeEnemy: enemy})
 }
 
 func (et EnemyTypeGunTurret) CanDieWhenHitByBullet() bool {

@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/graphics"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,7 +17,7 @@ const PLAYER1_UP1 = "images/player-1/up/1.png"
 const PLAYER1_UP2 = "images/player-1/up/2.png"
 
 func TestSpriteForIdlePlayer(t *testing.T) {
-	InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
+	graphics.InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
 
 	var player = Players[1]
 	player.Reset()
@@ -30,7 +31,7 @@ func TestSpriteForIdlePlayer(t *testing.T) {
 }
 
 func TestSprite0IsReturnedWhenPlayerStartsToMove(t *testing.T) {
-	InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
+	graphics.InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
 
 	var player = Players[1]
 	player.Reset()
@@ -49,7 +50,7 @@ func TestSprite0IsReturnedWhenPlayerStartsToMove(t *testing.T) {
 }
 
 func TestDoesNotPlayTheAnimationWithoutDelay(t *testing.T) {
-	InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
+	graphics.InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
 
 	var player = Players[1]
 	player.Reset()
@@ -87,7 +88,7 @@ func TestPlaysAnimationInLoop(t *testing.T) {
 }
 
 func TestInvincibilityAnimationWithoutMovement(t *testing.T) {
-	InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
+	graphics.InitPlayerSkins(filepath.Join(os.Getenv(RC_ASSETS), "skins"))
 
 	var player = Players[1]
 	player.Reset()

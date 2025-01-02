@@ -20,7 +20,7 @@ type PlayerSpriteSupplier struct {
 	invincibilityToggle          bool
 	lastIndex                    int
 	lastSprite                   *graphics.SpriteWithOffset
-	skin                         *Skin
+	skin                         *graphics.Skin
 	wasDying                     bool
 	wasMoving                    bool
 }
@@ -35,7 +35,7 @@ func NewPlayerSpriteSupplier(player *Player, durationOfInvincibilityState int64)
 		invincibilityToggle:          true,
 		lastIndex:                    0,
 		lastSprite:                   nil,
-		skin:                         playerSkins[player.index],
+		skin:                         graphics.PlayerSkins[player.index],
 		wasDying:                     false,
 		wasMoving:                    false,
 	}

@@ -1,18 +1,17 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/graphics"
 )
 
 type TankSpriteSupplier struct {
 	durationSinceLastSprite int64
 	direction               geometry.Direction
-	enemy                   ActiveEnemyVisuals
+	enemy                   EnemyVisuals
 	lastIndex               int
 }
 
-func NewTankSpriteSupplier(enemy ActiveEnemyVisuals) *TankSpriteSupplier {
+func NewTankSpriteSupplier(enemy EnemyVisuals) *TankSpriteSupplier {
 	return &TankSpriteSupplier{
 		direction:               *enemy.ViewingDirection(),
 		durationSinceLastSprite: 0,
@@ -25,7 +24,7 @@ func (supplier *TankSpriteSupplier) GetDurationOfEnemyDeathAnimation() int64 {
 	return 9223372036854775807
 }
 
-func (supplier *TankSpriteSupplier) Sprite(msSinceLastSprite int64) *graphics.SpriteWithOffset {
+func (supplier *TankSpriteSupplier) Sprite(msSinceLastSprite int64) *SpriteWithOffset {
 	if supplier.enemy.Dying() {
 		var deathAnimationFrames = enemySkins[supplier.enemy.Skin()].DeathAnimation[supplier.direction.Name]
 		supplier.durationSinceLastSprite += msSinceLastSprite

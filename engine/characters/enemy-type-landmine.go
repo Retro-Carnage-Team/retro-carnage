@@ -1,9 +1,11 @@
 package characters
 
+import "retro-carnage/engine/graphics"
+
 type EnemyTypeLandmine struct{}
 
-func (et EnemyTypeLandmine) BuildEnemySpriteSupplier(enemy *ActiveEnemy) EnemySpriteSupplier {
-	return &LandmineSpriteSupplier{}
+func (et EnemyTypeLandmine) BuildEnemySpriteSupplier(enemy *ActiveEnemy) graphics.EnemySpriteSupplier {
+	return &graphics.LandmineSpriteSupplier{}
 }
 
 func (et EnemyTypeLandmine) CanDieWhenHitByBullet() bool {

@@ -2,7 +2,7 @@ package start
 
 import (
 	"retro-carnage/assets"
-	"retro-carnage/engine/characters"
+	"retro-carnage/engine/graphics"
 	"retro-carnage/input"
 	"retro-carnage/logging"
 	"retro-carnage/ui/common"
@@ -60,8 +60,8 @@ func (c *controller) update(elapsedTimeInMs int64) {
 }
 
 func (c *controller) init() {
-	go characters.InitEnemySkins("skins")
-	go characters.InitPlayerSkins("skins")
+	go graphics.InitEnemySkins("skins")
+	go graphics.InitPlayerSkins("skins")
 
 	go c.stereo.BufferSong(assets.ThemeSong)
 	go c.stereo.BufferSong(assets.GameOverSong)

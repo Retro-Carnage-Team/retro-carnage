@@ -2,7 +2,6 @@ package engine
 
 import (
 	"retro-carnage/assets"
-	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
 	"retro-carnage/engine/graphics"
 )
@@ -24,7 +23,7 @@ func NewExplosiveRpg(
 	direction geometry.Direction,
 	selectedRpg *assets.Weapon,
 ) *ExplosiveRpg {
-	var offset = characters.SkinForPlayer(playerIdx).BulletOffsets[direction.Name]
+	var offset = graphics.SkinForPlayer(playerIdx).BulletOffsets[direction.Name]
 	return &ExplosiveRpg{
 		Explosive: &Explosive{
 			distanceMoved:     0,

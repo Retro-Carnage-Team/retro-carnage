@@ -1,16 +1,15 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/graphics"
 	"retro-carnage/logging"
 )
 
 type GunTurretSpriteSupplier struct {
-	enemy ActiveEnemyVisuals
+	enemy EnemyVisuals
 }
 
-func NewGunTurretSpriteSupplier(direction geometry.Direction, enemy ActiveEnemyVisuals) *GunTurretSpriteSupplier {
+func NewGunTurretSpriteSupplier(direction geometry.Direction, enemy EnemyVisuals) *GunTurretSpriteSupplier {
 	if !direction.IsDiagonal() {
 		logging.Error.Fatalf("Gun turrets can have diagonal directions, only. Found %s instead", direction.Name)
 	}
@@ -22,7 +21,7 @@ func (supplier *GunTurretSpriteSupplier) GetDurationOfEnemyDeathAnimation() int6
 	return 1
 }
 
-func (supplier *GunTurretSpriteSupplier) Sprite(msSinceLastSprite int64) *graphics.SpriteWithOffset {
+func (supplier *GunTurretSpriteSupplier) Sprite(msSinceLastSprite int64) *SpriteWithOffset {
 	var skinFrame = enemySkins[supplier.enemy.Skin()].Idle[supplier.enemy.ViewingDirection().Name]
 	return skinFrame.ToSpriteWithOffset()
 }

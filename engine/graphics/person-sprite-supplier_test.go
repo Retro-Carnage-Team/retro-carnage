@@ -1,4 +1,4 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/engine/geometry"
@@ -13,7 +13,7 @@ const ENEMY0_DOWN2 = "images/enemy-0/down/2.png"
 func TestPersonReturnsSpritesOfAnimation(t *testing.T) {
 	InitEnemySkins("testdata/skins")
 	var person = buildEnemyPerson()
-	var spriteSupplier = NewPersonSpriteSupplier(ActiveEnemyVisuals{activeEnemy: &person})
+	var spriteSupplier = NewPersonSpriteSupplier(&person)
 	assert.NotNil(t, spriteSupplier)
 
 	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(1).Source)
@@ -24,31 +24,39 @@ func TestPersonReturnsSpritesOfAnimation(t *testing.T) {
 func TestPersonReturnsCorrectSpritesForDeathStateTransition(t *testing.T) {
 	InitEnemySkins("testdata/skins")
 	var person = buildEnemyPerson()
-	var spriteSupplier = NewPersonSpriteSupplier(ActiveEnemyVisuals{activeEnemy: &person})
+	var spriteSupplier = NewPersonSpriteSupplier(&person)
 
 	assert.NotNil(t, spriteSupplier)
 	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(1).Source)
 
-	person.Die()
+	person.dying = true
 
 	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(2).Source)
 	assert.Equal(t, ENEMY0_DOWN1, spriteSupplier.Sprite(durationOfEnemyDeathAnimationFrame).Source)
 }
 
-func buildEnemyPerson() ActiveEnemy {
-	var result = ActiveEnemy{
-		Dying:                   false,
-		DyingAnimationCountDown: 0,
-		Movements:               []EnemyMovement{},
-		position: geometry.Rectangle{
-			X:      100,
-			Y:      100,
-			Width:  50,
-			Height: 50,
-		},
-		Skin:             WoodlandWithSMG,
-		Type:             EnemyTypePerson{},
-		ViewingDirection: &geometry.Down,
+func buildEnemyPerson() mockPerson {
+	return mockPerson{
+		dying:            false,
+		skin:             WoodlandWithSMG,
+		viewingDirection: geometry.Down,
 	}
-	return result
+}
+
+type mockPerson struct {
+	dying            bool
+	skin             EnemySkin
+	viewingDirection geometry.Direction
+}
+
+func (mp *mockPerson) Dying() bool {
+	return mp.dying
+}
+
+func (mp *mockPerson) Skin() EnemySkin {
+	return mp.skin
+}
+
+func (mp *mockPerson) ViewingDirection() *geometry.Direction {
+	return &mp.viewingDirection
 }

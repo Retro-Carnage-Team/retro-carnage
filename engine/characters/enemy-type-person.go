@@ -2,12 +2,13 @@ package characters
 
 import (
 	"retro-carnage/assets"
+	"retro-carnage/engine/graphics"
 )
 
 type EnemyTypePerson struct{}
 
-func (et EnemyTypePerson) BuildEnemySpriteSupplier(enemy *ActiveEnemy) EnemySpriteSupplier {
-	return NewPersonSpriteSupplier(ActiveEnemyVisuals{activeEnemy: enemy})
+func (et EnemyTypePerson) BuildEnemySpriteSupplier(enemy *ActiveEnemy) graphics.EnemySpriteSupplier {
+	return graphics.NewPersonSpriteSupplier(ActiveEnemyVisuals{activeEnemy: enemy})
 }
 
 func (et EnemyTypePerson) CanDieWhenHitByBullet() bool {

@@ -1,8 +1,7 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/graphics"
 
 	pixel "github.com/Retro-Carnage-Team/pixel2"
 )
@@ -14,13 +13,13 @@ const (
 
 type PersonSpriteSupplier struct {
 	durationSinceLastSprite int64
-	enemy                   ActiveEnemyVisuals
+	enemy                   EnemyVisuals
 	lastDirection           geometry.Direction
 	lastIndex               int
 	wasDying                bool
 }
 
-func NewPersonSpriteSupplier(enemy ActiveEnemyVisuals) *PersonSpriteSupplier {
+func NewPersonSpriteSupplier(enemy EnemyVisuals) *PersonSpriteSupplier {
 	return &PersonSpriteSupplier{
 		enemy:                   enemy,
 		lastDirection:           *enemy.ViewingDirection(),
@@ -33,7 +32,7 @@ func (supplier *PersonSpriteSupplier) GetDurationOfEnemyDeathAnimation() int64 {
 	return durationOfEnemyDeathAnimationFrame * 10
 }
 
-func (supplier *PersonSpriteSupplier) Sprite(msSinceLastSprite int64) *graphics.SpriteWithOffset {
+func (supplier *PersonSpriteSupplier) Sprite(msSinceLastSprite int64) *SpriteWithOffset {
 	var skinFrames = enemySkins[supplier.enemy.Skin()].MovementByDirection[supplier.enemy.ViewingDirection().Name]
 	if supplier.enemy.Dying() {
 		if !supplier.wasDying {

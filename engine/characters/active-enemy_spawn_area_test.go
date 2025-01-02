@@ -3,6 +3,7 @@ package characters
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/graphics"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -52,7 +53,7 @@ func createSpawnArea(capacity int) *ActiveEnemy {
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               make([]EnemyMovement, 0),
-		Skin:                    WoodlandWithSMG,
+		Skin:                    graphics.WoodlandWithSMG,
 		SpawnCapacity:           capacity,
 		SpawnDelays:             append(make([]int64, 0), spawn_delay),
 		SpriteSupplier:          nil,

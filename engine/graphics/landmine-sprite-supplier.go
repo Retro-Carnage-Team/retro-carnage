@@ -1,9 +1,8 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/graphics"
 )
 
 type LandmineSpriteSupplier struct{}
@@ -14,10 +13,10 @@ func (supplier *LandmineSpriteSupplier) GetDurationOfEnemyDeathAnimation() int64
 	return 1
 }
 
-func (supplier *LandmineSpriteSupplier) Sprite(int64) *graphics.SpriteWithOffset {
+func (supplier *LandmineSpriteSupplier) Sprite(int64) *SpriteWithOffset {
 	var sprite = assets.SpriteRepository.Get(landmineSprite)
 	var offset = geometry.Point{X: 0, Y: 0}
-	return &graphics.SpriteWithOffset{
+	return &SpriteWithOffset{
 		Offset: offset,
 		Source: landmineSprite,
 		Sprite: sprite,

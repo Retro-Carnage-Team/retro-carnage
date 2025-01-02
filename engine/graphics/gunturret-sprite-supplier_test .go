@@ -1,4 +1,4 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/engine/geometry"
@@ -9,25 +9,11 @@ import (
 
 func TestGunTurretReturnsStaticSprite(t *testing.T) {
 	InitEnemySkins("testdata/skins")
-	var gunTurret = ActiveEnemy{
-		Dying:                   false,
-		DyingAnimationCountDown: 0,
-		Movements:               []EnemyMovement{},
-		position: geometry.Rectangle{
-			X:      100,
-			Y:      100,
-			Width:  50,
-			Height: 50,
-		},
-		Skin:             "",
-		SpriteSupplier:   nil,
-		Type:             EnemyTypeGunTurret{},
-		ViewingDirection: &geometry.UpRight,
+	var gunTurret = mockGunTurret{
+		viewingDirection: geometry.UpRight,
 	}
 
-	var spriteSupplier = GunTurretSpriteSupplier{
-		enemy: ActiveEnemyVisuals{activeEnemy: &gunTurret},
-	}
+	var spriteSupplier = GunTurretSpriteSupplier{enemy: &gunTurret}
 	assert.NotNil(t, spriteSupplier)
 
 	var sprite = spriteSupplier.Sprite(0)
@@ -37,4 +23,21 @@ func TestGunTurretReturnsStaticSprite(t *testing.T) {
 	sprite = spriteSupplier.Sprite(durationOfEnemyMovementFrame * 1.4)
 	assert.NotNil(t, sprite)
 	assert.Equal(t, "images/environment/gun-turret-up_right.png", sprite.Source)
+}
+
+type mockGunTurret struct {
+	skin             string
+	viewingDirection geometry.Direction
+}
+
+func (mgt *mockGunTurret) Dying() bool {
+	return false
+}
+
+func (mgt *mockGunTurret) Skin() EnemySkin {
+	return GunTurretSkin
+}
+
+func (mgt *mockGunTurret) ViewingDirection() *geometry.Direction {
+	return &mgt.viewingDirection
 }

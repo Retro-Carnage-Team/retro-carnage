@@ -4,6 +4,7 @@ import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/characters"
 	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/graphics"
 
 	"math/rand"
 )
@@ -67,7 +68,7 @@ func NewBulletFiredByPlayer(
 			position:                    &geometry.Rectangle{X: playerPosition.X, Y: playerPosition.Y, Width: bulletHeight, Height: bulletWidth},
 			speed:                       selectedWeapon.BulletSpeed,
 		}
-		var offsetValue = characters.SkinForPlayer(playerIdx).BulletOffsets[direction.Name]
+		var offsetValue = graphics.SkinForPlayer(playerIdx).BulletOffsets[direction.Name]
 		bullet.position.Add(&offsetValue)
 		result = append(result, bullet)
 	}
@@ -106,7 +107,7 @@ func NewBulletFiredByEnemy(enemy *characters.ActiveEnemy) (result *Bullet) {
 		speed:                       EnemyBulletSpeed,
 	}
 
-	var skin = characters.GetEnemySkin(enemy.Skin)
+	var skin = graphics.GetEnemySkin(enemy.Skin)
 	var offsetValue = skin.BulletOffsets[enemy.ViewingDirection.Name]
 	result.position.Add(&offsetValue)
 	return result
