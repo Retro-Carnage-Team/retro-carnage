@@ -14,7 +14,7 @@ func (supplier *LandmineSpriteSupplier) GetDurationOfEnemyDeathAnimation() int64
 	return 1
 }
 
-func (supplier *LandmineSpriteSupplier) Sprite(int64, ActiveEnemy) *graphics.SpriteWithOffset {
+func (supplier *LandmineSpriteSupplier) Sprite(int64) *graphics.SpriteWithOffset {
 	var sprite = assets.SpriteRepository.Get(landmineSprite)
 	var offset = geometry.Point{X: 0, Y: 0}
 	return &graphics.SpriteWithOffset{

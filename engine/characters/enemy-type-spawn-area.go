@@ -1,10 +1,8 @@
 package characters
 
-import "retro-carnage/engine/geometry"
-
 type EnemyTypeSpawnArea struct{}
 
-func (et EnemyTypeSpawnArea) BuildEnemySpriteSupplier(viewingDirection *geometry.Direction) EnemySpriteSupplier {
+func (et EnemyTypeSpawnArea) BuildEnemySpriteSupplier(enemy *ActiveEnemy) EnemySpriteSupplier {
 	// spawn areas are not visible
 	return nil
 }

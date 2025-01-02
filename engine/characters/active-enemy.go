@@ -65,7 +65,7 @@ func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 		var newViewingDirection = geometry.GetDirectionByName(currentMovement.Direction)
 		if newViewingDirection != nil && newViewingDirection.Name != e.ViewingDirection.Name {
 			e.ViewingDirection = newViewingDirection
-			e.SpriteSupplier = NewPersonSpriteSupplier(*newViewingDirection)
+			e.SpriteSupplier = NewPersonSpriteSupplier(ActiveEnemyVisuals{activeEnemy: e})
 		}
 
 		var duration = util.MinInt64(remaining, currentMovement.Duration-currentMovement.TimeElapsed)
@@ -141,6 +141,6 @@ func (e *ActiveEnemy) spawnEnemyInstance() *ActiveEnemy {
 		ViewingDirection:        e.ViewingDirection,
 	}
 	result.SetPosition(e.Position().Clone())
-	result.SpriteSupplier = NewPersonSpriteSupplier(*result.ViewingDirection)
+	result.SpriteSupplier = NewPersonSpriteSupplier(ActiveEnemyVisuals{activeEnemy: result})
 	return result
 }

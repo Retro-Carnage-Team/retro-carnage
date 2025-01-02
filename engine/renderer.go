@@ -73,7 +73,7 @@ func (r *Renderer) drawEnemies(elapsedTimeInMs int64) {
 			continue
 		}
 
-		var spriteWithOffset = enemy.SpriteSupplier.Sprite(elapsedTimeInMs, *enemy)
+		var spriteWithOffset = enemy.SpriteSupplier.Sprite(elapsedTimeInMs)
 		if nil != spriteWithOffset {
 			r.drawSpriteToCanvas(spriteWithOffset, enemy.Position())
 		} else {

@@ -8,13 +8,15 @@ import (
 type TankSpriteSupplier struct {
 	durationSinceLastSprite int64
 	direction               geometry.Direction
+	enemy                   ActiveEnemyVisuals
 	lastIndex               int
 }
 
-func NewTankSpriteSupplier(direction geometry.Direction) *TankSpriteSupplier {
+func NewTankSpriteSupplier(enemy ActiveEnemyVisuals) *TankSpriteSupplier {
 	return &TankSpriteSupplier{
-		direction:               direction,
+		direction:               *enemy.ViewingDirection(),
 		durationSinceLastSprite: 0,
+		enemy:                   enemy,
 		lastIndex:               0,
 	}
 }
@@ -23,9 +25,9 @@ func (supplier *TankSpriteSupplier) GetDurationOfEnemyDeathAnimation() int64 {
 	return 9223372036854775807
 }
 
-func (supplier *TankSpriteSupplier) Sprite(msSinceLastSprite int64, enemy ActiveEnemy) *graphics.SpriteWithOffset {
-	if enemy.Dying {
-		var deathAnimationFrames = enemySkins[enemy.Skin].DeathAnimation[supplier.direction.Name]
+func (supplier *TankSpriteSupplier) Sprite(msSinceLastSprite int64) *graphics.SpriteWithOffset {
+	if supplier.enemy.Dying() {
+		var deathAnimationFrames = enemySkins[supplier.enemy.Skin()].DeathAnimation[supplier.direction.Name]
 		supplier.durationSinceLastSprite += msSinceLastSprite
 
 		if supplier.durationSinceLastSprite > durationOfEnemyMovementFrame {
@@ -35,6 +37,6 @@ func (supplier *TankSpriteSupplier) Sprite(msSinceLastSprite int64, enemy Active
 		return deathAnimationFrames[supplier.lastIndex].ToSpriteWithOffset()
 	}
 
-	var skinFrames = enemySkins[enemy.Skin].MovementByDirection[supplier.direction.Name]
+	var skinFrames = enemySkins[supplier.enemy.Skin()].MovementByDirection[supplier.direction.Name]
 	return skinFrames[supplier.lastIndex].ToSpriteWithOffset()
 }

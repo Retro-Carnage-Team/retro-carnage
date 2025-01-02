@@ -1,10 +1,8 @@
 package characters
 
-import "retro-carnage/engine/geometry"
-
 type EnemyTypeLandmine struct{}
 
-func (et EnemyTypeLandmine) BuildEnemySpriteSupplier(viewingDirection *geometry.Direction) EnemySpriteSupplier {
+func (et EnemyTypeLandmine) BuildEnemySpriteSupplier(enemy *ActiveEnemy) EnemySpriteSupplier {
 	return &LandmineSpriteSupplier{}
 }
 
