@@ -47,7 +47,7 @@ func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
 // Die will kill this ActiveEnemy (and start it's dying animation)
 func (e *ActiveEnemy) Die() {
 	e.Dying = true
-	if !e.Type.IsVisible() {
+	if e.Type.IsVisible() {
 		e.DyingAnimationCountDown = e.SpriteSupplier.GetDurationOfEnemyDeathAnimation()
 	}
 	e.Type.OnDeath(e)

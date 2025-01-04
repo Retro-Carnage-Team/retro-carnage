@@ -27,7 +27,7 @@ func NewRenderer(engine *GameEngine, window *opengl.Window) *Renderer {
 	var playerSpriteSuppliers = make([]*graphics.PlayerSpriteSupplier, 0)
 	for _, player := range characters.PlayerController.ConfiguredPlayers() {
 		var behavior = engine.playerBehaviors[player.Index()]
-		var visualAdapter = characters.NewPlayerVisualsAdapter(*behavior)
+		var visualAdapter = characters.NewPlayerVisualsAdapter(behavior)
 		playerSpriteSuppliers = append(playerSpriteSuppliers, graphics.NewPlayerSpriteSupplier(visualAdapter, DurationOfInvincibilityState))
 	}
 
@@ -89,7 +89,7 @@ func (r *Renderer) drawEnemies(elapsedTimeInMs int64) {
 func (r *Renderer) drawPlayers(elapsedTimeInMs int64) {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = r.engine.playerBehaviors[player.Index()]
-		var visualAdapter = characters.NewPlayerVisualsAdapter(*behavior)
+		var visualAdapter = characters.NewPlayerVisualsAdapter(behavior)
 		var spriteWithOffset = r.playerSpriteSuppliers[player.Index()].Sprite(elapsedTimeInMs, visualAdapter)
 		// spriteWithOffset will be null a couple of times per second when player is invincible.
 		if nil != spriteWithOffset {

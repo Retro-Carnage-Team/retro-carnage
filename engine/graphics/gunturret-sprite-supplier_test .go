@@ -26,7 +26,6 @@ func TestGunTurretReturnsStaticSprite(t *testing.T) {
 }
 
 type mockGunTurret struct {
-	skin             string
 	viewingDirection geometry.Direction
 }
 

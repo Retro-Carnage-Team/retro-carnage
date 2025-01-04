@@ -3,10 +3,10 @@ package characters
 import "retro-carnage/engine/geometry"
 
 type PlayerVisualsAdapter struct {
-	playerBehavior PlayerBehavior
+	playerBehavior *PlayerBehavior
 }
 
-func NewPlayerVisualsAdapter(playerBehavior PlayerBehavior) *PlayerVisualsAdapter {
+func NewPlayerVisualsAdapter(playerBehavior *PlayerBehavior) *PlayerVisualsAdapter {
 	return &PlayerVisualsAdapter{
 		playerBehavior: playerBehavior,
 	}
