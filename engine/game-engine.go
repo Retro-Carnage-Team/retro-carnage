@@ -95,10 +95,7 @@ func (ge *GameEngine) UpdateGameState(elapsedTimeInMs int64) {
 	ge.scrollObjectsOnScreen(&scrollOffsets)
 
 	var activatedEnemies = ge.levelController.ActivatedEnemies()
-	for i := range activatedEnemies {
-		var enemy = &activatedEnemies[i]
-		ge.enemies = append(ge.enemies, enemy)
-	}
+	ge.enemies = append(ge.enemies, activatedEnemies...)
 }
 
 func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {
@@ -455,6 +452,10 @@ func (ge *GameEngine) checkPlayerForCollisionWithBullet(rect *geometry.Rectangle
 // Enemy will be killed if a deadly collision is detected.
 func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 	for _, enemy := range ge.enemies {
+		if enemy.Dying {
+			continue
+		}
+
 		var death = false
 		var killer = -1
 

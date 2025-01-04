@@ -65,7 +65,7 @@ func (et EnemyTypePerson) OnActivation(e *ActiveEnemy) {
 
 func (et EnemyTypePerson) OnDeath(e *ActiveEnemy) {
 	var randomDeathSound = assets.RandomEnemyDeathSoundEffect()
-	assets.NewStereo().StopFx(randomDeathSound)
+	assets.NewStereo().PlayFx(randomDeathSound)
 }
 
 func (et EnemyTypePerson) OnMovementStopped(e *ActiveEnemy) {
