@@ -1,8 +1,6 @@
-package engine
-
-import "retro-carnage/engine/graphics"
+package graphics
 
 // ExplosiveSpriteSupplier is an interface common to all explosives.
 type ExplosiveSpriteSupplier interface {
-	Sprite(int64) *graphics.SpriteWithOffset
+	Sprite(int64) *SpriteWithOffset
 }

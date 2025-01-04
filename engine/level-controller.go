@@ -314,13 +314,13 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy, adjustment *geometry.P
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
 		Movements:               lc.convertEnemyMovements(e.Movements),
-		Skin:                    characters.EnemySkin(e.Skin),
+		Skin:                    graphics.EnemySkin(e.Skin),
 		SpawnCapacity:           e.SpawnCapacity,
 		SpawnDelays:             e.SpawnDelays,
-		SpriteSupplier:          enemyType.BuildEnemySpriteSupplier(direction),
 		Type:                    enemyType,
 		ViewingDirection:        direction,
 	}
+	result.SpriteSupplier = enemyType.BuildEnemySpriteSupplier(&result)
 	result.SetPosition(e.Position.Clone().Add(adjustment))
 	enemyType.OnActivation(&result)
 	return result

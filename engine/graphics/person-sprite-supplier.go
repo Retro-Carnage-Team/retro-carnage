@@ -1,8 +1,7 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/graphics"
 
 	pixel "github.com/Retro-Carnage-Team/pixel2"
 )
@@ -14,14 +13,16 @@ const (
 
 type PersonSpriteSupplier struct {
 	durationSinceLastSprite int64
+	enemy                   EnemyVisuals
 	lastDirection           geometry.Direction
 	lastIndex               int
 	wasDying                bool
 }
 
-func NewPersonSpriteSupplier(direction geometry.Direction) *PersonSpriteSupplier {
+func NewPersonSpriteSupplier(enemy EnemyVisuals) *PersonSpriteSupplier {
 	return &PersonSpriteSupplier{
-		lastDirection:           direction,
+		enemy:                   enemy,
+		lastDirection:           *enemy.ViewingDirection(),
 		durationSinceLastSprite: 0,
 		lastIndex:               0,
 	}
@@ -31,9 +32,9 @@ func (supplier *PersonSpriteSupplier) GetDurationOfEnemyDeathAnimation() int64 {
 	return durationOfEnemyDeathAnimationFrame * 10
 }
 
-func (supplier *PersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy ActiveEnemy) *graphics.SpriteWithOffset {
-	var skinFrames = enemySkins[enemy.Skin].MovementByDirection[enemy.ViewingDirection.Name]
-	if enemy.Dying {
+func (supplier *PersonSpriteSupplier) Sprite(msSinceLastSprite int64) *SpriteWithOffset {
+	var skinFrames = enemySkins[supplier.enemy.Skin()].MovementByDirection[supplier.enemy.ViewingDirection().Name]
+	if supplier.enemy.Dying() {
 		if !supplier.wasDying {
 			supplier.durationSinceLastSprite = 0
 			supplier.wasDying = true
@@ -50,7 +51,7 @@ func (supplier *PersonSpriteSupplier) Sprite(msSinceLastSprite int64, enemy Acti
 		return result
 	} else {
 		supplier.wasDying = false
-		if supplier.lastDirection != *enemy.ViewingDirection {
+		if supplier.lastDirection != *supplier.enemy.ViewingDirection() {
 			supplier.durationSinceLastSprite = 0
 			supplier.lastIndex = 0
 			var skinFrame = skinFrames[supplier.lastIndex]

@@ -3,6 +3,7 @@ package characters
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
+	"retro-carnage/engine/graphics"
 	"retro-carnage/util"
 )
 
@@ -15,11 +16,11 @@ type ActiveEnemy struct {
 	DyingAnimationCountDown int64
 	Movements               []EnemyMovement
 	position                geometry.Rectangle
-	Skin                    EnemySkin
+	Skin                    graphics.EnemySkin
 	SpawnCapacity           int
 	spawnCounter            int
 	SpawnDelays             []int64
-	SpriteSupplier          EnemySpriteSupplier
+	SpriteSupplier          graphics.EnemySpriteSupplier
 	Type                    EnemyType
 	ViewingDirection        *geometry.Direction
 }
@@ -46,7 +47,7 @@ func (e *ActiveEnemy) Action(timeElapsedInMs int64) *string {
 // Die will kill this ActiveEnemy (and start it's dying animation)
 func (e *ActiveEnemy) Die() {
 	e.Dying = true
-	if !e.Type.IsVisible() {
+	if e.Type.IsVisible() {
 		e.DyingAnimationCountDown = e.SpriteSupplier.GetDurationOfEnemyDeathAnimation()
 	}
 	e.Type.OnDeath(e)
@@ -65,7 +66,7 @@ func (e *ActiveEnemy) Move(elapsedTimeInMs int64) {
 		var newViewingDirection = geometry.GetDirectionByName(currentMovement.Direction)
 		if newViewingDirection != nil && newViewingDirection.Name != e.ViewingDirection.Name {
 			e.ViewingDirection = newViewingDirection
-			e.SpriteSupplier = NewPersonSpriteSupplier(*newViewingDirection)
+			e.SpriteSupplier = graphics.NewPersonSpriteSupplier(ActiveEnemyVisuals{activeEnemy: e})
 		}
 
 		var duration = util.MinInt64(remaining, currentMovement.Duration-currentMovement.TimeElapsed)
@@ -141,6 +142,6 @@ func (e *ActiveEnemy) spawnEnemyInstance() *ActiveEnemy {
 		ViewingDirection:        e.ViewingDirection,
 	}
 	result.SetPosition(e.Position().Clone())
-	result.SpriteSupplier = NewPersonSpriteSupplier(*result.ViewingDirection)
+	result.SpriteSupplier = graphics.NewPersonSpriteSupplier(ActiveEnemyVisuals{activeEnemy: result})
 	return result
 }

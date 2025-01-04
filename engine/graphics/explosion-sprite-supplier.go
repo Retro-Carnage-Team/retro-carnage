@@ -1,10 +1,9 @@
-package engine
+package graphics
 
 import (
 	"fmt"
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/graphics"
 	"retro-carnage/util"
 )
 
@@ -20,12 +19,12 @@ type ExplosionSpriteSupplier struct {
 }
 
 // Sprite returns the correct SpriteWithOffset for the specified elapsedTimeInMs
-func (ess *ExplosionSpriteSupplier) Sprite(elapsedTimeInMs int64) *graphics.SpriteWithOffset {
+func (ess *ExplosionSpriteSupplier) Sprite(elapsedTimeInMs int64) *SpriteWithOffset {
 	ess.duration += elapsedTimeInMs
 	var idx = util.MinInt(NumberOfExplosionSprites-1, int(ess.duration/DurationOfExplosionFrame))
 	var spritePath = fmt.Sprintf("%s/%d.png", Folder, idx)
 	var sprite = assets.SpriteRepository.Get(spritePath)
-	return &graphics.SpriteWithOffset{
+	return &SpriteWithOffset{
 		Offset: geometry.Point{},
 		Source: spritePath,
 		Sprite: sprite,

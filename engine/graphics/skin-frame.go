@@ -1,9 +1,8 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/assets"
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/graphics"
 )
 
 type SkinFrame struct {
@@ -11,8 +10,8 @@ type SkinFrame struct {
 	Offset     geometry.Point `json:"offset"`
 }
 
-func (sf *SkinFrame) ToSpriteWithOffset() *graphics.SpriteWithOffset {
-	return &graphics.SpriteWithOffset{
+func (sf *SkinFrame) ToSpriteWithOffset() *SpriteWithOffset {
+	return &SpriteWithOffset{
 		Offset: sf.Offset,
 		Source: sf.SpritePath,
 		Sprite: assets.SpriteRepository.Get(sf.SpritePath),
