@@ -455,6 +455,10 @@ func (ge *GameEngine) checkPlayerForCollisionWithBullet(rect *geometry.Rectangle
 // Enemy will be killed if a deadly collision is detected.
 func (ge *GameEngine) handleDeadlyCollisionsOfEnemies() {
 	for _, enemy := range ge.enemies {
+		if enemy.Dying {
+			continue
+		}
+
 		var death = false
 		var killer = -1
 
