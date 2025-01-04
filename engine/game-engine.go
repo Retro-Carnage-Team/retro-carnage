@@ -95,10 +95,7 @@ func (ge *GameEngine) UpdateGameState(elapsedTimeInMs int64) {
 	ge.scrollObjectsOnScreen(&scrollOffsets)
 
 	var activatedEnemies = ge.levelController.ActivatedEnemies()
-	for i := range activatedEnemies {
-		var enemy = &activatedEnemies[i]
-		ge.enemies = append(ge.enemies, enemy)
-	}
+	ge.enemies = append(ge.enemies, activatedEnemies...)
 }
 
 func (ge *GameEngine) updatePlayerBehavior(elapsedTimeInMs int64) {

@@ -104,8 +104,8 @@ func (lc *LevelController) ProgressToNextSegment() {
 }
 
 // ActivatedEnemies returns Enemy instances that have been activated since the last scroll movement
-func (lc *LevelController) ActivatedEnemies() []characters.ActiveEnemy {
-	var result = make([]characters.ActiveEnemy, 0)
+func (lc *LevelController) ActivatedEnemies() []*characters.ActiveEnemy {
+	var result = make([]*characters.ActiveEnemy, 0)
 	var scrollAdjustment = lc.getScrollAdjustment()
 
 	var activationArea *geometry.Rectangle
@@ -306,10 +306,10 @@ func (lc *LevelController) ObstaclesOnScreen() []assets.Obstacle {
 	return result
 }
 
-func (lc *LevelController) activateEnemy(e *assets.Enemy, adjustment *geometry.Point) characters.ActiveEnemy {
+func (lc *LevelController) activateEnemy(e *assets.Enemy, adjustment *geometry.Point) *characters.ActiveEnemy {
 	var direction = geometry.GetDirectionByName(e.Direction)
 	var enemyType = characters.GetEnemyTypeByCode(e.Type)
-	var result = characters.ActiveEnemy{
+	var result = &characters.ActiveEnemy{
 		Actions:                 e.Actions,
 		Dying:                   false,
 		DyingAnimationCountDown: 0,
@@ -320,9 +320,9 @@ func (lc *LevelController) activateEnemy(e *assets.Enemy, adjustment *geometry.P
 		Type:                    enemyType,
 		ViewingDirection:        direction,
 	}
-	result.SpriteSupplier = enemyType.BuildEnemySpriteSupplier(&result)
+	result.SpriteSupplier = enemyType.BuildEnemySpriteSupplier(result)
 	result.SetPosition(e.Position.Clone().Add(adjustment))
-	enemyType.OnActivation(&result)
+	enemyType.OnActivation(result)
 	return result
 }
 
