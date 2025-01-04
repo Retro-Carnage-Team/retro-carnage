@@ -1,8 +1,7 @@
-package characters
+package graphics
 
 import (
 	"retro-carnage/engine/geometry"
-	"retro-carnage/engine/graphics"
 	"retro-carnage/util"
 )
 
@@ -19,14 +18,14 @@ type PlayerSpriteSupplier struct {
 	durationSinceLastToggle      int64
 	invincibilityToggle          bool
 	lastIndex                    int
-	lastSprite                   *graphics.SpriteWithOffset
-	skin                         *graphics.Skin
+	lastSprite                   *SpriteWithOffset
+	skin                         *Skin
 	wasDying                     bool
 	wasMoving                    bool
 }
 
 // NewPlayerSpriteSupplier creates and initializes a new PlayerSpriteSupplier for a given Player.
-func NewPlayerSpriteSupplier(player *Player, durationOfInvincibilityState int64) *PlayerSpriteSupplier {
+func NewPlayerSpriteSupplier(player PlayerVisuals, durationOfInvincibilityState int64) *PlayerSpriteSupplier {
 	return &PlayerSpriteSupplier{
 		directionOfLastSprite:        geometry.Up,
 		durationOfInvincibilityState: durationOfInvincibilityState,
@@ -35,16 +34,16 @@ func NewPlayerSpriteSupplier(player *Player, durationOfInvincibilityState int64)
 		invincibilityToggle:          true,
 		lastIndex:                    0,
 		lastSprite:                   nil,
-		skin:                         graphics.PlayerSkins[player.index],
+		skin:                         PlayerSkins[player.PlayerIndex()],
 		wasDying:                     false,
 		wasMoving:                    false,
 	}
 }
 
 // Sprite returns the graphics.SpriteWithOffset for the current state of the Player.
-func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, behavior *PlayerBehavior) *graphics.SpriteWithOffset {
-	var nextSprite = pss.sprite(elapsedTimeInMs, behavior)
-	if behavior.Invincible {
+func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, player PlayerVisuals) *SpriteWithOffset {
+	var nextSprite = pss.sprite(elapsedTimeInMs, player)
+	if player.Invincible() {
 		pss.durationSinceLastToggle += elapsedTimeInMs
 		if pss.durationSinceLastToggle >= pss.durationOfInvincibilityState {
 			pss.durationSinceLastToggle = 0
@@ -59,22 +58,22 @@ func (pss *PlayerSpriteSupplier) Sprite(elapsedTimeInMs int64, behavior *PlayerB
 	return nextSprite
 }
 
-func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, behavior *PlayerBehavior) *graphics.SpriteWithOffset {
+func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, player PlayerVisuals) *SpriteWithOffset {
 	pss.durationSinceLastSprite += elapsedTimeInMs
 
-	if behavior.Dying {
+	if player.Dying() {
 		return pss.spriteForDyingPlayer()
 	}
 	pss.wasDying = false
 
-	if behavior.Idle() {
+	if player.Idle() {
 		pss.wasMoving = false
-		var skinFrame = pss.skin.Idle[behavior.Direction.Name]
+		var skinFrame = pss.skin.Idle[player.ViewingDirection().Name]
 		return skinFrame.ToSpriteWithOffset()
 	} else {
 		if (DurationOfPlayerMovementFrame <= pss.durationSinceLastSprite) || (nil == pss.lastSprite) {
 			pss.durationSinceLastSprite = 0
-			var frames = pss.skin.MovementByDirection[behavior.Direction.Name]
+			var frames = pss.skin.MovementByDirection[player.ViewingDirection().Name]
 			if pss.wasMoving {
 				pss.lastIndex = (pss.lastIndex + 1) % len(frames)
 			} else {
@@ -84,11 +83,11 @@ func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, behavior *PlayerB
 			pss.lastSprite = frames[pss.lastIndex].ToSpriteWithOffset()
 		}
 
-		if pss.directionOfLastSprite != behavior.Direction {
-			pss.directionOfLastSprite = behavior.Direction
+		if pss.directionOfLastSprite != *player.ViewingDirection() {
+			pss.directionOfLastSprite = *player.ViewingDirection()
 			pss.durationSinceLastSprite = 0
 			pss.lastIndex = 0
-			var frames = pss.skin.MovementByDirection[behavior.Direction.Name]
+			var frames = pss.skin.MovementByDirection[player.ViewingDirection().Name]
 			pss.lastSprite = frames[pss.lastIndex].ToSpriteWithOffset()
 		}
 
@@ -96,7 +95,7 @@ func (pss *PlayerSpriteSupplier) sprite(elapsedTimeInMs int64, behavior *PlayerB
 	}
 }
 
-func (pss *PlayerSpriteSupplier) spriteForDyingPlayer() *graphics.SpriteWithOffset {
+func (pss *PlayerSpriteSupplier) spriteForDyingPlayer() *SpriteWithOffset {
 	var deathFrames = pss.skin.DeathAnimation[geometry.Up.Name]
 	if pss.wasDying {
 		if DurationOfPlayerDeathAnimationFrame <= pss.durationSinceLastSprite {
