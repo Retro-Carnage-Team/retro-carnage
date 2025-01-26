@@ -43,8 +43,10 @@ func (sc *selectController) processUserInput() {
 		if uiEventState.PressedButton {
 			sc.processOptionSelected()
 		} else if uiEventState.MovedUp {
-			if sc.model.selectedOption > optionOnePlayer {
-				sc.model.selectedOption = sc.model.selectedOption - 1
+			if sc.model.selectedOption == optionOptions && sc.model.multiplayerPossible {
+				sc.model.selectedOption = optionTwoPlayers
+			} else {
+				sc.model.selectedOption = optionOnePlayer
 			}
 		} else if uiEventState.MovedDown {
 			if sc.model.selectedOption == optionOnePlayer && sc.model.multiplayerPossible {
