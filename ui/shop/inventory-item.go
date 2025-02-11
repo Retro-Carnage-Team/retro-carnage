@@ -43,10 +43,6 @@ func (ii *inventoryItem) IsGrenade() bool {
 		ii.index < len(assets.WeaponCrate.GetAll())+len(assets.GrenadeCrate.GetAll())
 }
 
-func (ii *inventoryItem) IsAmmunition() bool {
-	return !ii.IsWeapon() && !ii.IsGrenade()
-}
-
 // OwnedFromMax returns the current number of these item in inventory and their max count.
 func (ii *inventoryItem) OwnedFromMax(inventoryController *engine.InventoryController) (int, int) {
 	if ii.IsWeapon() {
@@ -54,14 +50,11 @@ func (ii *inventoryItem) OwnedFromMax(inventoryController *engine.InventoryContr
 		var owned = inventoryController.AmmunitionCount(weapon.Ammo)
 		var ammunition = assets.AmmunitionCrate.GetByName(weapon.Ammo)
 		return owned, ammunition.MaxCount
-	} else if ii.IsGrenade() {
+	} else {
+		// item is a grenade
 		var owned = inventoryController.GrenadeCount(ii.Name())
 		var grenade = assets.GrenadeCrate.GetByName(ii.Name())
 		return owned, grenade.MaxCount
-	} else {
-		var owned = inventoryController.AmmunitionCount(ii.Name())
-		var ammunition = assets.AmmunitionCrate.GetByName(ii.Name())
-		return owned, ammunition.MaxCount
 	}
 }
 

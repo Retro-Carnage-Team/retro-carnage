@@ -140,8 +140,6 @@ func (c *controller) processButtonPressedOnModal() {
 			c.inventoryController.BuyAmmunition(weapon.Ammo)
 		} else if item.IsGrenade() {
 			c.inventoryController.BuyGrenade(item.Name())
-		} else if item.IsAmmunition() {
-			c.inventoryController.BuyAmmunition(item.Name())
 		}
 		if !c.isModalButtonBuyAmmunitionAvailable() {
 			c.model.modalButtonSelection = buttonCloseModal

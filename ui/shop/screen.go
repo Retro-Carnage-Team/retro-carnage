@@ -379,10 +379,7 @@ func (s *Screen) drawModalBodyAmmoGrenadeTable(item *inventoryItem) {
 	var packageSizeValue = ""
 	var rangeValue = ""
 
-	if item.IsAmmunition() {
-		var ammo = assets.AmmunitionCrate.GetByName(item.Name())
-		packageSizeValue = fmt.Sprintf("%d", ammo.PackageSize)
-	} else {
+	if item.IsGrenade() {
 		var grenade = assets.GrenadeCrate.GetByName(item.Name())
 		packageSizeValue = fmt.Sprintf("%d", grenade.PackageSize)
 		rangeValue = fmt.Sprintf("%d m", grenade.MovementDistance)
@@ -494,33 +491,24 @@ func (s *Screen) drawModalButton(top float64, bottom float64, rightBorder float6
 }
 
 func (s *Screen) getModalBuyAmmoButtonLabel() string {
-	const template = "BUY %d BULLET(S) FOR $ %d"
+	const template = "BUY %d %s FOR $ %d"
 	var item = s.model.items[s.model.selectedItemIdx]
 	if item.IsWeapon() {
 		var weapon = assets.WeaponCrate.GetByName(item.Name())
 		var ammo = assets.AmmunitionCrate.GetByName(weapon.Ammo)
-		return fmt.Sprintf(template, ammo.PackageSize, ammo.Price)
-	} else if item.IsAmmunition() {
-		var ammo = assets.AmmunitionCrate.GetByName(item.Name())
-		return fmt.Sprintf(template, ammo.PackageSize, ammo.Price)
+		return fmt.Sprintf(template, ammo.PackageSize, "BULLETS", ammo.Price)
 	} else {
 		var grenade = assets.GrenadeCrate.GetByName(item.Name())
-		return fmt.Sprintf(template, grenade.PackageSize, grenade.Price)
+		return fmt.Sprintf(template, grenade.PackageSize, "GRENADES", grenade.Price)
 	}
 }
 
 func (s *Screen) getModalFooterStatusHint() string {
 	var item = s.model.items[s.model.selectedItemIdx]
 	if item.IsWeapon() {
-		var weapon = assets.WeaponCrate.GetByName(item.Name())
 		if s.controller.inventoryController.WeaponInInventory(item.Name()) {
-			for _, ammo := range s.model.items {
-				if ammo.Name() == weapon.Ammo {
-					var owned, max = ammo.OwnedFromMax(&s.controller.inventoryController)
-					return fmt.Sprintf("%d / %d bullets", owned, max)
-				}
-			}
-			logging.Error.Fatalf("Failed to find ammo item: %s", weapon.Ammo)
+			var owned, max = item.OwnedFromMax(&s.controller.inventoryController)
+			return fmt.Sprintf("%d / %d bullets", owned, max)
 		} else {
 			return ""
 		}
