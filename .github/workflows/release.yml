@@ -36,7 +36,9 @@ jobs:
         git clone --depth 1 --branch ${{ github.ref_name }} https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/${{ github.ref_name }}
         rm -rf /tmp/${{ github.ref_name }}/.git
     - name: Copy binary
-      run: mv ./retro-carnage /tmp/${{ github.ref_name }}/
+      run: |
+        mv ./icon.png /tmp/${{ github.ref_name }}/
+        mv ./retro-carnage /tmp/${{ github.ref_name }}/
     - name: Build release archive
       shell: bash
       run: |
@@ -58,9 +60,13 @@ jobs:
       with:
         go-version: '1.23.x'
     - name: Install dependencies
-      run: go get -d .
+      run: |
+        go install github.com/tc-hib/go-winres@latest  
+        go get -d . 
     - name: Build
-      run: go build -v
+      run: |
+        go-winres simply --icon icon.png --manifest gui
+        go build -v
     - name: Build release archive
       shell: pwsh
       run: |   
@@ -77,5 +83,3 @@ jobs:
         port: 22
         uploads: |
           ./archive/ => ./releases/
-
-        
