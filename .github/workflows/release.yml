@@ -36,7 +36,9 @@ jobs:
         git clone --depth 1 --branch ${{ github.ref_name }} https://github.com/Retro-Carnage-Team/retro-carnage-assets.git /tmp/${{ github.ref_name }}
         rm -rf /tmp/${{ github.ref_name }}/.git
     - name: Copy binary
-      run: mv ./retro-carnage /tmp/${{ github.ref_name }}/
+      run: |
+        mv ./icon.png /tmp/${{ github.ref_name }}/
+        mv ./retro-carnage /tmp/${{ github.ref_name }}/
     - name: Build release archive
       shell: bash
       run: |
