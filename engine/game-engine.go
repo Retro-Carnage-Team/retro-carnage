@@ -330,6 +330,8 @@ func (ge *GameEngine) handlePlayerWeaponAction(elapsedTimeInMs int64) {
 				ge.handlePlayerWeaponTriggerPressed(player, playerPosition, behavior)
 			} else if behavior.Firing && player.AutomaticWeaponSelected() {
 				ge.handlePlayerWeaponTriggerHeld(behavior, elapsedTimeInMs, player)
+			} else {
+				behavior.TimeSinceLastBullet += elapsedTimeInMs
 			}
 
 			if behavior.TriggerReleased && player.AutomaticWeaponSelected() {
@@ -346,24 +348,40 @@ func (ge *GameEngine) handlePlayerWeaponTriggerPressed(
 	playerPosition *geometry.Rectangle,
 	behavior *characters.PlayerBehavior,
 ) {
-	if player.GrenadeSelected() && ge.inventoryController[player.Index()].RemoveAmmunition() {
+	if player.GrenadeSelected() &&
+		WeaponDelayGrenade <= behavior.TimeSinceLastBullet &&
+		ge.inventoryController[player.Index()].RemoveAmmunition() {
 		ge.explosives = append(ge.explosives, NewExplosiveGrenadeByPlayer(
 			player.Index(),
 			playerPosition,
 			behavior.Direction,
 			player.SelectedGrenade(),
 		))
-	} else if player.RpgSelected() && ge.inventoryController[player.Index()].RemoveAmmunition() {
+		behavior.TimeSinceLastBullet = 0
+	} else {
 		var weapon = player.SelectedWeapon()
-		ge.stereo.PlayFx(weapon.Sound)
-		ge.explosives = append(
-			ge.explosives,
-			NewExplosiveRpg(player.Index(), playerPosition, behavior.Direction, weapon).Explosive,
-		)
-	} else if (player.PistolSelected() || player.AutomaticWeaponSelected()) &&
-		ge.inventoryController[player.Index()].RemoveAmmunition() {
-		ge.stereo.PlayFx(player.SelectedWeapon().Sound)
-		ge.fireBullet(player, behavior)
+		if weapon == nil {
+			return
+		}
+
+		if player.RpgSelected() &&
+			WeaponDelayRpg <= behavior.TimeSinceLastBullet &&
+			ge.inventoryController[player.Index()].RemoveAmmunition() {
+
+			ge.stereo.PlayFx(weapon.Sound)
+			ge.explosives = append(
+				ge.explosives,
+				NewExplosiveRpg(player.Index(), playerPosition, behavior.Direction, weapon).Explosive,
+			)
+			behavior.TimeSinceLastBullet = 0
+
+		} else if (player.PistolSelected() || player.AutomaticWeaponSelected()) &&
+			(int64(weapon.BulletInterval) <= behavior.TimeSinceLastBullet) &&
+			ge.inventoryController[player.Index()].RemoveAmmunition() {
+
+			ge.stereo.PlayFx(player.SelectedWeapon().Sound)
+			ge.fireBullet(player, behavior)
+		}
 	}
 }
 
