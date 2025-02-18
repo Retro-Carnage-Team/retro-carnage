@@ -13,6 +13,8 @@ const (
 	ScrollBarrierLeft            = 1_000
 	ScrollBarrierRight           = 500
 	ScrollMovementPerMs          = 0.3 // Screen.width = 1.500 px / 5.000 milliseconds = 0.2 px / ms
+	WeaponDelayGrenade           = 1_000
+	WeaponDelayRpg               = 2_000
 )
 
 var (

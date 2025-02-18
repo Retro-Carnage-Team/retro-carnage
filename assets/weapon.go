@@ -10,7 +10,7 @@ const (
 
 type Weapon struct {
 	Ammo           string
-	BulletInterval int     // offset between two bullets in ms
+	BulletInterval int     // (min) offset between two bullets in ms
 	BulletRange    int     // in pixels
 	BulletSpeed    float64 // pixels per ms
 	Description    string
