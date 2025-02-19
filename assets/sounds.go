@@ -9,6 +9,7 @@ type Song string
 
 const (
 	FxNone           SoundEffect = "" // this will not play any sound
+	FxAa12           SoundEffect = "aa12.mp3"
 	FxAk47           SoundEffect = "AK47.mp3"
 	FxAr10           SoundEffect = "AR10.mp3"
 	FxBar            SoundEffect = "BAR.mp3"
@@ -73,26 +74,34 @@ const (
 	ThemeSong        Song = "The-Contra-Chop.mp3"
 )
 
-var SoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxCash, FxCheatSwitch, FxDeathEnemy0, FxDeathEnemy1,
-	FxDeathEnemy2, FxDeathEnemy3, FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1,
-	FxDeathPlayer2, FxError, FxFnfal, FxG36, FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxHk21, FxLoading, FxM28A1,
-	FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo, FxPistol1, FxPistol2, FxRicochet0, FxRicochet1, FxRicochet2, FxRicochet3,
-	FxRicochet4, FxRicochet5, FxRicochet6, FxRicochet7, FxRicochet8, FxRocketLauncher, FxShotgun, FxTankMoving, FxUzi}
+var SoundEffects = []SoundEffect{
+	FxAa12, FxAk47, FxAr10, FxBar, FxCash, FxCheatSwitch, FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2, FxDeathEnemy3,
+	FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1, FxDeathPlayer2, FxError, FxFnfal, FxG36,
+	FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxHk21, FxLoading, FxM28A1, FxMg4, FxMg42, FxMp5, FxMp7, FxOutOfAmmo,
+	FxPistol1, FxPistol2, FxRicochet0, FxRicochet1, FxRicochet2, FxRicochet3, FxRicochet4, FxRicochet5, FxRicochet6,
+	FxRicochet7, FxRicochet8, FxRocketLauncher, FxShotgun, FxTankMoving, FxUzi,
+}
 
-var LoopingSoundEffects = []SoundEffect{FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5,
-	FxMp7, FxTankMoving, FxUzi}
+var LoopingSoundEffects = []SoundEffect{
+	FxAa12, FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMp5, FxMp7, FxTankMoving, FxUzi,
+}
 
-var EnemyDeathsSoundEffects = []SoundEffect{FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2, FxDeathEnemy3, FxDeathEnemy4,
-	FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7}
+var EnemyDeathsSoundEffects = []SoundEffect{
+	FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2, FxDeathEnemy3, FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6,
+	FxDeathEnemy7,
+}
 
 var GrenadeSoundEffects = []SoundEffect{FxGrenade1, FxGrenade2, FxGrenade3}
 
-var Music = []Song{BackgroundSong1, BackgroundSong2, BackgroundSong3, BackgroundSong4, BackgroundSong5, BackgroundSong6,
+var Music = []Song{
+	BackgroundSong1, BackgroundSong2, BackgroundSong3, BackgroundSong4, BackgroundSong5, BackgroundSong6,
 	BackgroundSong7, BackgroundSong8, BackgroundSong9, BackgroundSong10, BackgroundSong11, BackgroundSong12,
-	BackgroundSong13, GameOverSong, GameWonSong, ThemeSong}
+	BackgroundSong13, GameOverSong, GameWonSong, ThemeSong,
+}
 
-var RicochetSoundEffects = []SoundEffect{FxRicochet0, FxRicochet1, FxRicochet2, FxRicochet3, FxRicochet4, FxRicochet5,
-	FxRicochet6, FxRicochet7, FxRicochet8}
+var RicochetSoundEffects = []SoundEffect{
+	FxRicochet0, FxRicochet1, FxRicochet2, FxRicochet3, FxRicochet4, FxRicochet5, FxRicochet6, FxRicochet7, FxRicochet8,
+}
 
 func RandomEnemyDeathSoundEffect() SoundEffect {
 	return EnemyDeathsSoundEffects[rand.Intn(len(EnemyDeathsSoundEffects))]
