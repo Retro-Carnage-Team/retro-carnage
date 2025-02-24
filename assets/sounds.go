@@ -27,8 +27,6 @@ const (
 	FxDeathPlayer2    SoundEffect = "death-player-2.mp3"
 	FxError           SoundEffect = "error.mp3"
 	FxFnfal           SoundEffect = "FNFAL.mp3"
-	FxG36             SoundEffect = "G36.mp3"
-	FxG95k            SoundEffect = "G95K.mp3"
 	FxGrenade1        SoundEffect = "grenade.mp3"
 	FxGrenade2        SoundEffect = "grenade2.mp3"
 	FxGrenade3        SoundEffect = "grenade3.mp3"
@@ -37,14 +35,12 @@ const (
 	FxLoading         SoundEffect = "loading.mp3"
 	FxM28A1           SoundEffect = "M28A1.mp3"
 	FxMg4             SoundEffect = "MG4.mp3"
-	FxMg42            SoundEffect = "MG42.mp3"
 	FxMinigunEnd      SoundEffect = "minigun-end.mp3"
 	FxMinigunLoop     SoundEffect = "minigun-loop.mp3"
 	FxMp5             SoundEffect = "MP5.mp3"
 	FxMp7             SoundEffect = "MP7.mp3"
 	FxOutOfAmmo       SoundEffect = "outofammo.mp3"
 	FxPistol1         SoundEffect = "pistol.mp3"
-	FxPistol2         SoundEffect = "pistol2.mp3"
 	FxRicochet0       SoundEffect = "ricochet-0.mp3"
 	FxRicochet1       SoundEffect = "ricochet-1.mp3"
 	FxRicochet2       SoundEffect = "ricochet-2.mp3"
@@ -54,10 +50,10 @@ const (
 	FxRicochet6       SoundEffect = "ricochet-6.mp3"
 	FxRicochet7       SoundEffect = "ricochet-7.mp3"
 	FxRicochet8       SoundEffect = "ricochet-8.mp3"
+	FxRifle           SoundEffect = "rifle.mp3"
 	FxRocketLauncher  SoundEffect = "rlauncher.mp3"
 	FxShotgun         SoundEffect = "shotgun.mp3"
 	FxTankMoving      SoundEffect = "tank-moving.mp3"
-	FxUzi             SoundEffect = "UZI.mp3"
 
 	BackgroundSong1  Song = "All-We-Ever-See-of-Stars.mp3"
 	BackgroundSong2  Song = "Beatdown-City.mp3"
@@ -79,16 +75,14 @@ const (
 
 var SoundEffects = []SoundEffect{
 	FxAa12, FxAk47, FxAr10, FxBar, FxCash, FxCheatSwitch, FxDeathEnemy0, FxDeathEnemy1, FxDeathEnemy2, FxDeathEnemy3,
-	FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1, FxDeathPlayer2, FxError, FxFnfal, FxG36,
-	FxG95k, FxGrenade1, FxGrenade2, FxGrenade3, FxGrenadeLauncher, FxHk21, FxLoading, FxM28A1, FxMg4, FxMg42,
-	FxMinigunEnd, FxMinigunLoop, FxMp5, FxMp7, FxOutOfAmmo, FxPistol1, FxPistol2, FxRicochet0, FxRicochet1, FxRicochet2,
-	FxRicochet3, FxRicochet4, FxRicochet5, FxRicochet6, FxRicochet7, FxRicochet8, FxRocketLauncher, FxShotgun,
-	FxTankMoving, FxUzi,
+	FxDeathEnemy4, FxDeathEnemy5, FxDeathEnemy6, FxDeathEnemy7, FxDeathPlayer1, FxDeathPlayer2, FxError, FxFnfal,
+	FxGrenade1, FxGrenade2, FxGrenade3, FxGrenadeLauncher, FxHk21, FxLoading, FxM28A1, FxMg4, FxMinigunEnd,
+	FxMinigunLoop, FxMp5, FxMp7, FxOutOfAmmo, FxPistol1, FxRicochet0, FxRicochet1, FxRicochet2, FxRicochet3,
+	FxRicochet4, FxRicochet5, FxRicochet6, FxRicochet7, FxRicochet8, FxRifle, FxRocketLauncher, FxShotgun, FxTankMoving,
 }
 
 var LoopingSoundEffects = []SoundEffect{
-	FxAa12, FxAk47, FxAr10, FxBar, FxFnfal, FxG36, FxG95k, FxHk21, FxMg4, FxMg42, FxMinigunLoop, FxMp5, FxMp7,
-	FxTankMoving, FxUzi,
+	FxAa12, FxAk47, FxAr10, FxBar, FxFnfal, FxHk21, FxMg4, FxMinigunLoop, FxMp5, FxMp7, FxTankMoving,
 }
 
 var EnemyDeathsSoundEffects = []SoundEffect{
