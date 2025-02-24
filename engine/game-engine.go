@@ -324,18 +324,23 @@ func (ge *GameEngine) adjustPositionedItemWithScrollOffset(
 func (ge *GameEngine) handlePlayerWeaponAction(elapsedTimeInMs int64) {
 	for _, player := range characters.PlayerController.RemainingPlayers() {
 		var behavior = ge.playerBehaviors[player.Index()]
-		if !behavior.Dying {
-			var playerPosition = ge.playerPositions[player.Index()]
-			if behavior.TriggerPressed {
-				ge.handlePlayerWeaponTriggerPressed(player, playerPosition, behavior)
-			} else if behavior.Firing && player.AutomaticWeaponSelected() {
-				ge.handlePlayerWeaponTriggerHeld(behavior, elapsedTimeInMs, player)
-			} else {
-				behavior.TimeSinceLastBullet += elapsedTimeInMs
-			}
+		if behavior.Dying {
+			continue
+		}
 
-			if behavior.TriggerReleased && player.AutomaticWeaponSelected() {
-				ge.stereo.StopFx(player.SelectedWeapon().Sound)
+		var playerPosition = ge.playerPositions[player.Index()]
+		if behavior.TriggerPressed {
+			ge.handlePlayerWeaponTriggerPressed(player, playerPosition, behavior)
+		} else if behavior.Firing && player.AutomaticWeaponSelected() {
+			ge.handlePlayerWeaponTriggerHeld(behavior, elapsedTimeInMs, player)
+		} else {
+			behavior.TimeSinceLastBullet += elapsedTimeInMs
+		}
+
+		if behavior.TriggerReleased && player.AutomaticWeaponSelected() {
+			ge.stereo.StopFx(player.SelectedWeapon().Sound)
+			if player.SelectedWeapon().CoolDownSound != assets.FxNone {
+				ge.stereo.PlayFx(player.SelectedWeapon().CoolDownSound)
 			}
 		}
 	}

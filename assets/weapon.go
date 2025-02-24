@@ -13,6 +13,7 @@ type Weapon struct {
 	BulletInterval int     // (min) offset between two bullets in ms
 	BulletRange    int     // in pixels
 	BulletSpeed    float64 // pixels per ms
+	CoolDownSound  SoundEffect
 	Description    string
 	Image          string
 	ImageRotated   string

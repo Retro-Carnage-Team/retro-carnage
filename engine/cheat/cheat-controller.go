@@ -17,11 +17,7 @@ var (
 		pixel.KeyO,
 		pixel.KeyH,
 		pixel.KeyN,
-		pixel.KeyR,
-		pixel.KeyA,
-		pixel.KeyM,
-		pixel.KeyB,
-		pixel.KeyO,
+		pixel.KeyJ,
 	}
 	unlimitedLivesCheat = []pixel.Button{
 		pixel.KeyD,
