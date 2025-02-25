@@ -89,8 +89,8 @@ func NewKeyboardConfiguration() InputDeviceConfiguration {
 		},
 		DeviceName:          DeviceNameKeyboard,
 		InputFire:           int(pixel.KeySpace),
-		InputNextWeapon:     int(pixel.KeyA),
-		InputPreviousWeapon: int(pixel.KeyZ),
+		InputNextWeapon:     int(pixel.KeyPageUp),
+		InputPreviousWeapon: int(pixel.KeyPageDown),
 	}
 }
 
