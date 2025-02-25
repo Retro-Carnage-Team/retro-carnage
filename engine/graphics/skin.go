@@ -14,7 +14,6 @@ type Skin struct {
 	Idle                map[string]SkinFrame      `json:"idle"`
 	MovementByDirection map[string][]SkinFrame    `json:"movement"`
 	Name                string                    `json:"name"`
-	RpgOffsets          map[string]geometry.Point `json:"rpgOffsets"`
 }
 
 // DurationOfDeathAnimation returns the duration of a death animation in milliseconds
