@@ -7,6 +7,7 @@ import (
 	"retro-carnage/config"
 	"retro-carnage/logging"
 	"retro-carnage/util"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -103,6 +104,10 @@ func (sb *Stereo) StopFx(effect SoundEffect) {
 
 // IsSongBuffered returns whether or not the given song is buffered (and thus can be played).
 func (sb *Stereo) IsSongBuffered(song Song) bool {
+	if sb.noMusic {
+		return true
+	}
+
 	sb.musicMutex.Lock()
 	var aSoundIsNil = nil == sb.music[song]
 	sb.musicMutex.Unlock()
@@ -214,10 +219,5 @@ func readMp3IntoBuffer(filePath string) (*beep.Buffer, error) {
 }
 
 func isLoopingEffect(fx SoundEffect) bool {
-	for _, v := range LoopingSoundEffects {
-		if v == fx {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(LoopingSoundEffects, fx)
 }
