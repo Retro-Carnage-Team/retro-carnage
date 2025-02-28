@@ -209,5 +209,9 @@ func (coc *controllerOptionsController) getDisplayTextForValue(value int) string
 	}
 
 	var gpButton = pixel.GamepadButton(value)
-	return gamepadButtonNames[gpButton]
+	var result, ok = gamepadButtonNames[gpButton]
+	if ok {
+		return result
+	}
+	return "- NOT SET -"
 }
