@@ -74,16 +74,16 @@ func (s *ControllerOptionsScreen) Update(_ int64) {
 
 	// Action label
 	var actionLabelLocationY = axisLabelLocationY - 3*s.textDimensions[txtActionFire].Y
-	txt = s.drawText(txtActionFire, headlineDistanceLeft, actionLabelLocationY, common.White)
-	var valueDistanceLeft = headlineDistanceLeft + txt.Bounds().W()/2*3
+	s.drawText(txtActionFire, headlineDistanceLeft, actionLabelLocationY, common.White)
 
 	// Next weapon label
 	var nextWeaponLabelLocationY = actionLabelLocationY - 3*s.textDimensions[txtNextWeapon].Y
 	s.drawText(txtNextWeapon, headlineDistanceLeft, nextWeaponLabelLocationY, common.White)
 
 	// Previous weapon label
-	var previousWeaponLabelLocationY = nextWeaponLabelLocationY - 3*s.textDimensions[txtNextWeapon].Y
-	s.drawText(txtPrevWeapon, headlineDistanceLeft, previousWeaponLabelLocationY, common.White)
+	var previousWeaponLabelLocationY = nextWeaponLabelLocationY - 3*s.textDimensions[txtPrevWeapon].Y
+	txt = s.drawText(txtPrevWeapon, headlineDistanceLeft, previousWeaponLabelLocationY, common.White)
+	var valueDistanceLeft = headlineDistanceLeft + txt.Bounds().W()/2*3
 
 	// Values
 	s.renderControllerSelectionValues(valueDistanceLeft, controllerLabelLocationY)
