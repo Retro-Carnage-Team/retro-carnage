@@ -48,16 +48,13 @@ type playerInfo struct {
 
 // newPlayerInfo creates and returns a new instance of playerInfo.
 // Use this to construct this component.
-func newPlayerInfo(playerIdx int, window *opengl.Window) *playerInfo {
+func newPlayerInfo(playerIdx int, window *opengl.Window, componentArea *geometry.Rectangle) *playerInfo {
 	var players = characters.PlayerController.ConfiguredPlayers()
-	var player *characters.Player = nil
-	if len(players) > playerIdx {
-		player = players[playerIdx]
-	}
+	var player = players[playerIdx]
 	var result = &playerInfo{
 		ammunitionChanged: true,
 		canvas:            nil,
-		componentArea:     nil,
+		componentArea:     componentArea,
 		livesChanged:      true,
 		player:            player,
 		playerIdx:         playerIdx,
@@ -65,11 +62,10 @@ func newPlayerInfo(playerIdx int, window *opengl.Window) *playerInfo {
 		weaponChanged:     true,
 		window:            window,
 	}
-	if nil != player {
-		var changeListener = &util.ChangeListener{Callback: result.playerPropertyChanged, PropertyNames: []string{}}
-		player.AddChangeListener(changeListener)
-		result.changeListener = changeListener
-	}
+
+	var changeListener = &util.ChangeListener{Callback: result.playerPropertyChanged, PropertyNames: []string{}}
+	player.AddChangeListener(changeListener)
+	result.changeListener = changeListener
 	return result
 }
 
@@ -83,9 +79,8 @@ func (pi *playerInfo) draw(target pixel.Target) {
 // updateCanvas updates the in-memory canvas of this component.
 // Should not be called from outside this class.
 func (pi *playerInfo) updateCanvas() {
-	var initialize = nil == pi.componentArea || nil == pi.canvas
+	var initialize = nil == pi.canvas
 	if initialize {
-		pi.calculateComponentArea(pi.window)
 		pi.initializeCanvas()
 		pi.drawBackground()
 		pi.drawPlayerPortrait()
@@ -108,21 +103,6 @@ func (pi *playerInfo) updateCanvas() {
 		pi.drawLives()
 		pi.livesChanged = false
 	}
-}
-
-// calculateComponentArea gets the area of this player info component.
-// Should not be called from outside this class.
-func (pi *playerInfo) calculateComponentArea(window *opengl.Window) {
-	var playerInfoArea = geometry.Rectangle{
-		X:      0,
-		Y:      0,
-		Width:  (window.Bounds().W() - window.Bounds().H()) / 2,
-		Height: window.Bounds().H(),
-	}
-	if pi.playerIdx == 1 {
-		playerInfoArea.X = window.Bounds().W() - playerInfoArea.Width
-	}
-	pi.componentArea = &playerInfoArea
 }
 
 // initializeCanvas performs the lazy initialization of the canvas.
@@ -191,18 +171,16 @@ func (pi *playerInfo) drawScore() {
 	draw.Rectangle(0)
 	draw.Draw(pi.canvas)
 
-	if nil != pi.player {
-		var score = fmt.Sprintf("%d", pi.player.Score())
-		var textDimensions = fonts.GetTextDimension(fontSize, score)
-		var position = pixel.Vec{
-			X: pi.componentArea.X + (pi.componentArea.Width-textDimensions.X)/2,
-			Y: bottomLeft.Y + (scoreAreaHeight-textDimensions.Y)/2,
-		}
-		var txt = text.New(position, fonts.SizeToFontAtlas[fontSize])
-		txt.Color = common.Yellow
-		_, _ = fmt.Fprint(txt, score)
-		txt.Draw(pi.canvas, pixel.IM)
+	var score = fmt.Sprintf("%d", pi.player.Score())
+	var textDimensions = fonts.GetTextDimension(fontSize, score)
+	var position = pixel.Vec{
+		X: pi.componentArea.X + (pi.componentArea.Width-textDimensions.X)/2,
+		Y: bottomLeft.Y + (scoreAreaHeight-textDimensions.Y)/2,
 	}
+	var txt = text.New(position, fonts.SizeToFontAtlas[fontSize])
+	txt.Color = common.Yellow
+	_, _ = fmt.Fprint(txt, score)
+	txt.Draw(pi.canvas, pixel.IM)
 }
 
 // drawWeaponBackground draws the background of the weapon area (weapon / ammo counter) onto a specific section of the
@@ -290,12 +268,7 @@ func (pi *playerInfo) drawLives() {
 	draw.Push(bottomLeft, topRight)
 	draw.Rectangle(0)
 	draw.Draw(pi.canvas)
-
-	if nil != pi.player {
-		pi.drawLivesForPlayer(bottomLeft)
-	} else {
-		pi.drawLivesForMissingInAction(bottomLeft)
-	}
+	pi.drawLivesForPlayer(bottomLeft)
 }
 
 func (pi *playerInfo) drawLivesForPlayer(bottomLeft pixel.Vec) {
@@ -315,25 +288,13 @@ func (pi *playerInfo) drawLivesForPlayer(bottomLeft pixel.Vec) {
 	}
 
 	var left = pi.componentArea.X + (pi.componentArea.Width-width)/2 + scaledSpriteWidth/2
-	for i := 0; i < pi.player.Lives(); i++ {
+	for range pi.player.Lives() {
 		var matrix = pixel.IM.
 			Scaled(pixel.V(0, 0), scale).
 			Moved(pixel.V(left, bottomLeft.Y+1+scaledSpriteHeight/2))
 		lifeSprite.Draw(pi.canvas, matrix)
 		left += scaledSpriteWidth + 5
 	}
-}
-
-func (pi *playerInfo) drawLivesForMissingInAction(bottomLeft pixel.Vec) {
-	var textDimensions = fonts.GetTextDimension(fontSize, missingInAction)
-	var position = pixel.Vec{
-		X: pi.componentArea.X + (pi.componentArea.Width-textDimensions.X)/2,
-		Y: bottomLeft.Y + (livesAreaHeight-textDimensions.Y)/2,
-	}
-	var txt = text.New(position, fonts.SizeToFontAtlas[fontSize])
-	txt.Color = common.Yellow
-	_, _ = fmt.Fprint(txt, missingInAction)
-	txt.Draw(pi.canvas, pixel.IM)
 }
 
 // areaForLives returns the two points (bottom left, top right) that define the rectangular area in which the extra

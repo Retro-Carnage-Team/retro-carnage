@@ -23,7 +23,7 @@ type Renderer struct {
 }
 
 // NewRenderer creates and initializes a new Renderer instance.
-func NewRenderer(engine *GameEngine, window *opengl.Window) *Renderer {
+func NewRenderer(engine *GameEngine, window *opengl.Window, outputArea *geometry.Rectangle) *Renderer {
 	var playerSpriteSuppliers = make([]*graphics.PlayerSpriteSupplier, 0)
 	for _, player := range characters.PlayerController.ConfiguredPlayers() {
 		var behavior = engine.playerBehaviors[player.Index()]
@@ -32,7 +32,8 @@ func NewRenderer(engine *GameEngine, window *opengl.Window) *Renderer {
 	}
 
 	var result = &Renderer{engine: engine, playerSpriteSuppliers: playerSpriteSuppliers, window: window}
-	result.initializeGeometry()
+	result.outputArea = outputArea
+	result.scalingFactor = outputArea.Height / ScreenSize
 	result.initializeCanvas()
 	return result
 }
@@ -198,20 +199,6 @@ func (r *Renderer) drawSpriteToCanvas(spriteWithOffset *graphics.SpriteWithOffse
 	} else {
 		spriteWithOffset.Sprite.Draw(r.canvas, matrix)
 	}
-}
-
-// initializeGeometry computes the location and size of game area and the scaling factor.
-// Should not be called from outside this class.
-func (r *Renderer) initializeGeometry() {
-	var playerInfoAreaWidth = (r.window.Bounds().W() - r.window.Bounds().H()) / 2
-	var result = &geometry.Rectangle{
-		X:      playerInfoAreaWidth,
-		Y:      0,
-		Width:  r.window.Bounds().W() - playerInfoAreaWidth - playerInfoAreaWidth,
-		Height: r.window.Bounds().H(),
-	}
-	r.outputArea = result
-	r.scalingFactor = result.Height / ScreenSize
 }
 
 // initializeCanvas performs the initialization of the canvas.
